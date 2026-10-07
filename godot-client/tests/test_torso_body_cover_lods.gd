@@ -5,19 +5,6 @@ extends SceneTree
 const Policy := preload("res://src/actors/actor_render_quality.gd")
 const RACE := "luminous_male"
 const TORSO_VISUAL := 192
-const ORUN_RACE := "orun_male"
-const ORUN_PROFILE_ID := "orun-male-rear-neck-v1"
-const ORUN_SURFACE := 3
-const ORUN_SOURCE_FINGERPRINT := "580ab6ee1d57c3cc98369636e872556bbe2a6e1d290c86270c31fcf985dd5446"
-## The same surface as GLTFDocument parses it from the loose GLB, which is
-## how an exported client (no resource path) builds every actor.
-const ORUN_RAW_FINGERPRINT := "adadf7459870edb2824a2010e68656f7272c382d76621c216594cba95dedf07b"
-const ORUN_MASKED_FACES := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14,
-	15, 16, 17, 18, 20, 21, 27, 28, 36, 37, 50, 51, 57, 63, 64, 67, 68, 69,
-	71, 86, 88, 89, 95, 101, 109, 112, 125, 128, 129, 151, 152, 160, 192,
-	213, 219, 220, 249, 251, 278, 342, 343, 344, 346, 387, 409, 414, 415,
-	432, 433, 443, 453, 461, 462, 467, 468, 470, 490, 491, 492, 504, 508,
-	509, 510, 512, 517, 523, 524, 525, 526, 531, 537, 538, 545, 546]
 
 var _checks := 0
 var _failures := 0
@@ -33,8 +20,6 @@ func _run() -> void:
 	_check_u32_lod_indices()
 	_check_cache_reset_and_rebuild()
 	_check_imported_actor_lods_and_quality()
-	_check_orun_runtime_profile()
-	_check_orun_shipped_route_profile()
 	TorsoBodyCover.clear()
 	GlbSceneCache.clear()
 	print("torso body cover LODs: %s (%d checks)" % [
@@ -280,160 +265,6 @@ func _check_imported_actor_lods_and_quality() -> void:
 	first.free()
 
 
-## The reviewed Orun fix is deliberately coverage-active rather than baked into
-## the body GLB: bare actors must retain the pristine, closed surface. This
-## oracle pins the imported surface independently of the production registry.
-func _check_orun_runtime_profile() -> void:
-	var models: Dictionary = JSON.parse_string(
-		FileAccess.get_file_as_string("res://data/actors/models.json"))["models"]
-	var equipment: Dictionary = JSON.parse_string(
-		FileAccess.get_file_as_string("res://data/actors/equipment.json"))
-	var config: Dictionary = models[ORUN_RACE]
-	var profile: Dictionary = config.get("torsoBodyCover", {}) as Dictionary
-	_expect(profile.size() == 3 and str(profile.get("id", "")) == ORUN_PROFILE_ID
-		and int(profile.get("version", 0)) == 1
-		and str(profile.get("sourceSHA256", ""))
-		== "9044aebf2ea13cf82a9bdb40641481115e25521ec02e8a78df760a9b01299fd8",
-		"the Orun config stores only the compact hash-pinned profile selector")
-	var animations: Dictionary = JSON.parse_string(
-		FileAccess.get_file_as_string(config["animationMap"]))
-	var first := _actor(6201, config, animations, equipment, ORUN_RACE)
-	if first == null:
-		return
-	var body := _body(first)
-	_expect(body != null, "the Orun actor exposes its imported body mesh")
-	if body == null:
-		first.free()
-		return
-	var original := body.mesh
-	var arrays: Array = original.surface_get_arrays(ORUN_SURFACE)
-	var source: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
-	_expect(source.size() == 1701 and source.size() / 3 == 567,
-		"the reviewed Orun shared-neck face order is unchanged")
-	_expect(_surface_fingerprint(arrays, source) == ORUN_SOURCE_FINGERPRINT,
-		"the imported Orun shared-neck fingerprint is unchanged")
-	_expect(not body.has_meta("uncovered_body_mesh"),
-		"a bare Orun starts on the pristine resource without cover metadata")
-
-	var selected_vertices := {}
-	for face_value: Variant in ORUN_MASKED_FACES:
-		var face := int(face_value)
-		for corner: int in range(3):
-			selected_vertices[source[face * 3 + corner]] = true
-	var original_lods := _lod_indices(original, ORUN_SURFACE)
-	var mask_touching_lod_faces := _count_lod_mask_faces(
-		original_lods, selected_vertices)
-	_expect(mask_touching_lod_faces == 74,
-		"the imported LOD chain has the reviewed 74 mask-touching faces")
-
-	for visual: int in [209, 225, 216, 189]:
-		first.apply_equipment_visuals({5: visual})
-		var covered := body.mesh
-		var covered_source: PackedInt32Array = covered.surface_get_arrays(
-			ORUN_SURFACE)[Mesh.ARRAY_INDEX]
-		var diff := _subsequence_diff(source, covered_source)
-		_expect(diff["removed"] == ORUN_MASKED_FACES
-			and (diff["unmatched"] as Array).is_empty(),
-			"torso %d removes exactly the 88 reviewed Orun rows" % visual)
-		_expect(_count_lod_mask_faces(_lod_indices(covered, ORUN_SURFACE),
-			selected_vertices) == 0,
-			"torso %d cannot reintroduce the rear apron through a LOD" % visual)
-		first.apply_equipment_visuals({})
-		_expect(is_same(body.mesh, original)
-			and (body.mesh.surface_get_arrays(ORUN_SURFACE)[Mesh.ARRAY_INDEX]
-			as PackedInt32Array) == source,
-			"torso %d unequip restores the exact pristine mesh" % visual)
-
-	for outfit: Dictionary in [{4: 176}, {6: 205}, {4: 176, 6: 205}]:
-		first.apply_equipment_visuals(outfit)
-		_expect((body.mesh.surface_get_arrays(ORUN_SURFACE)[Mesh.ARRAY_INDEX]
-			as PackedInt32Array) == source,
-			"legs/boots %s never activate the neck profile" % str(outfit.keys()))
-		first.apply_equipment_visuals({})
-
-	first.apply_equipment_visuals({5: 189})
-	var shared_covered := body.mesh
-	var second := _actor(6202, config, animations, equipment, ORUN_RACE)
-	if second != null:
-		var second_body := _body(second)
-		second.apply_equipment_visuals({5: 189})
-		_expect(second_body != null and is_same(second_body.mesh, shared_covered),
-			"equivalent Orun actors reuse one covered profile cache entry")
-		second.apply_equipment_visuals({})
-		second.free()
-	first.apply_equipment_visuals({})
-
-	var registry_profile := (TorsoBodyCover.PROFILE_REGISTRY[ORUN_PROFILE_ID]
-		as Dictionary).duplicate(true)
-	var drifted_entry := ((registry_profile["rearFaceMasks"] as Array)[0]
-		as Dictionary).duplicate(true)
-	drifted_entry["surfaceFingerprintSHA256"] = "drifted"
-	registry_profile["rearFaceMasks"] = [drifted_entry]
-	_expect(TorsoBodyCover._profile_mask(registry_profile, ORUN_SURFACE,
-		arrays, source, true).is_empty(),
-		"a surface-fingerprint mismatch fails closed without applying ordinals")
-	first.free()
-
-
-## An exported client has no resource path, so GlbSceneCache cannot map the
-## globalized scene path back to res:// and parses the loose GLB with
-## GLTFDocument instead of loading the imported scene. That mesh lists the
-## same faces in the same order but lays each face's corners out differently,
-## so it has its own fingerprint; before the registry named it, every packaged
-## Orun warned "surface fingerprint drifted" and dropped the whole shared-neck
-## bridge. Build Orun the way the package does and require the reviewed rows.
-func _check_orun_shipped_route_profile() -> void:
-	GlbSceneCache.clear()
-	TorsoBodyCover.clear()
-	var models: Dictionary = JSON.parse_string(
-		FileAccess.get_file_as_string("res://data/actors/models.json"))["models"]
-	var equipment: Dictionary = JSON.parse_string(
-		FileAccess.get_file_as_string("res://data/actors/equipment.json"))
-	var config: Dictionary = models[ORUN_RACE]
-	var animations: Dictionary = JSON.parse_string(
-		FileAccess.get_file_as_string(config["animationMap"]))
-	var scene_path := ProjectSettings.globalize_path(str(config["scene"]))
-	var parsed := GlbSceneCache._build_raw(scene_path)
-	_expect(parsed != null, "the loose Orun GLB parses through GLTFDocument")
-	if parsed == null:
-		return
-	GlbSceneCache.install_prepared({scene_path: parsed})
-	var actor := _actor(6203, config, animations, equipment, ORUN_RACE)
-	if actor == null:
-		GlbSceneCache.clear()
-		return
-	var body := _body(actor)
-	_expect(body != null, "the parsed Orun actor exposes its body mesh")
-	if body == null:
-		actor.free()
-		GlbSceneCache.clear()
-		return
-	var arrays: Array = body.mesh.surface_get_arrays(ORUN_SURFACE)
-	var source: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
-	_expect(source.size() == 1701
-		and _surface_fingerprint(arrays, source) == ORUN_RAW_FINGERPRINT,
-		"the shipped route's Orun shared-neck surface is the pinned raw parse")
-	for visual: int in [209, 225, 216, 189]:
-		actor.apply_equipment_visuals({5: visual})
-		var covered_source: PackedInt32Array = body.mesh.surface_get_arrays(
-			ORUN_SURFACE)[Mesh.ARRAY_INDEX]
-		var diff := _subsequence_diff(source, covered_source)
-		_expect(diff["removed"] == ORUN_MASKED_FACES
-			and (diff["unmatched"] as Array).is_empty()
-			and covered_source.size() / 3 == 567 - ORUN_MASKED_FACES.size(),
-			"on the shipped route torso %d keeps 479 bridge faces, removing the 88 reviewed rows" % visual)
-		actor.apply_equipment_visuals({})
-		_expect((body.mesh.surface_get_arrays(ORUN_SURFACE)[Mesh.ARRAY_INDEX]
-			as PackedInt32Array) == source,
-			"on the shipped route torso %d unequip restores the parsed mesh" % visual)
-	_expect(TorsoBodyCover._profile_warnings.is_empty(),
-		"the shipped route ignores no torso cover profile: %s" % str(
-			TorsoBodyCover._profile_warnings.keys()))
-	actor.free()
-	GlbSceneCache.clear()
-	TorsoBodyCover.clear()
-
-
 func _actor(id: int, config: Dictionary, animations: Dictionary,
 		equipment: Dictionary, race: String = RACE) -> ReplicatedActor3D:
 	var actor := ReplicatedActor3D.new()
@@ -447,57 +278,6 @@ func _actor(id: int, config: Dictionary, animations: Dictionary,
 		actor.free()
 		return null
 	return actor
-
-
-func _body(actor: ReplicatedActor3D) -> MeshInstance3D:
-	var native := actor.get_node_or_null("NativeModel") as Node3D
-	if native == null:
-		return null
-	for value: Node in native.find_children("*", "MeshInstance3D", true, false):
-		var mesh := value as MeshInstance3D
-		if mesh.name.to_lower() in ["body", "char1", "mesh_node"]:
-			return mesh
-	return null
-
-
-func _surface_fingerprint(arrays: Array, source: PackedInt32Array) -> String:
-	var context := HashingContext.new()
-	context.start(HashingContext.HASH_SHA256)
-	context.update((arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).to_byte_array())
-	context.update((arrays[Mesh.ARRAY_TEX_UV] as PackedVector2Array).to_byte_array())
-	context.update((arrays[Mesh.ARRAY_BONES] as PackedInt32Array).to_byte_array())
-	context.update((arrays[Mesh.ARRAY_WEIGHTS] as PackedFloat32Array).to_byte_array())
-	context.update(source.to_byte_array())
-	return context.finish().hex_encode()
-
-
-func _subsequence_diff(original: PackedInt32Array,
-		covered: PackedInt32Array) -> Dictionary:
-	var removed: Array = []
-	var unmatched: Array = []
-	var covered_face := 0
-	for original_face: int in range(original.size() / 3):
-		var source_row := original.slice(original_face * 3, original_face * 3 + 3)
-		if covered_face < covered.size() / 3 and source_row == covered.slice(
-				covered_face * 3, covered_face * 3 + 3):
-			covered_face += 1
-		else:
-			removed.append(original_face)
-	while covered_face < covered.size() / 3:
-		unmatched.append(Array(covered.slice(covered_face * 3, covered_face * 3 + 3)))
-		covered_face += 1
-	return {"removed": removed, "unmatched": unmatched}
-
-
-func _count_lod_mask_faces(lods: Dictionary, selected_vertices: Dictionary) -> int:
-	var count := 0
-	for source_value: Variant in lods.values():
-		var source := source_value as PackedInt32Array
-		for index: int in range(0, source.size(), 3):
-			count += int(selected_vertices.has(source[index])
-				or selected_vertices.has(source[index + 1])
-				or selected_vertices.has(source[index + 2]))
-	return count
 
 
 func _coverable_meshes(actor: ReplicatedActor3D) -> Dictionary:

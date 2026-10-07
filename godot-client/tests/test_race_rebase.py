@@ -125,8 +125,10 @@ class RaceRebaseTest(unittest.TestCase):
             d, b = self.documents[slug]
             body = next(m for m in d["meshes"] if m["name"] == "body")
             with self.subTest(model=slug):
-                self.assertEqual(["shared_body", "race_head", "neck_join", "shared_neck"],
-                                 [p.get("extras", {}).get("sourceRole") for p in body["primitives"]])
+                roles = [p.get("extras", {}).get("sourceRole") for p in body["primitives"]]
+                # A Ssarathi carries its tail as a fifth body surface.
+                self.assertEqual(["shared_body", "race_head", "neck_join", "shared_neck"]
+                                 + (["race_tail"] if slug.startswith("ssarathi_") else []), roles)
                 self.assertEqual(2, sum(d["materials"][p["material"]].get("name") == "Shared neck bridge"
                                         for m in d["meshes"] for p in m["primitives"]))
                 edges, a = neck_join_checks(list(primitives(d, b)))
@@ -196,14 +198,18 @@ class RaceRebaseTest(unittest.TestCase):
             refs = self.models[slug]["skinPalette"]["references"]["body"]
             linear = [float(np.where(np.array(r) <= .04045, np.array(r) / 12.92,
                                      ((np.array(r) + .055) / 1.055) ** 2.4) @ LUMA) for r in refs]
+            d, _ = self.documents[slug]
+            body = next(m for m in d["meshes"] if m["name"] == "body")
+            roles = [p.get("extras", {}).get("sourceRole") for p in body["primitives"]]
             with self.subTest(model=slug):
-                for a, b in ((0, 3), (3, 2), (2, 1)):
-                    self.assertLessEqual(abs(linear[a] / linear[b] - 1), .02)
+                self.assertEqual(len(roles), len(refs))
+                for a, b in (("shared_body", "shared_neck"), ("shared_neck", "neck_join"), ("neck_join", "race_head")):
+                    self.assertLessEqual(abs(linear[roles.index(a)] / linear[roles.index(b)] - 1), .02)
                 # The calibration tool owns the unification and says why.
                 seams = self.models[slug]["skinPalette"].get("bodySeams", {})
                 if seams.get("unified"):
                     self.assertIn("reason", seams)
-                    self.assertEqual(4, len(seams["calibrated"]))
+                    self.assertEqual(len(roles), len(seams["calibrated"]))
 
     def test_bridge_texture_carries_skin_grain(self) -> None:
         """A one-colour-per-column bridge fill renders as vertical streaks."""
@@ -222,6 +228,44 @@ class RaceRebaseTest(unittest.TestCase):
             with self.subTest(model=slug):
                 self.assertLess(ratio, 1.5)
 
+
+    def test_catalogue_entry_matches_the_installed_glb(self) -> None:
+        """A reinstall must not leave a stale catalogue sha256 or counts."""
+        for slug, entry in self.rebased.items():
+            d, _ = self.documents[slug]
+            surfaces = [p for m in d["meshes"] for p in m["primitives"]]
+            with self.subTest(model=slug):
+                self.assertEqual(hashlib.sha256((ROOT / entry["path"]).read_bytes()).hexdigest(), entry["sha256"])
+                self.assertEqual(sum(d["accessors"][p["attributes"]["POSITION"]]["count"] for p in surfaces),
+                                 entry["vertices"])
+                self.assertEqual(sum(d["accessors"][p["indices"]]["count"] // 3 for p in surfaces), entry["triangles"])
+
+    def test_bridge_has_no_groove_inside_both_rims(self) -> None:
+        """No neck-bridge vertex lies more than 1 mm inside both rims at its
+        azimuth (a waist where the Human nape is wider than the head rim)."""
+        for slug in self.rebased:
+            d, b = self.documents[slug]
+            spec = d["asset"]["extras"]["sharedBodyShape"]
+            _, _, origin, axis = frame(d)
+            points = next(a["POSITION"].astype(float)[np.unique(f)] for _, role, a, f in primitives(d, b)
+                          if role == "neck_join")
+            rel = points - origin
+            travel = rel @ axis
+            radial = rel - travel[:, None] * axis
+            radius = np.linalg.norm(radial, axis=1)
+            theta = np.arctan2(radial @ np.cross(axis, [1., 0., 0.]), radial[:, 0])
+            lower = np.abs(travel - spec["lowerCutM"]) < 3e-6
+            upper = np.abs(travel - spec["upperCutM"]) < 3e-6
+
+            def rim(on: np.ndarray) -> np.ndarray:
+                order = np.argsort(theta[on])
+                return np.interp(theta, theta[on][order], radius[on][order], period=2 * np.pi)
+            inner = ~lower & ~upper
+            with self.subTest(model=slug):
+                self.assertGreater(int(lower.sum()), 30)
+                self.assertGreater(int(upper.sum()), 30)
+                dip = np.minimum(rim(lower), rim(upper))[inner] - radius[inner]
+                self.assertLessEqual(float(dip.max()), .001)
 
 if __name__ == "__main__":
     unittest.main()

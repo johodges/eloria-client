@@ -22,6 +22,28 @@ wardrobe atlas unchanged, and a 1024x512 neck cylinder. Images stay unnamed
 so Godot extracts them as <slug>_<index>.jpg, which git already ignores.
 shared_player_bodies.py is used read-only; its legacy outputs are unchanged.
 
+Per race (P3): the head plane is the v2 GLB's upperCutM (.11; .13 for the
+detailed Glasswarden and Ssarathi necks). A Ssarathi race_tail is carried
+with its own material: its root ring is sunk into the Human trousers and the
+free tail is feathered off thigh_l onto the pelvis (gate V18). When
+the inner-wall rule leaves more than 2% of the head hidden, a second pass
+drops every robustly hidden face (drop_buried). The v2 graft's in-plane caps
+over inner rim loops get their own head-atlas charts (broken_uv). The head
+atlas falls back to 2048 when its islands cannot reach the Human face
+density at 1024. Mycelari male: one linear gain darkens the head source.
+
+Skin tone: the Human skin's area-weighted median takes the face reference
+calibrate_skin_palettes will measure (face_reference), so a unified skin
+palette dyes hands and face alike; the neck then bends to the head rim per
+azimuth (neck_tone), so a head lighter at the back than at the throat keeps
+that down the neck instead of showing a band under the skull. The bridge
+profile cannot dip inside both rims (ungroove, gate V19); bridge grain comes
+from outer head skin only (band_visibility) and carries no race feature
+(feature_weight: colour outliers and sampled-radius steps such as ear lobes),
+and V17 also checks how much grain it carries. Install retires the cuff
+propagation manifest once no derived race is left in it. V14 also checks
+that the mask covers the painted brow strokes and (Stoneborn) iris colour.
+
 toolSHA256 (gate V16) hashes this file with CRLF folded to LF, i.e. the git
 blob, so it holds on a Windows autocrlf checkout and on an LF checkout alike.
 Any edit of this file still needs a rebuild before V16 passes again.
@@ -31,16 +53,18 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 import copy
+import datetime
 import hashlib
 import io
 import json
 from pathlib import Path
+import re
 import shutil
 import subprocess
 
 import numpy as np
 from PIL import Image
-from scipy.ndimage import convolve, gaussian_filter
+from scipy.ndimage import binary_dilation, binary_fill_holes, convolve, gaussian_filter
 from scipy.spatial import cKDTree
 from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
@@ -59,27 +83,103 @@ DIRECTIONS = 60
 JPEG_QUALITY = 92
 CHROMA_MAD = 10
 LUM_LOG_MAD = 10
+# Bridge columns dipping more than GROOVE_START inside both rims blend (fully
+# at GROOVE_START + GROOVE_RANGE) to a monotone radius profile (ungroove);
+# gate V19 allows no dip over GROOVE_LIMIT.
+GROOVE_START, GROOVE_RANGE, GROOVE_LIMIT = .0005, .001, .001
+# The excluded (non-skin) texels grow this far inside the skin before the fill.
+EXCLUDE_GROW = 2
+# Neck tone (neck_tone): the dyed Human neck takes the head rim's colour per
+# azimuth at the cut, fading out by TONE_LOW travel and beyond
+# TONE_RADIUS[0] + TONE_RADIUS[1] from the neck axis. Each ring is TONE_RING
+# tall and smoothed over TONE_SIGMA of the 1024 columns around the neck.
+TONE_LOW, TONE_RING, TONE_SIGMA = 0., .010, 48.
+TONE_RADIUS = (.10, .04)
+TONE_CLIP = (.25, 4.)
 NECK_SIZE = (1024, 512)
 BRIDGE_MATERIAL = 'Shared neck bridge'
 # Bridge texels take real skin grain: the high-pass of the Human neck just
 # below the cut and of the head just above the rim, mirrored into the bridge.
 DETAIL_BAND = .030
 DETAIL_SIGMA = 4.
+# Race features inside a detail band (Glasswarden crystal studs, Ssarathi jaw
+# plates, ear lobes) are not skin grain: mirrored into the bridge they print a
+# ghost copy on the neck. A texel whose colour stands FEATURE_MADS robust
+# deviations off the band's large-scale skin (lowpass FEATURE_SIGMA) is a
+# feature; the region, grown FEATURE_GROW texels and hole-filled, gives no grain.
+FEATURE_SIGMA, FEATURE_SMOOTH, FEATURE_MADS, FEATURE_GROW, FEATURE_FEATHER = 12., 1.5, 10., 6, 2.
+# Shading contours carry no colour outlier (a Votary ear lobe's outline on the
+# neck skin): where the sampled surface steps in radius by FEATURE_STEP_M
+# between texels (an ear lobe or a plate edge over the neck) is a feature too.
+FEATURE_STEP_M, FEATURE_STEP_SKIP = .0015, 4
 STREAK_SIGMA = 6.
 STREAK_LIMIT = 1.5
+# V17 also wants the bridge rows next to the head to carry at least GRAIN_MIN
+# of the outer head skin's grain (grain_amount).
+GRAIN_MIN = .25
 # Files the rebase programme edits besides the install targets (design §8).
 PROGRAMME_FILES = frozenset({
     'eloria-assets/tools/rebase_race_body.py', 'eloria-assets/tools/calibrate_skin_palettes.py',
+    'eloria-assets/tools/equipment_authoring.py', 'eloria-assets/tools/face_regions.json',
+    'godot-client/tests/test_orun_neck_apron_mask.py',
+    'godot-client/tests/test_torso_body_cover_lods.gd',
     'godot-client/tests/test_race_rebase.py', 'godot-client/tests/test_native_glb_assets.py',
     'godot-client/tests/test_equipment_fit.py', 'godot-client/tests/test_luminous_cuff_fit_authoring.py',
     '.github/workflows/godot-client.yml'})
 STARTER_HELMETS = ('3:134', '3:159', '3:115', '3:122')
-# Front ray-cast landmarks of test_face_texture_mapping.py (iris, brow centre).
-LANDMARKS = {'greyhaven_male': ([(-.032, 1.624), (.032, 1.624)], (.042, 1.642)),
-             'greyhaven_female': ([(-.035, 1.613), (.035, 1.613)], (.041, 1.639))}
+# Front ray-cast landmarks of test_face_texture_mapping.py: iris centres for
+# every race, brow centres for the races that test has brows for.
+IRISES = {
+    'glasswarden_female': [(-.037, 1.643), (.037, 1.643)], 'glasswarden_male': [(-.035, 1.653), (.036, 1.653)],
+    'greyhaven_female': [(-.035, 1.613), (.035, 1.613)], 'greyhaven_male': [(-.032, 1.624), (.032, 1.624)],
+    'mycelari_female': [(-.038, 1.628), (.038, 1.628)], 'mycelari_male': [(-.036, 1.637), (.038, 1.637)],
+    'orun_female': [(-.038, 1.631), (.038, 1.631)], 'orun_male': [(-.036, 1.635), (.036, 1.635)],
+    'ssarathi_female': [(-.048, 1.680), (.048, 1.680)], 'ssarathi_male': [(-.054, 1.662), (.054, 1.662)],
+    'stoneborn_female': [(-.034, 1.624), (.034, 1.624)], 'stoneborn_male': [(-.031, 1.627), (.031, 1.627)],
+    'votary_female': [(-.031, 1.607), (.031, 1.607)], 'votary_male': [(-.025, 1.607), (.025, 1.607)]}
+BROWS = {'glasswarden_female': (.047, 1.667), 'glasswarden_male': (.040, 1.667),
+         'greyhaven_female': (.041, 1.639), 'greyhaven_male': (.042, 1.642),
+         'mycelari_female': (.050, 1.655), 'mycelari_male': (.040, 1.650),
+         'orun_female': (.047, 1.650), 'orun_male': (.043, 1.650),
+         'votary_female': (.035, 1.622), 'votary_male': (.029, 1.613)}
+# V14 painted-feature cover (painted_feature_cover): brow strokes under
+# BROW_STROKE_MIN canvas px are too faint to judge (votary_male); IRIS_COLOUR
+# races paint an iris colour the mask's eye channel must cover.
+BROW_STROKE_MIN = 100
+IRIS_COLOUR = {'stoneborn_': {'redOverGreen': 15, 'redOverBlue': 30}}
+IRIS_COVER = .8
+# Races whose head has no eyebrows mesh (test_native_glb_assets budget test).
+NO_EYEBROWS = ('mycelari_',)
 # Face filter of the Human density reference: Head weight > .5, centroid
 # 3 cm in front of the Head joint, normal facing the viewer.
 FACE_FRONT, FACE_NZ = .03, .5
+# Head inner shell (gate V7). When the inner-wall rule leaves more than this
+# hidden, every robustly hidden face goes too (drop_buried).
+HIDDEN_LIMIT = .02
+DENSE_DIRECTIONS = 120
+# v2 grafts capped inner rim loops (spb.cap_inner_loops) with in-plane fans
+# whose centre takes the ring's mean UV: those triangles span the source
+# atlas. A face is UV-broken when all its corners lie on the upper cut plane
+# (such a cap), or when an edge is BROKEN_UV_RATIO times the head's median
+# px/cm and longer than BROKEN_UV_PX source pixels (no head has one outside
+# the caps today). It gets its own chart, coloured from its corners' colours
+# on intact faces.
+BROKEN_UV_RATIO, BROKEN_UV_PX = 10., 32.
+# Mycelari male: one linear-RGB gain on the 2048 head source brings the
+# median race_head body-face luminance (sRGB 0-255, sampled at UV centroids)
+# to the female's, measured the same way on mycelari_female_tpose.glb.
+HEAD_ALBEDO_TARGETS = {'mycelari_male': {'medianLuminance': 185.0, 'reference': 'mycelari_female'}}
+# Ssarathi tail (race_tail): the v2 root ring sat inside the old Luminous
+# trousers; on the Human it sits up to 5 cm outside the seat. The root is
+# sunk TAIL_DEPTH inside the Human surface with a displacement that fades out
+# over TAIL_SINK_FALLOFF; UVs and the rest of the tail keep their bytes.
+TAIL_DEPTH, TAIL_SINK_FALLOFF = .008, .12
+# The free tail swung with thigh_l (male: 1,568 vertices, up to 1.0; female:
+# 2,683 vertices, up to .5, the whole length). Root vertices inside the
+# trousers take the seat's weights; over this geodesic distance from the
+# emergence the weights blend to the source weights with both thigh shares
+# moved to pelvis.
+TAIL_FEATHER = {'ssarathi_male': .10, 'ssarathi_female': .10}
 
 
 def digest(path):
@@ -176,6 +276,30 @@ def intersector(p, faces):
     return RayMeshIntersector(trimesh.Trimesh(np.asarray(p, float), faces, process=False))
 
 
+# Rays per intersector call. 8000 made a whole-body pass peak at 16.5 GB; 1000
+# peaks at 5 GB in the same time (results do not depend on the chunk).
+RAY_CHUNK = 1000
+
+
+def any_hit(rmi, origins, directions):
+    """intersects_any in chunks: trimesh pairs every ray with its candidate
+    triangles at once, which runs a whole-body pass out of memory."""
+    hit = np.zeros(len(origins), bool)
+    for s in range(0, len(origins), RAY_CHUNK):
+        hit[s:s+RAY_CHUNK] = rmi.intersects_any(origins[s:s+RAY_CHUNK], directions[s:s+RAY_CHUNK])
+    return hit
+
+
+def first_hits(rmi, origins, directions):
+    """intersects_location(multiple_hits=False) in chunks."""
+    locations, rays, triangles = [np.zeros((0, 3))], [np.zeros(0, int)], [np.zeros(0, int)]
+    for s in range(0, len(origins), RAY_CHUNK):
+        loc, ray, tri = rmi.intersects_location(origins[s:s+RAY_CHUNK], directions[s:s+RAY_CHUNK], multiple_hits=False)
+        locations.append(np.asarray(loc, float).reshape(-1, 3)); rays.append(np.asarray(ray, int)+s)
+        triangles.append(np.asarray(tri, int))
+    return np.concatenate(locations), np.concatenate(rays), np.concatenate(triangles)
+
+
 def visibility(p, n, faces, candidates):
     """Outside-in visibility and the inner wall (drop_inner_shell.py rule)."""
     p = np.asarray(p, float)
@@ -186,14 +310,14 @@ def visibility(p, n, faces, candidates):
         todo = candidates[~seen[candidates]]
         if not len(todo):
             break
-        hit = rmi.intersects_any(centre[todo]+2e-4*d, np.repeat(d[None], len(todo), 0))
+        hit = any_hit(rmi, centre[todo]+2e-4*d, np.repeat(d[None], len(todo), 0))
         seen[todo[~hit]] = True
     hidden = candidates[~seen[candidates]]
     inner = np.zeros(len(faces), bool)
     if len(hidden):
         normal, _ = oriented_normals(p, n, faces)
         origin = centre[hidden]-2e-4*normal[hidden]
-        loc, ray, tri = rmi.intersects_location(origin, -normal[hidden], multiple_hits=False)
+        loc, ray, tri = first_hits(rmi, origin, -normal[hidden])
         near = (np.linalg.norm(loc-origin[ray], axis=1) < .015) & seen[tri]
         inner[hidden[ray[near]]] = True
     return seen, inner
@@ -369,17 +493,407 @@ def clean_head(upper, origin, axis, upper_cut):
         local = np.flatnonzero(candidates[ids])
         s, i = visibility(p, n, faces[ids], local)
         seen[ids[local]] = s[local]; inner[ids[local]] = i[local]
+    # An inner-wall face goes only if it also stays hidden from four points
+    # along the dense and lattice directions: a crease behind an ear can show
+    # one exactly from behind, and deleting it would open a pinhole.
+    visible_kept = np.zeros(len(faces), bool)
+    for candidates, occluders in ((~scalp, ~scalp), (scalp, np.ones(len(faces), bool))):
+        ids = np.flatnonzero(occluders)
+        local = np.flatnonzero((inner & ~rim & ~fragment & candidates)[ids])
+        if len(local):
+            visible_kept[ids[local[~dense_hidden(p.astype(float), faces[ids], local)]]] = True
+    inner &= ~visible_kept
     drop = (fragment | inner) & ~rim
+    remove_faces(upper, keys, drop)
+    kept = ~drop
+    report = {'fragmentsRemoved': int(len(np.unique(label[fragment & ~rim]))), 'fragmentTriangles': int((fragment & ~rim).sum()),
+              'innerShellRemoved': int((inner & ~rim & ~fragment).sum()),
+              'hiddenHeadFraction': float((~seen & kept).sum()/max(kept.sum(), 1)),
+              'visibilityDirections': DIRECTIONS}
+    if visible_kept.any():
+        report['innerShellDenseVisibleKept'] = int(visible_kept.sum())
+    if report['hiddenHeadFraction'] > HIDDEN_LIMIT:
+        report['buried'] = drop_buried(upper, origin, axis, upper_cut)
+        report['hiddenHeadFraction'] = report['buried']['hiddenHeadFractionAfter']
+    if report['hiddenHeadFraction'] > 0:
+        # The gate counts a face as hidden only when no ray escapes the dense
+        # test either: the 60-direction centroid test alone also lists faces
+        # that show through a crease or a lip slit (they stay; see above).
+        faces = np.concatenate(list(upper['f'].values()))
+        tag = np.concatenate([[k[0]]*len(f) for k, f in upper['f'].items()])
+        hidden60, robust = robust_hidden(upper['a']['POSITION'].astype(float), upper['a']['NORMAL'].astype(float), faces, tag)
+        report.update(hiddenHeadFraction60=float(hidden60.mean()), hiddenHeadFraction=float(robust.mean()), hiddenRule=HIDDEN_RULE)
+    return report
+
+
+HIDDEN_RULE = ('hidden: no ray escapes from the centroid along 60 directions, nor from 4 points (centroid and '
+               f'3 interior) along 26 lattice + {DENSE_DIRECTIONS} Fibonacci directions')
+
+
+def robust_hidden(p, n, faces, tag):
+    """60-direction centroid hiding (head_hidden), and the faces of it that
+    also stay hidden under dense_hidden with the same occluders."""
+    hidden = head_hidden(p, n, faces, tag)
+    robust = hidden.copy()
+    scalp = tag == 'scalp'
+    for wanted, occluders in ((~scalp, ~scalp), (scalp, np.ones(len(faces), bool))):
+        ids = np.flatnonzero(occluders)
+        local = np.flatnonzero((hidden & wanted)[ids])
+        if len(local):
+            robust[ids[local]] = dense_hidden(p, faces[ids], local)
+    return hidden, robust
+
+
+def remove_faces(group, keys, drop):
     offset = 0
     for k in keys:
-        count = len(upper['f'][k])
-        upper['f'][k] = upper['f'][k][~drop[offset:offset+count]]
+        count = len(group['f'][k])
+        group['f'][k] = group['f'][k][~drop[offset:offset+count]]
         offset += count
+
+
+def head_hidden(p, n, faces, tag, extra=None):
+    """Pilot visibility per face: skin never occluded by the scalp, which
+    coversHair helmets hide; scalp candidates see every occluder. `extra`
+    (points, faces) adds occluders that are never candidates."""
+    scalp = tag == 'scalp'
+    seen = np.ones(len(faces), bool)
+    for candidates, occluders in ((~scalp, ~scalp), (scalp, np.ones(len(faces), bool))):
+        ids = np.flatnonzero(occluders)
+        local = np.flatnonzero(candidates[ids])
+        pp, ff = p, faces[ids]
+        if extra is not None:
+            pp = np.concatenate([p, extra[0]]); ff = np.concatenate([ff, extra[1]+len(p)])
+        s, _ = visibility(pp, np.concatenate([n, np.zeros((len(pp)-len(p), 3))]), ff, local)
+        seen[ids[local]] = s[local]
+    return ~seen
+
+
+def lattice():
+    """The 26 axis, edge and corner directions: the canonical camera views
+    (front, side, back, top and their diagonals) a Fibonacci set misses."""
+    grid = np.array([(x, y, z) for x in (-1, 0, 1) for y in (-1, 0, 1) for z in (-1, 0, 1) if (x, y, z) != (0, 0, 0)], float)
+    return grid/np.linalg.norm(grid, axis=1, keepdims=True)
+
+
+def dense_hidden(p, faces, candidates, directions=DENSE_DIRECTIONS):
+    """Re-test hidden faces from four points each (centroid and three interior
+    points) along a denser direction set plus the 26 lattice directions; True
+    where no ray escapes."""
+    rmi = intersector(p, faces)
+    corners = np.asarray(p, float)[faces[candidates]]
+    points = [corners.mean(1)] + [(corners*w[None, :, None]).sum(1) for w in
+                                  np.array([[.7, .15, .15], [.15, .7, .15], [.15, .15, .7]])]
+    hidden = np.ones(len(candidates), bool)
+    for d in np.concatenate([lattice(), fibonacci(directions)]):
+        for origin in points:
+            todo = np.flatnonzero(hidden)
+            if not len(todo):
+                return hidden
+            hit = any_hit(rmi, origin[todo]+2e-4*d, np.repeat(d[None], len(todo), 0))
+            hidden[todo[~hit]] = False
+    return hidden
+
+
+def drop_buried(upper, origin, axis, upper_cut):
+    """Second pass when the inner-wall rule leaves hiddenHeadFraction above
+    HIDDEN_LIMIT (Meshy shells with nested walls, a duplicate scalp piece or a
+    closed mouth box). The neck opening is plugged by a cone from the outer
+    rim to a point 3 cm down the neck axis (in the body the bridge and the
+    Human neck close it), so faces seen only up the neck count as hidden.
+    A face is dropped when it is hidden from all 60 directions and stays
+    hidden from four points each along a denser set.
+    As in the first pass, rim-band faces are never touched, so the rim stays
+    the one ring the bridge welds to (inner rim loops keep their caps). Loose
+    pieces this leaves are dropped by the fragment rule."""
+    p, n = upper['a']['POSITION'].astype(float), upper['a']['NORMAL'].astype(float)
+    keys = list(upper['f'])
+    faces = np.concatenate([upper['f'][k] for k in keys])
+    tag = np.concatenate([[k[0]]*len(upper['f'][k]) for k in keys])
+    boundary = plane_rim(upper, origin, axis, upper_cut)
+    rings = spb.loops({'a': upper['a'], 'boundary': boundary}, origin, axis)
+    ring = p[rings[0]]
+    rim = (np.abs((p-origin)@axis-upper_cut) < RIM_BAND)[faces].any(1)
+    centre = ring.mean(0)-.03*axis
+    count = len(ring)
+    plug = (np.concatenate([ring, centre[None]]),
+            np.stack([np.arange(count), (np.arange(count)+1) % count, np.full(count, count)], 1))
+    hidden = head_hidden(p, n, faces, tag, plug)
+    candidates = np.flatnonzero(hidden & ~rim)
+    pp = np.concatenate([p, plug[0]])
+    scalp = tag == 'scalp'
+    confirmed = np.zeros(len(faces), bool)
+    for wanted, occluders in ((~scalp, ~scalp), (scalp, np.ones(len(faces), bool))):
+        ids = np.flatnonzero(occluders)
+        local = np.flatnonzero(np.isin(ids, candidates[wanted[candidates]]))
+        if not len(local):
+            continue
+        ff = np.concatenate([faces[ids], plug[1]+len(p)])
+        confirmed[ids[local]] = dense_hidden(pp, ff, local)
+    drop = confirmed.copy()
+    # Pieces cut loose by the drop (eyes and eyebrows excepted).
+    label = face_components(p, faces[~drop])
+    size = np.bincount(label)
+    loose = np.zeros(len(faces), bool)
+    protected = np.zeros(len(size), bool)
+    protected[np.unique(label[rim[~drop] | np.isin(tag[~drop], ('eyes', 'eyebrows'))])] = True
+    loose[np.flatnonzero(~drop)[(size[label] < 20) & ~protected[label]]] = True
+    drop |= loose
+    remove_faces(upper, keys, drop)
     kept = ~drop
-    return {'fragmentsRemoved': int(len(np.unique(label[fragment & ~rim]))), 'fragmentTriangles': int((fragment & ~rim).sum()),
-            'innerShellRemoved': int((inner & ~rim & ~fragment).sum()),
-            'hiddenHeadFraction': float((~seen & kept).sum()/max(kept.sum(), 1)),
-            'visibilityDirections': DIRECTIONS}
+    after = head_hidden(p, n, faces[kept], tag[kept])
+    by_tag = Counter(tag[confirmed].tolist())
+    return {'rule': 'hidden from 60 directions with the neck plugged, and from 4 points x '
+                    f'({DENSE_DIRECTIONS} Fibonacci + 26 lattice) directions; rim-band faces kept', 'hiddenBefore': int(hidden.sum()),
+            'denseVisibleKept': int((hidden & ~rim).sum()-confirmed.sum()), 'rimBandHiddenKept': int((hidden & rim).sum()),
+            'removed': int(confirmed.sum()), 'removedByMesh': dict(sorted(by_tag.items())),
+            'looseRemoved': int(loose.sum()), 'denseDirections': DENSE_DIRECTIONS,
+            'hiddenHeadTrianglesAfter': int(after.sum()), 'hiddenHeadFractionAfter': float(after.sum()/max(kept.sum(), 1))}
+
+
+def broken_uv(upper, size, origin, axis, upper_cut):
+    """Per-primitive masks of UV-broken faces: in-plane caps and stretched faces."""
+    p, uv = upper['a']['POSITION'].astype(float), upper['a']['TEXCOORD_0'].astype(float)
+    faces = np.concatenate(list(upper['f'].values()))
+    median = float(np.median(texel_density(p, uv, faces, (size, size))[0]))
+    on_plane = np.abs((p-origin)@axis-upper_cut) < 2e-6
+    masks, counts = {}, Counter()
+    for key, f in upper['f'].items():
+        e3 = np.linalg.norm(p[f[:, [1, 2, 0]]]-p[f], axis=2)*100
+        eu = np.linalg.norm(uv[f[:, [1, 2, 0]]]-uv[f], axis=2)*size
+        cap = on_plane[f].all(1)
+        stretched = ((eu > BROKEN_UV_RATIO*median*e3) & (eu > BROKEN_UV_PX)).any(1)
+        masks[key] = cap | stretched
+        counts['inPlaneCaps'] += int(cap.sum()); counts['stretched'] += int((stretched & ~cap).sum())
+    return masks, median, dict(counts)
+
+
+
+def broken_corner_colours(upper, masks, pixels):
+    """Colour of each broken face's corners where they sit on intact faces."""
+    p, uv = upper['a']['POSITION'].astype(float), upper['a']['TEXCOORD_0'].astype(float)
+    good = np.unique(np.concatenate([f[~masks[k]] for k, f in upper['f'].items()]))
+    tree = cKDTree(p[good])
+    colour = spb.sample_image(np.rint(pixels*255), uv[good])
+    fallback = np.median(colour, axis=0)
+    out = {}
+    for key, mask in masks.items():
+        if not mask.any():
+            continue
+        rows = upper['f'][key][mask].ravel()
+        values = [colour[h].mean(0) if h else fallback for h in tree.query_ball_point(p[rows], 1e-6)]
+        out[key] = np.array(values).reshape(-1, 3, 3)
+    return out
+
+
+def chart_broken(upper, masks, size, density):
+    """UV-broken faces get their own corners and a planar chart at the head's
+    median density (in source UV units); positions, normals and weights are
+    copied byte for byte."""
+    a = upper['a']
+    for key, mask in masks.items():
+        if not mask.any():
+            continue
+        f = upper['f'][key].copy()
+        rows = f[mask].ravel()
+        start = len(a['POSITION'])
+        for k in KEYS:
+            a[k] = np.concatenate([a[k], a[k][rows]])
+        new = np.arange(start, start+len(rows)).reshape(-1, 3)
+        f[mask] = new
+        upper['f'][key] = f
+        q = a['POSITION'][new].astype(float)
+        e1 = q[:, 1]-q[:, 0]
+        normal = np.cross(e1, q[:, 2]-q[:, 0])
+        u = e1/np.maximum(np.linalg.norm(e1, axis=1, keepdims=True), 1e-12)
+        v = np.cross(normal/np.maximum(np.linalg.norm(normal, axis=1, keepdims=True), 1e-12), u)
+        rel = q-q[:, :1]
+        coords = np.stack([(rel*u[:, None]).sum(2), (rel*v[:, None]).sum(2)], -1)*100*density/size
+        a['TEXCOORD_0'][new.ravel()] = coords.reshape(-1, 2).astype(a['TEXCOORD_0'].dtype)
+
+
+# ---------------------------------------------------------------------------
+# Ssarathi tail (race_tail)
+# ---------------------------------------------------------------------------
+
+def winding(points, tris, chunk=128):
+    """Generalised winding number of each point against a triangle soup."""
+    points, tris = np.asarray(points, float), np.asarray(tris, float)
+    out = np.zeros(len(points))
+    for s in range(0, len(points), chunk):
+        q = points[s:s+chunk]
+        a, b, c = (tris[None, :, i]-q[:, None] for i in range(3))
+        la, lb, lc = (np.linalg.norm(v, axis=2) for v in (a, b, c))
+        num = np.einsum('ijk,ijk->ij', a, np.cross(b, c))
+        den = (la*lb*lc+np.einsum('ijk,ijk->ij', a, b)*lc+np.einsum('ijk,ijk->ij', b, c)*la
+               + np.einsum('ijk,ijk->ij', c, a)*lb)
+        out[s:s+chunk] = np.arctan2(num, den).sum(1)/(2*np.pi)
+    return out
+
+
+def open_loops(p, faces):
+    """Rows of each open boundary loop of the position-welded surface."""
+    ids = weld(p)
+    e = np.sort(ids[np.concatenate([faces[:, [0, 1]], faces[:, [1, 2]], faces[:, [2, 0]]])], 1)
+    edges, count = np.unique(e, axis=0, return_counts=True)
+    edges = edges[count == 1]
+    if not len(edges):
+        return []
+    n = ids.max()+1
+    label = connected_components(coo_matrix((np.ones(len(edges)), (edges[:, 0], edges[:, 1])), shape=(n, n)).tocsr(),
+                                 directed=False)[1]
+    return sorted((np.flatnonzero(np.isin(ids, np.unique(edges[label[edges[:, 0]] == c])))
+                   for c in np.unique(label[edges[:, 0]])), key=len, reverse=True)
+
+
+def surface_depth(points, tris):
+    """Signed depth below a triangle soup (positive inside) and the closest
+    surface point."""
+    import trimesh
+    mesh = trimesh.Trimesh(tris.reshape(-1, 3), np.arange(tris.size//3).reshape(-1, 3), process=False)
+    closest, distance, _ = trimesh.proximity.closest_point(mesh, points)
+    inside = winding(points, tris) > .5
+    return np.where(inside, distance, -distance), closest
+
+
+def vertex_normals(p, faces, ids):
+    """Area-weighted face normals summed per welded position."""
+    q = np.cross(p[faces[:, 1]]-p[faces[:, 0]], p[faces[:, 2]]-p[faces[:, 0]])
+    total = np.zeros((ids.max()+1, 3))
+    for c in range(3):
+        np.add.at(total, ids[faces[:, c]], q)
+    return total[ids]/np.maximum(np.linalg.norm(total[ids], axis=1, keepdims=True), 1e-12)
+
+
+def tail_group(hd, hb):
+    if not any(p.get('extras', {}).get('sourceRole') == 'race_tail' for m in hd['meshes'] for p in m['primitives']):
+        return None
+    group = block_roles(hd, hb, {'race_tail'})
+    group['f'] = {('body', 'tail'): group['f'][('body', 'head')]}
+    group['role'] = 'race_tail'
+    return group
+
+
+def human_surface(lower):
+    """Triangles of the Human below-neck surfaces (skin and wardrobe)."""
+    p = lower['a']['POSITION'].astype(float)
+    return np.concatenate([p[f] for (name, _), f in lower['f'].items() if name in ea.BODY_SURFACES])
+
+
+def fit_tail(tail, lower, names, feather=None):
+    """Carry the v2 tail onto the Human: drop loose pieces, sink the root
+    ring TAIL_DEPTH inside the Human surface (fading over TAIL_SINK_FALLOFF),
+    and optionally feather the free tail's thigh weights to the pelvis."""
+    a = tail['a']
+    key = ('body', 'tail')
+    faces = tail['f'][key]
+    p0 = a['POSITION'].astype(float)
+    report = {'trianglesBefore': int(len(faces)), 'verticesBefore': int(len(np.unique(faces)))}
+    label = face_components(p0, faces)
+    size = np.bincount(label)
+    loose = size[label] < 20
+    faces = faces[~loose]
+    report.update(fragmentsRemoved=int((size < 20).sum()), fragmentTriangles=int(loose.sum()))
+    surface = human_surface(lower)
+    loops = open_loops(p0, faces)
+    root = loops[0]
+    depth, closest = surface_depth(p0[root], surface)
+    outward = np.where((depth > 0)[:, None], closest-p0[root], p0[root]-closest)
+    outward /= np.maximum(np.linalg.norm(outward, axis=1, keepdims=True), 1e-12)
+    move = np.where((depth < TAIL_DEPTH)[:, None], closest-outward*TAIL_DEPTH-p0[root], 0.)
+    used = np.unique(faces)
+    distance, nearest = cKDTree(p0[root]).query(p0[used], k=min(8, len(root)))
+    weight = 1/np.maximum(distance, 1e-9)**4
+    field = (weight[..., None]*move[nearest]).sum(1)/weight.sum(1, keepdims=True)
+    s = np.clip(distance[:, 0]/TAIL_SINK_FALLOFF, 0, 1)
+    shift = np.zeros_like(p0)
+    shift[used] = field*(1-s*s*(3-2*s))[:, None]
+    shift[root] = move
+    p1 = p0+shift
+    moved = np.linalg.norm(shift, axis=1) > 1e-9
+    ids = weld(p0)
+    before, after = vertex_normals(p0, faces, ids), vertex_normals(p1, faces, ids)
+    normal = a['NORMAL'].astype(float)
+    normal[moved] += after[moved]-before[moved]
+    normal[moved] /= np.maximum(np.linalg.norm(normal[moved], axis=1, keepdims=True), 1e-12)
+    a['POSITION'] = p1.astype(a['POSITION'].dtype)
+    a['NORMAL'] = normal.astype(a['NORMAL'].dtype)
+    depth_after, _ = surface_depth(p1[root], surface)
+    report['root'] = {'loopVertices': int(len(root)), 'otherOpenLoops': [int(len(x)) for x in loops[1:]],
+                      'depthBeforeM': [float(depth.min()), float(np.median(depth)), float(depth.max())],
+                      'depthAfterM': [float(depth_after.min()), float(np.median(depth_after)), float(depth_after.max())],
+                      'targetDepthM': TAIL_DEPTH, 'sinkFalloffM': TAIL_SINK_FALLOFF,
+                      'maxShiftM': float(np.linalg.norm(shift, axis=1).max()), 'movedVertices': int(moved.sum())}
+    if feather:
+        report['feather'] = feather_tail(a, faces, lower, surface, names, feather)
+    tail['f'][key] = faces
+    report.update(triangles=int(len(faces)), vertices=int(len(np.unique(faces))))
+    return report
+
+
+def feather_tail(a, faces, lower, surface, names, feather):
+    """Root inside the trousers follows the seat; the free tail follows the
+    pelvis (both thigh shares moved to it), blended over `feather` metres of
+    tail surface from the emergence."""
+    from scipy.sparse.csgraph import dijkstra
+    p = a['POSITION'].astype(float)
+    used = np.unique(faces)
+    inside = np.zeros(len(p), bool)
+    near = used[p[used, 0] < .45]
+    inside[near] = winding(p[near], surface) > .5
+    ids = weld(p)
+    n = ids.max()+1
+    e = np.unique(np.sort(ids[np.concatenate([faces[:, [0, 1]], faces[:, [1, 2]], faces[:, [2, 0]]])], 1), axis=0)
+    rep = np.zeros(n, int); rep[ids] = np.arange(len(p))
+    length = np.linalg.norm(p[rep[e[:, 0]]]-p[rep[e[:, 1]]], axis=1)
+    graph = coo_matrix((length, (e[:, 0], e[:, 1])), shape=(n, n)).tocsr()
+    sources = np.unique(ids[inside])
+    along = (dijkstra(graph, directed=False, indices=sources, min_only=True)[ids] if len(sources)
+             else np.full(len(p), np.inf))
+    dense = spb.dense_weights(a)
+    pelvis, thighs = names.index('pelvis'), [names.index('thigh_l'), names.index('thigh_r')]
+    free = dense.copy()
+    free[:, pelvis] += free[:, thighs].sum(1); free[:, thighs] = 0
+    human = lower['a']
+    keep = np.unique(np.concatenate([f for (name, _), f in lower['f'].items() if name in ('wardrobe_pants', 'wardrobe_shirt')]))
+    distance, nearest = cKDTree(human['POSITION'][keep].astype(float)).query(p, k=4)
+    w = 1/np.maximum(distance, 1e-6)**2; w /= w.sum(1, keepdims=True)
+    seat_dense = spb.dense_weights({'POSITION': human['POSITION'][keep], 'JOINTS_0': human['JOINTS_0'][keep],
+                                    'WEIGHTS_0': human['WEIGHTS_0'][keep]})
+    seat = np.einsum('nk,nkj->nj', w, seat_dense[nearest])
+    s = np.clip(np.where(np.isfinite(along), along, feather)/feather, 0, 1); s = (s*s*(3-2*s))[:, None]
+    blended = (1-s)*seat+s*free
+    old_thigh = dense[:, thighs[0]]
+    joints, weights = spb.sparse_weights(blended)
+    a['JOINTS_0'][used] = joints[used].astype(a['JOINTS_0'].dtype)
+    a['WEIGHTS_0'][used] = weights[used].astype(a['WEIGHTS_0'].dtype)
+    new_thigh = joint_weight(a, thighs[0])
+    return {'featherM': feather, 'insideVertices': int(inside[used].sum()),
+            'thighLBefore': {'vertices': int((old_thigh[used] > 0).sum()), 'dominant': int((dense[used].argmax(1) == thighs[0]).sum()),
+                             'max': float(old_thigh[used].max())},
+            'thighLAfter': {'vertices': int((new_thigh[used] > 1e-6).sum()), 'dominant': int((spb.dense_weights(a)[used].argmax(1) == thighs[0]).sum()),
+                            'max': float(new_thigh[used].max()),
+                            'maxBeyondFeather': float(new_thigh[used][along[used] >= feather].max(initial=0))},
+            'seatThighLAtEmergence': float(seat[used][inside[used], thighs[0]].mean()) if inside[used].any() else None,
+            'rule': 'inside the Human surface: the seat (4 nearest pants/shirt vertices); beyond the feather distance '
+                    'along the tail surface: source weights with thigh_l/thigh_r moved to pelvis; smoothstep between'}
+
+
+def head_albedo_gain(hd, hb, pixels, target):
+    """One linear-RGB gain taking the race_head body-face median luminance
+    (sRGB 0-255 at UV centroids) to the target."""
+    group = block_roles(hd, hb, {'race_head'})
+    colour = spb.sample_image(np.rint(pixels*255), group['a']['TEXCOORD_0'].astype(float)[group['f'][('body', 'head')]].mean(1))
+    linear = srgb_to_linear(colour)
+
+    def median(gain):
+        return float(np.median(linear_to_srgb(linear*gain)@LUMA*255))
+    lo, hi = 0., 4.
+    for _ in range(60):
+        mid = (lo+hi)/2
+        lo, hi = (mid, hi) if median(mid) < target else (lo, mid)
+    gain = (lo+hi)/2
+    return gain, median(1.), median(gain)
 
 
 def weld_ring(group, rows):
@@ -406,6 +920,78 @@ def weld_ring(group, rows):
             changed['weights'] += len(ids)
     return {'rows': int(len(rows)), 'positions': int(len(np.unique(labels))),
             'normalsChanged': changed['normals'], 'weightsChanged': changed['weights']}
+
+
+def rim_radius(points, origin, axis, theta):
+    """Radius of a rim ring at the given azimuths (periodic interpolation)."""
+    rel = np.asarray(points, float)-origin
+    radial = rel-(rel@axis)[:, None]*axis
+    angle = np.arctan2(radial@side_of(axis), radial[:, 0])
+    order = np.argsort(angle)
+    return np.interp(theta, angle[order], np.linalg.norm(radial, axis=1)[order], period=2*np.pi)
+
+
+def bridge_dips(interior, lower_rim, upper_rim, origin, axis):
+    """How far each interior bridge point lies inside both rims at its azimuth
+    (a groove: the boundary-tangent profile swinging in and back out)."""
+    rel = np.asarray(interior, float)-origin
+    radial = rel-(rel@axis)[:, None]*axis
+    theta = np.arctan2(radial@side_of(axis), radial[:, 0])
+    rims = np.minimum(rim_radius(lower_rim, origin, axis, theta), rim_radius(upper_rim, origin, axis, theta))
+    return np.maximum(rims-np.linalg.norm(radial, axis=1), 0.), theta
+
+
+def ungroove(bridge, origin, axis):
+    """Columns of the spb.neck_bridge profile that dip inside both rims (the
+    Human nape wider than the head rim, both rim tangents sloping out) take a
+    monotone cubic radius (Fritsch-Carlson limited end slopes) instead; other
+    columns keep their bytes. Heights and azimuths stay; interior normals are
+    re-summed from the faces as spb does."""
+    a = bridge['a']
+    p = a['POSITION'].astype(float)
+    n0, n1 = len(bridge['lowerIds']), len(bridge['upperIds'])
+    inner = p[n0:len(p)-n1]
+    rings = len(inner)//64
+    if rings*64 != len(inner):
+        raise ValueError('unexpected bridge layout')
+    steps = np.arange(1, 8)/8 if rings == 7 else np.array([.125, .25, .5, .75])
+    rel = inner-origin
+    height = rel@axis
+    radial = rel-height[:, None]*axis
+    r = np.linalg.norm(radial, axis=1)
+    unit = radial/r[:, None]
+    theta = np.arange(64)*2*np.pi/64
+    r0, r1 = rim_radius(p[:n0], origin, axis, theta), rim_radius(p[len(p)-n1:], origin, axis, theta)
+    R = r.reshape(rings, 64)
+    dip = np.maximum(np.minimum(r0, r1)-R.min(0), 0.)
+    report = {'maxDipBeforeM': float(dip.max()), 'rule': f'columns dipping over {GROOVE_START*1000:g} mm inside both rims '
+              f'blend (fully at {(GROOVE_START+GROOVE_RANGE)*1000:g} mm) to a monotone cubic radius profile'}
+    alpha = np.clip((dip-GROOVE_START)/GROOVE_RANGE, 0, 1); alpha = alpha*alpha*(3-2*alpha)
+    if not alpha.any():
+        return {**report, 'columns': 0, 'maxDipAfterM': report['maxDipBeforeM']}
+    alpha = np.maximum(alpha, np.clip(gaussian_filter(alpha, 1.5, mode='wrap'), 0, 1))
+    alpha[alpha < .01] = 0
+    delta = r1-r0
+    d0, d1 = (R[0]-r0)/steps[0], (r1-R[-1])/(1-steps[-1])
+    d0 = np.where(d0*delta > 0, d0, 0.); d1 = np.where(d1*delta > 0, d1, 0.)
+    scale = np.hypot(d0, d1)/np.maximum(np.abs(delta), 1e-9)
+    limit = np.where(scale > 3, 3/np.maximum(scale, 1e-9), 1.)
+    d0, d1 = d0*limit, d1*limit
+    s = steps[:, None]
+    mono = ((2*s**3-3*s*s+1)*r0+(s**3-2*s*s+s)*d0+(-2*s**3+3*s*s)*r1+(s**3-s*s)*d1)
+    R_new = R+alpha*(mono-R)
+    p[n0:len(p)-n1] = origin+height[:, None]*axis+unit*R_new.reshape(-1, 1)
+    faces = bridge['f'][('body', 4)]
+    normal = np.cross(p[faces[:, 1]]-p[faces[:, 0]], p[faces[:, 2]]-p[faces[:, 0]])
+    summed = np.zeros_like(p)
+    for column in range(3):
+        np.add.at(summed, faces[:, column], normal)
+    summed /= np.maximum(np.linalg.norm(summed, axis=1, keepdims=True), 1e-9)
+    a['POSITION'] = p
+    a['NORMAL'] = np.asarray(a['NORMAL'], float).copy()
+    a['NORMAL'][n0:len(p)-n1] = summed[n0:len(p)-n1]
+    after = np.maximum(np.minimum(r0, r1)-R_new.min(0), 0.)
+    return {**report, 'columns': int((alpha > 0).sum()), 'maxDipAfterM': float(after.max())}
 
 
 def bridge_metrics(bridge_p, bridge_f, neighbours, origin, axis, lower, upper):
@@ -526,19 +1112,20 @@ def split_shared_neck(lower, bridge, origin, axis, h1):
                   'folded': int(folded.sum()), 'overlapDropped': int(overlap_dropped), 'faces': int(selected.sum())}
 
 
-def recolour_skin(lower, template_pixels, head_pixels, upper, origin_t, axis_t, origin_h, axis_h, upper_cut, detail_mix):
-    """B7a: dye the Human skin texels to the race neck colour (runtime formula)."""
-    size = template_pixels.shape[1::-1]
-    a = lower['a']
-    body = next(f for k, f in lower['f'].items() if k[0] == 'body')
-    wardrobe = np.concatenate([f for k, f in lower['f'].items() if k[0].startswith('wardrobe_')])
-    skin_count, skin_face, sy, sx = coverage(a['TEXCOORD_0'], body, size)
-    cloth_count, _, _, _ = coverage(a['TEXCOORD_0'], wardrobe, size)
-    skin = (skin_count > 0) & (cloth_count == 0)
-    travel = (a['POSITION'][body].astype(float).mean(1)-origin_t)@axis_t
-    reference = np.median(spb.sample_image(np.rint(template_pixels*255), a['TEXCOORD_0'][body[(travel >= .045) & (travel <= LOWER_CUT)]].astype(float).mean(1)), axis=0)
+def weighted_median(values, weights):
+    """Per-column weighted median (calibrate_skin_palettes.weighted_median)."""
+    out = []
+    for column in np.asarray(values, float).T:
+        order = np.argsort(column)
+        out.append(float(column[order[np.searchsorted(np.cumsum(weights[order]), weights.sum()/2)]]))
+    return np.array(out)
+
+
+def ring_colour(upper, head_pixels, origin_h, axis_h, upper_cut):
+    """Median race-head colour just above the rim (the pilot's recolour target,
+    now reported only: the neck tone pass matches the rim per azimuth)."""
     hp, huv = upper['a']['POSITION'].astype(float), upper['a']['TEXCOORD_0'].astype(float)
-    hf = upper['f'][('body', 'head')]
+    hf = intact(upper, ('body', 'head'))
     c = hp[hf].mean(1)-origin_h
     t = c@axis_h
     r = np.linalg.norm(c-t[:, None]*axis_h, axis=1)
@@ -546,10 +1133,86 @@ def recolour_skin(lower, template_pixels, head_pixels, upper, origin_t, axis_t, 
     for band in (.020, .040):
         chosen = (t >= upper_cut) & (t <= upper_cut+band) & (r < .14) & (colour.max(1) > .10)
         if chosen.sum() >= 12:
-            break
-    else:
-        raise ValueError('Too few race neck samples for the skin colour')
-    target = np.median(colour[chosen], axis=0)
+            return np.median(colour[chosen], axis=0), int(chosen.sum())
+    raise ValueError('Too few race neck samples for the skin colour')
+
+
+def face_reference(upper, head_pixels, region, projection):
+    """The race_head reference calibrate_skin_palettes will measure: the
+    area-weighted median of the head's body faces at their UV centroids,
+    without the eye/brow mask regions (face_regions.json, projected as
+    build_face_masks.bake projects them) and without black gutters."""
+    from build_face_masks import projection_masks
+    from scipy.ndimage import map_coordinates
+    hp, huv = upper['a']['POSITION'].astype(float), upper['a']['TEXCOORD_0'].astype(float)
+    hf = intact(upper, ('body', 'head'))
+    centre, area = hp[hf].mean(1), area3(hp, hf)
+    colour = spb.sample_image(np.rint(head_pixels*255), huv[hf].mean(1))
+    masks = projection_masks(region)
+    py = (projection['yMax']-centre[:, 1])*projection['pixelsPerMetre']
+    px = (centre[:, 0]-projection['xMin'])*projection['pixelsPerMetre']
+    masked = np.stack([map_coordinates(masks[..., c], [py, px], order=1, mode='constant') for c in range(3)], -1).max(1)
+    masked = np.where((centre[:, 2] > .02) & (centre[:, 1] > 1.57), masked, 0.)
+    use = (area > 1e-12) & (colour.max(1) > .10) & (masked < .094)
+    return weighted_median(colour[use], area[use])
+
+
+def skin_faces(lower, neck=None):
+    """Human skin faces (positions, faces, Human-atlas UVs): the body faces
+    below the cut, plus the shared_neck faces with their old UVs once split."""
+    body = next(f for k, f in lower['f'].items() if k[0] == 'body')
+    parts = [(lower['a']['POSITION'], body, lower['a']['TEXCOORD_0'])]
+    if neck is not None:
+        parts.append((neck['a']['POSITION'], neck['f'][('body', 4)], neck['oldUV']))
+    return parts
+
+
+def skin_reference(lower, pixels):
+    """Area-weighted median of the Human skin atlas at its body-face UV
+    centroids (calibrate_skin_palettes' shared_body measure)."""
+    (p, f, uv), = skin_faces(lower)
+    p = p.astype(float)
+    area = np.linalg.norm(np.cross(p[f[:, 1]]-p[f[:, 0]], p[f[:, 2]]-p[f[:, 0]]), axis=1)
+    colour = spb.sample_image(np.rint(pixels*255), uv[f].astype(float).mean(1))
+    use = (area > 1e-12) & (colour.max(1) > .10)
+    return weighted_median(colour[use], area[use])
+
+
+def tone_weight(points, origin, axis):
+    """Neck tone correction weight: 1 at the lower cut on the neck, fading to
+    0 at TONE_LOW travel and away from the neck axis (shoulders, T-pose arms)."""
+    rel = np.asarray(points, float)-origin
+    travel = rel@axis
+    radius = np.linalg.norm(rel-travel[:, None]*axis, axis=1)
+    s = np.clip((travel-TONE_LOW)/(LOWER_CUT-TONE_LOW), 0, 1)
+    r = np.clip((radius-TONE_RADIUS[0])/TONE_RADIUS[1], 0, 1)
+    return s*s*(3-2*s)*(1-r*r*(3-2*r))
+
+
+def tone_gain(points, origin, axis, gain):
+    """Per-point linear gain: the per-column ring gain raised to tone_weight."""
+    rel = np.asarray(points, float)-origin
+    theta = np.arctan2(rel@side_of(axis), rel[:, 0])
+    column = (theta/(2*np.pi)+.5)*len(gain)-.5
+    lo = np.floor(column).astype(int)
+    f = (column-lo)[:, None]
+    log_gain = np.log(gain)
+    g = (1-f)*log_gain[lo % len(gain)]+f*log_gain[(lo+1) % len(gain)]
+    return np.exp(g*tone_weight(points, origin, axis)[:, None])
+
+
+def recolour_skin(lower, template_pixels, target, origin_t, axis_t, detail_mix, tone=None):
+    """B7a: dye the Human skin texels (runtime formula) so that the skin's
+    area-weighted median takes the race face colour; with `tone` (per-column
+    linear gains, neck_tone) the neck also bends to the head rim per azimuth."""
+    size = template_pixels.shape[1::-1]
+    a = lower['a']
+    body = next(f for k, f in lower['f'].items() if k[0] == 'body')
+    wardrobe = np.concatenate([f for k, f in lower['f'].items() if k[0].startswith('wardrobe_')])
+    skin_count, skin_face, sy, sx = coverage(a['TEXCOORD_0'], body, size)
+    cloth_count, _, _, _ = coverage(a['TEXCOORD_0'], wardrobe, size)
+    skin = (skin_count > 0) & (cloth_count == 0)
+    reference = skin_reference(lower, template_pixels)
     ref_l, tgt_l = srgb_to_linear(reference), srgb_to_linear(target)
     original = srgb_to_linear(template_pixels[skin])
     lum = (original@LUMA)/(ref_l@LUMA)
@@ -558,7 +1221,9 @@ def recolour_skin(lower, template_pixels, head_pixels, upper, origin_t, axis_t, 
     # Texels outside either (the pale cloth-paint teeth along the collar,
     # grey paint strokes on the hands, the near-black boot-top skin the boots
     # hide) are refilled from neighbouring dyed skin. Nails and highlights
-    # inside the distribution keep the runtime dye formula.
+    # inside the distribution keep the runtime dye formula. The excluded set
+    # grows EXCLUDE_GROW texels inside the skin: the anti-aliased rim of a
+    # paint stroke falls inside the distribution but still reads as a line.
     chroma = original/np.maximum(original.sum(1, keepdims=True), 1e-6)
     med = np.median(chroma, axis=0)
     mad = 1.4826*np.median(np.abs(chroma-med), axis=0)
@@ -567,39 +1232,132 @@ def recolour_skin(lower, template_pixels, head_pixels, upper, origin_t, axis_t, 
     lmed = np.median(log_lum); lmad = 1.4826*np.median(np.abs(log_lum-lmed))
     chroma_out = distance > CHROMA_MAD
     lum_out = np.abs(log_lum-lmed) > LUM_LOG_MAD*lmad
-    outside = chroma_out | lum_out
+    yy, xx = np.nonzero(skin)
+    core = np.zeros(skin.shape, bool); core[yy[chroma_out | lum_out], xx[chroma_out | lum_out]] = True
+    excluded = binary_dilation(core, iterations=EXCLUDE_GROW) & skin if EXCLUDE_GROW else core
+    outside = excluded[yy, xx]
     dyed = tgt_l*((1-detail_mix)*lum[:, None]+detail_mix*original/ref_l)
+    face, fy, fx, bary = raster(a['TEXCOORD_0'], body, size)
+    first = np.full(skin.shape, -1); first[fy[::-1], fx[::-1]] = np.arange(len(face))[::-1]
+    hit = first[yy, xx]
+    position = np.einsum('ni,nic->nc', bary[hit], a['POSITION'][body[face[hit]]].astype(float))
+    tone_report = None
+    if tone is not None:
+        dyed = dyed*tone_gain(position, origin_t, axis_t, tone)
+        w = tone_weight(position, origin_t, axis_t)
+        tone_report = {'texels': int((w > 0).sum()), 'fullTexels': int((w > .999).sum())}
     result = np.zeros_like(template_pixels)
     valid = np.zeros(skin.shape, bool)
-    yy, xx = np.nonzero(skin)
     keep = ~outside
     result[yy[keep], xx[keep]] = linear_to_srgb(dyed[keep])
     valid[yy[keep], xx[keep]] = True
-    excluded = np.zeros(skin.shape, bool); excluded[yy[outside], xx[outside]] = True
     result, valid = dilate(result, valid, 512, region=excluded)
     unfilled = ~valid[yy[outside], xx[outside]]
     result, valid = dilate(result, valid, 16)
     result[~valid] = target
     # Where are the excluded texels (for the report)?
-    first = np.full(skin.shape, -1); first[sy, sx] = skin_face
-    fx = first[yy[outside], xx[outside]]
-    centre = a['POSITION'][body[fx]].astype(float).mean(1)
+    centre = position[outside]
     region = np.where(np.abs(centre[:, 0]) > .45, 'hands',
                       np.where(((centre-origin_t)@axis_t) > -.05, 'neck', np.where(centre[:, 1] < .6, 'legs', 'other')))
-    return result, {'space': 'linear', 'detailMix': detail_mix,
-                    'referenceRGB': reference.tolist(), 'targetRGB': target.tolist(), 'targetSamples': int(chosen.sum()),
-                    'texels': int(skin.sum()), 'excludedTexels': int(outside.sum()),
-                    'excludedChroma': int(chroma_out.sum()), 'excludedLuminance': int(lum_out.sum()),
-                    'excludedDarker': int((outside & (log_lum < lmed)).sum()),
-                    'excludedLighter': int((outside & (log_lum >= lmed)).sum()),
-                    'excludedByRegion': dict(sorted(Counter(region.tolist()).items())), 'excludedUnfilled': int(unfilled.sum()),
-                    'excludedUnfilledByRegion': dict(sorted(Counter(region[unfilled].tolist()).items())),
-                    'unfilledNote': 'excluded texels with no dyed-skin texel reachable through excluded texels: '
-                                    'filled by a 16-px dilation across the chart gutter, else the target colour',
-                    'chromaMedian': med.tolist(), 'chromaMAD': mad.tolist(), 'lumRatioMedian': float(np.exp(lmed)),
-                    'lumLogMAD': float(lmad),
-                    'exclusionRule': {'chromaDistanceMAD': CHROMA_MAD, 'logLuminanceMAD': LUM_LOG_MAD, 'sides': 'both',
-                                      'fill': 'dilation from neighbouring dyed skin texels'}}
+    report = {'space': 'linear', 'detailMix': detail_mix,
+              'referenceRGB': reference.tolist(), 'targetRGB': np.asarray(target).tolist(),
+              'reference': 'area-weighted median of the Human skin at body-face UV centroids',
+              'texels': int(skin.sum()), 'excludedTexels': int(outside.sum()),
+              'excludedChroma': int(chroma_out.sum()), 'excludedLuminance': int(lum_out.sum()),
+              'excludedCore': int((chroma_out | lum_out).sum()), 'excludedGrown': int(outside.sum()-(chroma_out | lum_out).sum()),
+              'excludedDarker': int((outside & (log_lum < lmed)).sum()),
+              'excludedLighter': int((outside & (log_lum >= lmed)).sum()),
+              'excludedByRegion': dict(sorted(Counter(region.tolist()).items())), 'excludedUnfilled': int(unfilled.sum()),
+              'excludedUnfilledByRegion': dict(sorted(Counter(region[unfilled].tolist()).items())),
+              'unfilledNote': 'excluded texels with no dyed-skin texel reachable through excluded texels: '
+                              'filled by a 16-px dilation across the chart gutter, else the target colour',
+              'chromaMedian': med.tolist(), 'chromaMAD': mad.tolist(), 'lumRatioMedian': float(np.exp(lmed)),
+              'lumLogMAD': float(lmad),
+              'exclusionRule': {'chromaDistanceMAD': CHROMA_MAD, 'logLuminanceMAD': LUM_LOG_MAD, 'sides': 'both',
+                                'grownTexels': EXCLUDE_GROW, 'fill': 'dilation from neighbouring dyed skin texels'}}
+    if tone_report:
+        report['neckTone'] = tone_report
+    return result, report
+
+
+def neck_tone(lower, skin_pixels, upper, head_pixels, visible, origin_t, axis_t, upper_cut, h1):
+    """Per-azimuth linear gain taking the dyed Human neck just below the cut to
+    the race head just above the rim (both low-passed around the neck). A head
+    whose back is lighter than its throat then keeps that difference down the
+    neck instead of a darker band under a lighter skull."""
+    w = NECK_SIZE[0]
+    pitch = (h1-NECK_H0)/NECK_SIZE[1]
+    g_cut = int(np.floor((LOWER_CUT-NECK_H0)/pitch-.5))
+    g_ring = int(np.ceil((LOWER_CUT-TONE_RING-NECK_H0)/pitch-.5))
+    g_top = int(np.ceil((upper_cut-NECK_H0)/pitch-.5))
+    g_head = int(np.floor((upper_cut+TONE_RING-NECK_H0)/pitch-.5))
+    parts = []
+    for p, f, uv in skin_faces(lower):
+        t = (p.astype(float)-origin_t)@axis_t
+        parts.append((p, f[(t[f].max(1) > LOWER_CUT-TONE_RING-pitch) & (np.abs(p[f][..., 0]).max(1) < .12)], uv))
+    human, _ = detail_canvas(parts, skin_pixels, origin_t, axis_t, (g_ring, g_cut), pitch, w)
+    head, _ = detail_canvas(head_band_parts(upper, visible, origin_t, axis_t, upper_cut, TONE_RING+pitch),
+                            head_pixels, origin_t, axis_t, (g_top, g_head), pitch, w)
+
+    def ring(image):
+        mean = srgb_to_linear(image).mean(0)
+        return np.stack([gaussian_filter(mean[:, c], TONE_SIGMA, mode='wrap') for c in range(3)], -1)
+    lower_ring, upper_ring = ring(human), ring(head)
+    gain = np.clip(upper_ring/np.maximum(lower_ring, 1e-6), TONE_CLIP[0], TONE_CLIP[1])
+    lum = (upper_ring@LUMA)/np.maximum(lower_ring@LUMA, 1e-6)
+    return gain, {'rule': f'per-column linear gain (rim band of the head over the dyed Human neck, each {TONE_RING*100:g} cm '
+                          f'tall, circular gaussian {TONE_SIGMA:g} of {w} columns) applied as gain^weight; weight 1 at '
+                          f'the cut, smoothstep to 0 at travel {TONE_LOW:g} m and beyond {sum(TONE_RADIUS):g} m from the '
+                          'neck axis',
+                  'luminanceGain': {'min': float(lum.min()), 'median': float(np.median(lum)), 'max': float(lum.max()),
+                                    'front': float(lum[w//4]), 'back': float(lum[3*w//4])},
+                  'clip': list(TONE_CLIP)}
+
+
+def intact(upper, key):
+    """A head primitive's faces without the UV-broken ones (broken_uv)."""
+    faces = upper['f'][key]
+    return faces[~upper['broken'][key]] if 'broken' in upper else faces
+
+
+def neck_plug(upper, origin, axis, upper_cut):
+    """A cone from the rim to a point 3 cm down the neck axis: in the body the
+    bridge and the Human neck close the head's neck opening."""
+    p = upper['a']['POSITION'].astype(float)
+    boundary = plane_rim(upper, origin, axis, upper_cut)
+    ring = p[spb.loops({'a': upper['a'], 'boundary': boundary}, origin, axis)[0]]
+    count = len(ring)
+    return (np.concatenate([ring, (ring.mean(0)-.03*axis)[None]]),
+            np.stack([np.arange(count), (np.arange(count)+1) % count, np.full(count, count)], 1))
+
+
+def band_visibility(upper, origin, axis, upper_cut, band=.05):
+    """Which intact head-body faces reaching [rim, rim + band] are outer skin:
+    a ray from the centroid escapes along one of 60 directions, every head
+    face and a neck plug occluding. The detail and tone bands sample only
+    these, never a leftover inner wall a few millimetres inside the skin."""
+    p = upper['a']['POSITION'].astype(float)
+    faces = np.concatenate(list(upper['f'].values()))
+    head = intact(upper, ('body', 'head'))
+    travel = (p-origin)@axis
+    near = (travel[head].min(1) < upper_cut+band) & (travel[head].max(1) > upper_cut-1e-6)
+    plug = neck_plug(upper, origin, axis, upper_cut)
+    pp = np.concatenate([p, plug[0]])
+    ff = np.concatenate([head[near], faces, plug[1]+len(p)])
+    seen, _ = visibility(pp, np.zeros_like(pp), ff, np.arange(int(near.sum())))
+    visible = np.zeros(len(head), bool)
+    visible[np.flatnonzero(near)] = seen[:int(near.sum())]
+    return visible, {'bandFaces': int(near.sum()), 'hiddenBandFaces': int(near.sum()-visible.sum()),
+                     'rule': 'centroid ray escapes along one of 60 directions; occluders: every head face and a cone '
+                             'plugging the neck opening'}
+
+
+def head_band_parts(upper, visible, origin, axis, upper_cut, band):
+    """detail_canvas parts for the visible head skin in [rim, rim + band]."""
+    p, head = upper['a']['POSITION'], intact(upper, ('body', 'head'))
+    t = (p.astype(float)-origin)@axis
+    sel = visible & (t[head].min(1) < upper_cut+band) & (t[head].max(1) > upper_cut)
+    return [(p, head[sel], upper['a']['TEXCOORD_0'])]
 
 
 def fold_rows(m, a, b):
@@ -609,11 +1367,12 @@ def fold_rows(m, a, b):
     return a+np.where(k < n, k, 2*n-1-k)
 
 
-def detail_canvas(parts, pixels, origin, axis, rows, pitch, width):
+def detail_canvas(parts, pixels, origin, axis, rows, pitch, width, with_radius=False):
     """Skin colour in neck-atlas cylinder space for global rows [first, last].
 
     parts: (positions, faces, per-vertex source UVs). Where two faces map to
-    one texel the smaller radius wins (the neck, not an overhanging jaw)."""
+    one texel the smaller radius wins (the neck, not an overhanging jaw).
+    With `with_radius`, also the sampled surface's radius per texel (nan: none)."""
     first, last = rows
     height = last-first+1
     lo = NECK_H0+first*pitch
@@ -637,11 +1396,43 @@ def detail_canvas(parts, pixels, origin, axis, rows, pitch, width):
     covered = float(valid.mean())
     image, valid = dilate(image, valid, 64)
     image[~valid] = image[valid].mean(0)
+    if with_radius:
+        return image, covered, np.where(np.isfinite(best), best, np.nan)
     return image, covered
 
 
 def lowpass(image, sigma):
     return np.stack([gaussian_filter(image[..., c], sigma, mode=('nearest', 'wrap')) for c in range(image.shape[-1])], -1)
+
+
+def radius_steps(radius):
+    """Texels where the sampled surface steps in radius (FEATURE_STEP_M):
+    across a column, or as a kink down a column (a second difference, so a
+    steep but smooth jaw line is not a step). The first FEATURE_STEP_SKIP
+    rows next to the cut are never steps: the rim keeps its grain."""
+    r = np.where(np.isfinite(radius), radius, np.nanmedian(radius))
+    across = np.abs(np.diff(r, axis=1, append=r[:, :1]))
+    across = np.maximum(across, np.roll(across, 1, axis=1))
+    padded = np.concatenate([2*r[:1]-r[1:2], r, 2*r[-1:]-r[-2:-1]], 0)
+    down = np.abs(padded[2:]-2*padded[1:-1]+padded[:-2])
+    step = np.maximum(across, down) > FEATURE_STEP_M
+    step[:FEATURE_STEP_SKIP] = False
+    return step
+
+
+def feature_weight(image, radius=None):
+    """1 on race features in a detail canvas (FEATURE_* above), 0 on skin grain,
+    with a short feathered falloff; also the masked fractions (all, by colour,
+    by radius step)."""
+    dev = np.linalg.norm(image-lowpass(image, FEATURE_SIGMA), axis=-1)
+    dev = gaussian_filter(dev, FEATURE_SMOOTH, mode=('nearest', 'wrap'))
+    median = np.median(dev)
+    colour = dev > median+FEATURE_MADS*1.4826*np.median(np.abs(dev-median))
+    steps = radius_steps(radius) if radius is not None else np.zeros_like(colour)
+    grow = lambda m: binary_fill_holes(binary_dilation(m, iterations=FEATURE_GROW)) if m.any() else m
+    mask = grow(colour | steps)
+    weight = np.maximum(mask, gaussian_filter(mask.astype(float), FEATURE_FEATHER, mode=('nearest', 'wrap')))
+    return weight, {'all': float(mask.mean()), 'colour': float(grow(colour).mean()), 'radiusStep': float(grow(steps).mean())}
 
 
 def streak_ratio(image, sigma=STREAK_SIGMA):
@@ -653,13 +1444,14 @@ def streak_ratio(image, sigma=STREAK_SIGMA):
     return float((np.diff(hp, axis=1)**2).mean()/max((np.diff(hp, axis=0)**2).mean(), 1e-12))
 
 
-def neck_texture(neck, bridge, lower, upper, skin_pixels, head_pixels, origin_t, axis_t, upper_cut, h1, floor):
+def neck_texture(neck, bridge, lower, upper, skin_pixels, head_pixels, origin_t, axis_t, upper_cut, h1, floor, visible):
     """B7c: one cylinder for shared_neck (exact I1 transfer) and the bridge.
 
     Bridge texel = a smooth blend of the low-passed skin either side plus the
     high-pass grain of the Human neck below the cut and of the head above the
     rim, each mirrored into the bridge. At either rim the sum is the
-    neighbouring skin texel itself, so neither border steps."""
+    neighbouring skin texel itself, so neither border steps. The head band
+    samples only outer skin (band_visibility)."""
     w, h = NECK_SIZE
     pitch = (h1-NECK_H0)/h
     image = np.zeros((h, w, 3)); valid = np.zeros((h, w), bool)
@@ -681,13 +1473,18 @@ def neck_texture(neck, bridge, lower, upper, skin_pixels, head_pixels, origin_t,
         t = (p.astype(float)-origin_t)@axis_t
         sel = (t[f].max(1) > band_lo-pitch) & (t[f].min(1) < LOWER_CUT) & (np.abs(p[f][..., 0]).max(1) < .12)
         human_parts.append((p, f[sel], uv))
-    head_p, head_f = upper['a']['POSITION'], upper['f'][('body', 'head')]
-    t = (head_p.astype(float)-origin_t)@axis_t
-    head_parts = [(head_p, head_f[(t[head_f].min(1) < upper_cut+DETAIL_BAND+pitch) & (t[head_f].max(1) > upper_cut)],
-                   upper['a']['TEXCOORD_0'])]
-    human, human_cover = detail_canvas(human_parts, skin_pixels, origin_t, axis_t, (g_low, g_cut), pitch, w)
-    head, head_cover = detail_canvas(head_parts, head_pixels, origin_t, axis_t, (g_top, g_high), pitch, w)
+    head_parts = head_band_parts(upper, visible, origin_t, axis_t, upper_cut, DETAIL_BAND+pitch)
+    human, human_cover, human_radius = detail_canvas(human_parts, skin_pixels, origin_t, axis_t, (g_low, g_cut), pitch, w, True)
+    head, head_cover, head_radius = detail_canvas(head_parts, head_pixels, origin_t, axis_t, (g_top, g_high), pitch, w, True)
     human_low, head_low = lowpass(human, DETAIL_SIGMA), lowpass(head, DETAIL_SIGMA)
+    # Features in either band carry no grain (no ghost copy in the bridge).
+    # Human band rows run upward to the cut, head band rows upward from the rim:
+    # flip the human band so its first rows (never steps) are the cut's.
+    (human_feature, human_masked) = feature_weight(human[::-1], human_radius[::-1])
+    human_feature = human_feature[::-1]
+    (head_feature, head_masked) = feature_weight(head, head_radius)
+    human_grain = (human-human_low)*(1-human_feature)[..., None]
+    head_grain = (head-head_low)*(1-head_feature)[..., None]
     bf = bridge['f'][('body', 4)]
     face, y, x, bary = raster(bridge['a']['TEXCOORD_0'], bf, NECK_SIZE, wrap=True)
     travel = NECK_H0+(y+.5)*pitch
@@ -695,7 +1492,7 @@ def neck_texture(neck, bridge, lower, upper, skin_pixels, head_pixels, origin_t,
     below = fold_rows(2*g_cut+1-y, g_low, g_cut)-g_low
     above = fold_rows(2*g_top-1-y, g_top, g_high)-g_top
     base = (1-s)*human_low[g_cut-g_low, x]+s*head_low[0, x]
-    grain = (1-s)*(human-human_low)[below, x]+s*(head-head_low)[above, x]
+    grain = (1-s)*human_grain[below, x]+s*head_grain[above, x]
     image[y, x] = np.clip(base+grain, 0, 1); valid[y, x] = True
     covered = int(valid.sum())
     image, valid = dilate(image, valid, 4)
@@ -712,7 +1509,14 @@ def neck_texture(neck, bridge, lower, upper, skin_pixels, head_pixels, origin_t,
                                 'Human neck below the cut and the head above the rim',
                       'detailBandM': DETAIL_BAND, 'humanBandM': [band_lo, LOWER_CUT], 'lowpassSigmaTexels': DETAIL_SIGMA,
                       'rows': {'humanBand': [g_low, g_cut], 'bridge': [g_cut+1, g_top-1], 'headBand': [g_top, g_high]},
-                      'humanBandCoverage': human_cover, 'headBandCoverage': head_cover}
+                      'humanBandCoverage': human_cover, 'headBandCoverage': head_cover,
+                      'featureMask': {'rule': f'colour deviation from a sigma {FEATURE_SIGMA:g} lowpass (smoothed '
+                                              f'{FEATURE_SMOOTH:g}) over median + {FEATURE_MADS:g} robust MAD, or a '
+                                              f'sampled-surface radius step over {FEATURE_STEP_M*1000:g} mm between '
+                                              f'texels (not in the {FEATURE_STEP_SKIP} rows next to the cut), grown '
+                                              f'{FEATURE_GROW} texels, holes filled, feathered {FEATURE_FEATHER:g}; '
+                                              'no grain there',
+                                      'humanBandMasked': human_masked, 'headBandMasked': head_masked}}
     return image, {'size': [w, h], 'h0': NECK_H0, 'h1': h1, 'coveredTexels': covered,
                    'topRimV': float((upper_cut-NECK_H0)/(h1-NECK_H0)), 'bridgeTexture': bridge_texture}, (human, head)
 
@@ -815,12 +1619,26 @@ def pack_head(upper, head_pixels, atlas, density_max, human_face, head_joint, he
                  'floorPxPerCm': float(floor), 'islands': len(islands), 'gutterPx': 4, 'sourceSize': src}
 
 
-def bake_head(upper, old_uv, head_pixels, atlas):
+
+def bake_head(upper, old_uv, head_pixels, atlas, corner_colours=None):
     faces = np.concatenate(list(upper['f'].values()))
     face, y, x, bary = raster(upper['a']['TEXCOORD_0'], faces, (atlas, atlas))
     old = np.einsum('ni,nic->nc', bary, old_uv[faces[face]])
     image = np.zeros((atlas, atlas, 3)); valid = np.zeros((atlas, atlas), bool)
     image[y, x] = spb.sample_image(np.rint(head_pixels*255), old); valid[y, x] = True
+    if corner_colours:
+        # UV-broken faces: their corners' colours on the intact faces.
+        flat = np.full(len(faces), -1)
+        colours, offset, start = [], 0, 0
+        for key, f in upper['f'].items():
+            if key in corner_colours:
+                mask = upper['broken'][key]
+                flat[offset+np.flatnonzero(mask)] = start+np.arange(int(mask.sum()))
+                colours.append(corner_colours[key]); start += int(mask.sum())
+            offset += len(f)
+        colours = np.concatenate(colours)
+        sel = flat[face] >= 0
+        image[y[sel], x[sel]] = np.einsum('ni,nic->nc', bary[sel], colours[flat[face[sel]]])
     median = np.median(image[valid], axis=0)
     image, valid = dilate(image, valid, 4)
     image[~valid] = median
@@ -879,8 +1697,8 @@ def as_f4(group):
     return group
 
 
-def build(root, slug, out, head=None, head_texture=None, template=None, head_atlas=1024,
-          density_max=20., neck_profile='smooth', detail_mix=.2):
+def build(root, slug, out, head=None, head_texture=None, template=None, head_atlas=None,
+          density_max=20., neck_profile='smooth', detail_mix=.2, skin_target='face'):
     root, out = Path(root).resolve(), Path(out).resolve()
     if 'godot-client' in out.parts:
         raise ValueError('Use a scratch --out outside godot-client')
@@ -919,6 +1737,13 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
         raise ValueError(f'2048 head texture does not match the shipped head ({half_delta:.2f} levels)')
     if texture_kind != 'meshy-original' and head_pixels.shape[0] < 2048:
         print('WARNING: head texture source is', head_pixels.shape, flush=True)
+    albedo = None
+    if slug in HEAD_ALBEDO_TARGETS:
+        wanted = HEAD_ALBEDO_TARGETS[slug]
+        gain, before_lum, after_lum = head_albedo_gain(hd, hb, head_pixels, wanted['medianLuminance'])
+        head_pixels = linear_to_srgb(srgb_to_linear(head_pixels)*gain)
+        albedo = {'space': 'linear', 'gain': gain, 'medianLuminanceBefore': before_lum, 'medianLuminanceAfter': after_lum,
+                  **wanted, 'measure': 'median sRGB luminance (0-255) of the 2048 source at race_head body-face UV centroids'}
     upper_cut = float(shape['upperCutM'])
     # B2: Human below the plane; whole-below triangles stay byte copies.
     common = spb.block(td, tb)
@@ -939,21 +1764,45 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
         raise ValueError(f'head rim has {len(upper_rings)} rings')
     head_counts = {k[0]: len(f) for k, f in upper['f'].items()}
     cleanup = clean_head(upper, origin_h, axis_h, upper_cut)
+    upper['boundary'] = plane_rim(upper, origin_h, axis_h, upper_cut)
+    if len(spb.loops(upper, origin_h, axis_h)) != 1:
+        raise ValueError('head rim is not one ring after cleanup')
+    upper['broken'], source_density, broken_counts = broken_uv(upper, head_pixels.shape[1], origin_h, axis_h, upper_cut)
+    broken_report = {'faces': {k[0]: int(m.sum()) for k, m in upper['broken'].items() if m.any()}, **broken_counts,
+                     'rule': f'all corners on the upper cut plane (v2 inner-loop caps), or an edge over {BROKEN_UV_RATIO:g}x '
+                             f'the median px/cm and over {BROKEN_UV_PX:g} source px',
+                     'chart': 'own planar chart at the median density; texels interpolate the colours of their corners on intact faces'}
     # B5: weld both rims.
     lower_rows = np.unique(lower['boundary']); lower_rows = lower_rows[lower_rows >= template_rows]
     used = np.unique(np.concatenate(list(upper['f'].values())))
     upper_rows = used[np.abs((upper['a']['POSITION'][used].astype(float)-origin_h)@axis_h-upper_cut) < 2e-6]
     weld_report = {'lower': weld_ring(lower, lower_rows), 'upper': weld_ring(upper, upper_rows)}
+    # Ssarathi: the v2 tail, root sunk into the Human trousers.
+    tail = tail_group(hd, hb)
+    tail_report = fit_tail(tail, lower, names_t, TAIL_FEATHER.get(slug)) if tail else None
     # B6: the bridge (never an automatic linear fallback).
     bridge, lr, ur = spb.neck_bridge(lower, upper, origin_t, axis_t, 4, lower, smooth_profile=neck_profile == 'smooth')
+    groove = ungroove(bridge, origin_t, axis_t)
     as_f4(bridge); bridge['role'] = 'neck_join'
     h1 = NECK_H0+(upper_cut-NECK_H0)/(1-2.5/NECK_SIZE[1])
-    # B7a: recolour the Human skin atlas.
+    # B7a: recolour the Human skin atlas: its median takes the face reference
+    # (a unified palette then dyes body and face alike); the neck bends to the
+    # head rim per azimuth (neck_tone).
+    visible, visible_report = band_visibility(upper, origin_h, axis_h, upper_cut)
     template_mat = next(k for k in lower['f'] if k[0] == 'body')[1]
     wardrobe_mat = next(k for k in lower['f'] if k[0].startswith('wardrobe_'))[1]
     template_index, template_pixels = spb.material_image(td, tb, template_mat)
-    skin, recolour = recolour_skin(lower, template_pixels.astype(float)/255, head_pixels, upper,
-                                   origin_t, axis_t, origin_h, axis_h, upper_cut, detail_mix)
+    template_pixels = template_pixels.astype(float)/255
+    regions = json.loads(Path(__file__).with_name('face_regions.json').read_text())
+    ring, ring_samples = ring_colour(upper, head_pixels, origin_h, axis_h, upper_cut)
+    face_ref = face_reference(upper, head_pixels, regions['models'][slug], regions['projection'])
+    skin_colour = face_ref if skin_target == 'face' else ring
+    first_pass, _ = recolour_skin(lower, template_pixels, skin_colour, origin_t, axis_t, detail_mix)
+    gain, tone_report = neck_tone(lower, first_pass, upper, head_pixels, visible, origin_t, axis_t, upper_cut, h1)
+    skin, recolour = recolour_skin(lower, template_pixels, skin_colour, origin_t, axis_t, detail_mix, tone=gain)
+    recolour.update(targetSource=skin_target, faceReferenceRGB=face_ref.tolist(), neckRingRGB=ring.tolist(),
+                    neckRingSamples=ring_samples, neckTone={**tone_report, **recolour.get('neckTone', {})},
+                    bandVisibility=visible_report)
     skin_payload = encode_jpeg(skin)
     skin_pixels = decode(skin_payload)
     # B7b/B7c: shared_neck split, cylinder UVs and the neck texture.
@@ -964,17 +1813,27 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
     bridge['a']['TEXCOORD_0'] = bridge_uv.reshape(-1, 2).astype('<f4')
     bridge['f'] = {('body', 4): np.arange(len(bf)*3).reshape(-1, 3)}
     neck_pixels, neck_atlas, detail = neck_texture(neck, bridge, lower, upper, skin_pixels, head_pixels,
-                                                   origin_t, axis_t, upper_cut, h1, neck_report['closedRingFloorM'])
+                                                   origin_t, axis_t, upper_cut, h1, neck_report['closedRingFloorM'], visible)
     neck_payload = encode_jpeg(neck_pixels)
     neck_atlas['streaks'] = neck_streaks(decode(neck_payload), detail, neck_atlas['bridgeTexture']['rows'])
     # B7d: head atlas.
     human_face = human_face_density(td, tb)
+    corner_colours = broken_corner_colours(upper, upper['broken'], head_pixels)
+    chart_broken(upper, upper['broken'], head_pixels.shape[1], source_density)
     old_uv = upper['a']['TEXCOORD_0'].astype(float).copy()
     head_joint = world_h[names_h.index('Head')][:3, 3]
-    upper['a']['TEXCOORD_0'], head_atlas_report = pack_head(upper, head_pixels, head_atlas, density_max, human_face,
-                                                            head_joint, names_h.index('Head'))
-    upper['a']['TEXCOORD_0'] = upper['a']['TEXCOORD_0'].astype('<f4')
-    head_payload = encode_jpeg(bake_head(upper, old_uv, head_pixels, head_atlas))
+    sizes = (head_atlas,) if head_atlas else (1024, 2048)
+    for head_atlas in sizes:
+        try:
+            packed, head_atlas_report = pack_head(upper, head_pixels, head_atlas, density_max, human_face,
+                                                  head_joint, names_h.index('Head'))
+            break
+        except ValueError:
+            if head_atlas == sizes[-1]:
+                raise
+    head_atlas_report['triedSizes'] = list(sizes[:sizes.index(head_atlas)+1])
+    upper['a']['TEXCOORD_0'] = packed.astype('<f4')
+    head_payload = encode_jpeg(bake_head(upper, old_uv, head_pixels, head_atlas, corner_colours))
     faces = np.concatenate(list(upper['f'].values()))
     density, _ = texel_density(upper['a']['POSITION'], upper['a']['TEXCOORD_0'], faces, (head_atlas, head_atlas))
     face = face_filter(upper['a']['POSITION'], upper['a']['NORMAL'], faces, head_joint, joint_weight(upper['a'], names_h.index('Head')))
@@ -988,14 +1847,27 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
             'skeleton': 'headSource', 'lowerCutM': LOWER_CUT, 'upperCutM': upper_cut, 'bodyCutMode': 'neck-plane',
             'neckBase': {'startM': -.060, 'radiusM': .150},
             'neckProfile': 'boundary-tangent' if neck_profile == 'smooth' else 'linear',
-            'skinRecolour': {k: recolour[k] for k in ('space', 'detailMix', 'referenceRGB', 'targetRGB', 'texels',
-                                                      'excludedTexels', 'exclusionRule')},
+            'skinRecolour': {**{k: recolour[k] for k in ('space', 'detailMix', 'referenceRGB', 'targetRGB', 'targetSource',
+                                                         'texels', 'excludedTexels', 'exclusionRule')},
+                             'neckTone': {'lowM': TONE_LOW, 'ringM': TONE_RING, 'sigmaColumns': TONE_SIGMA,
+                                          'luminanceGain': recolour['neckTone']['luminanceGain']}},
             'headAtlas': {k: head_atlas_report[k] for k in ('size', 'pxPerCm', 'facePxPerCm', 'sourcePxPerCm', 'sourceFacePxPerCm', 'islands', 'gutterPx', 'sourceSize')},
             'neckAtlas': {'size': list(NECK_SIZE), 'bridgeTexture': 'rim blend + mirrored skin grain'},
             'cleanup': cleanup, 'toolSHA256': hashes['tool']}
+    if albedo:
+        spec['headAlbedo'] = albedo
+    if groove['columns']:
+        spec['neckProfileRepair'] = {k: groove[k] for k in ('columns', 'maxDipBeforeM', 'maxDipAfterM')}
+    if broken_report['faces']:
+        spec['brokenUV'] = broken_report
+    if tail:
+        spec['tail'] = {k: tail_report[k] for k in ('trianglesBefore', 'fragmentTriangles', 'triangles')}
+        spec['tail']['rootSinkM'] = {'depth': TAIL_DEPTH, 'falloff': TAIL_SINK_FALLOFF, 'maxShift': tail_report['root']['maxShiftM']}
+        if 'feather' in tail_report:
+            spec['tail']['featherM'] = tail_report['feather']['featherM']
     d, binary = assemble(hd, hb, td, tb, lower, upper, bridge, neck, spec,
                          head_payload, skin_payload, spb.image_bytes(td, tb, spb.material_image(td, tb, wardrobe_mat)[0]),
-                         neck_payload, template_mat, wardrobe_mat)
+                         neck_payload, template_mat, wardrobe_mat, tail)
     d, binary = g.compact(d, bytes(binary))
     if input_digests(inputs) != hashes:
         raise ValueError('An input changed during generation')
@@ -1013,9 +1885,13 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
               'bridgeRings': [len(lr[0]), len(ur[0])], 'templateBelowCutTriangles': below,
               'headTrianglesBefore': head_counts, 'rimWeld': weld_report, 'sharedNeck': neck_report,
               'skinRecolour': recolour, 'headAtlas': head_atlas_report, 'neckAtlas': neck_atlas,
-              'bridge': {'v3': metrics_v3, 'v2': v2_bridge_metrics(hd, hb, origin_h, axis_h, upper_cut)},
+              'bridge': {'v3': metrics_v3, 'v2': v2_bridge_metrics(hd, hb, origin_h, axis_h, upper_cut), 'groove': groove},
               'trianglesByRole': triangles_by_role(d, binary), 'sharedBodyShape': spec,
               'status': 'candidate: requires visual/animation review'}
+    if tail:
+        report['tail'] = tail_report
+    if broken_report['faces']:
+        report['brokenUV'] = broken_report
     target.with_suffix('.json').write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
     return report
 
@@ -1051,12 +1927,14 @@ def triangles_by_role(d, binary):
 
 
 def assemble(hd, hb, td, tb, lower, upper, bridge, neck, spec, head_payload, skin_payload, wardrobe_payload,
-             neck_payload, template_mat, wardrobe_mat):
+             neck_payload, template_mat, wardrobe_mat, tail=None):
     """Fresh document: v2 nodes, skin and mesh order; new materials/images."""
     d = {'asset': copy.deepcopy(hd['asset']), 'scene': hd.get('scene', 0), 'scenes': copy.deepcopy(hd['scenes']),
          'nodes': copy.deepcopy(hd['nodes']), 'buffers': [{'byteLength': 0}], 'bufferViews': [], 'accessors': []}
     d['asset']['generator'] = 'Eloria rebase_race_body.py'
     d['asset']['extras']['sharedBodyShape'] = spec
+    # The Ssarathi waistband repair belonged to the old Luminous trousers.
+    d['asset']['extras'].pop('waistSeamRepair', None)
     binary = bytearray()
     skin = copy.deepcopy(hd['skins'][0])
     skin['inverseBindMatrices'] = copy_accessor(d, binary, hd, hb, hd['skins'][0]['inverseBindMatrices'])
@@ -1081,6 +1959,22 @@ def assemble(hd, hb, td, tb, lower, upper, bridge, neck, spec, head_payload, ski
     d['images'] = [{'mimeType': 'image/jpeg', 'bufferView': spb.append_view(d, binary, payload)}
                    for payload in (head_payload, skin_payload, wardrobe_payload, neck_payload)]
     d['textures'] = [{'source': 0, 'sampler': 0}, {'source': 1, 'sampler': 1}, {'source': 2}, {'source': 3, 'sampler': 2}]
+    if tail:
+        # The tail keeps its v2 material (named Material_1) and image bytes.
+        source = next(p for m in hd['meshes'] for p in m['primitives'] if p.get('extras', {}).get('sourceRole') == 'race_tail')
+        material = copy.deepcopy(hd['materials'][source['material']])
+        texture = hd['textures'][material['pbrMetallicRoughness']['baseColorTexture']['index']]
+        material['pbrMetallicRoughness']['baseColorTexture'] = {'index': len(d['textures'])}
+        d['images'].append({'mimeType': hd['images'][texture['source']]['mimeType'],
+                            'bufferView': spb.append_view(d, binary, spb.image_bytes(hd, hb, texture['source']))})
+        entry = {'source': len(d['images'])-1}
+        if 'sampler' in texture:
+            d['samplers'].append(copy.deepcopy(hd['samplers'][texture['sampler']])); entry['sampler'] = len(d['samplers'])-1
+        d['textures'].append(entry)
+        d['materials'].append(material)
+        if material.get('extensions'):
+            d['extensionsUsed'] = sorted(material['extensions'])
+        tail = {'a': tail['a'], 'role': 'race_tail', 'f': {('body', len(d['materials'])-1): tail['f'][('body', 'tail')]}}
     meshes = {}
     body = {'a': lower['a'], 'role': 'shared_body',
             'f': {(name, 2 if name == 'body' else 3): f for (name, _), f in lower['f'].items()}}
@@ -1090,6 +1984,8 @@ def assemble(hd, hb, td, tb, lower, upper, bridge, neck, spec, head_payload, ski
     write_group_v3(d, binary, {'a': head['a'], 'role': 'race_head', 'f': {k: f for k, f in head['f'].items() if k[0] == 'body'}}, meshes)
     write_group_v3(d, binary, bridge, meshes)
     write_group_v3(d, binary, neck, meshes)
+    if tail:
+        write_group_v3(d, binary, tail, meshes)
     write_group_v3(d, binary, {'a': body['a'], 'role': 'shared_body', 'f': {k: f for k, f in body['f'].items() if k[0] != 'body'}}, meshes)
     write_group_v3(d, binary, {'a': head['a'], 'role': 'race_head', 'f': {k: f for k, f in head['f'].items() if k[0] != 'body'}}, meshes)
     for name in ('wardrobe_head_band', 'wardrobe_head_cap'):
@@ -1164,13 +2060,100 @@ def small_components(parts, origin, axis):
     return sorted(int(x) for x in size[size < 20])
 
 
-def eye_mask_landmarks(path, slug):
-    """Decision 11: the baked mask at the annotated iris and brow landmarks."""
+def front_projection(path, mask):
+    """Orthographic front view of a GLB's race-head surfaces in the
+    face_regions.json canvas (900 x 600, 3000 px/m): head-atlas colour, mask
+    colour and depth per pixel (front-most surface; -inf where none)."""
+    regions = json.loads(Path(__file__).with_name('face_regions.json').read_text())
+    proj = regions['projection']
+    d, b = ea.read_glb(Path(path))
+    width, height = 900, 600
+    colour, masked = np.zeros((height, width, 3)), np.zeros((height, width, 3))
+    depth = np.full((height, width), -np.inf)
+    mask = np.asarray(mask, float)/255
+    for name, role, a, f in vspb.primitives(d, b):
+        if role != 'race_head':
+            continue
+        prim = next(q for q in next(m for m in d['meshes'] if m['name'] == name)['primitives']
+                    if q.get('extras', {}).get('sourceRole') == 'race_head')
+        image = decode(spb.image_bytes(d, b, d['textures'][d['materials'][prim['material']]['pbrMetallicRoughness']
+                                                          ['baseColorTexture']['index']]['source']))
+        p, uv = a['POSITION'].astype(float), a['TEXCOORD_0'].astype(float)
+        f = f[(p[f][..., 2].max(1) > 0) & (p[f][..., 1].max(1) > 1.5)]
+        xy = np.stack([(p[:, 0]-proj['xMin'])*proj['pixelsPerMetre']/width,
+                       (proj['yMax']-p[:, 1])*proj['pixelsPerMetre']/height], 1)
+        face, y, x, bary = raster(xy, f, (width, height))
+        z = np.einsum('ni,ni->n', bary, p[f[face]][..., 2])
+        t = np.einsum('ni,nic->nc', bary, uv[f[face]])
+        order = np.argsort(z)
+        y, x, z, t = y[order], x[order], z[order], t[order]
+        front = z > depth[y, x]
+        colour[y[front], x[front]] = spb.sample_image(np.rint(image*255), t[front]); depth[y[front], x[front]] = z[front]
+        texel = np.floor((t[front] % 1)*np.array(mask.shape[1::-1])).astype(int)
+        masked[y[front], x[front]] = mask[texel[:, 1], texel[:, 0]]
+    return colour, masked, depth
+
+
+def painted_feature_cover(path, slug, mask):
+    """V14: the mask covers what is painted. Brows (bodies with face_regions
+    brow polygons): on each side the largest stroke 25 levels darker than its
+    sigma-12 surround, in a +-2 x +-.8 cm window round the BROWS landmark and
+    outside the eye region (mask R, grown 14 px), must carry B > .5 on half its
+    texels; a stroke under BROW_STROKE_MIN px is too faint to judge. Irises
+    (IRIS_COLOUR races): the painted iris colour in a +-1.6 x +-1.2 cm window
+    round each iris landmark must carry R >= .8 on IRIS_COVER of its texels."""
+    from scipy.ndimage import label
+    regions = json.loads(Path(__file__).with_name('face_regions.json').read_text())
+    region, proj = regions['models'][slug], regions['projection']
+    colour, masked, depth = front_projection(path, mask)
+    valid = np.isfinite(depth)
+    lum = colour@LUMA*255
+    X = lambda x: int(round((x-proj['xMin'])*proj['pixelsPerMetre']))
+    Y = lambda y: int(round((proj['yMax']-y)*proj['pixelsPerMetre']))
+    checks, report = {}, {}
+    if 'brows' in region and slug in BROWS:
+        blur = gaussian_filter(np.where(valid, lum, 0), 12)/np.maximum(gaussian_filter(valid.astype(float), 12), 1e-6)
+        eye = binary_dilation(masked[..., 0] > .05, iterations=14)
+        stroke = (lum < blur-25) & valid & ~eye
+        bx, by = BROWS[slug]
+        for sign in (-1, 1):
+            window = np.zeros_like(stroke)
+            window[Y(by+.008):Y(by-.008), X(sign*bx-.02):X(sign*bx+.02)] = True
+            labels, count = label(stroke & window)
+            size = np.bincount(labels.ravel())[1:] if count else np.zeros(0, int)
+            if not count or size.max() < BROW_STROKE_MIN:
+                report[f'browStroke{sign:+d}'] = {'texels': int(size.max(initial=0)), 'faint': True}
+                continue
+            big = labels == np.argmax(size)+1
+            cover = float((masked[big][:, 2] > .5).mean())
+            report[f'browStroke{sign:+d}'] = {'texels': int(big.sum()), 'coverB05': cover}
+            checks[f'browStroke{sign:+d}'] = cover >= .5
+    rule = next((v for k, v in IRIS_COLOUR.items() if slug.startswith(k)), None)
+    if rule:
+        rgb = colour*255
+        painted = ((rgb[..., 0] > rgb[..., 1]+rule['redOverGreen']) & (rgb[..., 0] > rgb[..., 2]+rule['redOverBlue'])
+                   & valid)
+        for i, (x, y) in enumerate(IRISES[slug]):
+            window = np.zeros_like(painted)
+            window[Y(y)-36:Y(y)+36, X(x)-48:X(x)+48] = True
+            sel = painted & window
+            cover = float((masked[sel][:, 0] >= .8).mean()) if sel.any() else 0.
+            report[f'irisColour{i}'] = {'texels': int(sel.sum()), 'coverR08': cover}
+            checks[f'irisColour{i}'] = cover >= IRIS_COVER
+    return checks, report
+
+
+def eye_mask_landmarks(path, slug, mask=None, painted=False):
+    """Decision 11: a face mask at the iris and brow landmarks of
+    test_face_texture_mapping.py. Without `mask` the candidate's mask is baked
+    as install bakes it. Returns {check: passed} and the sampled values."""
     import trimesh
-    from build_face_masks import bake
-    regions = json.loads((Path(__file__).with_name('face_regions.json')).read_text())
-    region = copy.deepcopy(regions['models'][slug]); region.pop('browStrokes', None)
-    mask, info = bake(Path(path), region, regions['projection'])
+    info = {}
+    if mask is None:
+        from build_face_masks import bake
+        regions = json.loads((Path(__file__).with_name('face_regions.json')).read_text())
+        region = copy.deepcopy(regions['models'][slug]); region.pop('browStrokes', None)
+        mask, info = bake(Path(path), region, regions['projection'])
     d, b = g.read(path)
     vertices, uvs, faces, off = [], [], [], 0
     for m in d['meshes']:
@@ -1190,25 +2173,42 @@ def eye_mask_landmarks(path, slug):
         bary = trimesh.triangles.points_to_barycentric(mesh.triangles[tri], pts)[0]
         xy = np.floor(((bary@uv[mesh.faces[tri[0]]]) % 1)*np.array(mask.shape[:2][::-1])).astype(int)
         return mask[xy[1], xy[0]]/255.
-    irises, brow = LANDMARKS[slug]
-    report = {'maskSize': list(mask.shape[:2]), 'pixelsPerChannel': info['pixelsPerChannel'], 'irises': []}
-    ok = True
-    for x, y in irises:
+    report = {'maskSize': list(mask.shape[:2]), 'pixelsPerChannel': info.get('pixelsPerChannel'), 'irises': []}
+    if painted:
+        cover, cover_report = painted_feature_cover(path, slug, mask)
+        report['painted'] = cover_report
+    checks = {}
+    for i, (x, y) in enumerate(IRISES[slug]):
         values = [v for v in (at(x+dx, y+dy) for dx in (-.001, 0, .001) for dy in (-.001, 0, .001)) if v is not None]
         r, gr = (float(max(v[0] for v in values)), float(max(v[1] for v in values))) if values else (0., 0.)
-        report['irises'].append({'at': [x, y], 'R': r, 'G': gr}); ok &= r >= .8 and gr > .15
-    for sign in (-1, 1):
-        values = np.array([v[2] for v in (at(sign*brow[0]+dx, brow[1]+dy) for dx in np.linspace(-.012, .012, 15)
-                                          for dy in np.linspace(-.004, .004, 9)) if v is not None])
-        report[f'brow{sign:+d}'] = {'maxB': float(values.max(initial=0)), 'over05': int((values > .05).sum())}
-        ok &= values.max(initial=0) > .1 and (values > .05).sum() > 1
-    centre = at(0, brow[1])
-    report['browGapB'] = float(centre[2]) if centre is not None else None
-    ok &= centre is not None and centre[2] < .02
+        report['irises'].append({'at': [x, y], 'R': r, 'G': gr}); checks[f'iris{i}'] = r >= .8 and gr > .15
+    if slug in BROWS:
+        brow = BROWS[slug]
+        for sign in (-1, 1):
+            values = np.array([v[2] for v in (at(sign*brow[0]+dx, brow[1]+dy) for dx in np.linspace(-.012, .012, 15)
+                                              for dy in np.linspace(-.004, .004, 9)) if v is not None])
+            report[f'brow{sign:+d}'] = {'maxB': float(values.max(initial=0)), 'over05': int((values > .05).sum())}
+            checks[f'brow{sign:+d}'] = bool(values.max(initial=0) > .1 and (values > .05).sum() > 1)
+        centre = at(0, brow[1])
+        report['browGapB'] = float(centre[2]) if centre is not None else None
+        checks['browGap'] = centre is not None and centre[2] < .02
     clean = [at(x, y) for x, y in [(0, 1.68), (0, 1.63), (-.06, 1.595), (.06, 1.595)]]
     report['skinRG'] = [float(v[:2].max()) if v is not None else None for v in clean]
-    ok &= all(v is not None and v[:2].max() < .02 for v in clean)
-    return bool(ok), report
+    for i, v in enumerate(clean):
+        checks[f'skin{i}'] = v is not None and v[:2].max() < .02
+    if painted:
+        checks.update(cover)
+    return {k: bool(v) for k, v in checks.items()}, report
+
+
+def shipped_mask(head, slug):
+    """The face mask that ships with a v2 head: beside a pre-install backup,
+    else the tree's (verify before install)."""
+    head = Path(head)
+    for path in (head.parent/f'{slug}.png', head.parents[1]/'face_masks'/f'{slug}.png'):
+        if path.exists():
+            return np.asarray(Image.open(path).convert('RGB'))
+    return None
 
 
 def headwear_crossings(root, slug, candidate, head):
@@ -1246,7 +2246,7 @@ def headwear_crossings(root, slug, candidate, head):
 
     def crossings(rmi, a, b):
         d = b-a; length = np.linalg.norm(d, axis=1); d /= length[:, None]
-        loc, ray, _ = rmi.intersects_location(a, d, multiple_hits=False)
+        loc, ray, _ = first_hits(rmi, a, d)
         return int((np.linalg.norm(loc-a[ray], axis=1) < length[ray]-1e-7).sum())
     a2, b2, _ = edges(head)
     a3, b3, head_joint = edges(candidate)
@@ -1289,6 +2289,94 @@ def hidden_body(d, b, origin, axis):
             'directions': DIRECTIONS}
 
 
+def tail_checks(parts, tail, v2_tail, spec, names, slug):
+    """V18: the carried tail. UVs are the v2 bytes; every root-ring vertex
+    lies at least half TAIL_DEPTH inside the Human surface; the tail faces
+    outside it are one piece (nothing pokes through the seat elsewhere); with
+    a feather, no free-tail vertex carries thigh weight."""
+    if len(tail) != 1 or len(v2_tail) != 1:
+        return False, {'tailPrimitives': len(tail), 'v2TailPrimitives': len(v2_tail)}
+    (a, f), (a2, f2) = tail[0], v2_tail[0]
+    values = {'triangles': int(len(f)), 'v2Triangles': int(len(f2)), 'fragmentTriangles': spec['tail']['fragmentTriangles']}
+    uv_ok = not (vspb.signatures(a, f, ('TEXCOORD_0',))-vspb.signatures(a2, f2, ('TEXCOORD_0',)))
+    surface = np.concatenate([q['POSITION'].astype(float)[ff] for name, role, q, ff in parts
+                              if role in ('shared_body', 'shared_neck') and name in ea.BODY_SURFACES])
+    p = a['POSITION'].astype(float)
+    loops = open_loops(p, f)
+    depth, _ = surface_depth(p[loops[0]], surface)
+    used = np.unique(f)
+    inside = np.zeros(len(p), bool)
+    near = used[p[used, 0] < .45]
+    inside[near] = winding(p[near], surface) > .5
+    outside = f[~inside[f].all(1)]
+    pieces = np.bincount(face_components(p, outside)) if len(outside) else np.zeros(0, int)
+    values.update(uvBytesFromV2=uv_ok, rootLoopVertices=int(len(loops[0])),
+                  rootDepthM={'min': float(depth.min()), 'median': float(np.median(depth))},
+                  otherOpenLoops=[int(len(x)) for x in loops[1:]], insideVertices=int(inside[used].sum()),
+                  outsidePieces=sorted(pieces.tolist(), reverse=True))
+    fragments = np.bincount(face_components(p, f))
+    values['smallestComponent'] = int(fragments.min())
+    ok = (uv_ok and len(f) == len(f2)-spec['tail']['fragmentTriangles'] and depth.min() >= TAIL_DEPTH/2
+          and len(pieces) == 1 and fragments.min() >= 20)
+    thighs = [names.index('thigh_l'), names.index('thigh_r')]
+    share = {k: np.where(np.isin(q['JOINTS_0'].astype(int), [j]), q['WEIGHTS_0'], 0.).sum(1)
+             for k, q, j in (('now', a, thighs[0]), ('v2', a2, thighs[0]))}
+    values['thighL'] = {'v2Vertices': int((share['v2'][np.unique(f2)] > 0).sum()), 'vertices': int((share['now'][used] > 1e-6).sum()),
+                        'v2Max': float(share['v2'][np.unique(f2)].max()), 'max': float(share['now'][used].max())}
+    feather = TAIL_FEATHER.get(slug)
+    if feather:
+        from scipy.sparse.csgraph import dijkstra
+        ids = weld(p)
+        n = ids.max()+1
+        e = np.unique(np.sort(ids[np.concatenate([f[:, [0, 1]], f[:, [1, 2]], f[:, [2, 0]]])], 1), axis=0)
+        rep = np.zeros(n, int); rep[ids] = np.arange(len(p))
+        graph = coo_matrix((np.linalg.norm(p[rep[e[:, 0]]]-p[rep[e[:, 1]]], axis=1), (e[:, 0], e[:, 1])), shape=(n, n)).tocsr()
+        along = dijkstra(graph, directed=False, indices=np.unique(ids[inside]), min_only=True)[ids]
+        free = used[along[used] >= feather]
+        thigh = np.where(np.isin(a['JOINTS_0'].astype(int), thighs), a['WEIGHTS_0'], 0.).sum(1)
+        values['freeTail'] = {'vertices': int(len(free)), 'maxThighWeight': float(thigh[free].max(initial=0)), 'featherM': feather}
+        ok &= len(free) > 0 and thigh[free].max(initial=0) == 0
+    return bool(ok), values
+
+
+def grain_amount(d, b, parts, upper, origin_h, axis_h, upper_cut, neck_image, rows):
+    """V17: high-pass (sigma 3) luminance spread of the bridge rows nearest the
+    head (the upper half of the bridge, I3) over that of the outer head skin in
+    [rim, rim + DETAIL_BAND] (I0, band_visibility faces). A bridge sampled from
+    an inner wall carries almost no grain under a stippled head (.13)."""
+    body = next(m for m in d['meshes'] if m['name'] == 'body')
+    prim = next(q for q in body['primitives'] if q.get('extras', {}).get('sourceRole') == 'race_head')
+    head_image = decode(spb.image_bytes(d, b, d['textures'][d['materials'][prim['material']]['pbrMetallicRoughness']
+                                                             ['baseColorTexture']['index']]['source']))
+
+    def high_pass(image):
+        lum = image@LUMA*255
+        return lum-gaussian_filter(lum, 3, mode='nearest')
+    visible, _ = band_visibility(upper, origin_h, axis_h, upper_cut)
+    head = intact(upper, ('body', 'head'))
+    travel = (upper['a']['POSITION'].astype(float)-origin_h)@axis_h
+    band = head[visible & (travel[head].min(1) < upper_cut+DETAIL_BAND) & (travel[head].max(1) > upper_cut)]
+    size = head_image.shape[1::-1]
+    _, y, x, _ = raster(upper['a']['TEXCOORD_0'], band, size)
+    head_spread = float(high_pass(head_image)[y, x].std())
+    lo, hi = rows
+    bridge_spread = float(high_pass(neck_image)[(lo+hi)//2:hi].std())
+    return {'headBandSpread': head_spread, 'bridgeUpperSpread': bridge_spread,
+            'ratio': bridge_spread/max(head_spread, 1e-6), 'limit': GRAIN_MIN}
+
+
+def profile_dips(parts, origin_t, axis_t, origin_h, axis_h, upper_cut):
+    """V19: how far the bridge's interior vertices lie inside both rims."""
+    for _, role, a, f in parts:
+        if role == 'neck_join':
+            p = a['POSITION'].astype(float)[np.unique(f)]
+    lower = np.abs((p-origin_t)@axis_t-LOWER_CUT) < 3e-6
+    upper = np.abs((p-origin_h)@axis_h-upper_cut) < 3e-6
+    dip, theta = bridge_dips(p[~lower & ~upper], p[lower], p[upper], origin_t, axis_t)
+    return {'maxDipM': float(dip.max()), 'atDegrees': float(np.degrees(theta[dip.argmax()])),
+            'over1mm': int((dip > .001).sum()), 'limit': GROOVE_LIMIT}
+
+
 def verify(root, slug, candidate, out, head=None, candidates=None, reports=True):
     root, candidate = Path(root).resolve(), Path(candidate).resolve()
     sex = slug.rsplit('_', 1)[1]
@@ -1316,6 +2404,8 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
     parts = list(vspb.primitives(d, b))
     template_parts = list(vspb.primitives(td, tb))
     head_parts = list(vspb.primitives(hd, hb))
+    tail = [(a, f) for _, role, a, f in parts if role == 'race_tail']
+    v2_tail = [(a, f) for _, role, a, f in head_parts if role == 'race_tail']
 
     def below(prims, fields, exclude=()):
         found, count = Counter(), 0
@@ -1348,7 +2438,8 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
             rim = (np.abs((a['POSITION'].astype(float)-origin_h)@axis_h-upper_cut) < RIM_BAND)[f].any(1)
             nsig.update(vspb.signatures(a, f[~rim], fields+('NORMAL',)))
     cleanup = spec['cleanup']
-    removed = cleanup['fragmentTriangles']+cleanup['innerShellRemoved']
+    removed = (cleanup['fragmentTriangles']+cleanup['innerShellRemoved']
+               + sum(cleanup.get('buried', {}).get(k, 0) for k in ('removed', 'looseRemoved')))
     accessories = []
     for name in ('wardrobe_head_band', 'wardrobe_head_cap'):
         mine = next(m for m in d['meshes'] if m['name'] == name)['primitives']
@@ -1379,18 +2470,18 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
     gate('V6_fragments', not (size < 20).any() and small == small_t, headBridgeComponents=size.tolist(),
          belowCutSmallComponents=small, templateBelowCutSmallComponents=small_t)
     # V7: the head inner shell, recomputed on the candidate.
+    # A face counts as hidden when it fails the 60-direction centroid test
+    # and the dense 4-point lattice + Fibonacci test (HIDDEN_RULE): the first
+    # alone also lists faces that show through a crease or a lip slit.
     upper = block_roles(d, b, {'race_head'})
     keys = list(upper['f']); faces = np.concatenate([upper['f'][k] for k in keys])
-    tag = np.concatenate([[k[0]]*len(upper['f'][k]) for k in keys]); scalp = tag == 'scalp'
-    hidden = 0
-    for wanted, occluders in ((~scalp, ~scalp), (scalp, np.ones(len(faces), bool))):
-        ids = np.flatnonzero(occluders); local = np.flatnonzero(wanted[ids])
-        seen, _ = visibility(upper['a']['POSITION'], upper['a']['NORMAL'], faces[ids], local)
-        hidden += int((~seen[local]).sum())
-    fraction = hidden/len(faces)
+    tag = np.concatenate([[k[0]]*len(upper['f'][k]) for k in keys])
+    hidden60, robust = robust_hidden(upper['a']['POSITION'].astype(float), upper['a']['NORMAL'].astype(float), faces, tag)
+    hidden, fraction = int(robust.sum()), float(robust.mean())
     whole, whole_t = hidden_body(d, b, origin_t, axis_t), hidden_body(td, tb, origin_t, axis_t)
     gate('V7_inner_shell', fraction <= .02 and cleanup['hiddenHeadFraction'] <= .02, hiddenHeadTriangles=hidden,
          hiddenHeadFraction=fraction, recordedFraction=cleanup['hiddenHeadFraction'],
+         hiddenHeadTriangles60=int(hidden60.sum()), hiddenHeadFraction60=float(hidden60.mean()), rule=HIDDEN_RULE,
          wholeBody={'candidate': whole, 'template': whole_t,
                     'belowCutHiddenEqual': whole['belowCutHidden'] == whole_t['belowCutHidden'],
                     'note': 'report only: below the cut the body is the template byte for byte (P0-owned)'})
@@ -1422,8 +2513,10 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
     gate('V10_budget', verts < 40_000 and tris > 18_000 and 7000 < head_tris < 22000,
          vertices=verts, triangles=tris, raceHead=head_tris)
     nodes = Counter(n.get('name') for n in d['nodes'] if 'mesh' in n)
-    required = ('body', 'eyes', 'eyebrows', 'scalp', 'wardrobe_shirt', 'wardrobe_pants', 'wardrobe_boots',
-                'wardrobe_head_band', 'wardrobe_head_cap')
+    wardrobe_nodes = ('wardrobe_shirt', 'wardrobe_pants', 'wardrobe_boots')
+    required = ('body', 'eyes', 'scalp', *wardrobe_nodes, 'wardrobe_head_band', 'wardrobe_head_cap')
+    if not slug.startswith(NO_EYEBROWS):
+        required += ('eyebrows',)
 
     def eyes_image(dd, bb):
         eyes = next(m for m in dd['meshes'] if m['name'] == 'eyes')['primitives'][0]
@@ -1431,7 +2524,7 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
         return spb.image_bytes(dd, bb, dd['textures'][texture]['source'])
     others = [eyes_image(*ea.read_glb(o)) for o in sorted(races.glob('*.glb')) if o.stem != slug]
     body_mat = d['materials'][body['primitives'][0]['material']]
-    wardrobe = [next(m for m in d['meshes'] if m['name'] == w)['primitives'][0]['material'] for w in required[4:7]]
+    wardrobe = [next(m for m in d['meshes'] if m['name'] == w)['primitives'][0]['material'] for w in wardrobe_nodes]
     first_cape = min(i for i, n in enumerate(names) if n.startswith('cape_'))
     highest = max(int(ea.accessor_array(d, b, p['attributes']['JOINTS_0']).max()) for m in d['meshes'] for p in m['primitives'])
     bridges = sum(1 for m in d['meshes'] for p in m['primitives'] if d['materials'][p['material']].get('name') == BRIDGE_MATERIAL)
@@ -1447,7 +2540,8 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
                  'imagesUnnamed': all('name' not in im for im in d['images'])}
     gate('V11_structure', structure['nodesOnce'] and structure['noHair'] and structure['eyesImageUnique']
          and structure['bodyPrim0Textured'] and structure['wardrobeMaterials'] and structure['jointsBelowCape']
-         and bridges == 2 and roles == ['shared_body', 'race_head', 'neck_join', 'shared_neck'] and structure['imagesUnnamed'],
+         and bridges == 2 and roles == ['shared_body', 'race_head', 'neck_join', 'shared_neck']+(['race_tail'] if tail else [])
+         and structure['imagesUnnamed'],
          **structure)
     soles = {}
     for side in ('l', 'r'):
@@ -1476,10 +2570,23 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
     v = np.concatenate([a['TEXCOORD_0'][np.unique(f), 1].astype(float) for _, role, a, f in parts if role == 'neck_join'])
     lo, hi = int(np.ceil(v.min()*NECK_SIZE[1]))+2, int(np.floor(v.max()*NECK_SIZE[1]))-2
     grain = streak_ratio(neck_image[lo:hi])
-    gate('V17_bridge_grain', grain < STREAK_LIMIT, bridgeStreakRatio=grain, rows=[lo, hi], limit=STREAK_LIMIT)
-    if slug in LANDMARKS:
-        ok, landmarks = eye_mask_landmarks(candidate, slug)
-        gate('V14_eye_mask_landmarks', ok, **landmarks)
+    amount = grain_amount(d, b, parts, upper, origin_h, axis_h, upper_cut, neck_image, (lo, hi))
+    gate('V17_bridge_grain', grain < STREAK_LIMIT and amount['ratio'] >= GRAIN_MIN, bridgeStreakRatio=grain, rows=[lo, hi],
+         limit=STREAK_LIMIT, grainAmount=amount)
+    dips = profile_dips(parts, origin_t, axis_t, origin_h, axis_h, upper_cut)
+    gate('V19_bridge_profile', dips['maxDipM'] <= GROOVE_LIMIT, **dips)
+    if tail or v2_tail:
+        ok, values = tail_checks(parts, tail, v2_tail, spec, names, slug)
+        gate('V18_tail', ok, **values)
+    # V14: every landmark check the shipped v2 mask passes still passes, and
+    # both irises pass (glasswarden_male and the Mycelari carry no brow mask
+    # since install drops browStrokes, as the v2 installer did).
+    checks, landmarks = eye_mask_landmarks(candidate, slug, painted=True)
+    before = shipped_mask(head, slug)
+    v2_checks = eye_mask_landmarks(head, slug, before)[0] if before is not None else {}
+    gate('V14_eye_mask_landmarks', all(v for k, v in checks.items() if k.startswith(('iris', 'browStroke')))
+         and all(checks[k] or not v for k, v in v2_checks.items()),
+         checks=checks, v2Checks=v2_checks, **landmarks)
     margins = [float(min((a['TEXCOORD_0'][np.unique(f)].astype(float)*size).min(),
                          (size-a['TEXCOORD_0'][np.unique(f)].astype(float)*size).min()))
                for _, role, a, f in parts if role == 'race_head']
@@ -1519,11 +2626,52 @@ def remove_json_block(path, key):
     indent = len(lines[start])-len(lines[start].lstrip())
     end = next(i for i in range(start+1, len(lines))
                if lines[i].strip().startswith(b'}') and len(lines[i])-len(lines[i].lstrip()) == indent)
+    kept = lines[:start]+lines[end+1:]
     if not lines[end].strip().endswith(b','):
-        raise ValueError(f'{key} is the last member of its object')
-    path.write_bytes(eol.join(lines[:start]+lines[end+1:]))
+        # The last member: the one before it (if any) loses its comma.
+        before = start-1
+        if not lines[before].rstrip().endswith(b','):
+            if not lines[before].rstrip().endswith(b'{'):
+                raise ValueError(f'cannot remove {key}')
+        else:
+            kept[before] = lines[before].rstrip()[:-1]
+    path.write_bytes(eol.join(kept))
     json.loads(path.read_text(encoding='utf-8'))
     return [start+1, end+1]
+
+
+CUFF_RETIRED_REASON = ("Every derived female race was rebased onto the regenerated Human body "
+                       "(eloria-assets/tools/rebase_race_body.py, sharedBodyShape v3) and now carries the Human pants and "
+                       "boots below the neck, so no installed body carries this propagation's outputs. The authoring "
+                       "record stays as history.")
+
+
+def retire_propagation(path, day):
+    """Once install has removed every derived race from the cuff propagation
+    manifest, mark it retired (status, retiredAt, retiredReason) and write the
+    empty assets object as {}: a text edit that keeps the file's line endings
+    and layout (it is not json.dumps round-trip-stable)."""
+    raw = path.read_bytes()
+    eol = b'\r\n' if b'\r\n' in raw else b'\n'
+    document = json.loads(raw)
+    if document['assets'] or document.get('status') == 'retired':
+        return None
+    text = raw.decode('utf-8')
+    newline = eol.decode()
+    empty = re.compile(r'"assets": \{\s*\}')
+    if len(empty.findall(text)) != 1:
+        raise ValueError('cannot find the empty assets object')
+    text = empty.sub('"assets": {}', text)
+    status = f'  "status": {json.dumps(document["status"])},{newline}'
+    if text.count(status) != 1:
+        raise ValueError('cannot find the manifest status')
+    text = text.replace(status, f'  "status": "retired",{newline}  "retiredAt": {json.dumps(day)},{newline}'
+                                f'  "retiredReason": {json.dumps(CUFF_RETIRED_REASON)},{newline}')
+    path.write_bytes(text.encode('utf-8'))
+    retired = json.loads(path.read_text(encoding='utf-8'))
+    if retired['assets'] or retired['status'] != 'retired':
+        raise ValueError('cuff manifest not retired')
+    return {'status': 'retired', 'retiredAt': day, 'previousStatus': document['status']}
 
 
 def untracked(root):
@@ -1612,6 +2760,12 @@ def install(root, candidates, slugs):
                                                 for p in m['primitives'] if p.get('extras', {}).get('sourceRole') == 'neck_join'),
                        triangles=sum(d['accessors'][p['indices']]['count']//3 for m in d['meshes'] for p in m['primitives']),
                        vertices=sum(d['accessors'][p['attributes']['POSITION']]['count'] for m in d['meshes'] for p in m['primitives']))
+        tail = sum(d['accessors'][p['indices']]['count']//3 for m in d['meshes'] for p in m['primitives']
+                   if p.get('extras', {}).get('sourceRole') == 'race_tail')
+        if tail or 'retainedTailTriangles' in catalog:
+            catalog['retainedTailTriangles'] = tail
+        # The Ssarathi waistband repair belonged to the old Luminous trousers.
+        catalog.pop('waistSeamRepair', None)
         data['catalog']['validation']['results'][path.relative_to(root).as_posix()] = {
             'nodes': len(d['nodes']), 'meshes': len(d['meshes']), 'skins': len(d.get('skins', [])),
             'animations': len(d.get('animations', []))}
@@ -1628,11 +2782,20 @@ def install(root, candidates, slugs):
     for slug, config in models['models'].items():
         if slug not in slugs and config != before['models']['models'][slug]:
             raise ValueError(f'calibration changed {slug}')
+    # orun-male-rear-neck-v1 masks faces of the v2 shared_neck by ordinal and
+    # fingerprint; on a rebased body it no longer matches (torso_body_cover.gd
+    # then warns and falls back to the generic rule), so the selector goes.
+    retired = [slug for slug in slugs if models['models'][slug].pop('torsoBodyCover', None) is not None]
+    if retired:
+        files['models'].write_text(json.dumps(models, indent=2)+'\n')
+        report['retiredTorsoBodyCover'] = retired
     seams = {}
     for slug in slugs:
         palette = models['models'][slug]['skinPalette']
         refs = palette['references']
-        if len(refs['body']) != 4 or any(refs[p] != [refs['body'][1]] for p in ('eyes', 'eyebrows', 'scalp')):
+        roles = palette.get('bodySeams', {}).get('roles', ['shared_body', 'race_head', 'neck_join', 'shared_neck'])
+        if (len(refs['body']) != len(roles) or roles[:4] != ['shared_body', 'race_head', 'neck_join', 'shared_neck']
+                or any(refs[p] != [refs['body'][1]] for p in ('eyes', 'eyebrows', 'scalp') if p in refs)):
             raise ValueError(f'{slug}: unexpected palette layout')
         lum = [float(srgb_to_linear(np.array(r))@LUMA) for r in refs['body']]
         after = {'shared_body/shared_neck': lum[0]/lum[3], 'shared_neck/neck_join': lum[3]/lum[2],
@@ -1644,6 +2807,10 @@ def install(root, candidates, slugs):
     for slug in slugs:
         if slug in assets:
             report.setdefault('cuffManifestLinesRemoved', {})[slug] = remove_json_block(files['cuff'], slug)
+    # No derived race left: the propagation record is retired, not deleted.
+    retired_cuff = retire_propagation(files['cuff'], datetime.date.today().isoformat())
+    if retired_cuff:
+        report['cuffManifestRetired'] = retired_cuff
     keep = candidates/'install'; keep.mkdir(parents=True, exist_ok=True)
     for path in files.values():
         shutil.copy2(path, keep/path.name)
@@ -1692,10 +2859,12 @@ def main():
     b.add_argument('--head', type=Path)
     b.add_argument('--head-texture', type=Path)
     b.add_argument('--template', type=Path)
-    b.add_argument('--head-atlas', type=int, default=1024)
+    b.add_argument('--head-atlas', type=int, help='1024 or 2048; default: 1024, else 2048 when the islands do not fit')
     b.add_argument('--head-density-max', type=float, default=20.)
     b.add_argument('--neck-profile', choices=('smooth', 'linear'), default='smooth')
     b.add_argument('--detail-mix', type=float, default=.2)
+    b.add_argument('--skin-target', choices=('face', 'ring'), default='face',
+                   help='skin recolour target: the face reference (default) or the pilot neck-ring median')
     v = sub.add_parser('verify')
     v.add_argument('--root', type=Path, required=True)
     v.add_argument('--slug', required=True)
@@ -1711,7 +2880,7 @@ def main():
     args = ap.parse_args()
     if args.command == 'build':
         report = build(args.root, args.slug, args.out, args.head, args.head_texture, args.template,
-                       args.head_atlas, args.head_density_max, args.neck_profile, args.detail_mix)
+                       args.head_atlas, args.head_density_max, args.neck_profile, args.detail_mix, args.skin_target)
         print(json.dumps({k: report[k] for k in ('outputSHA256', 'trianglesByRole', 'sharedNeck', 'headAtlas')}, indent=2))
     elif args.command == 'verify':
         result = verify(args.root, args.slug, args.candidate, args.out, args.head, reports=not args.no_reports)

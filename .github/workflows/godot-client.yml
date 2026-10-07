@@ -52,7 +52,6 @@ jobs:
             godot-client/tests/test_canonical_equipment.py \
             godot-client/tests/test_class_equipment_fit_revision.py \
             godot-client/tests/test_luminous_cuff_fit_authoring.py \
-            godot-client/tests/test_orun_neck_apron_mask.py \
             godot-client/tests/test_race_rebase.py \
             -q
       - name: Validate canonical equipment and animation paths

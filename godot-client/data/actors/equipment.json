@@ -31091,7 +31091,7 @@
   "fitGroups": {
     "glasswarden_female": [
       "canonical_glasswarden_female",
-      "canonical_luminous_female"
+      "canonical_human_female"
     ],
     "greyhaven_female": [
       "canonical_greyhaven_female",
@@ -31103,35 +31103,39 @@
     ],
     "mycelari_female": [
       "canonical_mycelari_female",
-      "canonical_luminous_female"
+      "canonical_human_female"
     ],
     "orun_female": [
       "canonical_orun_female",
-      "canonical_luminous_female"
+      "canonical_human_female"
     ],
     "orun_male": [
-      "canonical_orun_male"
+      "canonical_orun_male",
+      "canonical_human_male"
     ],
     "ssarathi_female": [
       "canonical_ssarathi_female",
-      "canonical_luminous_female"
+      "canonical_human_female"
     ],
     "ssarathi_male": [
-      "canonical_ssarathi_male"
+      "canonical_ssarathi_male",
+      "canonical_human_male"
     ],
     "stoneborn_female": [
       "canonical_stoneborn_female",
-      "canonical_luminous_female"
+      "canonical_human_female"
     ],
     "stoneborn_male": [
-      "canonical_stoneborn_male"
+      "canonical_stoneborn_male",
+      "canonical_human_male"
     ],
     "votary_female": [
       "canonical_votary_female",
-      "canonical_luminous_female"
+      "canonical_human_female"
     ],
     "glasswarden_male": [
-      "canonical_glasswarden_male"
+      "canonical_glasswarden_male",
+      "canonical_human_male"
     ],
     "greyhaven_male": [
       "canonical_greyhaven_male",
@@ -31142,10 +31146,12 @@
       "canonical_luminous_male"
     ],
     "mycelari_male": [
-      "canonical_mycelari_male"
+      "canonical_mycelari_male",
+      "canonical_human_male"
     ],
     "votary_male": [
-      "canonical_votary_male"
+      "canonical_votary_male",
+      "canonical_human_male"
     ]
   },
   "authoringRigs": {
@@ -31154,48 +31160,48 @@
   },
   "bodyGirth": {
     "glasswarden_female": {
-      "pelvis": 0.18249,
-      "spine_02": 0.15206,
-      "spine_03": 0.20566,
-      "neck_01": 0.0919,
-      "clavicle_l": 0.11257,
-      "clavicle_r": 0.10666,
-      "upperarm_l": 0.07406,
-      "upperarm_r": 0.07401,
-      "lowerarm_l": 0.05422,
-      "lowerarm_r": 0.06006,
-      "hand_l": 0.06048,
-      "hand_r": 0.0624,
-      "thigh_l": 0.10304,
-      "thigh_r": 0.10423,
-      "calf_l": 0.09065,
-      "calf_r": 0.08879,
-      "foot_l": 0.07874,
-      "foot_r": 0.07577,
-      "ball_l": 0.06861,
-      "ball_r": 0.0692
+      "pelvis": 0.19999,
+      "spine_02": 0.15238,
+      "spine_03": 0.20876,
+      "neck_01": 0.08652,
+      "clavicle_l": 0.09661,
+      "clavicle_r": 0.08832,
+      "upperarm_l": 0.06768,
+      "upperarm_r": 0.06922,
+      "lowerarm_l": 0.04753,
+      "lowerarm_r": 0.04932,
+      "hand_l": 0.04581,
+      "hand_r": 0.04629,
+      "thigh_l": 0.10283,
+      "thigh_r": 0.10283,
+      "calf_l": 0.08808,
+      "calf_r": 0.09107,
+      "foot_l": 0.07285,
+      "foot_r": 0.07663,
+      "ball_l": 0.05924,
+      "ball_r": 0.05807
     },
     "glasswarden_male": {
-      "pelvis": 0.18447,
-      "spine_02": 0.15912,
-      "spine_03": 0.21007,
-      "neck_01": 0.0944,
-      "clavicle_l": 0.10737,
-      "clavicle_r": 0.12791,
-      "upperarm_l": 0.07584,
-      "upperarm_r": 0.08186,
-      "lowerarm_l": 0.0571,
-      "lowerarm_r": 0.05762,
-      "hand_l": 0.06021,
-      "hand_r": 0.05843,
-      "thigh_l": 0.11049,
-      "thigh_r": 0.11117,
-      "calf_l": 0.08944,
-      "calf_r": 0.08806,
-      "foot_l": 0.07585,
-      "foot_r": 0.07716,
-      "ball_l": 0.06999,
-      "ball_r": 0.07056
+      "pelvis": 0.18864,
+      "spine_02": 0.15346,
+      "spine_03": 0.1986,
+      "neck_01": 0.0994,
+      "clavicle_l": 0.10927,
+      "clavicle_r": 0.10119,
+      "upperarm_l": 0.07348,
+      "upperarm_r": 0.07578,
+      "lowerarm_l": 0.05665,
+      "lowerarm_r": 0.06245,
+      "hand_l": 0.07321,
+      "hand_r": 0.06297,
+      "thigh_l": 0.11303,
+      "thigh_r": 0.11246,
+      "calf_l": 0.09982,
+      "calf_r": 0.09378,
+      "foot_l": 0.0777,
+      "foot_r": 0.07721,
+      "ball_l": 0.06169,
+      "ball_r": 0.06206
     },
     "greyhaven_female": {
       "pelvis": 0.19999,
@@ -31286,238 +31292,238 @@
       "ball_r": 0.06206
     },
     "mycelari_female": {
-      "pelvis": 0.18249,
-      "spine_02": 0.15206,
-      "spine_03": 0.20566,
-      "neck_01": 0.0919,
-      "clavicle_l": 0.11257,
-      "clavicle_r": 0.10666,
-      "upperarm_l": 0.07406,
-      "upperarm_r": 0.07401,
-      "lowerarm_l": 0.05422,
-      "lowerarm_r": 0.06006,
-      "hand_l": 0.06048,
-      "hand_r": 0.0624,
-      "thigh_l": 0.10304,
-      "thigh_r": 0.10423,
-      "calf_l": 0.09065,
-      "calf_r": 0.08879,
-      "foot_l": 0.07874,
-      "foot_r": 0.07577,
-      "ball_l": 0.06861,
-      "ball_r": 0.0692
+      "pelvis": 0.19999,
+      "spine_02": 0.15238,
+      "spine_03": 0.20876,
+      "neck_01": 0.08652,
+      "clavicle_l": 0.09661,
+      "clavicle_r": 0.08832,
+      "upperarm_l": 0.06768,
+      "upperarm_r": 0.06922,
+      "lowerarm_l": 0.04753,
+      "lowerarm_r": 0.04932,
+      "hand_l": 0.04581,
+      "hand_r": 0.04629,
+      "thigh_l": 0.10283,
+      "thigh_r": 0.10283,
+      "calf_l": 0.08808,
+      "calf_r": 0.09107,
+      "foot_l": 0.07285,
+      "foot_r": 0.07663,
+      "ball_l": 0.05924,
+      "ball_r": 0.05807
     },
     "mycelari_male": {
-      "pelvis": 0.18447,
-      "spine_02": 0.15912,
-      "spine_03": 0.21007,
-      "neck_01": 0.0944,
-      "clavicle_l": 0.10737,
-      "clavicle_r": 0.12791,
-      "upperarm_l": 0.07584,
-      "upperarm_r": 0.08186,
-      "lowerarm_l": 0.0571,
-      "lowerarm_r": 0.05762,
-      "hand_l": 0.06021,
-      "hand_r": 0.05843,
-      "thigh_l": 0.11049,
-      "thigh_r": 0.11117,
-      "calf_l": 0.08944,
-      "calf_r": 0.08806,
-      "foot_l": 0.07585,
-      "foot_r": 0.07716,
-      "ball_l": 0.06999,
-      "ball_r": 0.07056
+      "pelvis": 0.18864,
+      "spine_02": 0.15346,
+      "spine_03": 0.1986,
+      "neck_01": 0.0994,
+      "clavicle_l": 0.10927,
+      "clavicle_r": 0.10119,
+      "upperarm_l": 0.07348,
+      "upperarm_r": 0.07578,
+      "lowerarm_l": 0.05665,
+      "lowerarm_r": 0.06245,
+      "hand_l": 0.07321,
+      "hand_r": 0.06297,
+      "thigh_l": 0.11303,
+      "thigh_r": 0.11246,
+      "calf_l": 0.09982,
+      "calf_r": 0.09378,
+      "foot_l": 0.0777,
+      "foot_r": 0.07721,
+      "ball_l": 0.06169,
+      "ball_r": 0.06206
     },
     "orun_female": {
-      "pelvis": 0.18249,
-      "spine_02": 0.15206,
-      "spine_03": 0.20566,
-      "neck_01": 0.0919,
-      "clavicle_l": 0.11257,
-      "clavicle_r": 0.10666,
-      "upperarm_l": 0.07406,
-      "upperarm_r": 0.07401,
-      "lowerarm_l": 0.05422,
-      "lowerarm_r": 0.06006,
-      "hand_l": 0.06048,
-      "hand_r": 0.0624,
-      "thigh_l": 0.10304,
-      "thigh_r": 0.10423,
-      "calf_l": 0.09065,
-      "calf_r": 0.08879,
-      "foot_l": 0.07874,
-      "foot_r": 0.07577,
-      "ball_l": 0.06861,
-      "ball_r": 0.0692
+      "pelvis": 0.19999,
+      "spine_02": 0.15238,
+      "spine_03": 0.20876,
+      "neck_01": 0.08652,
+      "clavicle_l": 0.09661,
+      "clavicle_r": 0.08832,
+      "upperarm_l": 0.06768,
+      "upperarm_r": 0.06922,
+      "lowerarm_l": 0.04753,
+      "lowerarm_r": 0.04932,
+      "hand_l": 0.04581,
+      "hand_r": 0.04629,
+      "thigh_l": 0.10283,
+      "thigh_r": 0.10283,
+      "calf_l": 0.08808,
+      "calf_r": 0.09107,
+      "foot_l": 0.07285,
+      "foot_r": 0.07663,
+      "ball_l": 0.05924,
+      "ball_r": 0.05807
     },
     "orun_male": {
-      "pelvis": 0.18447,
-      "spine_02": 0.15912,
-      "spine_03": 0.21007,
-      "neck_01": 0.0944,
-      "clavicle_l": 0.10737,
-      "clavicle_r": 0.12791,
-      "upperarm_l": 0.07584,
-      "upperarm_r": 0.08186,
-      "lowerarm_l": 0.0571,
-      "lowerarm_r": 0.05762,
-      "hand_l": 0.06021,
-      "hand_r": 0.05843,
-      "thigh_l": 0.11049,
-      "thigh_r": 0.11117,
-      "calf_l": 0.08944,
-      "calf_r": 0.08806,
-      "foot_l": 0.07585,
-      "foot_r": 0.07716,
-      "ball_l": 0.06999,
-      "ball_r": 0.07056
+      "pelvis": 0.18864,
+      "spine_02": 0.15346,
+      "spine_03": 0.1986,
+      "neck_01": 0.0994,
+      "clavicle_l": 0.10927,
+      "clavicle_r": 0.10119,
+      "upperarm_l": 0.07348,
+      "upperarm_r": 0.07578,
+      "lowerarm_l": 0.05665,
+      "lowerarm_r": 0.06245,
+      "hand_l": 0.07321,
+      "hand_r": 0.06297,
+      "thigh_l": 0.11303,
+      "thigh_r": 0.11246,
+      "calf_l": 0.09982,
+      "calf_r": 0.09378,
+      "foot_l": 0.0777,
+      "foot_r": 0.07721,
+      "ball_l": 0.06169,
+      "ball_r": 0.06206
     },
     "ssarathi_female": {
-      "pelvis": 0.18249,
-      "spine_02": 0.15206,
-      "spine_03": 0.20566,
-      "neck_01": 0.0919,
-      "clavicle_l": 0.11257,
-      "clavicle_r": 0.10666,
-      "upperarm_l": 0.07406,
-      "upperarm_r": 0.07401,
-      "lowerarm_l": 0.05422,
-      "lowerarm_r": 0.06006,
-      "hand_l": 0.06048,
-      "hand_r": 0.0624,
-      "thigh_l": 0.1851,
-      "thigh_r": 0.10581,
-      "calf_l": 0.09065,
-      "calf_r": 0.08879,
-      "foot_l": 0.07874,
-      "foot_r": 0.07577,
-      "ball_l": 0.06861,
-      "ball_r": 0.0692
+      "pelvis": 0.19999,
+      "spine_02": 0.15238,
+      "spine_03": 0.20876,
+      "neck_01": 0.08652,
+      "clavicle_l": 0.09661,
+      "clavicle_r": 0.08832,
+      "upperarm_l": 0.06768,
+      "upperarm_r": 0.06922,
+      "lowerarm_l": 0.04753,
+      "lowerarm_r": 0.04932,
+      "hand_l": 0.04581,
+      "hand_r": 0.04629,
+      "thigh_l": 0.10283,
+      "thigh_r": 0.10283,
+      "calf_l": 0.08808,
+      "calf_r": 0.09107,
+      "foot_l": 0.07285,
+      "foot_r": 0.07663,
+      "ball_l": 0.05924,
+      "ball_r": 0.05807
     },
     "ssarathi_male": {
-      "pelvis": 0.18447,
-      "spine_02": 0.15912,
-      "spine_03": 0.21007,
-      "neck_01": 0.0944,
-      "clavicle_l": 0.10737,
-      "clavicle_r": 0.12791,
-      "upperarm_l": 0.07584,
-      "upperarm_r": 0.08186,
-      "lowerarm_l": 0.0571,
-      "lowerarm_r": 0.05762,
-      "hand_l": 0.06021,
-      "hand_r": 0.05843,
-      "thigh_l": 0.20809,
-      "thigh_r": 0.11244,
-      "calf_l": 0.08944,
-      "calf_r": 0.08806,
-      "foot_l": 0.07585,
-      "foot_r": 0.07716,
-      "ball_l": 0.06999,
-      "ball_r": 0.07056
+      "pelvis": 0.18864,
+      "spine_02": 0.15346,
+      "spine_03": 0.1986,
+      "neck_01": 0.0994,
+      "clavicle_l": 0.10927,
+      "clavicle_r": 0.10119,
+      "upperarm_l": 0.07348,
+      "upperarm_r": 0.07578,
+      "lowerarm_l": 0.05665,
+      "lowerarm_r": 0.06245,
+      "hand_l": 0.07321,
+      "hand_r": 0.06297,
+      "thigh_l": 0.11303,
+      "thigh_r": 0.11246,
+      "calf_l": 0.09982,
+      "calf_r": 0.09378,
+      "foot_l": 0.0777,
+      "foot_r": 0.07721,
+      "ball_l": 0.06169,
+      "ball_r": 0.06206
     },
     "stoneborn_female": {
-      "pelvis": 0.18249,
-      "spine_02": 0.15206,
-      "spine_03": 0.20566,
-      "neck_01": 0.0919,
-      "clavicle_l": 0.11257,
-      "clavicle_r": 0.10666,
-      "upperarm_l": 0.07406,
-      "upperarm_r": 0.07401,
-      "lowerarm_l": 0.05422,
-      "lowerarm_r": 0.06006,
-      "hand_l": 0.06048,
-      "hand_r": 0.0624,
-      "thigh_l": 0.10304,
-      "thigh_r": 0.10423,
-      "calf_l": 0.09065,
-      "calf_r": 0.08879,
-      "foot_l": 0.07874,
-      "foot_r": 0.07577,
-      "ball_l": 0.06861,
-      "ball_r": 0.0692
+      "pelvis": 0.19999,
+      "spine_02": 0.15238,
+      "spine_03": 0.20876,
+      "neck_01": 0.08652,
+      "clavicle_l": 0.09661,
+      "clavicle_r": 0.08832,
+      "upperarm_l": 0.06768,
+      "upperarm_r": 0.06922,
+      "lowerarm_l": 0.04753,
+      "lowerarm_r": 0.04932,
+      "hand_l": 0.04581,
+      "hand_r": 0.04629,
+      "thigh_l": 0.10283,
+      "thigh_r": 0.10283,
+      "calf_l": 0.08808,
+      "calf_r": 0.09107,
+      "foot_l": 0.07285,
+      "foot_r": 0.07663,
+      "ball_l": 0.05924,
+      "ball_r": 0.05807
     },
     "stoneborn_male": {
-      "pelvis": 0.18447,
-      "spine_02": 0.15912,
-      "spine_03": 0.21007,
-      "neck_01": 0.0944,
-      "clavicle_l": 0.10737,
-      "clavicle_r": 0.12791,
-      "upperarm_l": 0.07584,
-      "upperarm_r": 0.08186,
-      "lowerarm_l": 0.0571,
-      "lowerarm_r": 0.05762,
-      "hand_l": 0.06021,
-      "hand_r": 0.05843,
-      "thigh_l": 0.11049,
-      "thigh_r": 0.11117,
-      "calf_l": 0.08944,
-      "calf_r": 0.08806,
-      "foot_l": 0.07585,
-      "foot_r": 0.07716,
-      "ball_l": 0.06999,
-      "ball_r": 0.07056
+      "pelvis": 0.18864,
+      "spine_02": 0.15346,
+      "spine_03": 0.1986,
+      "neck_01": 0.0994,
+      "clavicle_l": 0.10927,
+      "clavicle_r": 0.10119,
+      "upperarm_l": 0.07348,
+      "upperarm_r": 0.07578,
+      "lowerarm_l": 0.05665,
+      "lowerarm_r": 0.06245,
+      "hand_l": 0.07321,
+      "hand_r": 0.06297,
+      "thigh_l": 0.11303,
+      "thigh_r": 0.11246,
+      "calf_l": 0.09982,
+      "calf_r": 0.09378,
+      "foot_l": 0.0777,
+      "foot_r": 0.07721,
+      "ball_l": 0.06169,
+      "ball_r": 0.06206
     },
     "votary_female": {
-      "pelvis": 0.18249,
-      "spine_02": 0.15206,
-      "spine_03": 0.20566,
-      "neck_01": 0.0919,
-      "clavicle_l": 0.11257,
-      "clavicle_r": 0.10666,
-      "upperarm_l": 0.07406,
-      "upperarm_r": 0.07401,
-      "lowerarm_l": 0.05422,
-      "lowerarm_r": 0.06006,
-      "hand_l": 0.06048,
-      "hand_r": 0.0624,
-      "thigh_l": 0.10304,
-      "thigh_r": 0.10423,
-      "calf_l": 0.09065,
-      "calf_r": 0.08879,
-      "foot_l": 0.07874,
-      "foot_r": 0.07577,
-      "ball_l": 0.06861,
-      "ball_r": 0.0692
+      "pelvis": 0.19999,
+      "spine_02": 0.15238,
+      "spine_03": 0.20876,
+      "neck_01": 0.08652,
+      "clavicle_l": 0.09661,
+      "clavicle_r": 0.08832,
+      "upperarm_l": 0.06768,
+      "upperarm_r": 0.06922,
+      "lowerarm_l": 0.04753,
+      "lowerarm_r": 0.04932,
+      "hand_l": 0.04581,
+      "hand_r": 0.04629,
+      "thigh_l": 0.10283,
+      "thigh_r": 0.10283,
+      "calf_l": 0.08808,
+      "calf_r": 0.09107,
+      "foot_l": 0.07285,
+      "foot_r": 0.07663,
+      "ball_l": 0.05924,
+      "ball_r": 0.05807
     },
     "votary_male": {
-      "pelvis": 0.18447,
-      "spine_02": 0.15912,
-      "spine_03": 0.21007,
-      "neck_01": 0.0944,
-      "clavicle_l": 0.10737,
-      "clavicle_r": 0.12791,
-      "upperarm_l": 0.07584,
-      "upperarm_r": 0.08186,
-      "lowerarm_l": 0.0571,
-      "lowerarm_r": 0.05762,
-      "hand_l": 0.06021,
-      "hand_r": 0.05843,
-      "thigh_l": 0.11049,
-      "thigh_r": 0.11117,
-      "calf_l": 0.08944,
-      "calf_r": 0.08806,
-      "foot_l": 0.07585,
-      "foot_r": 0.07716,
-      "ball_l": 0.06999,
-      "ball_r": 0.07056
+      "pelvis": 0.18864,
+      "spine_02": 0.15346,
+      "spine_03": 0.1986,
+      "neck_01": 0.0994,
+      "clavicle_l": 0.10927,
+      "clavicle_r": 0.10119,
+      "upperarm_l": 0.07348,
+      "upperarm_r": 0.07578,
+      "lowerarm_l": 0.05665,
+      "lowerarm_r": 0.06245,
+      "hand_l": 0.07321,
+      "hand_r": 0.06297,
+      "thigh_l": 0.11303,
+      "thigh_r": 0.11246,
+      "calf_l": 0.09982,
+      "calf_r": 0.09378,
+      "foot_l": 0.0777,
+      "foot_r": 0.07721,
+      "ball_l": 0.06169,
+      "ball_r": 0.06206
     }
   },
   "soleDrop": {
     "glasswarden_female": {
-      "foot_l": 0.09774,
-      "foot_r": 0.09796,
-      "ball_l": 0.01498,
-      "ball_r": 0.0152
+      "foot_l": 0.09758,
+      "foot_r": 0.09788,
+      "ball_l": 0.01482,
+      "ball_r": 0.01512
     },
     "glasswarden_male": {
-      "foot_l": 0.09445,
-      "foot_r": 0.09796,
-      "ball_l": 0.01169,
-      "ball_r": 0.0152
+      "foot_l": 0.10061,
+      "foot_r": 0.10001,
+      "ball_l": 0.01784,
+      "ball_r": 0.01725
     },
     "greyhaven_female": {
       "foot_l": 0.09758,
@@ -31544,109 +31550,109 @@
       "ball_r": 0.01725
     },
     "mycelari_female": {
-      "foot_l": 0.09774,
-      "foot_r": 0.09796,
-      "ball_l": 0.01498,
-      "ball_r": 0.0152
+      "foot_l": 0.09758,
+      "foot_r": 0.09788,
+      "ball_l": 0.01482,
+      "ball_r": 0.01512
     },
     "mycelari_male": {
-      "foot_l": 0.09445,
-      "foot_r": 0.09796,
-      "ball_l": 0.01169,
-      "ball_r": 0.0152
+      "foot_l": 0.10061,
+      "foot_r": 0.10001,
+      "ball_l": 0.01784,
+      "ball_r": 0.01725
     },
     "orun_female": {
-      "foot_l": 0.09774,
-      "foot_r": 0.09796,
-      "ball_l": 0.01498,
-      "ball_r": 0.0152
+      "foot_l": 0.09758,
+      "foot_r": 0.09788,
+      "ball_l": 0.01482,
+      "ball_r": 0.01512
     },
     "orun_male": {
-      "foot_l": 0.09445,
-      "foot_r": 0.09796,
-      "ball_l": 0.01169,
-      "ball_r": 0.0152
+      "foot_l": 0.10061,
+      "foot_r": 0.10001,
+      "ball_l": 0.01784,
+      "ball_r": 0.01725
     },
     "ssarathi_female": {
-      "foot_l": 0.09774,
-      "foot_r": 0.09796,
-      "ball_l": 0.01498,
-      "ball_r": 0.0152
+      "foot_l": 0.09758,
+      "foot_r": 0.09788,
+      "ball_l": 0.01482,
+      "ball_r": 0.01512
     },
     "ssarathi_male": {
-      "foot_l": 0.09445,
-      "foot_r": 0.09796,
-      "ball_l": 0.01169,
-      "ball_r": 0.0152
+      "foot_l": 0.10061,
+      "foot_r": 0.10001,
+      "ball_l": 0.01784,
+      "ball_r": 0.01725
     },
     "stoneborn_female": {
-      "foot_l": 0.09774,
-      "foot_r": 0.09796,
-      "ball_l": 0.01498,
-      "ball_r": 0.0152
+      "foot_l": 0.09758,
+      "foot_r": 0.09788,
+      "ball_l": 0.01482,
+      "ball_r": 0.01512
     },
     "stoneborn_male": {
-      "foot_l": 0.09445,
-      "foot_r": 0.09796,
-      "ball_l": 0.01169,
-      "ball_r": 0.0152
+      "foot_l": 0.10061,
+      "foot_r": 0.10001,
+      "ball_l": 0.01784,
+      "ball_r": 0.01725
     },
     "votary_female": {
-      "foot_l": 0.09774,
-      "foot_r": 0.09796,
-      "ball_l": 0.01498,
-      "ball_r": 0.0152
+      "foot_l": 0.09758,
+      "foot_r": 0.09788,
+      "ball_l": 0.01482,
+      "ball_r": 0.01512
     },
     "votary_male": {
-      "foot_l": 0.09445,
-      "foot_r": 0.09796,
-      "ball_l": 0.01169,
-      "ball_r": 0.0152
+      "foot_l": 0.10061,
+      "foot_r": 0.10001,
+      "ball_l": 0.01784,
+      "ball_r": 0.01725
     }
   },
   "footAnchor": {
     "glasswarden_female": {
       "foot_l": [
-        -0.00418,
-        -0.09774,
-        0.08094
+        0.01065,
+        -0.09758,
+        0.08036
       ],
       "ball_l": [
-        -0.00418,
-        -0.01498,
-        -0.08049
+        0.01065,
+        -0.01482,
+        -0.08107
       ],
       "foot_r": [
-        0.00248,
-        -0.09796,
-        0.08364
+        -0.00779,
+        -0.09788,
+        0.08044
       ],
       "ball_r": [
-        0.00248,
-        -0.0152,
-        -0.07778
+        -0.00779,
+        -0.01512,
+        -0.08099
       ]
     },
     "glasswarden_male": {
       "foot_l": [
-        0.00242,
-        -0.09445,
-        0.08787
+        0.01233,
+        -0.10061,
+        0.06524
       ],
       "ball_l": [
-        0.00242,
-        -0.01169,
-        -0.07356
+        0.01233,
+        -0.01784,
+        -0.09619
       ],
       "foot_r": [
-        0.00052,
-        -0.09796,
-        0.091
+        -0.01294,
+        -0.10001,
+        0.06544
       ],
       "ball_r": [
-        0.00052,
-        -0.0152,
-        -0.07043
+        -0.01294,
+        -0.01725,
+        -0.09599
       ]
     },
     "greyhaven_female": {
@@ -31739,222 +31745,222 @@
     },
     "mycelari_female": {
       "foot_l": [
-        -0.00418,
-        -0.09774,
-        0.08094
+        0.01065,
+        -0.09758,
+        0.08036
       ],
       "ball_l": [
-        -0.00418,
-        -0.01498,
-        -0.08049
+        0.01065,
+        -0.01482,
+        -0.08107
       ],
       "foot_r": [
-        0.00248,
-        -0.09796,
-        0.08364
+        -0.00779,
+        -0.09788,
+        0.08044
       ],
       "ball_r": [
-        0.00248,
-        -0.0152,
-        -0.07778
+        -0.00779,
+        -0.01512,
+        -0.08099
       ]
     },
     "mycelari_male": {
       "foot_l": [
-        0.00242,
-        -0.09445,
-        0.08787
+        0.01233,
+        -0.10061,
+        0.06524
       ],
       "ball_l": [
-        0.00242,
-        -0.01169,
-        -0.07356
+        0.01233,
+        -0.01784,
+        -0.09619
       ],
       "foot_r": [
-        0.00052,
-        -0.09796,
-        0.091
+        -0.01294,
+        -0.10001,
+        0.06544
       ],
       "ball_r": [
-        0.00052,
-        -0.0152,
-        -0.07043
+        -0.01294,
+        -0.01725,
+        -0.09599
       ]
     },
     "orun_female": {
       "foot_l": [
-        -0.00418,
-        -0.09774,
-        0.08094
+        0.01065,
+        -0.09758,
+        0.08036
       ],
       "ball_l": [
-        -0.00418,
-        -0.01498,
-        -0.08049
+        0.01065,
+        -0.01482,
+        -0.08107
       ],
       "foot_r": [
-        0.00248,
-        -0.09796,
-        0.08364
+        -0.00779,
+        -0.09788,
+        0.08044
       ],
       "ball_r": [
-        0.00248,
-        -0.0152,
-        -0.07778
+        -0.00779,
+        -0.01512,
+        -0.08099
       ]
     },
     "orun_male": {
       "foot_l": [
-        0.00242,
-        -0.09445,
-        0.08787
+        0.01233,
+        -0.10061,
+        0.06524
       ],
       "ball_l": [
-        0.00242,
-        -0.01169,
-        -0.07356
+        0.01233,
+        -0.01784,
+        -0.09619
       ],
       "foot_r": [
-        0.00052,
-        -0.09796,
-        0.091
+        -0.01294,
+        -0.10001,
+        0.06544
       ],
       "ball_r": [
-        0.00052,
-        -0.0152,
-        -0.07043
+        -0.01294,
+        -0.01725,
+        -0.09599
       ]
     },
     "ssarathi_female": {
       "foot_l": [
-        -0.00418,
-        -0.09774,
-        0.08094
+        0.01065,
+        -0.09758,
+        0.08036
       ],
       "ball_l": [
-        -0.00418,
-        -0.01498,
-        -0.08049
+        0.01065,
+        -0.01482,
+        -0.08107
       ],
       "foot_r": [
-        0.00248,
-        -0.09796,
-        0.08364
+        -0.00779,
+        -0.09788,
+        0.08044
       ],
       "ball_r": [
-        0.00248,
-        -0.0152,
-        -0.07778
+        -0.00779,
+        -0.01512,
+        -0.08099
       ]
     },
     "ssarathi_male": {
       "foot_l": [
-        0.00242,
-        -0.09445,
-        0.08787
+        0.01233,
+        -0.10061,
+        0.06524
       ],
       "ball_l": [
-        0.00242,
-        -0.01169,
-        -0.07356
+        0.01233,
+        -0.01784,
+        -0.09619
       ],
       "foot_r": [
-        0.00052,
-        -0.09796,
-        0.091
+        -0.01294,
+        -0.10001,
+        0.06544
       ],
       "ball_r": [
-        0.00052,
-        -0.0152,
-        -0.07043
+        -0.01294,
+        -0.01725,
+        -0.09599
       ]
     },
     "stoneborn_female": {
       "foot_l": [
-        -0.00418,
-        -0.09774,
-        0.08094
+        0.01065,
+        -0.09758,
+        0.08036
       ],
       "ball_l": [
-        -0.00418,
-        -0.01498,
-        -0.08049
+        0.01065,
+        -0.01482,
+        -0.08107
       ],
       "foot_r": [
-        0.00248,
-        -0.09796,
-        0.08364
+        -0.00779,
+        -0.09788,
+        0.08044
       ],
       "ball_r": [
-        0.00248,
-        -0.0152,
-        -0.07778
+        -0.00779,
+        -0.01512,
+        -0.08099
       ]
     },
     "stoneborn_male": {
       "foot_l": [
-        0.00242,
-        -0.09445,
-        0.08787
+        0.01233,
+        -0.10061,
+        0.06524
       ],
       "ball_l": [
-        0.00242,
-        -0.01169,
-        -0.07356
+        0.01233,
+        -0.01784,
+        -0.09619
       ],
       "foot_r": [
-        0.00052,
-        -0.09796,
-        0.091
+        -0.01294,
+        -0.10001,
+        0.06544
       ],
       "ball_r": [
-        0.00052,
-        -0.0152,
-        -0.07043
+        -0.01294,
+        -0.01725,
+        -0.09599
       ]
     },
     "votary_female": {
       "foot_l": [
-        -0.00418,
-        -0.09774,
-        0.08094
+        0.01065,
+        -0.09758,
+        0.08036
       ],
       "ball_l": [
-        -0.00418,
-        -0.01498,
-        -0.08049
+        0.01065,
+        -0.01482,
+        -0.08107
       ],
       "foot_r": [
-        0.00248,
-        -0.09796,
-        0.08364
+        -0.00779,
+        -0.09788,
+        0.08044
       ],
       "ball_r": [
-        0.00248,
-        -0.0152,
-        -0.07778
+        -0.00779,
+        -0.01512,
+        -0.08099
       ]
     },
     "votary_male": {
       "foot_l": [
-        0.00242,
-        -0.09445,
-        0.08787
+        0.01233,
+        -0.10061,
+        0.06524
       ],
       "ball_l": [
-        0.00242,
-        -0.01169,
-        -0.07356
+        0.01233,
+        -0.01784,
+        -0.09619
       ],
       "foot_r": [
-        0.00052,
-        -0.09796,
-        0.091
+        -0.01294,
+        -0.10001,
+        0.06544
       ],
       "ball_r": [
-        0.00052,
-        -0.0152,
-        -0.07043
+        -0.01294,
+        -0.01725,
+        -0.09599
       ]
     }
   },
@@ -31963,46 +31969,46 @@
       "canonicalHeadRestY": 1.5998,
       "bodyGirth": {
         "glasswarden_female": {
-          "pelvis": 0.17519,
-          "spine_01": 0.12375,
-          "spine_02": 0.1375,
-          "spine_03": 0.14357,
-          "neck_01": 0.07592,
-          "clavicle_l": 0.08402,
-          "clavicle_r": 0.08402,
-          "upperarm_l": 0.04443,
-          "upperarm_r": 0.04443,
-          "lowerarm_l": 0.03943,
-          "lowerarm_r": 0.03943,
-          "hand_l": 0.03959,
-          "hand_r": 0.03959,
-          "thigh_l": 0.10796,
-          "thigh_r": 0.10796,
-          "calf_l": 0.07265,
-          "calf_r": 0.07265,
-          "foot_l": 0.06643,
-          "foot_r": 0.06643,
-          "ball_l": 0.05406,
-          "ball_r": 0.05406
+          "pelvis": 0.18703,
+          "spine_01": 0.13431,
+          "spine_02": 0.15,
+          "spine_03": 0.15811,
+          "neck_01": 0.07656,
+          "clavicle_l": 0.09336,
+          "clavicle_r": 0.09336,
+          "upperarm_l": 0.05315,
+          "upperarm_r": 0.05315,
+          "lowerarm_l": 0.04504,
+          "lowerarm_r": 0.04504,
+          "hand_l": 0.04077,
+          "hand_r": 0.04077,
+          "thigh_l": 0.11451,
+          "thigh_r": 0.11451,
+          "calf_l": 0.07878,
+          "calf_r": 0.07878,
+          "foot_l": 0.06648,
+          "foot_r": 0.06648,
+          "ball_l": 0.05515,
+          "ball_r": 0.05515
         },
         "glasswarden_male": {
-          "pelvis": 0.16682,
-          "spine_01": 0.1329,
-          "spine_02": 0.17379,
-          "spine_03": 0.19176,
-          "neck_01": 0.11446,
-          "clavicle_l": 0.11085,
-          "clavicle_r": 0.11085,
-          "upperarm_l": 0.07098,
-          "upperarm_r": 0.07098,
-          "lowerarm_l": 0.05473,
-          "lowerarm_r": 0.05473,
-          "hand_l": 0.04353,
-          "hand_r": 0.04353,
-          "thigh_l": 0.09542,
-          "thigh_r": 0.09542,
-          "calf_l": 0.07279,
-          "calf_r": 0.07279,
+          "pelvis": 0.17424,
+          "spine_01": 0.14538,
+          "spine_02": 0.19071,
+          "spine_03": 0.2101,
+          "neck_01": 0.11185,
+          "clavicle_l": 0.1261,
+          "clavicle_r": 0.1261,
+          "upperarm_l": 0.08467,
+          "upperarm_r": 0.08467,
+          "lowerarm_l": 0.06205,
+          "lowerarm_r": 0.06205,
+          "hand_l": 0.04449,
+          "hand_r": 0.04449,
+          "thigh_l": 0.10427,
+          "thigh_r": 0.10427,
+          "calf_l": 0.07925,
+          "calf_r": 0.07925,
           "foot_l": 0.07075,
           "foot_r": 0.07075,
           "ball_l": 0.05615,
@@ -32101,279 +32107,279 @@
           "ball_r": 0.05615
         },
         "mycelari_female": {
-          "pelvis": 0.17304,
-          "spine_01": 0.12784,
-          "spine_02": 0.13068,
-          "spine_03": 0.14141,
-          "neck_01": 0.07215,
-          "clavicle_l": 0.08414,
-          "clavicle_r": 0.08414,
-          "upperarm_l": 0.04098,
-          "upperarm_r": 0.04098,
-          "lowerarm_l": 0.03337,
-          "lowerarm_r": 0.03337,
-          "hand_l": 0.03794,
-          "hand_r": 0.03794,
-          "thigh_l": 0.10008,
-          "thigh_r": 0.10008,
-          "calf_l": 0.06122,
-          "calf_r": 0.06122,
-          "foot_l": 0.06695,
-          "foot_r": 0.06695,
-          "ball_l": 0.05935,
-          "ball_r": 0.05935
+          "pelvis": 0.18703,
+          "spine_01": 0.13431,
+          "spine_02": 0.15,
+          "spine_03": 0.15811,
+          "neck_01": 0.07656,
+          "clavicle_l": 0.09336,
+          "clavicle_r": 0.09336,
+          "upperarm_l": 0.05315,
+          "upperarm_r": 0.05315,
+          "lowerarm_l": 0.04504,
+          "lowerarm_r": 0.04504,
+          "hand_l": 0.04077,
+          "hand_r": 0.04077,
+          "thigh_l": 0.11451,
+          "thigh_r": 0.11451,
+          "calf_l": 0.07878,
+          "calf_r": 0.07878,
+          "foot_l": 0.06648,
+          "foot_r": 0.06648,
+          "ball_l": 0.05515,
+          "ball_r": 0.05515
         },
         "mycelari_male": {
-          "pelvis": 0.16593,
-          "spine_01": 0.13409,
-          "spine_02": 0.15994,
-          "spine_03": 0.18449,
-          "neck_01": 0.10097,
-          "clavicle_l": 0.11122,
-          "clavicle_r": 0.11122,
-          "upperarm_l": 0.06423,
-          "upperarm_r": 0.06423,
-          "lowerarm_l": 0.04548,
-          "lowerarm_r": 0.04548,
-          "hand_l": 0.04093,
-          "hand_r": 0.04093,
-          "thigh_l": 0.08997,
-          "thigh_r": 0.08997,
-          "calf_l": 0.0619,
-          "calf_r": 0.0619,
-          "foot_l": 0.07074,
-          "foot_r": 0.07074,
-          "ball_l": 0.06155,
-          "ball_r": 0.06155
-        },
-        "orun_female": {
-          "pelvis": 0.19823,
-          "spine_01": 0.1392,
-          "spine_02": 0.16222,
-          "spine_03": 0.16727,
-          "neck_01": 0.07876,
-          "clavicle_l": 0.09371,
-          "clavicle_r": 0.09371,
-          "upperarm_l": 0.05578,
-          "upperarm_r": 0.05578,
-          "lowerarm_l": 0.046,
-          "lowerarm_r": 0.046,
-          "hand_l": 0.04079,
-          "hand_r": 0.04079,
-          "thigh_l": 0.12705,
-          "thigh_r": 0.12705,
-          "calf_l": 0.10262,
-          "calf_r": 0.10262,
-          "foot_l": 0.07317,
-          "foot_r": 0.07317,
-          "ball_l": 0.05514,
-          "ball_r": 0.05514
-        },
-        "orun_male": {
-          "pelvis": 0.18072,
-          "spine_01": 0.15474,
-          "spine_02": 0.20456,
-          "spine_03": 0.22702,
-          "neck_01": 0.11404,
-          "clavicle_l": 0.12745,
-          "clavicle_r": 0.12745,
-          "upperarm_l": 0.08988,
-          "upperarm_r": 0.08988,
-          "lowerarm_l": 0.0633,
-          "lowerarm_r": 0.0633,
+          "pelvis": 0.17424,
+          "spine_01": 0.14538,
+          "spine_02": 0.19071,
+          "spine_03": 0.2101,
+          "neck_01": 0.11185,
+          "clavicle_l": 0.1261,
+          "clavicle_r": 0.1261,
+          "upperarm_l": 0.08467,
+          "upperarm_r": 0.08467,
+          "lowerarm_l": 0.06205,
+          "lowerarm_r": 0.06205,
           "hand_l": 0.04449,
           "hand_r": 0.04449,
-          "thigh_l": 0.12447,
-          "thigh_r": 0.12447,
-          "calf_l": 0.10388,
-          "calf_r": 0.10388,
-          "foot_l": 0.07573,
-          "foot_r": 0.07573,
-          "ball_l": 0.05614,
-          "ball_r": 0.05614
+          "thigh_l": 0.10427,
+          "thigh_r": 0.10427,
+          "calf_l": 0.07925,
+          "calf_r": 0.07925,
+          "foot_l": 0.07075,
+          "foot_r": 0.07075,
+          "ball_l": 0.05615,
+          "ball_r": 0.05615
+        },
+        "orun_female": {
+          "pelvis": 0.18703,
+          "spine_01": 0.13431,
+          "spine_02": 0.15,
+          "spine_03": 0.15811,
+          "neck_01": 0.07656,
+          "clavicle_l": 0.09336,
+          "clavicle_r": 0.09336,
+          "upperarm_l": 0.05315,
+          "upperarm_r": 0.05315,
+          "lowerarm_l": 0.04504,
+          "lowerarm_r": 0.04504,
+          "hand_l": 0.04077,
+          "hand_r": 0.04077,
+          "thigh_l": 0.11451,
+          "thigh_r": 0.11451,
+          "calf_l": 0.07878,
+          "calf_r": 0.07878,
+          "foot_l": 0.06648,
+          "foot_r": 0.06648,
+          "ball_l": 0.05515,
+          "ball_r": 0.05515
+        },
+        "orun_male": {
+          "pelvis": 0.17424,
+          "spine_01": 0.14538,
+          "spine_02": 0.19071,
+          "spine_03": 0.2101,
+          "neck_01": 0.11185,
+          "clavicle_l": 0.1261,
+          "clavicle_r": 0.1261,
+          "upperarm_l": 0.08467,
+          "upperarm_r": 0.08467,
+          "lowerarm_l": 0.06205,
+          "lowerarm_r": 0.06205,
+          "hand_l": 0.04449,
+          "hand_r": 0.04449,
+          "thigh_l": 0.10427,
+          "thigh_r": 0.10427,
+          "calf_l": 0.07925,
+          "calf_r": 0.07925,
+          "foot_l": 0.07075,
+          "foot_r": 0.07075,
+          "ball_l": 0.05615,
+          "ball_r": 0.05615
         },
         "ssarathi_female": {
-          "pelvis": 0.18782,
-          "spine_01": 0.13098,
-          "spine_02": 0.13958,
-          "spine_03": 0.15115,
-          "neck_01": 0.0849,
-          "clavicle_l": 0.08609,
-          "clavicle_r": 0.08609,
-          "upperarm_l": 0.04761,
-          "upperarm_r": 0.04761,
-          "lowerarm_l": 0.03878,
-          "lowerarm_r": 0.03878,
-          "hand_l": 0.04188,
-          "hand_r": 0.04188,
-          "thigh_l": 0.13011,
-          "thigh_r": 0.13011,
-          "calf_l": 0.09465,
-          "calf_r": 0.09465,
-          "foot_l": 0.08574,
-          "foot_r": 0.08574,
-          "ball_l": 0.10439,
-          "ball_r": 0.10439
+          "pelvis": 0.18703,
+          "spine_01": 0.13431,
+          "spine_02": 0.15,
+          "spine_03": 0.15811,
+          "neck_01": 0.07656,
+          "clavicle_l": 0.09336,
+          "clavicle_r": 0.09336,
+          "upperarm_l": 0.05315,
+          "upperarm_r": 0.05315,
+          "lowerarm_l": 0.04504,
+          "lowerarm_r": 0.04504,
+          "hand_l": 0.04077,
+          "hand_r": 0.04077,
+          "thigh_l": 0.11451,
+          "thigh_r": 0.11451,
+          "calf_l": 0.07878,
+          "calf_r": 0.07878,
+          "foot_l": 0.06648,
+          "foot_r": 0.06648,
+          "ball_l": 0.05515,
+          "ball_r": 0.05515
         },
         "ssarathi_male": {
-          "pelvis": 0.17514,
-          "spine_01": 0.13999,
-          "spine_02": 0.17839,
-          "spine_03": 0.20374,
-          "neck_01": 0.13112,
-          "clavicle_l": 0.11198,
-          "clavicle_r": 0.11198,
-          "upperarm_l": 0.07374,
-          "upperarm_r": 0.07374,
-          "lowerarm_l": 0.05285,
-          "lowerarm_r": 0.05285,
-          "hand_l": 0.04491,
-          "hand_r": 0.04491,
-          "thigh_l": 0.14852,
-          "thigh_r": 0.14852,
-          "calf_l": 0.08587,
-          "calf_r": 0.08587,
-          "foot_l": 0.08998,
-          "foot_r": 0.08998,
-          "ball_l": 0.11006,
-          "ball_r": 0.11006
+          "pelvis": 0.17424,
+          "spine_01": 0.14538,
+          "spine_02": 0.19071,
+          "spine_03": 0.2101,
+          "neck_01": 0.11185,
+          "clavicle_l": 0.1261,
+          "clavicle_r": 0.1261,
+          "upperarm_l": 0.08467,
+          "upperarm_r": 0.08467,
+          "lowerarm_l": 0.06205,
+          "lowerarm_r": 0.06205,
+          "hand_l": 0.04449,
+          "hand_r": 0.04449,
+          "thigh_l": 0.10427,
+          "thigh_r": 0.10427,
+          "calf_l": 0.07925,
+          "calf_r": 0.07925,
+          "foot_l": 0.07075,
+          "foot_r": 0.07075,
+          "ball_l": 0.05615,
+          "ball_r": 0.05615
         },
         "stoneborn_female": {
-          "pelvis": 0.20971,
-          "spine_01": 0.14821,
-          "spine_02": 0.18309,
-          "spine_03": 0.18421,
-          "neck_01": 0.09579,
-          "clavicle_l": 0.11683,
-          "clavicle_r": 0.11683,
-          "upperarm_l": 0.06877,
-          "upperarm_r": 0.06877,
-          "lowerarm_l": 0.05699,
-          "lowerarm_r": 0.05699,
-          "hand_l": 0.04576,
-          "hand_r": 0.04576,
-          "thigh_l": 0.14114,
-          "thigh_r": 0.14114,
-          "calf_l": 0.10339,
-          "calf_r": 0.10339,
-          "foot_l": 0.07705,
-          "foot_r": 0.07705,
-          "ball_l": 0.05116,
-          "ball_r": 0.05116
+          "pelvis": 0.18703,
+          "spine_01": 0.13431,
+          "spine_02": 0.15,
+          "spine_03": 0.15811,
+          "neck_01": 0.07656,
+          "clavicle_l": 0.09336,
+          "clavicle_r": 0.09336,
+          "upperarm_l": 0.05315,
+          "upperarm_r": 0.05315,
+          "lowerarm_l": 0.04504,
+          "lowerarm_r": 0.04504,
+          "hand_l": 0.04077,
+          "hand_r": 0.04077,
+          "thigh_l": 0.11451,
+          "thigh_r": 0.11451,
+          "calf_l": 0.07878,
+          "calf_r": 0.07878,
+          "foot_l": 0.06648,
+          "foot_r": 0.06648,
+          "ball_l": 0.05515,
+          "ball_r": 0.05515
         },
         "stoneborn_male": {
-          "pelvis": 0.18617,
-          "spine_01": 0.17046,
-          "spine_02": 0.23587,
-          "spine_03": 0.25669,
-          "neck_01": 0.14716,
-          "clavicle_l": 0.14279,
-          "clavicle_r": 0.14279,
-          "upperarm_l": 0.1114,
-          "upperarm_r": 0.1114,
-          "lowerarm_l": 0.07825,
-          "lowerarm_r": 0.07825,
-          "hand_l": 0.04905,
-          "hand_r": 0.04905,
-          "thigh_l": 0.1379,
-          "thigh_r": 0.1379,
-          "calf_l": 0.10273,
-          "calf_r": 0.10273,
-          "foot_l": 0.07948,
-          "foot_r": 0.07948,
+          "pelvis": 0.17424,
+          "spine_01": 0.14538,
+          "spine_02": 0.19071,
+          "spine_03": 0.2101,
+          "neck_01": 0.11185,
+          "clavicle_l": 0.1261,
+          "clavicle_r": 0.1261,
+          "upperarm_l": 0.08467,
+          "upperarm_r": 0.08467,
+          "lowerarm_l": 0.06205,
+          "lowerarm_r": 0.06205,
+          "hand_l": 0.04449,
+          "hand_r": 0.04449,
+          "thigh_l": 0.10427,
+          "thigh_r": 0.10427,
+          "calf_l": 0.07925,
+          "calf_r": 0.07925,
+          "foot_l": 0.07075,
+          "foot_r": 0.07075,
           "ball_l": 0.05615,
           "ball_r": 0.05615
         },
         "votary_female": {
-          "pelvis": 0.189,
-          "spine_01": 0.13271,
-          "spine_02": 0.14558,
-          "spine_03": 0.15462,
-          "neck_01": 0.08007,
-          "clavicle_l": 0.09408,
-          "clavicle_r": 0.09408,
-          "upperarm_l": 0.05004,
-          "upperarm_r": 0.05004,
-          "lowerarm_l": 0.0419,
-          "lowerarm_r": 0.0419,
-          "hand_l": 0.0407,
-          "hand_r": 0.0407,
-          "thigh_l": 0.11677,
-          "thigh_r": 0.11677,
-          "calf_l": 0.08828,
-          "calf_r": 0.08828,
-          "foot_l": 0.06695,
-          "foot_r": 0.06695,
-          "ball_l": 0.0551,
-          "ball_r": 0.0551
+          "pelvis": 0.18703,
+          "spine_01": 0.13431,
+          "spine_02": 0.15,
+          "spine_03": 0.15811,
+          "neck_01": 0.07656,
+          "clavicle_l": 0.09336,
+          "clavicle_r": 0.09336,
+          "upperarm_l": 0.05315,
+          "upperarm_r": 0.05315,
+          "lowerarm_l": 0.04504,
+          "lowerarm_r": 0.04504,
+          "hand_l": 0.04077,
+          "hand_r": 0.04077,
+          "thigh_l": 0.11451,
+          "thigh_r": 0.11451,
+          "calf_l": 0.07878,
+          "calf_r": 0.07878,
+          "foot_l": 0.06648,
+          "foot_r": 0.06648,
+          "ball_l": 0.05515,
+          "ball_r": 0.05515
         },
         "votary_male": {
-          "pelvis": 0.17566,
-          "spine_01": 0.14375,
-          "spine_02": 0.18627,
-          "spine_03": 0.20708,
-          "neck_01": 0.11378,
-          "clavicle_l": 0.12864,
-          "clavicle_r": 0.12864,
-          "upperarm_l": 0.07954,
-          "upperarm_r": 0.07954,
-          "lowerarm_l": 0.05763,
-          "lowerarm_r": 0.05763,
+          "pelvis": 0.17424,
+          "spine_01": 0.14538,
+          "spine_02": 0.19071,
+          "spine_03": 0.2101,
+          "neck_01": 0.11185,
+          "clavicle_l": 0.1261,
+          "clavicle_r": 0.1261,
+          "upperarm_l": 0.08467,
+          "upperarm_r": 0.08467,
+          "lowerarm_l": 0.06205,
+          "lowerarm_r": 0.06205,
           "hand_l": 0.04449,
           "hand_r": 0.04449,
-          "thigh_l": 0.1067,
-          "thigh_r": 0.1067,
-          "calf_l": 0.08892,
-          "calf_r": 0.08892,
-          "foot_l": 0.07074,
-          "foot_r": 0.07074,
-          "ball_l": 0.06013,
-          "ball_r": 0.06013
+          "thigh_l": 0.10427,
+          "thigh_r": 0.10427,
+          "calf_l": 0.07925,
+          "calf_r": 0.07925,
+          "foot_l": 0.07075,
+          "foot_r": 0.07075,
+          "ball_l": 0.05615,
+          "ball_r": 0.05615
         }
       },
       "footAnchor": {
         "glasswarden_female": {
           "foot_l": [
             0.01319,
-            -0.07913,
-            0.07709
+            -0.07911,
+            0.07593
           ],
           "ball_l": [
             0.01319,
-            -0.02299,
-            -0.06182
+            -0.02321,
+            -0.06237
           ],
           "foot_r": [
             -0.01319,
-            -0.07913,
-            0.07709
+            -0.07911,
+            0.07593
           ],
           "ball_r": [
             -0.01319,
-            -0.02299,
-            -0.06182
+            -0.02321,
+            -0.06237
           ]
         },
         "glasswarden_male": {
           "foot_l": [
             0.01707,
-            -0.09627,
-            0.08169
+            -0.09601,
+            0.08072
           ],
           "ball_l": [
             0.01707,
-            -0.02465,
-            -0.06115
+            -0.02471,
+            -0.06148
           ],
           "foot_r": [
             -0.01707,
-            -0.09627,
-            0.08169
+            -0.09601,
+            0.08072
           ],
           "ball_r": [
             -0.01707,
-            -0.02465,
-            -0.06115
+            -0.02471,
+            -0.06148
           ]
         },
         "greyhaven_female": {
@@ -32467,221 +32473,221 @@
         "mycelari_female": {
           "foot_l": [
             0.01319,
-            -0.07865,
-            0.07342
+            -0.07911,
+            0.07593
           ],
           "ball_l": [
             0.01319,
-            -0.02713,
-            -0.05403
+            -0.02321,
+            -0.06237
           ],
           "foot_r": [
             -0.01319,
-            -0.07865,
-            0.07342
+            -0.07911,
+            0.07593
           ],
           "ball_r": [
             -0.01319,
-            -0.02713,
-            -0.05403
+            -0.02321,
+            -0.06237
           ]
         },
         "mycelari_male": {
           "foot_l": [
             0.01707,
-            -0.09159,
-            0.07727
+            -0.09601,
+            0.08072
           ],
           "ball_l": [
             0.01707,
-            -0.02579,
-            -0.05396
+            -0.02471,
+            -0.06148
           ],
           "foot_r": [
             -0.01707,
-            -0.09159,
-            0.07727
+            -0.09601,
+            0.08072
           ],
           "ball_r": [
             -0.01707,
-            -0.02579,
-            -0.05396
+            -0.02471,
+            -0.06148
           ]
         },
         "orun_female": {
           "foot_l": [
-            0.03228,
-            -0.07912,
-            0.07562
+            0.01319,
+            -0.07911,
+            0.07593
           ],
           "ball_l": [
-            0.03228,
-            -0.0231,
-            -0.06297
+            0.01319,
+            -0.02321,
+            -0.06237
           ],
           "foot_r": [
-            -0.03228,
-            -0.07912,
-            0.07562
+            -0.01319,
+            -0.07911,
+            0.07593
           ],
           "ball_r": [
-            -0.03228,
-            -0.0231,
-            -0.06297
+            -0.01319,
+            -0.02321,
+            -0.06237
           ]
         },
         "orun_male": {
           "foot_l": [
-            0.03329,
-            -0.09611,
-            0.08052
+            0.01707,
+            -0.09601,
+            0.08072
           ],
           "ball_l": [
-            0.03329,
-            -0.02469,
-            -0.06192
+            0.01707,
+            -0.02471,
+            -0.06148
           ],
           "foot_r": [
-            -0.03329,
-            -0.09611,
-            0.08052
+            -0.01707,
+            -0.09601,
+            0.08072
           ],
           "ball_r": [
-            -0.03329,
-            -0.02469,
-            -0.06192
+            -0.01707,
+            -0.02471,
+            -0.06148
           ]
         },
         "ssarathi_female": {
           "foot_l": [
-            0.00933,
-            -0.21394,
-            0.02479
+            0.01319,
+            -0.07911,
+            0.07593
           ],
           "ball_l": [
-            0.00933,
-            -0.01871,
-            -0.03861
+            0.01319,
+            -0.02321,
+            -0.06237
           ],
           "foot_r": [
-            -0.00933,
-            -0.21394,
-            0.02479
+            -0.01319,
+            -0.07911,
+            0.07593
           ],
           "ball_r": [
-            -0.00933,
-            -0.01871,
-            -0.03861
+            -0.01319,
+            -0.02321,
+            -0.06237
           ]
         },
         "ssarathi_male": {
           "foot_l": [
-            0.01498,
-            -0.23462,
-            0.02224
+            0.01707,
+            -0.09601,
+            0.08072
           ],
           "ball_l": [
-            0.01498,
-            -0.02261,
-            -0.02816
+            0.01707,
+            -0.02471,
+            -0.06148
           ],
           "foot_r": [
-            -0.01498,
-            -0.23462,
-            0.02224
+            -0.01707,
+            -0.09601,
+            0.08072
           ],
           "ball_r": [
-            -0.01498,
-            -0.02261,
-            -0.02816
+            -0.01707,
+            -0.02471,
+            -0.06148
           ]
         },
         "stoneborn_female": {
           "foot_l": [
-            0.01655,
-            -0.08338,
-            0.07657
+            0.01319,
+            -0.07911,
+            0.07593
           ],
           "ball_l": [
-            0.01655,
-            -0.02373,
-            -0.071
+            0.01319,
+            -0.02321,
+            -0.06237
           ],
           "foot_r": [
-            -0.01655,
-            -0.08338,
-            0.07657
+            -0.01319,
+            -0.07911,
+            0.07593
           ],
           "ball_r": [
-            -0.01655,
-            -0.02373,
-            -0.071
+            -0.01319,
+            -0.02321,
+            -0.06237
           ]
         },
         "stoneborn_male": {
           "foot_l": [
-            0.01942,
-            -0.10286,
-            0.08158
+            0.01707,
+            -0.09601,
+            0.08072
           ],
           "ball_l": [
-            0.01942,
-            -0.02688,
-            -0.06996
+            0.01707,
+            -0.02471,
+            -0.06148
           ],
           "foot_r": [
-            -0.01942,
-            -0.10286,
-            0.08158
+            -0.01707,
+            -0.09601,
+            0.08072
           ],
           "ball_r": [
-            -0.01942,
-            -0.02688,
-            -0.06996
+            -0.01707,
+            -0.02471,
+            -0.06148
           ]
         },
         "votary_female": {
           "foot_l": [
             0.01319,
-            -0.07889,
-            0.07218
+            -0.07911,
+            0.07593
           ],
           "ball_l": [
             0.01319,
-            -0.02505,
-            -0.06103
+            -0.02321,
+            -0.06237
           ],
           "foot_r": [
             -0.01319,
-            -0.07889,
-            0.07218
+            -0.07911,
+            0.07593
           ],
           "ball_r": [
             -0.01319,
-            -0.02505,
-            -0.06103
+            -0.02321,
+            -0.06237
           ]
         },
         "votary_male": {
           "foot_l": [
             0.01707,
-            -0.09391,
-            0.07726
+            -0.09601,
+            0.08072
           ],
           "ball_l": [
             0.01707,
-            -0.02517,
-            -0.05983
+            -0.02471,
+            -0.06148
           ],
           "foot_r": [
             -0.01707,
-            -0.09391,
-            0.07726
+            -0.09601,
+            0.08072
           ],
           "ball_r": [
             -0.01707,
-            -0.02517,
-            -0.05983
+            -0.02471,
+            -0.06148
           ]
         }
       }

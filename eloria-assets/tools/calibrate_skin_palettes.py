@@ -9,8 +9,9 @@ rebase_race_body.py) join four skin surfaces along seams: shared_body,
 shared_neck, neck_join and race_head. Their per-surface references come from
 different texels, so equal texels either side of a seam would dye
 differently. When any adjacent pair differs by more than 2% in linear
-luminance, every body reference takes the face reference, and
-skinPalette.bodySeams records the calibrated values and the reason.
+luminance, every skin-surface reference takes the face reference, and
+skinPalette.bodySeams records the calibrated values and the reason. A
+race_tail surface (Ssarathi) has its own texture and keeps its own reference.
 """
 import argparse
 import json
@@ -50,7 +51,9 @@ def unify_rebased_seams(document, refs, face_surface):
              'linearLuminanceRatios': ratios, 'tolerance': SEAM_TOLERANCE,
              'unified': any(abs(ratio - 1) > SEAM_TOLERANCE for ratio in ratios.values())}
     if seams['unified']:
-        refs['body'] = [list(refs['body'][face_surface]) for _ in refs['body']]
+        skin = {role for pair in SEAM_PAIRS for role in pair}
+        refs['body'] = [list(refs['body'][face_surface]) if role in skin else value
+                        for role, value in zip(roles, refs['body'])]
         seams['reason'] = ('an adjacent skin-surface pair differed by more than 2% in linear luminance, so equal '
                            'texels either side of that seam would dye differently; every body reference takes the '
                            'face (race_head) reference')

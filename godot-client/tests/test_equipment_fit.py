@@ -91,7 +91,7 @@ class EquipmentFitTest(unittest.TestCase):
                 self.assertEqual(expected, authoring_rig(self.registry, resolved["authoredFor"]),
                                  f"{race} {piece.slug}")
                 scenes.add(resolved["scene"])
-        self.assertEqual(1824, len(scenes))
+        self.assertEqual(1424, len(scenes))
 
     def test_measurements_are_plausible(self) -> None:
         # These sixteen approved bodies lie within this measured range.

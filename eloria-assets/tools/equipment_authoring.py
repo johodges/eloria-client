@@ -165,6 +165,8 @@ class Rig:
     #: against the actual body surface rather than a ring approximation.
     faces: np.ndarray | None = None
     source_slug: str = ""
+    #: Rows that belong only to ``race_tail`` primitives (the Ssarathi tail).
+    tail: np.ndarray | None = None
 
     @property
     def fit_scale(self) -> float:
@@ -534,6 +536,14 @@ def body_girth(rig: Rig, bones=GIRTH_BONES) -> dict:
     the ratio between two races means the same thing to the runtime as a
     thickness does to the authoring code.
     """
+    # Modified 2026-10-06: a race_tail surface is not body. The Ssarathi tail
+    # is weighted to pelvis and (male) thigh_l, so it widened those girths and
+    # every authored garment let out to match.
+    tail = getattr(rig, "tail", None)
+    if tail is not None and tail.any():
+        rig = Rig(joint_names=rig.joint_names, rest=rig.rest, parent=rig.parent,
+                  positions=rig.positions[~tail], joints=rig.joints[~tail],
+                  weights=rig.weights[~tail], source_slug=rig.source_slug)
     girth: dict[str, float] = {}
     for bone in bones:
         if bone not in rig.rest:
@@ -638,6 +648,7 @@ def load_rig(path: Path, body_mesh_names=BODY_SURFACES) -> Rig:
     bone_indices: list[np.ndarray] = []
     bone_weights: list[np.ndarray] = []
     faces: list[np.ndarray] = []
+    tail_faces: list[bool] = []
     offset = 0
     # A split body's surfaces SHARE one attribute set and differ only in
     # their index buffers; gathering per primitive would take every vertex
@@ -669,15 +680,21 @@ def load_rig(path: Path, body_mesh_names=BODY_SURFACES) -> Rig:
             if "indices" in primitive:
                 tri = accessor_array(document, binary, primitive["indices"])
                 faces.append(tri.reshape(-1, 3).astype(np.int64) + base)
+                tail_faces.append(primitive.get("extras", {}).get("sourceRole") == "race_tail")
     if not positions or not faces:
         raise ValueError(f"{path}: no skinned faces in selected surfaces {body_mesh_names}")
     # A shared accessor also contains vertices of excluded surfaces. Sampling
     # only the referenced union makes explicit surface selections meaningful.
     used, inverse = np.unique(np.vstack(faces), return_inverse=True)
+    inverse = inverse.reshape(-1, 3)
+    in_tail = np.repeat(tail_faces, [len(f) for f in faces])
+    tail = np.zeros(len(used), dtype=bool)
+    tail[inverse[in_tail].ravel()] = True
+    tail[inverse[~in_tail].ravel()] = False
     return Rig(joint_names=joint_names, rest=rest, parent=parent,
                positions=np.vstack(positions)[used], joints=np.vstack(bone_indices)[used],
-               weights=np.vstack(bone_weights)[used], faces=inverse.reshape(-1, 3),
-               source_slug=path.stem)
+               weights=np.vstack(bone_weights)[used], faces=inverse,
+               source_slug=path.stem, tail=tail)
 
 
 def tail_region(points, rig):
