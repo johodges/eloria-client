@@ -4,6 +4,16 @@ extends RefCounted
 ## split wardrobe surfaces and covered body faces beneath it.
 ## Work on a copy of the index buffers: UVs, skinning, materials and the original
 ## mesh remain intact, and unequipping restores the exact original resource.
+##
+## A race body (eloria-assets/tools/rebase_race_body.py) is the Human body below
+## the neck, weights included, with its race head carried by two "Shared neck
+## bridge" surfaces: the Human's own neck faces textured for the race, and a
+## join from the Human's neck ring (travel .075 along neck_01 -> Head) up to the
+## head rim whose every vertex keeps at least .64 Head/neck_01 weight. Bridge
+## faces take the same test as the rest of the body, so a race's neck is cut
+## where the Human's is and the bridge above the ring, the visible neck under
+## every collar, stays whole. Only the throat differs, see
+## FRONT_BRIDGE_MIN_WEIGHT.
 
 const BACKING_NAME := "GeneratedArmorBacking"
 const LOW := 0.95
@@ -21,92 +31,34 @@ const FRONT_APRON_MIN_Y := 1.403
 const FRONT_APRON_MAX_Y := 1.470
 const FRONT_APRON_HALF_WIDTH := .032
 const FRONT_APRON_MIN_Z := .005
-## Race heads reach the body through a "Shared neck bridge" whose lowest rear
-## rows flare out to the old wardrobe collar. Every generated torso shares one
-## backing band and its collar rises to at least 1.555 at the back (all 64
-## measured), so those rows hang outside it as a ragged skirt and prongs. Rows
-## behind the canonical neck_01->Head axis and below this height are trimmed.
-const REAR_BRIDGE_MAX_Y := 1.53
+## In front of the canonical neck_01 -> Head axis a bridge is the throat,
+## framed by the open front of coats such as 5:184, 5:189 and 5:222. The female
+## bridge carries 16 of the Human's throat faces whose lowest corner keeps only
+## .32 to .5 Head/neck_01 weight, and the whole-face .5 test cut them into a
+## saw-tooth spike in every open front. Bridge faces there stay while every
+## corner keeps more than this weight. No corner of a rebuilt bridge is below
+## .32, so on today's bodies this keeps every bridge face; the floor still drops
+## a face pinned to the chest by a near-zero corner. Behind the axis, and on
+## every face that is not bridge (the Human's own throat included), the
+## whole-face test applies. Re-checked on the rebuilt bodies 2026-10-07 under
+## all 64 generated torsos.
+const FRONT_BRIDGE_MIN_WEIGHT := .25
 const NECK_AXIS_BASE := Vector3(0., 1.452, -.051)
 const NECK_AXIS_TOP := Vector3(0., 1.568, .011)
-## Beside the neck the trim ramps down from REAR_BRIDGE_MAX_Y at the side to
-## SIDE_TRIM_MIN_Y at SIDE_TRIM_START_DEGREES from straight ahead. Without
-## it the full-weight side rows end in a step below the rear trim, which
-## swings out through 5:184/5:225 as hanging slivers. The lowest collar top
-## of all 64 generated torsos is 1.500 at 60 degrees, 1.512 at 70, 1.522 at
-## 80 and 1.532 at 90 (measured 2026-10-06), so the ramp stays under it.
-const SIDE_TRIM_START_DEGREES := 60.0
-const SIDE_TRIM_MIN_Y := 1.49
-## In front of the neck axis the bridge is the throat, framed by the open front
-## of coats such as 5:189, 5:184 and 5:222. Its long faces blend from the jaw
-## down to the chest, so the whole-face 0.5 test cut them into a saw-tooth of
-## spikes. They stay while every corner keeps at least this Head/neck_01
-## weight; the unweighted chest rows below still go.
-const FRONT_BRIDGE_MIN_WEIGHT := .25
-## Any cut through the irregular bridge leaves spikes hanging off it by one
-## edge and small fans joined only to each other (1 to 27 faces measured),
-## which draw as loose skin shards beside the neck. See _clean_bridge_cut.
-const BRIDGE_SPIKE_PASSES := 2
-const BRIDGE_ISLAND_MAX_FACES := 64
-## Both cuts follow the bridge triangles, so each open edge is a saw-tooth
-## hem. Its points are levelled: onto the trim line behind and beside the
-## neck, and onto the front edge's median height within FRONT_HEM_HALF_ANGLE
-## degrees of straight ahead. See _hem_bridge_cut.
-const REAR_HEM_BAND := .03
-const FRONT_HEM_HALF_ANGLE := 50.0
-const FRONT_HEM_BAND := .02
-const HEM_MAX_TURN_COS := .7
 ## A wardrobe-only neckline tucks its open rim behind the fitted shirt. On a
-## bridged race the bridge above this height is the visible neck, so it stays
-## put; only a reviewed profile's own hole is tucked like the Human's rim.
+## bridged race the bridge and the race head above this height are the visible
+## neck and head, so they stay put, open edges and all.
 const WARDROBE_BRIDGE_RIM_MAX_Y := 1.50
-
-## Immutable masks live once here rather than in every actor's deep-copied
-## model config. The model selects one profile by compact id/version; strict
-## surface fingerprints below prevent face ordinals from drifting silently.
-##
-## A mask names two fingerprints because the same GLB reaches the game by two
-## routes. An editor checkout loads the imported scene; an exported client has
-## no resource path, so GlbSceneCache parses the loose GLB with GLTFDocument
-## (`_build_raw`). The two meshes list the same faces in the same order (all
-## 567 of Orun's bridge faces were matched by corner position and UV), but
-## the importer re-lays each face's corners, so the bytes - and the
-## fingerprint - differ. `rawSurfaceFingerprintSHA256` pins the parsed mesh,
-## so the reviewed ordinals apply on either route and on nothing else.
-const PROFILE_REGISTRY := {
-	"orun-male-rear-neck-v1": {
-		"id": "orun-male-rear-neck-v1",
-		"version": 1,
-		"targetNodes": ["body", "char1", "mesh_node"],
-		"rearFaceMasks": [{
-			"surface": 3,
-			"sourceRole": "shared_neck",
-			"indexAccessor": 72,
-			"baseFaceCount": 567,
-			"expectedVertexCount": 1701,
-			"expectedIndexCount": 1701,
-			"surfaceFingerprintSHA256": "580ab6ee1d57c3cc98369636e872556bbe2a6e1d290c86270c31fcf985dd5446",
-			"rawSurfaceFingerprintSHA256": "adadf7459870edb2824a2010e68656f7272c382d76621c216594cba95dedf07b",
-			"faces": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15,
-				16, 17, 18, 20, 21, 27, 28, 36, 37, 50, 51, 57, 63, 64, 67,
-				68, 69, 71, 86, 88, 89, 95, 101, 109, 112, 125, 128, 129,
-				151, 152, 160, 192, 213, 219, 220, 249, 251, 278, 342, 343,
-				344, 346, 387, 409, 414, 415, 432, 433, 443, 453, 461, 462,
-				467, 468, 470, 490, 491, 492, 504, 508, 509, 510, 512, 517,
-				523, 524, 525, 526, 531, 537, 538, 545, 546],
-		}],
-	},
-}
+const BRIDGE_MATERIAL := "Shared neck bridge"
+const RACE_HEAD_MATERIAL := "Race head"
 
 static var _cache: Dictionary = {}
-static var _profile_warnings: Dictionary = {}
 
 ## Covered meshes are shared across equivalent actors for the duration of one
 ## session. Release those derived resources alongside the imported scene cache
 ## when leaving a world, so later sessions cannot accumulate stale mesh ids.
 static func clear() -> void:
 	_cache.clear()
-	_profile_warnings.clear()
 
 static func covers(point: Vector3, regions: Array = [], preserve_tail: bool = false) -> bool:
 	if preserve_tail and is_tail(point):
@@ -120,7 +72,7 @@ static func covers(point: Vector3, regions: Array = [], preserve_tail: bool = fa
 
 static func apply(instance: MeshInstance3D, enabled: bool,
 		to_rig: Transform3D, fit: float, regions: Array = [],
-		preserve_tail: bool = false, profile: Dictionary = {},
+		preserve_tail: bool = false,
 		mask_to_wardrobe_neckline: bool = false) -> void:
 	if not instance.has_meta("uncovered_body_mesh"):
 		if not enabled or instance.mesh == null:
@@ -130,12 +82,6 @@ static func apply(instance: MeshInstance3D, enabled: bool,
 	if not enabled:
 		instance.mesh = original
 		return
-	var active_profile := _resolve_profile(profile)
-	var target_nodes: Array = profile.get("targetNodes", []) as Array
-	if not active_profile.is_empty():
-		target_nodes = active_profile.get("targetNodes", []) as Array
-	if not target_nodes.is_empty() and not target_nodes.has(instance.name.to_lower()):
-		active_profile = {}
 	# The original shirt collar can extend above the trunk coverage band.
 	# Its replacement is the equipped collar; leave neck skin on the body.
 	if instance.name.to_lower() == "wardrobe_shirt" and covers(Vector3(0., 1.30, 0.), regions):
@@ -155,20 +101,16 @@ static func apply(instance: MeshInstance3D, enabled: bool,
 				bone_name = skeleton.get_bone_name(bone_index)
 			if bone_name in [&"Head", &"neck_01"]:
 				protected_binds.append(bind)
-	var profile_key := ("%s@%s" % [str(profile.get("id", "")),
-		str(profile.get("version", 0))]) if not active_profile.is_empty() else ""
-	var key := "%s|%s|%s|%s|%s|%s|%s|%s" % [original.get_instance_id(), to_rig,
-		fit, regions, preserve_tail, protected_binds, profile_key,
-		mask_to_wardrobe_neckline]
+	var key := "%s|%s|%s|%s|%s|%s|%s" % [original.get_instance_id(), to_rig,
+		fit, regions, preserve_tail, protected_binds, mask_to_wardrobe_neckline]
 	if not _cache.has(key):
 		_cache[key] = cut(original, to_rig, fit, regions, preserve_tail,
-			protected_binds, active_profile, mask_to_wardrobe_neckline)
+			protected_binds, mask_to_wardrobe_neckline)
 	instance.mesh = _cache[key] as Mesh
 
 static func cut(original: Mesh, to_rig: Transform3D, fit: float,
 		regions: Array = [], preserve_tail: bool = false,
 		protected_binds: PackedInt32Array = PackedInt32Array(),
-		profile: Dictionary = {},
 		mask_to_wardrobe_neckline: bool = false) -> ArrayMesh:
 	var result := ArrayMesh.new()
 	# Pants and boots also request body coverage, but must never activate the
@@ -181,12 +123,10 @@ static func cut(original: Mesh, to_rig: Transform3D, fit: float,
 		result.add_blend_shape(original.get_blend_shape_name(blend))
 	if original is ArrayMesh:
 		result.blend_shape_mode = (original as ArrayMesh).blend_shape_mode
-	# Classify every surface before touching any of them. The neck bridge, the
-	# race head and the shared body are separate surfaces welded along seams,
-	# so loose bridge shards and the true open rim are only known across all.
+	# Read every surface before touching any of them. A race's shared body, neck
+	# bridge and head are separate surfaces welded along seams, so a detached
+	# shell and the true open rim are only known across all of them.
 	var passes: Array[Dictionary] = []
-	var bridged := false
-	var profiled := false
 	for surface: int in range(original.get_surface_count()):
 		var arrays: Array = original.surface_get_arrays(surface)
 		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
@@ -202,59 +142,36 @@ static func cut(original: Mesh, to_rig: Transform3D, fit: float,
 			weights = arrays[Mesh.ARRAY_WEIGHTS] as PackedFloat32Array
 		var stride: int = bones.size() / maxi(vertices.size(), 1)
 		var material := original.surface_get_material(surface)
-		var bridge_surface := (material != null
-			and material.resource_name == "Shared neck bridge")
-		var profile_mask := _profile_mask(profile, surface, arrays, source,
-			bridge_surface)
-		# A hash-pinned profile owns its reviewed bridge faces completely. The
-		# topology detector is for unprofiled wardrobe necks such as Luminous;
-		# applying it on top of Orun's ordinal mask would remove extra rows.
-		var detached_neck_vertices := (_detached_neck_vertices(
-			source, vertices, to_rig, fit) if mask_to_wardrobe_neckline
-			and profile_mask.is_empty() else {})
-		bridged = bridged or bridge_surface
-		profiled = profiled or not profile_mask.is_empty()
+		var material_name := material.resource_name if material != null else ""
 		passes.append({"arrays": arrays, "vertices": vertices, "bones": bones,
 			"weights": weights, "stride": stride, "source": source,
-			"bridge": bridge_surface, "profile_mask": profile_mask,
-			"detached": detached_neck_vertices, "dropped": {}})
-	# A reviewed, fingerprint-pinned profile owns its whole bridge cut: its
-	# rig keeps the reviewed rear trim and nothing below is added to it.
-	var generic_cut := bridged and not profiled
+			"bridge": material_name == BRIDGE_MATERIAL,
+			"head": material_name == RACE_HEAD_MATERIAL, "detached": {}})
+	var welded: Array[PackedInt32Array] = []
+	if mask_to_wardrobe_neckline:
+		welded = _welded_points(passes, to_rig, fit)
+		_detached_neck_vertices(passes, welded, to_rig, fit)
 	# Classify faces before moving the derived rim. The tuck must not cause
 	# coverage to walk down successive torso rows.
 	for entry: Dictionary in passes:
 		entry["kept"] = _filtered_indices(entry["source"], entry["vertices"],
 			entry["bones"], entry["weights"], entry["stride"], to_rig, fit,
 			regions, preserve_tail, protected_binds, shaped_neck_active,
-			entry["bridge"], entry["profile_mask"], mask_to_wardrobe_neckline,
-			entry["detached"], generic_cut)
-	var welded: Array[PackedInt32Array] = []
-	if shaped_neck_active and generic_cut:
-		welded = _welded_points(passes, to_rig, fit)
-		_clean_bridge_cut(passes, welded)
-		if not mask_to_wardrobe_neckline:
-			_hem_bridge_cut(passes, welded, to_rig, fit)
+			mask_to_wardrobe_neckline, entry["detached"], entry["bridge"])
 	if mask_to_wardrobe_neckline:
-		if welded.is_empty():
-			welded = _welded_points(passes, to_rig, fit)
-		_inset_wardrobe_neckline_rim(passes, welded, to_rig, fit, profiled)
+		_inset_wardrobe_neckline_rim(passes, welded, to_rig, fit)
 	for surface: int in range(original.get_surface_count()):
 		var entry := passes[surface]
 		var arrays: Array = entry["arrays"]
 		var kept: PackedInt32Array = entry["kept"]
-		var dropped: Dictionary = entry["dropped"]
 		var lod_candidates: Dictionary = {}
 		var source_lods := _surface_lods(original, surface)
 		for distance: Variant in source_lods:
-			var lod_source := source_lods[distance] as PackedInt32Array
-			var lod_kept := _filtered_indices(lod_source, entry["vertices"],
+			lod_candidates[distance] = _filtered_indices(
+				source_lods[distance] as PackedInt32Array, entry["vertices"],
 				entry["bones"], entry["weights"], entry["stride"], to_rig, fit,
 				regions, preserve_tail, protected_binds, shaped_neck_active,
-				entry["bridge"], entry["profile_mask"], mask_to_wardrobe_neckline,
-				entry["detached"], generic_cut)
-			lod_candidates[distance] = (lod_kept if dropped.is_empty()
-				else _without_vertices(lod_kept, dropped))
+				mask_to_wardrobe_neckline, entry["detached"], entry["bridge"])
 		var blend_arrays: Array = original.surface_get_blend_shape_arrays(surface)
 		# Preserve surface numbering and its material overrides even when a
 		# whole wardrobe surface is covered. A zero-area triangle draws nothing.
@@ -280,129 +197,28 @@ static func _filtered_indices(source: PackedInt32Array,
 		weights: PackedFloat32Array, stride: int, to_rig: Transform3D,
 		fit: float, regions: Array, preserve_tail: bool,
 		protected_binds: PackedInt32Array, shaped_neck_active: bool,
-		bridge_surface: bool, profile_mask: Dictionary = {},
 		mask_to_wardrobe_neckline: bool = false,
 		detached_neck_vertices: Dictionary = {},
-		generic_cut: bool = false) -> PackedInt32Array:
+		bridge_surface: bool = false) -> PackedInt32Array:
 	var kept := PackedInt32Array()
-	var base_face_count := int(profile_mask.get("baseFaceCount", -1))
-	var exact_base_order := base_face_count >= 0 and source.size() == base_face_count * 3
-	var masked_faces: Dictionary = profile_mask.get("faces", {}) as Dictionary
-	var masked_vertices: Dictionary = profile_mask.get("vertices", {}) as Dictionary
-	var profile_driven_bridge := bridge_surface and not profile_mask.is_empty()
 	for index: int in range(0, source.size(), 3):
 		if (mask_to_wardrobe_neckline
 				and (detached_neck_vertices.has(source[index])
 					or detached_neck_vertices.has(source[index + 1])
 					or detached_neck_vertices.has(source[index + 2]))):
 			continue
-		if shaped_neck_active and _profile_masks_face(source, index,
-				exact_base_order, masked_faces, masked_vertices):
-			continue
 		if _keeps_face(source, index, vertices, bones, weights, stride, to_rig,
 				fit, regions, preserve_tail, protected_binds,
-				shaped_neck_active, bridge_surface, profile_driven_bridge,
-				mask_to_wardrobe_neckline, generic_cut):
+				shaped_neck_active, mask_to_wardrobe_neckline, bridge_surface):
 			kept.append_array(source.slice(index, index + 3))
 	return kept
-
-static func _resolve_profile(selection: Dictionary) -> Dictionary:
-	if selection.is_empty():
-		return {}
-	var id := str(selection.get("id", ""))
-	var entry: Dictionary = PROFILE_REGISTRY.get(id, {}) as Dictionary
-	if entry.is_empty() or int(entry.get("version", -1)) != int(selection.get("version", -2)):
-		_warn_profile_once(id, "unknown id/version")
-		return {}
-	return entry
-
-static func _warn_profile_once(id: String, reason: String) -> void:
-	var key := "%s:%s" % [id, reason]
-	if _profile_warnings.has(key):
-		return
-	_profile_warnings[key] = true
-	push_warning("Ignoring torso cover profile %s: %s" % [id, reason])
-
-static func _profile_mask(profile: Dictionary, surface: int, arrays: Array,
-		source: PackedInt32Array, bridge_surface: bool) -> Dictionary:
-	for value: Variant in profile.get("rearFaceMasks", []) as Array:
-		if value is not Dictionary:
-			continue
-		var entry := value as Dictionary
-		if int(entry.get("surface", -1)) != surface:
-			continue
-		var profile_id := str(profile.get("id", "unnamed"))
-		if str(entry.get("sourceRole", "")) == "shared_neck" and not bridge_surface:
-			_warn_profile_once(profile_id, "surface role/material drifted")
-			return {}
-		var vertices := arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array
-		if vertices.size() != int(entry.get("expectedVertexCount", -1)):
-			_warn_profile_once(profile_id, "surface vertex count drifted")
-			return {}
-		if source.size() != int(entry.get("expectedIndexCount", -1)):
-			_warn_profile_once(profile_id, "surface index count drifted")
-			return {}
-		var expected_fingerprint := str(entry.get("surfaceFingerprintSHA256", ""))
-		var raw_fingerprint := str(entry.get("rawSurfaceFingerprintSHA256", ""))
-		var actual_fingerprint := _surface_fingerprint(arrays, source)
-		if expected_fingerprint.is_empty() or (actual_fingerprint != expected_fingerprint
-				and (raw_fingerprint.is_empty() or actual_fingerprint != raw_fingerprint)):
-			_warn_profile_once(profile_id, "surface fingerprint drifted (%s)" % actual_fingerprint)
-			return {}
-		var faces := {}
-		var masked_vertices := {}
-		var previous := -1
-		var base_face_count := int(entry.get("baseFaceCount", -1))
-		for face_value: Variant in entry.get("faces", []) as Array:
-			var face := int(face_value)
-			if face <= previous or face < 0 or face >= base_face_count:
-				_warn_profile_once(profile_id, "face manifest is unsorted, duplicated, or out of range")
-				return {}
-			previous = face
-			faces[face] = true
-			masked_vertices[source[face * 3]] = true
-			masked_vertices[source[face * 3 + 1]] = true
-			masked_vertices[source[face * 3 + 2]] = true
-		var masks_faces := bool(entry.get("maskFaces", true))
-		return {
-			"baseFaceCount": base_face_count,
-			"faces": faces if masks_faces else {},
-			"vertices": masked_vertices if masks_faces else {},
-		}
-	return {}
-
-static func _surface_fingerprint(arrays: Array,
-		source: PackedInt32Array) -> String:
-	var context := HashingContext.new()
-	context.start(HashingContext.HASH_SHA256)
-	context.update((arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).to_byte_array())
-	context.update((arrays[Mesh.ARRAY_TEX_UV] as PackedVector2Array).to_byte_array())
-	context.update((arrays[Mesh.ARRAY_BONES] as PackedInt32Array).to_byte_array())
-	context.update((arrays[Mesh.ARRAY_WEIGHTS] as PackedFloat32Array).to_byte_array())
-	context.update(source.to_byte_array())
-	return context.finish().hex_encode()
-
-static func _profile_masks_face(source: PackedInt32Array, index: int,
-		exact_base_order: bool, masked_faces: Dictionary,
-		masked_vertices: Dictionary) -> bool:
-	if masked_faces.is_empty():
-		return false
-	if exact_base_order:
-		return masked_faces.has(index / 3)
-	# Imported LOD triangles may connect a reduced subset of the base vertices.
-	# Remove a LOD triangle touching the reviewed rear-only patch so cheaper
-	# levels cannot reintroduce the apron behind the fitted collar.
-	return (masked_vertices.has(source[index])
-		or masked_vertices.has(source[index + 1])
-		or masked_vertices.has(source[index + 2]))
 
 static func _keeps_face(source: PackedInt32Array, index: int,
 		vertices: PackedVector3Array, bones: PackedInt32Array,
 		weights: PackedFloat32Array, stride: int, to_rig: Transform3D,
 		fit: float, regions: Array, preserve_tail: bool,
 		protected_binds: PackedInt32Array, shaped_neck_active: bool,
-		bridge_surface: bool, profile_driven_bridge: bool,
-		mask_to_wardrobe_neckline: bool, generic_cut: bool = false) -> bool:
+		mask_to_wardrobe_neckline: bool, bridge_surface: bool = false) -> bool:
 	var center := (vertices[source[index]] + vertices[source[index + 1]]
 		+ vertices[source[index + 2]]) / 3.0
 	var head_weight := 0.0
@@ -446,50 +262,20 @@ static func _keeps_face(source: PackedInt32Array, index: int,
 		and rest_center.y > NECK_ENVELOPE_MIN_Y
 		and absf(rest_center.x) < NECK_ENVELOPE_HALF_WIDTH)
 	var outer_head := head_weight > .5 and not neck_envelope
-	# Generic fitted collars retain only faces whose complete triangle belongs
+	# The bridge's throat inside an armour collar keeps its blended faces down to
+	# FRONT_BRIDGE_MIN_WEIGHT. The wardrobe-only neckline owns its own front dip.
+	if (neck_envelope and bridge_surface and not mask_to_wardrobe_neckline
+			and rest_center.z >= _neck_axis_z(rest_center.y)):
+		return lowest_corner_weight > FRONT_BRIDGE_MIN_WEIGHT
+	# Otherwise fitted collars retain only faces whose complete triangle belongs
 	# predominantly to Head/neck_01. Averaging the three corners let a strongly
 	# weighted neck vertex keep two torso vertices, producing a long skin wedge
-	# through the collar. The reviewed Orun profile deliberately retains its
-	# unmasked bridge rows and therefore keeps the legacy mean-weight predicate.
-	var protected_face := (bridge_surface or head_weight > .5
-		if profile_driven_bridge else all_corners_protected)
-	# The generic shared-neck bridge is the visible neck from the jaw down:
-	# dropping the surface outright left every bridged race's head floating
-	# above a high collar. Under real armour its flared rows behind and beside
-	# the neck are trimmed (_bridge_trim_y), the generic analogue of Orun's
-	# reviewed rear-row mask; the fitted native shirt follows the body's own
-	# collar, so a wardrobe-only neckline keeps them. Behind the neck axis the
-	# rest takes the whole-face test. In front of the axis it is the throat
-	# inside the collar's opening and keeps its blended faces down to
-	# FRONT_BRIDGE_MIN_WEIGHT.
-	if neck_envelope and bridge_surface and not profile_driven_bridge:
-		if (not mask_to_wardrobe_neckline
-				and rest_center.y < _bridge_trim_y(rest_center, generic_cut)):
-			return false
-		if rest_center.z >= _neck_axis_z(rest_center.y):
-			return lowest_corner_weight > FRONT_BRIDGE_MIN_WEIGHT
-	return ((protected_face if neck_envelope else
-		(protected_face if shaped_neck_active else outer_head)) or (not neck_envelope
+	# through the collar.
+	return ((all_corners_protected if neck_envelope else
+		(all_corners_protected if shaped_neck_active else outer_head)) or (not neck_envelope
 		and not covered))
 
-## Height below which the generic bridge is trimmed under real armour:
-## REAR_BRIDGE_MAX_Y behind the neck axis, ramping down beside the neck to
-## SIDE_TRIM_MIN_Y at SIDE_TRIM_START_DEGREES from straight ahead, and no
-## trim further forward, where the collar opens. A profiled rig (`side` off)
-## keeps only the reviewed rear trim.
-static func _bridge_trim_y(point: Vector3, side: bool = true) -> float:
-	var ahead := point.z - _neck_axis_z(point.y)
-	if ahead < 0.0:
-		return REAR_BRIDGE_MAX_Y
-	if not side:
-		return -INF
-	var angle := rad_to_deg(atan2(absf(point.x), ahead))
-	if angle < SIDE_TRIM_START_DEGREES:
-		return -INF
-	return lerpf(SIDE_TRIM_MIN_Y, REAR_BRIDGE_MAX_Y,
-		(angle - SIDE_TRIM_START_DEGREES) / (90.0 - SIDE_TRIM_START_DEGREES))
-
-## Depth of the canonical neck axis at a rest-space height.
+## Depth of the canonical neck_01 -> Head axis at a rest-space height.
 static func _neck_axis_z(y: float) -> float:
 	var along := (y - NECK_AXIS_BASE.y) / (NECK_AXIS_TOP.y - NECK_AXIS_BASE.y)
 	return lerpf(NECK_AXIS_BASE.z, NECK_AXIS_TOP.z, along)
@@ -510,25 +296,25 @@ static func _wardrobe_neckline_y(point: Vector3) -> float:
 ## The rim is found across all surfaces at once: a race's neck bridge meets
 ## its head and the shared body along welded seams, and finding the rim one
 ## surface at a time took those seams for open edges, dragged them down to
-## the neckline and folded the bridge over the collar. The bridge above
-## WARDROBE_BRIDGE_RIM_MAX_Y is the visible neck and stays in place, except
-## around a reviewed profile's own hole (`profiled`).
+## the neckline and folded the bridge over the collar. Points of the bridge
+## and the race head above WARDROBE_BRIDGE_RIM_MAX_Y never move: they are the
+## visible neck and head, and some race heads have open edges under the chin
+## that are no neckline.
 static func _inset_wardrobe_neckline_rim(passes: Array[Dictionary],
-		welded: Array[PackedInt32Array], to_rig: Transform3D, fit: float,
-		profiled: bool) -> void:
+		welded: Array[PackedInt32Array], to_rig: Transform3D, fit: float) -> void:
 	var edge_counts := {}
-	var bridge_points := {}
+	var neck_points := {}
 	for surface: int in range(passes.size()):
 		var kept: PackedInt32Array = passes[surface]["kept"]
 		var ids: PackedInt32Array = welded[surface]
-		var bridge := bool(passes[surface]["bridge"])
+		var visible_neck := bool(passes[surface]["bridge"]) or bool(passes[surface]["head"])
 		for index: int in range(0, kept.size(), 3):
 			for corner: int in range(3):
 				var edge := _welded_edge(ids[kept[index + corner]],
 					ids[kept[index + (corner + 1) % 3]])
 				edge_counts[edge] = int(edge_counts.get(edge, 0)) + 1
-				if bridge:
-					bridge_points[ids[kept[index + corner]]] = true
+				if visible_neck:
+					neck_points[ids[kept[index + corner]]] = true
 	var boundary_points := {}
 	for edge_value: Variant in edge_counts:
 		if int(edge_counts[edge_value]) != 1:
@@ -553,7 +339,7 @@ static func _inset_wardrobe_neckline_rim(passes: Array[Dictionary],
 					or rest_point.z <= NECK_RIM_MIN_Z
 					or rest_point.z >= NECK_RIM_MAX_Z):
 				continue
-			if (bridge_points.has(ids[vertex]) and not profiled
+			if (neck_points.has(ids[vertex])
 					and rest_point.y > WARDROBE_BRIDGE_RIM_MAX_Y):
 				continue
 			rest_point.y = _wardrobe_neckline_y(rest_point)
@@ -586,314 +372,48 @@ static func _welded_points(passes: Array[Dictionary], to_rig: Transform3D,
 static func _welded_edge(first: int, second: int) -> Vector2i:
 	return Vector2i(mini(first, second), maxi(first, second))
 
-## Tidy the cut through the generic bridge, across all surfaces. First peel
-## spikes, bridge faces left hanging by one edge (two open edges), for
-## BRIDGE_SPIKE_PASSES rounds; then drop components made only of bridge faces
-## and no larger than BRIDGE_ISLAND_MAX_FACES. Every component that reaches
-## the head or the body stays, so the neck itself cannot come away.
-static func _clean_bridge_cut(passes: Array[Dictionary],
-		welded: Array[PackedInt32Array]) -> void:
-	var faces: Array[Vector2i] = []
-	var edges: Array[Vector2i] = []
-	var bridge_faces := PackedByteArray()
-	var alive := PackedByteArray()
-	for surface: int in range(passes.size()):
-		var kept: PackedInt32Array = passes[surface]["kept"]
-		var ids: PackedInt32Array = welded[surface]
-		var bridge := bool(passes[surface]["bridge"])
-		for index: int in range(0, kept.size(), 3):
-			faces.append(Vector2i(surface, index))
-			for corner: int in range(3):
-				edges.append(_welded_edge(ids[kept[index + corner]],
-					ids[kept[index + (corner + 1) % 3]]))
-			bridge_faces.append(1 if bridge else 0)
-			alive.append(1)
-	for spike_pass: int in range(BRIDGE_SPIKE_PASSES):
-		var edge_counts := {}
-		for face: int in range(faces.size()):
-			if alive[face] == 1:
-				for corner: int in range(3):
-					var edge := edges[face * 3 + corner]
-					edge_counts[edge] = int(edge_counts.get(edge, 0)) + 1
-		var spikes: Array[int] = []
-		for face: int in range(faces.size()):
-			if alive[face] == 0 or bridge_faces[face] == 0:
-				continue
-			var open_edges := 0
-			for corner: int in range(3):
-				if int(edge_counts[edges[face * 3 + corner]]) == 1:
-					open_edges += 1
-			if open_edges >= 2:
-				spikes.append(face)
-		if spikes.is_empty():
-			break
-		for face: int in spikes:
-			alive[face] = 0
-	var parents := PackedInt32Array()
-	parents.resize(faces.size())
-	var ranks := PackedInt32Array()
-	ranks.resize(faces.size())
-	var owners := {}
-	for face: int in range(faces.size()):
-		parents[face] = face
-		if alive[face] == 0:
-			continue
-		for corner: int in range(3):
-			var edge := edges[face * 3 + corner]
-			if not owners.has(edge):
-				owners[edge] = face
-				continue
-			var first_root := _component_root(parents, face)
-			var other_root := _component_root(parents, int(owners[edge]))
-			if first_root != other_root:
-				if ranks[first_root] < ranks[other_root]:
-					var swap := first_root
-					first_root = other_root
-					other_root = swap
-				parents[other_root] = first_root
-				if ranks[first_root] == ranks[other_root]:
-					ranks[first_root] += 1
-	var sizes := {}
-	var anchored := {}
-	for face: int in range(faces.size()):
-		if alive[face] == 0:
-			continue
-		var root := _component_root(parents, face)
-		sizes[root] = int(sizes.get(root, 0)) + 1
-		if bridge_faces[face] == 0:
-			anchored[root] = true
-	for face: int in range(faces.size()):
-		if alive[face] == 0:
-			continue
-		var root := _component_root(parents, face)
-		if not anchored.has(root) and int(sizes[root]) <= BRIDGE_ISLAND_MAX_FACES:
-			alive[face] = 0
-	var face := 0
-	for surface: int in range(passes.size()):
-		var kept: PackedInt32Array = passes[surface]["kept"]
-		var retained := PackedInt32Array()
-		var dropped := {}
-		for index: int in range(0, kept.size(), 3):
-			if alive[face] == 1:
-				retained.append_array(kept.slice(index, index + 3))
-			else:
-				for corner: int in range(3):
-					dropped[kept[index + corner]] = true
-			face += 1
-		if dropped.is_empty():
-			continue
-		for vertex: int in retained:
-			dropped.erase(vertex)
-		passes[surface]["kept"] = retained
-		passes[surface]["dropped"] = dropped
-
-## Any cut along the irregular bridge triangles leaves a saw-tooth hem: over
-## the back of the collar at the rear and side trim, and inside the open front
-## where the weights fade out. Level both. Open-edge points within
-## REAR_HEM_BAND of the trim line (_bridge_trim_y) go onto it; open-edge
-## points within FRONT_HEM_HALF_ANGLE of the front go onto the median height
-## of that front edge, when within FRONT_HEM_BAND of it. Only bridge points
-## that no kept head or body face uses may move, in every surface sharing the
-## welded point, and never one that would flip a face or open a T-junction,
-## so the closing caps and every seam stay shut. Weights, UVs and the source
-## mesh are untouched.
-static func _hem_bridge_cut(passes: Array[Dictionary],
-		welded: Array[PackedInt32Array], to_rig: Transform3D, fit: float) -> void:
-	var edge_counts := {}
-	var anchored_points := {}
-	var rest_points := {}
-	var bridge_faces: Array[PackedInt32Array] = []
-	for surface: int in range(passes.size()):
-		var kept: PackedInt32Array = passes[surface]["kept"]
-		var ids: PackedInt32Array = welded[surface]
-		var vertices: PackedVector3Array = passes[surface]["vertices"]
-		var bridge := bool(passes[surface]["bridge"])
-		for index: int in range(0, kept.size(), 3):
-			var corners := PackedInt32Array([ids[kept[index]], ids[kept[index + 1]],
-				ids[kept[index + 2]]])
-			for corner: int in range(3):
-				var edge := _welded_edge(corners[corner], corners[(corner + 1) % 3])
-				edge_counts[edge] = int(edge_counts.get(edge, 0)) + 1
-				if not bridge:
-					anchored_points[corners[corner]] = true
-				elif not rest_points.has(corners[corner]):
-					rest_points[corners[corner]] = (to_rig * vertices[kept[index + corner]]) / fit
-			if bridge:
-				bridge_faces.append(corners)
-	var open_points := {}
-	for edge_value: Variant in edge_counts:
-		if int(edge_counts[edge_value]) != 1:
-			continue
-		var edge := edge_value as Vector2i
-		for point: int in [edge.x, edge.y]:
-			if rest_points.has(point) and not anchored_points.has(point):
-				open_points[point] = rest_points[point]
-	var front_heights: Array[float] = []
-	for point_value: Variant in open_points:
-		var rest_point := open_points[point_value] as Vector3
-		if _front_hem_point(rest_point):
-			front_heights.append(rest_point.y)
-	var front_y := INF
-	if not front_heights.is_empty():
-		front_heights.sort()
-		front_y = front_heights[front_heights.size() / 2]
-	var targets := {}
-	for point_value: Variant in open_points:
-		var rest_point := open_points[point_value] as Vector3
-		if absf(rest_point.x) >= NECK_ENVELOPE_HALF_WIDTH:
-			continue
-		var trim_y := _bridge_trim_y(rest_point)
-		if trim_y > -INF and absf(rest_point.y - trim_y) < REAR_HEM_BAND:
-			targets[point_value] = trim_y
-		elif _front_hem_point(rest_point) and absf(rest_point.y - front_y) < FRONT_HEM_BAND:
-			targets[point_value] = front_y
-	_keep_hem_closed(targets, rest_points, bridge_faces)
-	if targets.is_empty():
-		return
-	var from_rig := to_rig.affine_inverse()
-	for surface: int in range(passes.size()):
-		var arrays: Array = passes[surface]["arrays"]
-		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
-		var ids: PackedInt32Array = welded[surface]
-		var result := PackedVector3Array()
-		for vertex: int in range(vertices.size()):
-			if not targets.has(ids[vertex]):
-				continue
-			if result.is_empty():
-				result = vertices.duplicate()
-			var rest_point := (to_rig * vertices[vertex]) / fit
-			rest_point.y = float(targets[ids[vertex]])
-			result[vertex] = from_rig * (rest_point * fit)
-		if not result.is_empty():
-			arrays[Mesh.ARRAY_VERTEX] = result
-
-## In front of the neck axis and within FRONT_HEM_HALF_ANGLE of straight ahead.
-static func _front_hem_point(point: Vector3) -> bool:
-	var ahead := point.z - _neck_axis_z(point.y)
-	return ahead > 0.0 and absf(point.x) < ahead * tan(deg_to_rad(FRONT_HEM_HALF_ANGLE))
-
-## Drop hem targets that would open the mesh. The decimated bridge has a few
-## T-junctions, a point resting on another face's edge; moving the point or
-## either end of that edge opens a pixel crack along it. A target that tilts
-## a face by more than HEM_MAX_TURN_COS turns it edge-on or over, and once
-## skinned its back is culled to a dark line. Rest positions; targets set y.
-static func _keep_hem_closed(targets: Dictionary, rest_points: Dictionary,
-		bridge_faces: Array[PackedInt32Array]) -> void:
-	if targets.is_empty():
-		return
-	var cell := .01
-	var grid := {}
-	for point_value: Variant in rest_points:
-		var key := Vector3i(((rest_points[point_value] as Vector3) / cell).floor())
-		if not grid.has(key):
-			grid[key] = PackedInt32Array()
-		(grid[key] as PackedInt32Array).append(int(point_value))
-	var edges := {}
-	for corners: PackedInt32Array in bridge_faces:
-		for corner: int in range(3):
-			edges[_welded_edge(corners[corner], corners[(corner + 1) % 3])] = true
-	for edge_value: Variant in edges:
-		var edge := edge_value as Vector2i
-		var start := rest_points[edge.x] as Vector3
-		var end := rest_points[edge.y] as Vector3
-		var low := Vector3i((start.min(end) / cell).floor())
-		var high := Vector3i((start.max(end) / cell).floor())
-		var span := high - low
-		if span.x * span.y * span.z > 64:
-			continue
-		var length_squared := start.distance_squared_to(end)
-		if length_squared < 1e-12:
-			continue
-		for x: int in range(low.x, high.x + 1):
-			for y: int in range(low.y, high.y + 1):
-				for z: int in range(low.z, high.z + 1):
-					for point: int in grid.get(Vector3i(x, y, z), PackedInt32Array()):
-						if point == edge.x or point == edge.y:
-							continue
-						if not (targets.has(point) or targets.has(edge.x)
-								or targets.has(edge.y)):
-							continue
-						var position := rest_points[point] as Vector3
-						var along := (position - start).dot(end - start) / length_squared
-						if (along > .001 and along < .999
-								and position.distance_to(start.lerp(end, along)) < .00005):
-							targets.erase(point)
-							targets.erase(edge.x)
-							targets.erase(edge.y)
-	for attempt: int in range(4):
-		var turned := false
-		for corners: PackedInt32Array in bridge_faces:
-			if not (targets.has(corners[0]) or targets.has(corners[1])
-					or targets.has(corners[2])):
-				continue
-			var before: Array[Vector3] = []
-			var after: Array[Vector3] = []
-			for corner: int in range(3):
-				var position := rest_points[corners[corner]] as Vector3
-				before.append(position)
-				if targets.has(corners[corner]):
-					position.y = float(targets[corners[corner]])
-				after.append(position)
-			var normal_before := (before[1] - before[0]).cross(before[2] - before[0])
-			var normal_after := (after[1] - after[0]).cross(after[2] - after[0])
-			if (normal_before.dot(normal_after) <= HEM_MAX_TURN_COS
-					* normal_before.length() * normal_after.length()):
-				for corner: int in range(3):
-					targets.erase(corners[corner])
-				turned = true
-		if not turned:
-			break
-
-## Generated LOD triangles connect a reduced subset of the base vertices.
-## Drop the ones touching a removed bridge shard so cheaper levels cannot
-## draw it again.
-static func _without_vertices(indices: PackedInt32Array,
-		vertices: Dictionary) -> PackedInt32Array:
-	var kept := PackedInt32Array()
-	for index: int in range(0, indices.size(), 3):
-		if (vertices.has(indices[index]) or vertices.has(indices[index + 1])
-				or vertices.has(indices[index + 2])):
-			continue
-		kept.append_array(indices.slice(index, index + 3))
-	return kept
-
 ## Some canonical heads carry a second, disconnected lower-neck shell. It is
 ## fully Head-weighted, so skinning weights cannot distinguish it from the
-## anatomical neck. Find only small welded components wholly inside the collar
-## band; their vertex ids also mask generated LOD triangles which touch them.
-static func _detached_neck_vertices(source: PackedInt32Array,
-		vertices: PackedVector3Array, to_rig: Transform3D, fit: float) -> Dictionary:
-	var point_ids := {}
-	var welded := PackedInt32Array()
-	welded.resize(vertices.size())
-	var rest_points := PackedVector3Array()
-	for vertex: int in range(vertices.size()):
-		var point := (to_rig * vertices[vertex]) / fit
-		var key := Vector3i(roundi(point.x * 100000.0), roundi(point.y * 100000.0),
-			roundi(point.z * 100000.0))
-		if not point_ids.has(key):
-			point_ids[key] = rest_points.size()
-			rest_points.append(point)
-		welded[vertex] = int(point_ids[key])
+## anatomical neck. Find only small components wholly inside the collar band,
+## welded across every surface: a race's neck bridge is split into surfaces
+## whose fragments are joined to the body and the head only through those
+## seams, and one surface at a time took them for loose shells and opened the
+## throat. Each pass's "detached" vertex ids also mask generated LOD triangles
+## which touch them.
+static func _detached_neck_vertices(passes: Array[Dictionary],
+		welded: Array[PackedInt32Array], to_rig: Transform3D, fit: float) -> void:
+	var rest_points := {}
+	for surface: int in range(passes.size()):
+		var vertices: PackedVector3Array = passes[surface]["vertices"]
+		var ids: PackedInt32Array = welded[surface]
+		for vertex: int in range(vertices.size()):
+			if not rest_points.has(ids[vertex]):
+				rest_points[ids[vertex]] = (to_rig * vertices[vertex]) / fit
 	var parents := PackedInt32Array()
 	parents.resize(rest_points.size())
 	for point_id: int in range(parents.size()):
 		parents[point_id] = point_id
-	for index: int in range(0, source.size(), 3):
-		var first_root := _component_root(parents, welded[source[index]])
-		for corner: int in range(1, 3):
-			var other_root := _component_root(parents, welded[source[index + corner]])
-			if first_root != other_root:
-				parents[other_root] = first_root
+	for surface: int in range(passes.size()):
+		var source: PackedInt32Array = passes[surface]["source"]
+		var ids: PackedInt32Array = welded[surface]
+		for index: int in range(0, source.size(), 3):
+			var first_root := _component_root(parents, ids[source[index]])
+			for corner: int in range(1, 3):
+				var other_root := _component_root(parents, ids[source[index + corner]])
+				if first_root != other_root:
+					parents[other_root] = first_root
 	var face_counts := {}
-	for index: int in range(0, source.size(), 3):
-		var root := _component_root(parents, welded[source[index]])
-		face_counts[root] = int(face_counts.get(root, 0)) + 1
+	for surface: int in range(passes.size()):
+		var source: PackedInt32Array = passes[surface]["source"]
+		var ids: PackedInt32Array = welded[surface]
+		for index: int in range(0, source.size(), 3):
+			var root := _component_root(parents, ids[source[index]])
+			face_counts[root] = int(face_counts.get(root, 0)) + 1
 	var minima := {}
 	var maxima := {}
-	for point_id: int in range(rest_points.size()):
+	for point_id: int in range(parents.size()):
 		var root := _component_root(parents, point_id)
-		var point := rest_points[point_id]
+		var point := rest_points[point_id] as Vector3
 		minima[root] = point if not minima.has(root) else (minima[root] as Vector3).min(point)
 		maxima[root] = point if not maxima.has(root) else (maxima[root] as Vector3).max(point)
 	var detached_roots := {}
@@ -906,11 +426,14 @@ static func _detached_neck_vertices(source: PackedInt32Array,
 				and maxf(absf(minimum.x), absf(maximum.x)) <= 0.100
 				and minimum.z >= -0.110 and maximum.z <= 0.040):
 			detached_roots[root] = true
-	var result := {}
-	for vertex: int in range(vertices.size()):
-		if detached_roots.has(_component_root(parents, welded[vertex])):
-			result[vertex] = true
-	return result
+	for surface: int in range(passes.size()):
+		var ids: PackedInt32Array = welded[surface]
+		var detached := {}
+		if not detached_roots.is_empty():
+			for vertex: int in range(ids.size()):
+				if detached_roots.has(_component_root(parents, ids[vertex])):
+					detached[vertex] = true
+		passes[surface]["detached"] = detached
 
 static func _component_root(parents: PackedInt32Array, point_id: int) -> int:
 	var root := point_id
