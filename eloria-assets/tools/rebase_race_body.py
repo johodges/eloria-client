@@ -115,6 +115,22 @@ R2 (review of the P4/P6 pilot):
 - install no longer writes models.json tailCollision (nothing reads it), and
   its after-write check tells tracked files dirty before install (content
   unchanged by it) from files install changed.
+
+R3 (tail): race_tail drapes the free tail in its TAIL_SHAPE ('heavy', 78% of
+the v2 length) instead of the R2 pole; `build --tail-shape <name>` builds a
+candidate in another race_tail TAIL_SHAPES shape (recorded in
+sharedBodyShape.tail.shape), which V18 fails: it requires TAIL_SHAPE.
+
+Batch B review (2026-10-07): race_features moves the crowned Glasswarden
+female's lower shard fringe into the feature (spec 'layered'), keeps the
+Stoneborn male's forehead and brow ridge as skin (grown over 10 mm) and gives
+the Glasswarden male's glass flecks the local skin colour in the head source
+right after the split (race_features.repaint; sharedBodyShape.raceFeatures
+.repaint, and V20 glassLeft bounds what is left on the baked atlas).
+race_tail's V18 holds every playable clip to the design limits; the clips
+the drape misses are race_tail TAIL_CLIP_WAIVERS, pending the lead's tail
+call. headwear_race_policy.json `shoulders` is measured over every played
+clip.
 """
 from __future__ import annotations
 
@@ -1090,17 +1106,19 @@ def feather_tail(a, faces, lower, surface, names, feather):
                     'along the tail surface: source weights with thigh_l/thigh_r moved to pelvis; smoothstep between'}
 
 
-def reroot_tail(module, tail, lower, names, world, slug):
+def reroot_tail(module, tail, lower, names, world, slug, shape=None):
     """Hook: race_tail.reroot_tail re-roots the v2 tail at the sacrum on the
-    Human trousers (decision 6); tail_capsule gives the pelvis-local cape
-    capsule install writes as models.json tailCollision. POSITION, NORMAL,
-    JOINTS_0 and WEIGHTS_0 change; faces lose only their loose fragments."""
+    Human trousers (decision 6) in the drape `shape` (a race_tail TAIL_SHAPES
+    name; None: the module's TAIL_SHAPE, the only one V18 passes);
+    tail_capsule gives the pelvis-local cape capsule (spec tail.collision).
+    POSITION, NORMAL, JOINTS_0 and WEIGHTS_0 change; faces lose only their
+    loose fragments."""
     a = tail['a']
     key = ('body', 'tail')
     pants = np.unique(np.concatenate([f for (name, _), f in lower['f'].items() if name == 'wardrobe_pants']))
     trouser = {k: lower['a'][k][pants] for k in ('POSITION', 'JOINTS_0', 'WEIGHTS_0')}
     joints = {n: world[i][:3, 3] for i, n in enumerate(names)}
-    result = module.reroot_tail({**a, 'faces': tail['f'][key]}, trouser, joints, names, slug=slug,
+    result = module.reroot_tail({**a, 'faces': tail['f'][key]}, trouser, joints, names, slug=slug, shape=shape,
                                 surface_tris=human_surface(lower))
     for k in ('POSITION', 'NORMAL', 'JOINTS_0', 'WEIGHTS_0'):
         a[k] = result[k]
@@ -1110,7 +1128,7 @@ def reroot_tail(module, tail, lower, names, world, slug):
     collision = {k: capsule[k] for k in ('bone', 'from', 'to', 'radius')}
     report['spec'] = plain({'method': f'{module.__name__}.reroot_tail', 'trianglesBefore': report['trianglesBefore'],
                             'fragmentTriangles': report['fragmentTriangles'], 'triangles': report['triangles'],
-                            'sacrumM': report['sacrumM'], 'hangDegrees': report['hangDegrees'],
+                            'sacrumM': report['sacrumM'], 'shape': report['shape'],
                             'featherM': report['featherM'], 'arcLengthRatio': report['arcLengthM']['ratio'],
                             'collision': collision})
     report['tailCollision'] = capsule
@@ -1968,7 +1986,7 @@ def as_f4(group):
 
 
 def build(root, slug, out, head=None, head_texture=None, template=None, head_atlas=None,
-          density_max=20., neck_profile='smooth', detail_mix=.2, skin_target='face', without=()):
+          density_max=20., neck_profile='smooth', detail_mix=.2, skin_target='face', without=(), tail_shape=None):
     root, out = Path(root).resolve(), Path(out).resolve()
     if 'godot-client' in out.parts:
         raise ValueError('Use a scratch --out outside godot-client')
@@ -2059,6 +2077,12 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
         upper['boundary'] = plane_rim(upper, origin_h, axis_h, upper_cut)
         if len(spb.loops(upper, origin_h, axis_h)) != 1:
             raise ValueError('head rim is not one ring after the feature split')
+        if feature_spec.get('repaint'):
+            # Batch B review: glass paint the split left in the dyed head (flat
+            # flecks, crystal bases) takes the local skin colour in the source
+            # copy every later step samples (race_features.repaint).
+            head_pixels, features['repaint'] = rf.repaint(upper, feature_spec, head_pixels, head_world, caps,
+                                                          origin_h, axis_h, upper_cut)
     upper['broken'], source_density, broken_counts = broken_uv(upper, head_pixels.shape[1], origin_h, axis_h, upper_cut)
     broken_report = {'faces': {k[0]: int(m.sum()) for k, m in upper['broken'].items() if m.any()}, **broken_counts,
                      'rule': f'all corners on the upper cut plane (v2 inner-loop caps), or an edge over {BROKEN_UV_RATIO:g}x '
@@ -2078,7 +2102,7 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
     tail = tail_group(hd, hb)
     tail_report = None
     if tail and modules['tail'] is not None:
-        tail_report = reroot_tail(modules['tail'], tail, lower, names_t, world_t, slug)
+        tail_report = reroot_tail(modules['tail'], tail, lower, names_t, world_t, slug, tail_shape)
     elif tail:
         tail_report = fit_tail(tail, lower, names_t, TAIL_FEATHER.get(slug))
     # B6: the bridge (never an automatic linear fallback).
@@ -2180,6 +2204,11 @@ def build(root, slug, out, head=None, head_texture=None, template=None, head_atl
     if features:
         spec['raceFeatures'] = {k: features[k] for k in ('node', 'role', 'kind', 'material', 'triangles', 'byPrimitive',
                                                          'caps', 'capRule', 'components', 'skull')}
+        if 'layered' in features:
+            spec['raceFeatures']['layered'] = features['layered']
+        if 'repaint' in features:
+            spec['raceFeatures']['repaint'] = {k: features['repaint'][k] for k in ('faces', 'areaCm2', 'texels', 'eyeFrontKept',
+                                                                                 'glassRGB', 'rule')}
         if 'floatingIslands' in features:
             islands = features['floatingIslands']
             spec['raceFeatures']['floatingIslands'] = {
@@ -3098,6 +3127,12 @@ def verify(root, slug, candidate, out, head=None, candidates=None, reports=True)
             pokes_ok, values['capHeadwear'] = cap_headwear_pokes(root, slug, parts, head_parts, cap_counts,
                                                                  world[names.index('Head')], spec['raceFeatures'])
             ok = ok and pokes_ok
+        repaint_rule = (rf.FEATURES.get(slug) or {}).get('repaint')
+        if repaint_rule:
+            # Batch B review: no glass-coloured paint left in the dyed head.
+            values['glassLeft'] = rf.glass_left(d, b, parts, cap_counts, world[names.index('Head')], ea.accessor_array,
+                                                repaint_rule)
+            ok = ok and values['glassLeft']['areaCm2'] <= repaint_rule['leftLimitCm2']
     gate('V20_race_features', ok, **values)
     edges, attrs = vspb.neck_join_checks(parts)
     gate('V4_neck_join', edges['geometricEdges'] > 50 and edges['unmatchedEdges'] == 0 and attrs['unmatchedCopies'] == 0
@@ -3601,6 +3636,8 @@ def main():
                    help='skin recolour target: the face reference (default) or the pilot neck-ring median')
     b.add_argument('--without', nargs='+', default=(), choices=sorted(HOOK_MODULES),
                    help='turn a present P4 hook module off (diagnostic builds; recorded in sharedBodyShape.hooks)')
+    b.add_argument('--tail-shape', help='Ssarathi tail drape (a race_tail TAIL_SHAPES name; default its TAIL_SHAPE, '
+                                        'the only one V18 passes): candidate builds')
     v = sub.add_parser('verify')
     v.add_argument('--root', type=Path, required=True)
     v.add_argument('--slug', required=True)
@@ -3620,7 +3657,7 @@ def main():
     if args.command == 'build':
         report = build(args.root, args.slug, args.out, args.head, args.head_texture, args.template,
                        args.head_atlas, args.head_density_max, args.neck_profile, args.detail_mix, args.skin_target,
-                       tuple(args.without))
+                       tuple(args.without), args.tail_shape)
         print(json.dumps({k: report[k] for k in ('outputSHA256', 'trianglesByRole', 'sharedNeck', 'headAtlas')}, indent=2))
     elif args.command == 'verify':
         result = verify(args.root, args.slug, args.candidate, args.out, args.head, reports=not args.no_reports)

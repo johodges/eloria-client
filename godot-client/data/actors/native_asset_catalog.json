@@ -98,8 +98,8 @@
       }
     },
     "votary_female": {
-      "vertices": 26395,
-      "triangles": 37317,
+      "vertices": 26883,
+      "triangles": 37856,
       "joints": 77,
       "feature": "horns",
       "wardrobe": "skinned",
@@ -113,7 +113,7 @@
       "path": "godot-client/assets/actors/native/races/votary_female.glb",
       "source": "whitehorn_votary_female_tpose.glb",
       "sourceSHA256": "a0601f6b651b363f793c997c1821fd483f6a017a836b07c58cffa3ee6214d154",
-      "sha256": "41d70bf029cfa496be30bfb1bdb05ca3fb4953762e5411af59a92299df29b097",
+      "sha256": "c27b499318c3cc229a8ad045f2e5b7b4b9c8c0317d751ca71f19c0db8200a68e",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -123,7 +123,8 @@
         "eyebrows",
         "scalp",
         "wardrobe_head_band",
-        "wardrobe_head_cap"
+        "wardrobe_head_cap",
+        "race_feature_head"
       ],
       "bodyTemplate": "luminous_female",
       "retainedTailTriangles": 0,
@@ -133,19 +134,19 @@
         "originalSHA256": "a0601f6b651b363f793c997c1821fd483f6a017a836b07c58cffa3ee6214d154",
         "sourceTriangles": 1935024,
         "extractedTriangles": 484105,
-        "scale": 0.8929180464935085,
+        "scale": 1.0000682120727296,
         "headTranslationM": [
-          0.0002464654442844251,
-          0.9821059483743251,
-          0.033055681143055744
+          0.0003021840642878135,
+          0.9135411066485282,
+          0.03788704090722201
         ]
       },
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_female",
         "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
-        "headSource": "votary_female.glb",
-        "headSourceSHA256": "1e25f34203feb96ac1e541f24c852996752ce0837513e6a0990f717fd6d2d5b6",
+        "headSource": "votary_female.v2.glb",
+        "headSourceSHA256": "322433361f0fc879a69148f85ef3333218e4ab72fd99c348809d28686c0bfd01",
         "headTextureSHA256": "d378e56f678e033fda9751106e7c9545f682611e71e3833d7216fb80f608c917",
         "skeleton": "headSource",
         "lowerCutM": 0.075,
@@ -165,9 +166,9 @@
             0.5330346200980384
           ],
           "targetRGB": [
-            0.9594492722570507,
-            0.8570398704094042,
-            0.7568642754959904
+            0.9577415126276437,
+            0.8551232479366608,
+            0.7551422315485301
           ],
           "targetSource": "face",
           "texels": 359465,
@@ -184,11 +185,11 @@
             "ringM": 0.01,
             "sigmaColumns": 48.0,
             "luminanceGain": {
-              "min": 0.7702685632219469,
-              "median": 0.9009039950940105,
-              "max": 1.0046587991177818,
-              "front": 0.9715350408637298,
-              "back": 0.7702740617132412
+              "min": 0.7733074933707215,
+              "median": 0.8982143334387899,
+              "max": 1.0083563869875474,
+              "front": 0.9723898081460808,
+              "back": 0.7733242454650081
             }
           }
         },
@@ -197,11 +198,11 @@
             1024,
             1024
           ],
-          "pxPerCm": 18.05003146523607,
-          "facePxPerCm": 17.57511143819872,
-          "sourcePxPerCm": 11.907237656359241,
-          "sourceFacePxPerCm": 11.593987211374365,
-          "islands": 48,
+          "pxPerCm": 15.475626618821865,
+          "facePxPerCm": 15.291990585641308,
+          "sourcePxPerCm": 10.585546630482977,
+          "sourceFacePxPerCm": 10.459947273568234,
+          "islands": 64,
           "gutterPx": 4,
           "sourceSize": 2048
         },
@@ -219,18 +220,70 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
         "neckProfileRepair": {
-          "columns": 21,
-          "maxDipBeforeM": 0.0011210823432976913,
-          "maxDipAfterM": 0.0005667704053416919
+          "columns": 15,
+          "maxDipBeforeM": 0.0008376328801653343,
+          "maxDipAfterM": 0.0005951699311976949
+        },
+        "raceFeatures": {
+          "node": "race_feature_head",
+          "role": "race_feature",
+          "kind": "horn",
+          "material": "Race feature horn",
+          "triangles": 6129,
+          "byPrimitive": {
+            "body": 314,
+            "scalp": 5815
+          },
+          "caps": {
+            "scalp": 539
+          },
+          "capRule": "the last caps[<mesh>] triangles of that race_head primitive, welded to the hole boundary; the primitive owning most of the hole edges",
+          "components": [
+            3069,
+            3060
+          ],
+          "skull": {
+            "centreYZ": [
+              0.03656,
+              -0.01988
+            ],
+            "radii": [
+              0.09393,
+              0.13,
+              0.10838
+            ],
+            "eyeYZ": [
+              0.05121,
+              0.06655
+            ],
+            "fittedOn": "cleaned head"
+          }
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2"
+        },
+        "hooks": {
+          "tail": null,
+          "hands": null,
+          "growths": null
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
     },
     "votary_male": {
-      "vertices": 23582,
-      "triangles": 29950,
+      "vertices": 24035,
+      "triangles": 30428,
       "joints": 77,
       "feature": "horns",
       "wardrobe": "skinned",
@@ -244,7 +297,7 @@
       "path": "godot-client/assets/actors/native/races/votary_male.glb",
       "source": "whitehorn_votary_male_tpose.glb",
       "sourceSHA256": "43cd45aca3c697956b98cfffa966a8ca612d28d341e7e9d29d3fadf696aaadb7",
-      "sha256": "652f2ea0546e6c2724f2ea7ccd9d4db9e6aa828e2957c765c49b7198f39bb17a",
+      "sha256": "6053585c0d3efbbc61cab57f4ccc0fd6b8a459fe7045c0d9e47467df74daf50a",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -254,7 +307,8 @@
         "eyebrows",
         "scalp",
         "wardrobe_head_band",
-        "wardrobe_head_cap"
+        "wardrobe_head_cap",
+        "race_feature_head"
       ],
       "bodyTemplate": "luminous_male",
       "retainedTailTriangles": 0,
@@ -264,19 +318,19 @@
         "originalSHA256": "43cd45aca3c697956b98cfffa966a8ca612d28d341e7e9d29d3fadf696aaadb7",
         "sourceTriangles": 1958304,
         "extractedTriangles": 467122,
-        "scale": 0.8935271831415312,
+        "scale": 1.0007504451185152,
         "headTranslationM": [
-          0.0006822659152947554,
-          0.9929808778853282,
-          0.012092351285635955
+          0.0007244368148366054,
+          0.9252355927115106,
+          0.015306088864377303
         ]
       },
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_male",
         "templateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
-        "headSource": "votary_male.glb",
-        "headSourceSHA256": "6657944d8a42e7ee3ce295b85e5d7bb7e5f7b677e3bcfc1c8774ae6f2044e5fe",
+        "headSource": "votary_male.v2.glb",
+        "headSourceSHA256": "babe8d4e0398eca84fb5a53e0bf283ea167feffe7097b2ef3aa0bcf50f95b9b9",
         "headTextureSHA256": "e563a96f7f57ccbe6ac3d6cd46ec0ed10c55c4fd95f6f654351fa2744562e87c",
         "skeleton": "headSource",
         "lowerCutM": 0.075,
@@ -296,9 +350,9 @@
             0.5098039215686274
           ],
           "targetRGB": [
-            0.7484776631939111,
-            0.7115352119495687,
-            0.6752123863868462
+            0.7484284843494691,
+            0.7114926299757911,
+            0.6751566715165154
           ],
           "targetSource": "face",
           "texels": 211406,
@@ -315,11 +369,11 @@
             "ringM": 0.01,
             "sigmaColumns": 48.0,
             "luminanceGain": {
-              "min": 0.7346742154714209,
-              "median": 0.8844074217526965,
-              "max": 0.9648159256978189,
-              "front": 0.7952402629687655,
-              "back": 0.8840355898103774
+              "min": 0.7233050213454633,
+              "median": 0.8848491960696674,
+              "max": 0.9654245815563954,
+              "front": 0.7836624655973335,
+              "back": 0.8845158148981861
             }
           }
         },
@@ -328,11 +382,11 @@
             1024,
             1024
           ],
-          "pxPerCm": 18.050039005708683,
-          "facePxPerCm": 18.73909673891422,
-          "sourcePxPerCm": 11.275309014582945,
-          "sourceFacePxPerCm": 11.705718927685918,
-          "islands": 50,
+          "pxPerCm": 15.475668411808883,
+          "facePxPerCm": 16.073442211555417,
+          "sourcePxPerCm": 10.014109164792828,
+          "sourceFacePxPerCm": 10.400949712646668,
+          "islands": 61,
           "gutterPx": 4,
           "sourceSize": 2048
         },
@@ -350,18 +404,70 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
         "neckProfileRepair": {
-          "columns": 59,
-          "maxDipBeforeM": 0.003661391780491491,
-          "maxDipAfterM": 0.0004074898630536533
+          "columns": 41,
+          "maxDipBeforeM": 0.0019367518471509332,
+          "maxDipAfterM": 0.0005093201159605543
+        },
+        "raceFeatures": {
+          "node": "race_feature_head",
+          "role": "race_feature",
+          "kind": "horn",
+          "material": "Race feature horn",
+          "triangles": 6114,
+          "byPrimitive": {
+            "body": 54,
+            "scalp": 6060
+          },
+          "caps": {
+            "scalp": 478
+          },
+          "capRule": "the last caps[<mesh>] triangles of that race_head primitive, welded to the hole boundary; the primitive owning most of the hole edges",
+          "components": [
+            3060,
+            3054
+          ],
+          "skull": {
+            "centreYZ": [
+              0.02576,
+              -0.01872
+            ],
+            "radii": [
+              0.09037,
+              0.13,
+              0.10376
+            ],
+            "eyeYZ": [
+              0.04705,
+              0.06587
+            ],
+            "fittedOn": "cleaned head"
+          }
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2"
+        },
+        "hooks": {
+          "tail": null,
+          "hands": null,
+          "growths": null
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
     },
     "glasswarden_female": {
-      "vertices": 26069,
-      "triangles": 37077,
+      "vertices": 32139,
+      "triangles": 39727,
       "joints": 77,
       "feature": "crystal",
       "wardrobe": "skinned",
@@ -374,8 +480,8 @@
       "groundHeight": 0.0,
       "path": "godot-client/assets/actors/native/races/glasswarden_female.glb",
       "source": "glasswarden_female_tpose.glb",
-      "sourceSHA256": "bcc56ed1bacd5f5bd8988e841d2cd9075fc2de8cf4d1bb65650483e7e46b9a6d",
-      "sha256": "01ff562f730e0ced0ba19554e3daa1db9267b1b1697ae3a38e7ebf69029fa611",
+      "sourceSHA256": "b9ed0125b47bb8a5737250d79bb59aa09260d0d45aa386fd07419ec4a9880643",
+      "sha256": "9a48f8fb2935a78ee42451faa1255250ddcc86ebcb47935be85cce04e9ff0b90",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -385,30 +491,69 @@
         "eyebrows",
         "scalp",
         "wardrobe_head_band",
-        "wardrobe_head_cap"
+        "wardrobe_head_cap",
+        "race_feature_head"
       ],
       "bodyTemplate": "luminous_female",
       "retainedTailTriangles": 0,
-      "neckAdaptorTriangles": 1081,
+      "neckAdaptorTriangles": 1008,
       "highResolutionHead": {
         "original": "glasswarden_female_tpose.glb",
-        "originalSHA256": "bcc56ed1bacd5f5bd8988e841d2cd9075fc2de8cf4d1bb65650483e7e46b9a6d",
-        "sourceTriangles": 1943602,
-        "extractedTriangles": 427393,
-        "scale": 0.8933440519154667,
+        "originalSHA256": "b9ed0125b47bb8a5737250d79bb59aa09260d0d45aa386fd07419ec4a9880643",
+        "sourceTriangles": 410778,
+        "extractedTriangles": 298796,
+        "scale": 0.8557184870792353,
         "headTranslationM": [
-          0.0004426437550475824,
-          0.928626963468486,
-          0.04795753494420469
-        ]
+          -2.4089423522687955e-05,
+          0.9699566754872391,
+          0.05439808248144652
+        ],
+        "landmarkAlignment": {
+          "scale": 0.9581911262798635,
+          "pivotFrom": [
+            0.0,
+            1.6795,
+            0.033
+          ],
+          "pivotTo": [
+            0.0,
+            1.6437,
+            0.033
+          ],
+          "translationM": [
+            0.0,
+            0.0344180034129693,
+            0.001379692832764505
+          ],
+          "rule": "eye midpoint onto the current head eye line; eye-to-chin length matched",
+          "landmarks": {
+            "current": {
+              "eyeY": 1.6437,
+              "chinBottomY": 1.5314,
+              "eyeToChinM": 0.1123
+            },
+            "extracted": {
+              "eyeY": 1.6795,
+              "chinBottomY": 1.5623,
+              "eyeToChinM": 0.1172
+            }
+          },
+          "extractScale": 0.8930561592670202,
+          "extractTranslationM": [
+            -2.5140520363838187e-05,
+            0.9763591484158898,
+            0.055331747701028784
+          ]
+        },
+        "originalPath": "generate_models/race_heads_2026-10/meshy/glasswarden_female_tpose.glb"
       },
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_female",
         "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
-        "headSource": "glasswarden_female.glb",
-        "headSourceSHA256": "789d51e34e143732805749e3f00ed2ee1c3638d069f577347aade6743d267044",
-        "headTextureSHA256": "0392cfc2ee7aa2f052639553beb576c83adc977c69f6dca3781558b0d94c39c0",
+        "headSource": "glasswarden_female.crowned-v2.glb",
+        "headSourceSHA256": "77bbae1f9e2a9eb108d6fe73b384d7d923425634250ff7f540865479a0f72241",
+        "headTextureSHA256": "ce3aaecb55d1b9aecf3c5a2112fde00aee0fe64cb9888fd7ab3eeba95c9c2007",
         "skeleton": "headSource",
         "lowerCutM": 0.075,
         "upperCutM": 0.13,
@@ -427,9 +572,9 @@
             0.5330346200980384
           ],
           "targetRGB": [
-            0.5842708161064223,
-            0.7278053756892561,
-            0.8881491904165226
+            0.7078811057711955,
+            0.8417256970332706,
+            0.9798077511112155
           ],
           "targetSource": "face",
           "texels": 359465,
@@ -446,26 +591,26 @@
             "ringM": 0.01,
             "sigmaColumns": 48.0,
             "luminanceGain": {
-              "min": 0.7449647743788332,
-              "median": 0.8352868331946972,
-              "max": 1.2565672242123669,
-              "front": 0.7600855159804228,
-              "back": 1.2563950551738263
+              "min": 0.6322540879266296,
+              "median": 0.7097412214036971,
+              "max": 0.9112269785806859,
+              "front": 0.6324859735291346,
+              "back": 0.9102542675114682
             }
           }
         },
         "headAtlas": {
           "size": [
-            1024,
-            1024
+            2048,
+            2048
           ],
-          "pxPerCm": 17.14750242926899,
-          "facePxPerCm": 17.219278785357538,
-          "sourcePxPerCm": 10.93594840798857,
-          "sourceFacePxPerCm": 10.981750917203096,
-          "islands": 38,
+          "pxPerCm": 18.042157260867402,
+          "facePxPerCm": 13.310949368396853,
+          "sourcePxPerCm": 33.324374390750926,
+          "sourceFacePxPerCm": 24.57559521696312,
+          "islands": 828,
           "gutterPx": 4,
-          "sourceSize": 2048
+          "sourceSize": 4096
         },
         "neckAtlas": {
           "size": [
@@ -477,22 +622,132 @@
         "cleanup": {
           "fragmentsRemoved": 0,
           "fragmentTriangles": 0,
-          "innerShellRemoved": 0,
-          "hiddenHeadFraction": 0.0,
-          "visibilityDirections": 60
+          "innerShellRemoved": 1265,
+          "hiddenHeadFraction": 0.00013126804935678657,
+          "visibilityDirections": 60,
+          "innerShellDenseVisibleKept": 533,
+          "buried": {
+            "rule": "hidden from 60 directions with the neck plugged, and from 4 points x (120 Fibonacci + 26 lattice) directions; rim-band faces kept",
+            "hiddenBefore": 2969,
+            "denseVisibleKept": 717,
+            "rimBandHiddenKept": 12,
+            "removed": 2240,
+            "removedByMesh": {
+              "body": 139,
+              "scalp": 2101
+            },
+            "looseRemoved": 35,
+            "denseDirections": 120,
+            "hiddenHeadTrianglesAfter": 480,
+            "hiddenHeadFractionAfter": 0.03150433184562877
+          },
+          "hiddenHeadFraction60": 0.03150433184562877,
+          "hiddenRule": "hidden: no ray escapes from the centroid along 60 directions, nor from 4 points (centroid and 3 interior) along 26 lattice + 120 Fibonacci directions"
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
         "neckProfileRepair": {
-          "columns": 52,
-          "maxDipBeforeM": 0.005107370309513748,
-          "maxDipAfterM": 0.0005097832096986402
+          "columns": 40,
+          "maxDipBeforeM": 0.0018419686116880607,
+          "maxDipAfterM": 0.0005888448690469297
+        },
+        "brokenUV": {
+          "faces": {
+            "body": 66
+          },
+          "inPlaneCaps": 66,
+          "stretched": 0,
+          "rule": "all corners on the upper cut plane (v2 inner-loop caps), or an edge over 10x the median px/cm and over 32 source px",
+          "chart": "own planar chart at the median density; texels interpolate the colours of their corners on intact faces"
+        },
+        "raceFeatures": {
+          "node": "race_feature_head",
+          "role": "race_feature",
+          "kind": "glass",
+          "material": "Race feature glass",
+          "triangles": 5838,
+          "byPrimitive": {
+            "body": 3211,
+            "scalp": 2627
+          },
+          "caps": {
+            "body": 2658,
+            "scalp": 279
+          },
+          "capRule": "the last caps[<mesh>] triangles of that race_head primitive, welded to the hole boundary; the primitive owning most of the hole edges",
+          "components": [
+            3969,
+            1750,
+            49,
+            47,
+            23
+          ],
+          "skull": {
+            "centreYZ": [
+              0.08226,
+              0.01651
+            ],
+            "radii": [
+              0.08563,
+              0.13,
+              0.10514
+            ],
+            "eyeYZ": [
+              0.08593,
+              0.09802
+            ],
+            "fittedOn": "uncleaned head"
+          },
+          "layered": {
+            "triangles": 1760,
+            "inFeature": 1754,
+            "rule": {
+              "belowEyeM": -0.01,
+              "behindSkullM": 0.0,
+              "rimMarginM": 0.006,
+              "minCrossings": 3
+            }
+          },
+          "floatingIslands": {
+            "triangles": 859,
+            "onCapM": 0.01,
+            "dropped": [
+              49,
+              416,
+              149,
+              25,
+              49,
+              63,
+              54,
+              54
+            ],
+            "kept": [
+              32
+            ]
+          }
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2"
+        },
+        "hooks": {
+          "tail": null,
+          "hands": null,
+          "growths": null
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
     },
     "glasswarden_male": {
-      "vertices": 24337,
-      "triangles": 30086,
+      "vertices": 25421,
+      "triangles": 30779,
       "joints": 77,
       "feature": "crystal",
       "wardrobe": "skinned",
@@ -506,7 +761,7 @@
       "path": "godot-client/assets/actors/native/races/glasswarden_male.glb",
       "source": "glasswarden_male_tpose.glb",
       "sourceSHA256": "efcec232675bfb5f233ea33cadb168d716658aa6569dd0b1a6c67fb0c0c85636",
-      "sha256": "f80853b703049b44e09c3e9f4f7b60655ac381fc3de7ddac01be6d8f1cf99388",
+      "sha256": "2dfcebc9ca766619bedfc820b973362c269361da590a76340d113e0d2b7fa19f",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -516,7 +771,8 @@
         "eyebrows",
         "scalp",
         "wardrobe_head_band",
-        "wardrobe_head_cap"
+        "wardrobe_head_cap",
+        "race_feature_head"
       ],
       "bodyTemplate": "luminous_male",
       "retainedTailTriangles": 0,
@@ -558,9 +814,9 @@
             0.5098039215686274
           ],
           "targetRGB": [
-            0.46346504922980575,
-            0.5859987745098058,
-            0.7694821908712904
+            0.45715102385851203,
+            0.5788620610642263,
+            0.7604742107632891
           ],
           "targetSource": "face",
           "texels": 211406,
@@ -577,11 +833,11 @@
             "ringM": 0.01,
             "sigmaColumns": 48.0,
             "luminanceGain": {
-              "min": 0.6404876650245312,
-              "median": 0.8470255227702314,
-              "max": 0.9601967770738019,
-              "front": 0.6701126650813832,
-              "back": 0.8474867226481421
+              "min": 0.6579885711544525,
+              "median": 0.8704871892774764,
+              "max": 0.9863463102236976,
+              "front": 0.6884761322607416,
+              "back": 0.8711489756664975
             }
           }
         },
@@ -590,11 +846,11 @@
             2048,
             2048
           ],
-          "pxPerCm": 19.999974165089334,
-          "facePxPerCm": 16.371469158495486,
-          "sourcePxPerCm": 10.821562177153844,
-          "sourceFacePxPerCm": 8.858252859615892,
-          "islands": 110,
+          "pxPerCm": 19.999979388912966,
+          "facePxPerCm": 16.57111268820328,
+          "sourcePxPerCm": 10.691734374420793,
+          "sourceFacePxPerCm": 8.85866600445059,
+          "islands": 199,
           "gutterPx": 4,
           "sourceSize": 2048
         },
@@ -614,11 +870,101 @@
           "hiddenHeadFraction60": 0.0002013693113169553,
           "hiddenRule": "hidden: no ray escapes from the centroid along 60 directions, nor from 4 points (centroid and 3 interior) along 26 lattice + 120 Fibonacci directions"
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
         "neckProfileRepair": {
           "columns": 62,
           "maxDipBeforeM": 0.003782133734252749,
           "maxDipAfterM": 0.0005279137114249308
+        },
+        "raceFeatures": {
+          "node": "race_feature_head",
+          "role": "race_feature",
+          "kind": "glass",
+          "material": "Race feature glass",
+          "triangles": 3667,
+          "byPrimitive": {
+            "body": 740,
+            "scalp": 2927
+          },
+          "caps": {
+            "body": 295,
+            "scalp": 398
+          },
+          "capRule": "the last caps[<mesh>] triangles of that race_head primitive, welded to the hole boundary; the primitive owning most of the hole edges",
+          "components": [
+            1000,
+            717,
+            592,
+            575,
+            245,
+            112,
+            109,
+            77,
+            75,
+            74,
+            69,
+            22
+          ],
+          "skull": {
+            "centreYZ": [
+              0.08785,
+              -0.01472
+            ],
+            "radii": [
+              0.0842,
+              0.13,
+              0.11609
+            ],
+            "eyeYZ": [
+              0.09916,
+              0.08198
+            ],
+            "fittedOn": "cleaned head"
+          },
+          "repaint": {
+            "faces": {
+              "body": 630,
+              "scalp": 217
+            },
+            "areaCm2": 57.17,
+            "texels": 19494,
+            "eyeFrontKept": 29,
+            "glassRGB": [
+              186.4,
+              234.7,
+              252.6
+            ],
+            "rule": {
+              "colourDistance": 45.0,
+              "eyeBehindM": 0.035,
+              "eyeAboveM": 0.03,
+              "leftLimitCm2": 2.0,
+              "radiusM": 0.025,
+              "skinDistance": 70.0,
+              "shade": [
+                0.9,
+                1.08
+              ],
+              "dilatePx": 2
+            }
+          }
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2"
+        },
+        "hooks": {
+          "tail": null,
+          "hands": null,
+          "growths": null
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -639,7 +985,7 @@
       "path": "godot-client/assets/actors/native/races/orun_female.glb",
       "source": "orun_female_tpose.glb",
       "sourceSHA256": "f7152380fa5ff5bfd7330e7548631d68b114acebecc753af1e2fde87c4833cc9",
-      "sha256": "e4ff5be736c097e7425b149cd195a707810f586926b74f349aeb1dfcd4317690",
+      "sha256": "a462d5a9c276da387e925535abe3caf9528df9855fe55e407d1c77b4bcd76749",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -659,19 +1005,19 @@
         "originalSHA256": "f7152380fa5ff5bfd7330e7548631d68b114acebecc753af1e2fde87c4833cc9",
         "sourceTriangles": 1923192,
         "extractedTriangles": 412588,
-        "scale": 0.8933304222022396,
+        "scale": 0.8486639010921275,
         "headTranslationM": [
-          0.0004774528276224341,
-          0.9254756061027132,
-          0.03163953438415684
+          0.00045674800310135287,
+          0.9572960086711743,
+          0.028919969499837876
         ]
       },
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_female",
         "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
-        "headSource": "orun_female.glb",
-        "headSourceSHA256": "cb547d406c26228c99e8cc5707192a40c1a8ab8b56b410c394a9cc935d502903",
+        "headSource": "orun_female.v2.glb",
+        "headSourceSHA256": "72c2b6c328818fbe4fedbbe13db63975ac5e31c30737c834649c82f80b39fea2",
         "headTextureSHA256": "2e9d70c1ca254eca794383724a9c420017ed5a87cbf5413821b2c98ebb036536",
         "skeleton": "headSource",
         "lowerCutM": 0.075,
@@ -691,9 +1037,9 @@
             0.5330346200980384
           ],
           "targetRGB": [
-            0.8015724791615616,
-            0.4751973046975975,
-            0.20282711591206373
+            0.8015911794955434,
+            0.4752289597894631,
+            0.20283243617201158
           ],
           "targetSource": "face",
           "texels": 359465,
@@ -710,11 +1056,11 @@
             "ringM": 0.01,
             "sigmaColumns": 48.0,
             "luminanceGain": {
-              "min": 0.918598921299814,
-              "median": 0.9854469983684702,
-              "max": 1.084252637574549,
-              "front": 0.9400964023065044,
-              "back": 0.9227527998088194
+              "min": 0.9184414017582084,
+              "median": 0.9874313742738183,
+              "max": 1.084573303871735,
+              "front": 0.9429281461293093,
+              "back": 0.9227796961700485
             }
           }
         },
@@ -723,10 +1069,10 @@
             1024,
             1024
           ],
-          "pxPerCm": 17.14751861319599,
-          "facePxPerCm": 17.283614075593867,
-          "sourcePxPerCm": 12.368465807155506,
-          "sourceFacePxPerCm": 12.466657986625254,
+          "pxPerCm": 18.049977214529868,
+          "facePxPerCm": 18.193418472356853,
+          "sourcePxPerCm": 13.019413471854325,
+          "sourceFacePxPerCm": 13.122842736832936,
           "islands": 36,
           "gutterPx": 4,
           "sourceSize": 2048
@@ -745,11 +1091,28 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
         "neckProfileRepair": {
-          "columns": 16,
-          "maxDipBeforeM": 0.0008376744170274231,
-          "maxDipAfterM": 0.0005733109166044734
+          "columns": 21,
+          "maxDipBeforeM": 0.0009756966300824843,
+          "maxDipAfterM": 0.0005960002736666928
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2"
+        },
+        "hooks": {
+          "tail": null,
+          "hands": null,
+          "growths": null
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -1158,7 +1521,7 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_female.glb",
       "source": "ssarathi_female_tpose.glb",
       "sourceSHA256": "c87560e8fe71372682314da2c4ec960e489a7fa50fccb90cb92f2a9459e4c3d6",
-      "sha256": "864caa73e6d0d870032d2010890015dbe61e567b37134e69ae49bc8c3298df96",
+      "sha256": "2d88de9d81fab6c85c6dfba49e0f72531016937e58fc237417d5b77337fb92da",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1178,19 +1541,19 @@
         "originalSHA256": "c87560e8fe71372682314da2c4ec960e489a7fa50fccb90cb92f2a9459e4c3d6",
         "sourceTriangles": 1959622,
         "extractedTriangles": 413712,
-        "scale": 0.8934806595605599,
+        "scale": 0.938154692538588,
         "headTranslationM": [
-          0.000767884947628273,
-          0.9078036858403009,
-          -0.02386299643064929
+          0.0007897091384641152,
+          0.8741922923136677,
+          -0.024342855935510478
         ]
       },
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_female",
         "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
-        "headSource": "ssarathi_female.glb",
-        "headSourceSHA256": "f084e009872678aae4970a552410fd7eafa7c8532ece3875db32032014f69855",
+        "headSource": "ssarathi_female.v2.glb",
+        "headSourceSHA256": "48df40f8c10c87be35350ca60728ff869b333cd64bf1e49d3471ef71f6478186",
         "headTextureSHA256": "268bf46ba703bbc649c8baa3d26d0501facecdea662d5102e9f7d55d6398e897",
         "skeleton": "headSource",
         "lowerCutM": 0.075,
@@ -1229,11 +1592,11 @@
             "ringM": 0.01,
             "sigmaColumns": 48.0,
             "luminanceGain": {
-              "min": 0.6294769782949532,
-              "median": 1.0559318511818394,
-              "max": 1.2478507301544262,
-              "front": 1.2446708397562638,
-              "back": 0.6295020380740515
+              "min": 0.6252136913558921,
+              "median": 1.051469155789567,
+              "max": 1.2479447219428472,
+              "front": 1.2455084771834881,
+              "back": 0.6252150653152195
             }
           }
         },
@@ -1242,10 +1605,10 @@
             1024,
             1024
           ],
-          "pxPerCm": 18.04921928374267,
-          "facePxPerCm": 17.91062860353617,
-          "sourcePxPerCm": 12.79127000684032,
-          "sourceFacePxPerCm": 12.692494874232597,
+          "pxPerCm": 17.147081519078466,
+          "facePxPerCm": 17.012470216502493,
+          "sourcePxPerCm": 12.18216476994231,
+          "sourceFacePxPerCm": 12.086206153965389,
           "islands": 118,
           "gutterPx": 4,
           "sourceSize": 2048
@@ -1264,11 +1627,11 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
         "neckProfileRepair": {
-          "columns": 27,
-          "maxDipBeforeM": 0.0014690923658575161,
-          "maxDipAfterM": 0.0004977626509741206
+          "columns": 25,
+          "maxDipBeforeM": 0.001355364030089054,
+          "maxDipAfterM": 0.0005191948835424204
         },
         "brokenUV": {
           "faces": {
@@ -1280,15 +1643,94 @@
           "chart": "own planar chart at the median density; texels interpolate the colours of their corners on intact faces"
         },
         "tail": {
+          "method": "race_tail.reroot_tail",
           "trianglesBefore": 6904,
           "fragmentTriangles": 0,
           "triangles": 6904,
-          "rootSinkM": {
-            "depth": 0.008,
-            "falloff": 0.12,
-            "maxShift": 0.05968492916156481
+          "sacrumM": [
+            0.0,
+            0.955,
+            -0.072
+          ],
+          "shape": {
+            "name": "heavy",
+            "pitchDegrees": [
+              [
+                0.0,
+                20.0
+              ],
+              [
+                0.5,
+                50.0
+              ],
+              [
+                1.0,
+                80.0
+              ]
+            ],
+            "yawDegrees": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                1.0,
+                0.0
+              ]
+            ],
+            "length": 0.78
           },
-          "featherM": 0.1
+          "featherM": 0.25,
+          "arcLengthRatio": 0.7844888137727754,
+          "collision": {
+            "bone": "pelvis",
+            "from": [
+              0.0,
+              0.03162,
+              -0.03077
+            ],
+            "to": [
+              0.0,
+              -0.2891,
+              -0.33879
+            ],
+            "radius": 0.1271
+          }
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2",
+          "race_tail.py": "f8cbc29b4d92b17c25513e8c06aa2ec396bf7f59db9dcf95c84b736de43dea43",
+          "race_hands.py": "ea2f9706837e4fdc079556a8d98a3c6079bb0deb04ff41d7f43af5ff0f7b5c8c",
+          "handSource:ssarathi_female_tpose.glb": "c87560e8fe71372682314da2c4ec960e489a7fa50fccb90cb92f2a9459e4c3d6",
+          "handSource:ssarathi_female_tpose_rigged.glb": "bccfe89d28307ff0e51f740474eea348d59d1dc249faae8cf48dc880b29d4572"
+        },
+        "hooks": {
+          "tail": "race_tail",
+          "hands": "race_hands",
+          "growths": null
+        },
+        "hands": {
+          "module": "race_hands",
+          "mode": "projected",
+          "sides": {
+            "l": {
+              "mode": "projected",
+              "gatePassed": true
+            },
+            "r": {
+              "mode": "projected",
+              "gatePassed": true
+            }
+          }
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -1309,7 +1751,7 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_male.glb",
       "source": "ssarathi_male_tpose.glb",
       "sourceSHA256": "0aaf3f18262bfc71b3e60044afbb9770b7d1f5551854ac62c07ccd627bceaf75",
-      "sha256": "d470728ec94a83af84adcf4eb7b6b6d7ed470c53b43d6eff563e48201ad752d5",
+      "sha256": "431b84ad642ef10aeedc9ee4ba5ffb3293d1e093663c32244f5c585ed51d0ff9",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1415,29 +1857,108 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
         "neckProfileRepair": {
           "columns": 64,
           "maxDipBeforeM": 0.0039044903617858062,
           "maxDipAfterM": 0.00046884138456937396
         },
         "tail": {
+          "method": "race_tail.reroot_tail",
           "trianglesBefore": 3212,
           "fragmentTriangles": 1,
           "triangles": 3211,
-          "rootSinkM": {
-            "depth": 0.008,
-            "falloff": 0.12,
-            "maxShift": 0.05356940439385133
+          "sacrumM": [
+            0.0,
+            0.955,
+            -0.083
+          ],
+          "shape": {
+            "name": "heavy",
+            "pitchDegrees": [
+              [
+                0.0,
+                20.0
+              ],
+              [
+                0.5,
+                50.0
+              ],
+              [
+                1.0,
+                80.0
+              ]
+            ],
+            "yawDegrees": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                1.0,
+                0.0
+              ]
+            ],
+            "length": 0.78
           },
-          "featherM": 0.1
+          "featherM": 0.25,
+          "arcLengthRatio": 0.7833883021642457,
+          "collision": {
+            "bone": "pelvis",
+            "from": [
+              0.0,
+              0.02887,
+              -0.04142
+            ],
+            "to": [
+              0.0,
+              -0.30001,
+              -0.33895
+            ],
+            "radius": 0.1063
+          }
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2",
+          "race_tail.py": "f8cbc29b4d92b17c25513e8c06aa2ec396bf7f59db9dcf95c84b736de43dea43",
+          "race_hands.py": "ea2f9706837e4fdc079556a8d98a3c6079bb0deb04ff41d7f43af5ff0f7b5c8c",
+          "handSource:ssarathi_male_tpose.glb": "0aaf3f18262bfc71b3e60044afbb9770b7d1f5551854ac62c07ccd627bceaf75",
+          "handSource:ssarathi_male_tpose_rigged.glb": "e6885a2fd03b19b47a9d7bb6ea8755dc7241c08081fa8af8bcdd701b0653e7ec"
+        },
+        "hooks": {
+          "tail": "race_tail",
+          "hands": "race_hands",
+          "growths": null
+        },
+        "hands": {
+          "module": "race_hands",
+          "mode": "projected",
+          "sides": {
+            "l": {
+              "mode": "projected",
+              "gatePassed": true
+            },
+            "r": {
+              "mode": "projected",
+              "gatePassed": true
+            }
+          }
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
     },
     "stoneborn_female": {
-      "vertices": 26663,
-      "triangles": 36619,
+      "vertices": 27983,
+      "triangles": 38112,
       "joints": 77,
       "feature": "stone",
       "wardrobe": "skinned",
@@ -1451,7 +1972,7 @@
       "path": "godot-client/assets/actors/native/races/stoneborn_female.glb",
       "source": "stoneborn_female_tpose.glb",
       "sourceSHA256": "4e7ba138db2251d33144b60ee710f95a8f2cacd0ae9852461af429954e6fc529",
-      "sha256": "2ef215ac7485842d33356e10562393ea8269d1bbba9c857cf028dc735f501899",
+      "sha256": "4cdb4368861d86ed857f7af846486ea65ef71a5e8cec2eedaca8b6c99a902813",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1461,7 +1982,8 @@
         "eyebrows",
         "scalp",
         "wardrobe_head_band",
-        "wardrobe_head_cap"
+        "wardrobe_head_cap",
+        "race_feature_head"
       ],
       "bodyTemplate": "luminous_female",
       "retainedTailTriangles": 0,
@@ -1504,8 +2026,8 @@
           ],
           "targetRGB": [
             0.2644850927240702,
-            0.26358148210188975,
-            0.2645022844696854
+            0.26349805835025697,
+            0.2646054664793143
           ],
           "targetSource": "face",
           "texels": 359465,
@@ -1522,11 +2044,11 @@
             "ringM": 0.01,
             "sigmaColumns": 48.0,
             "luminanceGain": {
-              "min": 0.8073552006536745,
-              "median": 0.8915589351323836,
-              "max": 1.0958168658413248,
-              "front": 0.8076577735456301,
-              "back": 1.0792481823421307
+              "min": 0.8082675845148587,
+              "median": 0.892340583618439,
+              "max": 1.099495195251242,
+              "front": 0.808602499139994,
+              "back": 1.0846867516831273
             }
           }
         },
@@ -1535,11 +2057,11 @@
             1024,
             1024
           ],
-          "pxPerCm": 13.966738761031488,
-          "facePxPerCm": 13.311499317577372,
-          "sourcePxPerCm": 11.926516728746728,
-          "sourceFacePxPerCm": 11.366931905766203,
-          "islands": 90,
+          "pxPerCm": 13.268440672466639,
+          "facePxPerCm": 12.743049941326783,
+          "sourcePxPerCm": 11.816137978018194,
+          "sourceFacePxPerCm": 11.348250732464173,
+          "islands": 158,
           "gutterPx": 4,
           "sourceSize": 2048
         },
@@ -1557,18 +2079,94 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
         "neckProfileRepair": {
           "columns": 14,
           "maxDipBeforeM": 0.0007814682069552416,
           "maxDipAfterM": 0.0005523525706533985
+        },
+        "raceFeatures": {
+          "node": "race_feature_head",
+          "role": "race_feature",
+          "kind": "stone",
+          "material": "Race feature stone",
+          "triangles": 3673,
+          "byPrimitive": {
+            "body": 565,
+            "scalp": 3108
+          },
+          "caps": {
+            "body": 253,
+            "scalp": 1240
+          },
+          "capRule": "the last caps[<mesh>] triangles of that race_head primitive, welded to the hole boundary; the primitive owning most of the hole edges",
+          "components": [
+            1232,
+            490,
+            468,
+            355,
+            350,
+            303,
+            273,
+            202
+          ],
+          "skull": {
+            "centreYZ": [
+              0.03307,
+              -0.03451
+            ],
+            "radii": [
+              0.09218,
+              0.13,
+              0.11325
+            ],
+            "eyeYZ": [
+              0.06248,
+              0.05253
+            ],
+            "fittedOn": "cleaned head"
+          }
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2",
+          "race_hands.py": "ea2f9706837e4fdc079556a8d98a3c6079bb0deb04ff41d7f43af5ff0f7b5c8c",
+          "handSource:stoneborn_female_tpose.glb": "4e7ba138db2251d33144b60ee710f95a8f2cacd0ae9852461af429954e6fc529",
+          "handSource:stoneborn_female_tpose_rigged.glb": "97616e4acc834d1532902e88758c2e399c050566c39bdd954f3b48950cbd595d"
+        },
+        "hooks": {
+          "tail": null,
+          "hands": "race_hands",
+          "growths": null
+        },
+        "hands": {
+          "module": "race_hands",
+          "mode": "projected",
+          "sides": {
+            "l": {
+              "mode": "projected",
+              "gatePassed": true
+            },
+            "r": {
+              "mode": "projected",
+              "gatePassed": true
+            }
+          }
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
     },
     "stoneborn_male": {
-      "vertices": 23622,
-      "triangles": 27471,
+      "vertices": 24478,
+      "triangles": 28399,
       "joints": 77,
       "feature": "stone",
       "wardrobe": "skinned",
@@ -1582,7 +2180,7 @@
       "path": "godot-client/assets/actors/native/races/stoneborn_male.glb",
       "source": "stoneborn_male_tpose.glb",
       "sourceSHA256": "f742ff4ade8777366b193e35ba6dd59716920c573ce2c381e3e1ac0d861a5fbb",
-      "sha256": "e0bf0f5ea9fe022d10d6d55e30fa3f02d3f03fc35bc86c1395129b3f096a5d71",
+      "sha256": "9c22f5c569bb6536d82fd2544158ee5843fcc38dbd4542a16d88d4d3c49db89e",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1592,7 +2190,8 @@
         "eyebrows",
         "scalp",
         "wardrobe_head_band",
-        "wardrobe_head_cap"
+        "wardrobe_head_cap",
+        "race_feature_head"
       ],
       "bodyTemplate": "luminous_male",
       "retainedTailTriangles": 0,
@@ -1636,7 +2235,7 @@
           "targetRGB": [
             0.23529411764705882,
             0.23137254901960785,
-            0.22423414841196887
+            0.2235294117647059
           ],
           "targetSource": "face",
           "texels": 211406,
@@ -1653,11 +2252,11 @@
             "ringM": 0.01,
             "sigmaColumns": 48.0,
             "luminanceGain": {
-              "min": 0.5477734724201404,
-              "median": 0.8317921011042351,
-              "max": 0.9486122909719014,
-              "front": 0.568975959498607,
-              "back": 0.841302617580966
+              "min": 0.5480028044684244,
+              "median": 0.8320584475538846,
+              "max": 0.9491856800392348,
+              "front": 0.5691886617657306,
+              "back": 0.8414976347577126
             }
           }
         },
@@ -1666,11 +2265,11 @@
             2048,
             2048
           ],
-          "pxPerCm": 19.99939709981038,
-          "facePxPerCm": 17.679407907517867,
-          "sourcePxPerCm": 7.488242656593564,
-          "sourceFacePxPerCm": 6.619385509539142,
-          "islands": 228,
+          "pxPerCm": 19.999435676222895,
+          "facePxPerCm": 17.86494224183946,
+          "sourcePxPerCm": 7.412406210760394,
+          "sourceFacePxPerCm": 6.621042505124192,
+          "islands": 286,
           "gutterPx": 4,
           "sourceSize": 2048
         },
@@ -1706,7 +2305,7 @@
           "hiddenHeadFraction60": 0.036322176072970114,
           "hiddenRule": "hidden: no ray escapes from the centroid along 60 directions, nor from 4 points (centroid and 3 interior) along 26 lattice + 120 Fibonacci directions"
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
         "neckProfileRepair": {
           "columns": 37,
           "maxDipBeforeM": 0.001544075385728011,
@@ -1720,13 +2319,97 @@
           "stretched": 0,
           "rule": "all corners on the upper cut plane (v2 inner-loop caps), or an edge over 10x the median px/cm and over 32 source px",
           "chart": "own planar chart at the median density; texels interpolate the colours of their corners on intact faces"
+        },
+        "raceFeatures": {
+          "node": "race_feature_head",
+          "role": "race_feature",
+          "kind": "stone",
+          "material": "Race feature stone",
+          "triangles": 1842,
+          "byPrimitive": {
+            "body": 341,
+            "scalp": 1501
+          },
+          "caps": {
+            "body": 284,
+            "scalp": 644
+          },
+          "capRule": "the last caps[<mesh>] triangles of that race_head primitive, welded to the hole boundary; the primitive owning most of the hole edges",
+          "components": [
+            313,
+            311,
+            262,
+            247,
+            202,
+            202,
+            158,
+            147
+          ],
+          "skull": {
+            "centreYZ": [
+              0.03917,
+              -0.03061
+            ],
+            "radii": [
+              0.07892,
+              0.13,
+              0.09661
+            ],
+            "eyeYZ": [
+              0.06917,
+              0.04959
+            ],
+            "fittedOn": "cleaned head"
+          },
+          "floatingIslands": {
+            "triangles": 0,
+            "onCapM": 0.01,
+            "dropped": [],
+            "kept": [
+              36
+            ]
+          }
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2",
+          "race_hands.py": "ea2f9706837e4fdc079556a8d98a3c6079bb0deb04ff41d7f43af5ff0f7b5c8c",
+          "handSource:stoneborn_male_tpose.glb": "f742ff4ade8777366b193e35ba6dd59716920c573ce2c381e3e1ac0d861a5fbb",
+          "handSource:stoneborn_male_tpose_rigged.glb": "a1d2c7f96fba8c2a3c37abf1bdde83eff69b1b6b3a379160417f97270d50937d"
+        },
+        "hooks": {
+          "tail": null,
+          "hands": "race_hands",
+          "growths": null
+        },
+        "hands": {
+          "module": "race_hands",
+          "mode": "projected",
+          "sides": {
+            "l": {
+              "mode": "projected",
+              "gatePassed": true
+            },
+            "r": {
+              "mode": "projected",
+              "gatePassed": true
+            }
+          }
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
     },
     "mycelari_female": {
-      "vertices": 25846,
-      "triangles": 36955,
+      "vertices": 28433,
+      "triangles": 39554,
       "joints": 77,
       "feature": "fungal",
       "wardrobe": "skinned",
@@ -1740,7 +2423,7 @@
       "path": "godot-client/assets/actors/native/races/mycelari_female.glb",
       "source": "mycelari_female_tpose.glb",
       "sourceSHA256": "36a041b00f9bb18f23312a2c3c58334c01e8bc3f0509003717d0ce28139a4991",
-      "sha256": "cba65c9d8fa6077f23bc8531bd87452e13f468b12b05385dc009b51b72b45245",
+      "sha256": "d182f1c29ce191c75f1663cef689e98e827ed1bc8a4070870ded447ed0568a6f",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1749,7 +2432,8 @@
         "eyes",
         "scalp",
         "wardrobe_head_band",
-        "wardrobe_head_cap"
+        "wardrobe_head_cap",
+        "race_feature_shoulders"
       ],
       "bodyTemplate": "luminous_female",
       "retainedTailTriangles": 0,
@@ -1845,18 +2529,44 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
         "neckProfileRepair": {
           "columns": 24,
           "maxDipBeforeM": 0.0011294291145091673,
           "maxDipAfterM": 0.0005879137152554198
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2",
+          "race_growths.py": "8672137e5aa6af98fddd57f0d1647b1742f2a37680409c4dc7ca68c2cacb4978",
+          "race_growths_blender.py": "a2695c880afb664c4cb971997e38c9c852b156d69fa27d1935e64baa03e99434",
+          "growth:mycelari_female": "f340ddf156a71f12257367ee28537d6611591300983e1bc7365c737edc045649"
+        },
+        "hooks": {
+          "tail": null,
+          "hands": null,
+          "growths": "race_growths"
+        },
+        "growths": {
+          "node": "race_feature_shoulders",
+          "growth": "mycelari_female.glb",
+          "growthSHA256": "f340ddf156a71f12257367ee28537d6611591300983e1bc7365c737edc045649",
+          "triangles": 2599
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
     },
     "mycelari_male": {
-      "vertices": 22616,
-      "triangles": 27206,
+      "vertices": 24481,
+      "triangles": 29805,
       "joints": 77,
       "feature": "fungal",
       "wardrobe": "skinned",
@@ -1870,7 +2580,7 @@
       "path": "godot-client/assets/actors/native/races/mycelari_male.glb",
       "source": "mycelari_male_tpose.glb",
       "sourceSHA256": "2aca1144b085584e298793940e17bc2b8f8afd969fcf3620d3b2604132f56157",
-      "sha256": "03a67a2a0f8f9d8d67a4896cc0bf551b9ec4153d59be26c5e3facee105a3f8c1",
+      "sha256": "4c6b683898da54b0fd8950b3b3e4e3b1515586a7712d865d14cf6cd2effb3268",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1879,7 +2589,8 @@
         "eyes",
         "scalp",
         "wardrobe_head_band",
-        "wardrobe_head_cap"
+        "wardrobe_head_cap",
+        "race_feature_shoulders"
       ],
       "bodyTemplate": "luminous_male",
       "retainedTailTriangles": 0,
@@ -1993,7 +2704,7 @@
           "hiddenHeadFraction60": 0.03596403596403597,
           "hiddenRule": "hidden: no ray escapes from the centroid along 60 directions, nor from 4 points (centroid and 3 interior) along 26 lattice + 120 Fibonacci directions"
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
         "headAlbedo": {
           "space": "linear",
           "gain": 0.6964477471213144,
@@ -2016,6 +2727,32 @@
           "stretched": 0,
           "rule": "all corners on the upper cut plane (v2 inner-loop caps), or an edge over 10x the median px/cm and over 32 source px",
           "chart": "own planar chart at the median density; texels interpolate the colours of their corners on intact faces"
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2",
+          "race_growths.py": "8672137e5aa6af98fddd57f0d1647b1742f2a37680409c4dc7ca68c2cacb4978",
+          "race_growths_blender.py": "a2695c880afb664c4cb971997e38c9c852b156d69fa27d1935e64baa03e99434",
+          "growth:mycelari_male": "4dc97a7422f32d3cc51d9332553cdfccbc51ab90f6bdce8653d25f47c9ae40e7"
+        },
+        "hooks": {
+          "tail": null,
+          "hands": null,
+          "growths": "race_growths"
+        },
+        "growths": {
+          "node": "race_feature_shoulders",
+          "growth": "mycelari_male.glb",
+          "growthSHA256": "4dc97a7422f32d3cc51d9332553cdfccbc51ab90f6bdce8653d25f47c9ae40e7",
+          "triangles": 2599
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -28600,14 +29337,14 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/races/glasswarden_female.glb": {
-        "nodes": 88,
-        "meshes": 9,
+        "nodes": 89,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/glasswarden_male.glb": {
-        "nodes": 88,
-        "meshes": 9,
+        "nodes": 89,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },
@@ -28636,14 +29373,14 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/races/mycelari_female.glb": {
-        "nodes": 88,
-        "meshes": 8,
+        "nodes": 89,
+        "meshes": 9,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/mycelari_male.glb": {
-        "nodes": 88,
-        "meshes": 8,
+        "nodes": 89,
+        "meshes": 9,
         "skins": 1,
         "animations": 0
       },
@@ -28672,26 +29409,26 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/races/stoneborn_female.glb": {
-        "nodes": 88,
-        "meshes": 9,
+        "nodes": 89,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/stoneborn_male.glb": {
-        "nodes": 88,
-        "meshes": 9,
+        "nodes": 89,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/votary_female.glb": {
-        "nodes": 88,
-        "meshes": 9,
+        "nodes": 89,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/votary_male.glb": {
-        "nodes": 88,
-        "meshes": 9,
+        "nodes": 89,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },

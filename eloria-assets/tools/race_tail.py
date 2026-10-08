@@ -1,7 +1,7 @@
 """Ssarathi tail re-root (race programme P4, decision 6) and its clip checks.
 
 The v2 tail (body primitive `race_tail`, its own image `Material_1`) is
-re-emitted from the sacrum along a gentle hang in the midline plane:
+re-emitted from the sacrum along a static drape in the midline plane:
 
 * geometry: geodesic distance s from the root ring (the open loop nearest the
   pelvis); knots = the root-ring centroid at s = 0 and the Gaussian-smoothed
@@ -10,12 +10,16 @@ re-emitted from the sacrum along a gentle hang in the midline plane:
   (44-48 degrees off the tube), so the old tangent there is the ring normal,
   blended to the centreline tangent over ROOT_BLEND_M: the ring stays
   parallel to the seat;
-* a new centreline starts at SACRUM[slug] and pitches from HANG_DEGREES[0]
-  below the horizontal (straight back, -z) at the root to HANG_DEGREES[1] at
-  the tip (smoothstep), sampled at the old centreline's cumulative arc
-  length, so the tail keeps its full length (+-0.5%);
+* a new centreline starts at SACRUM[slug] and follows the drape shape
+  (TAIL_SHAPES[TAIL_SHAPE], R3 'heavy'): its pitch below the horizontal
+  (straight back, -z) runs through (arc fraction, degrees) knots, 20 at the
+  root, 50 half way, 80 at the tip, sampled at the old centreline's
+  cumulative arc length scaled to the shape's length (.78 of v2: identity
+  over the first KEEP_ROOT_M, one compression factor past it);
 * every vertex keeps its offset in the old frame at its s and is re-emitted
-  in the new frame there; normals turn with the same rotation;
+  in the new frame there, its offset along the tangent stretched by the arc
+  scale (cross-sections kept, texture compressed along the tail, UVs and
+  triangles unchanged); normals turn with the same rotation;
 * the flared root ring is taller than the seat is deep, so ring vertices
   less than SINK_DEPTH_M inside the Human surface are pushed to that depth,
   fading over SINK_FALLOFF_M (sink_root, as fit_tail did);
@@ -26,6 +30,13 @@ re-emitted from the sacrum along a gentle hang in the midline plane:
 * faces lose only their loose fragments (< FRAGMENT_MIN_FACES, as fit_tail);
   TEXCOORD_0, the indices' rows and the image are the input's.
 
+The race has no tail bones (joints would break every hair and headwear
+bind), so past FEATHER_M the tail is rigid on the pelvis: the shape is the
+one static drape that reads as a heavy tail in idle, walk and run, clears
+the legs and the floor there, and stands up least when the pelvis bends
+(R3 candidates and numbers: TAIL_SHAPES; clip limits and the pending waivers:
+LEG_CLEARANCE_MIN_M, TAIL_CLIP_WAIVERS).
+
 `reroot_tail` is pure: arrays in, arrays out. `tail_capsule` gives the
 pelvis-local capsule (first CAPSULE_LENGTH_M of tail) a cape solver can
 collide with (models.json tailCollision). `ClipLibrary` + `BodyRig` evaluate
@@ -35,7 +46,7 @@ semantics) so that `clip_clearance` measures the skinned tail against leg
 capsules, the floor and the class-kit pieces (parts 2/4/5) frame by frame,
 offline. `v18_gate` is the verify hook (rest + playable clips).
 
-    python eloria-assets/tools/race_tail.py check --root <wt> --slug ssarathi_male --head <v2 backup glb> [--clips action|all] [--no-kits] [--out report.json]
+    python eloria-assets/tools/race_tail.py check --root <wt> --slug ssarathi_male --head <v2 backup glb> [--shape heavy] [--clips action|all] [--no-kits] [--out report.json]
 
 `check` re-roots the tail of a v2 body onto the installed body's trousers and
 prints the rest and clip numbers; it never writes into the worktree.
@@ -59,8 +70,36 @@ import equipment_authoring as ea  # noqa: E402
 # Root-ring centre of the re-emitted tail (rest pose, metres): on the midline,
 # 5.5 cm inside the Human trouser back (z -.138 male / -.127 female at y .955).
 SACRUM = {'ssarathi_male': (0., .955, -.083), 'ssarathi_female': (0., .955, -.072)}
-# Pitch below the horizontal (straight back, -z) at the root and at the tip.
-HANG_DEGREES = (10., 30.)
+# Static drape shapes (R3). The race has no tail bones (adding joints would
+# break every hair and headwear bind), so past FEATHER_M the tail is rigid on
+# the pelvis and one shape has to read in every clip. A shape gives the new
+# centreline's pitch below the horizontal (straight back, -z) as (arc
+# fraction, degrees) knots, smoothstep between consecutive knots (zero slope
+# at each knot), optionally a yaw towards +x the same way, and its arc length
+# relative to the v2 tail ('length'). Below 1 the arc past KEEP_ROOT_M is
+# compressed by one factor (ramping in over KEEP_RAMP_M) and the
+# cross-sections are kept: the texture compresses along the tail by that
+# factor, UVs and triangles are unchanged and nothing is cropped.
+TAIL_SHAPES = {
+    'pole': {'pitch': ((0., 10.), (1., 30.)), 'length': 1.},
+    'drape': {'pitch': ((0., 25.), (1., 70.)), 'length': 1.},
+    'drape_short': {'pitch': ((0., 25.), (1., 70.)), 'length': .82},
+    's_curve': {'pitch': ((0., 20.), (.6, 65.), (1., 20.)), 'length': .85},
+    'heavy': {'pitch': ((0., 20.), (.5, 50.), (1., 80.)), 'length': .78},
+}
+# R3 (lead review of the R2 pole, candidates in race-rebase/p47/tail_cands):
+# 'pole' is the R1/R2 hang (a rigid 1.3-1.4 m pole straight back, standing up
+# 1.35 m in Death_A and 1.09 m in Farm_Harvest, through capes); 'drape' and
+# 'drape_short' hang 25 -> 70 degrees (full length the female tip goes 17 cm
+# under the floor in Run_Female); 's_curve' lifts its tip off the ground but
+# curls it upwards in the bent clips and crosses capes most. 'heavy' curves
+# down from 20 degrees at the sacrum (steeper roots meet the thighs in
+# Run_Female) to 80 at a tip that ends behind the heels near the ground, at
+# 78% of the v2 length (80% leaves the female 7 mm off the floor in
+# Run_Female at 30 fps): least rise in the bent clips and fewest cape
+# crossings of the candidates that clear legs and floor in idle, walk and run.
+TAIL_SHAPE = 'heavy'
+KEEP_ROOT_M, KEEP_RAMP_M = .25, .10
 CENTRELINE_BINS = 40
 CENTRELINE_SIGMA = 1.5
 ROOT_BLEND_M = .12
@@ -68,6 +107,11 @@ ROOT_BLEND_M = .12
 # SINK_DEPTH_M inside the Human surface are pushed to that depth; the push
 # fades over SINK_FALLOFF_M of geodesic arc (as fit_tail did with TAIL_DEPTH).
 SINK_DEPTH_M, SINK_FALLOFF_M = .008, .12
+# A ring row the push leaves shallower than SINK_PULL_BELOW * SINK_DEPTH_M
+# (it went into a narrow fold, near the opposite wall: the male crotch under
+# a root pitched 20 degrees, 1.3 mm) is pulled towards the ring centre, in
+# SINK_PULL_STEPS steps, until it is SINK_DEPTH_M deep.
+SINK_PULL_BELOW, SINK_PULL_STEPS = .9, 40
 FEATHER_M = .25
 RESEAT_NEIGHBOURS = 4
 FRAGMENT_MIN_FACES = 20
@@ -79,11 +123,62 @@ CAPSULE_START_M = .10
 # calf->foot, foot->ball).
 ROOT_BAND_M = .25
 LEG_CAPSULES = (('thigh', 'calf', .085), ('calf', 'foot', .060), ('foot', 'ball', .050))
+# V18 clip gates, design limits (V18 at 542b60b2d): in every playable clip
+# (action_clips) the free tail keeps LEG_CLEARANCE_MIN_M off the leg capsules
+# and no tail point goes more than -FLOOR_MIN_M under the floor; the highest
+# tail point stays within RISE_MAX_M of the pelvis joint (in the idle family
+# the flared root ring reaches 115-130 mm above it). Idle, walk and run keep
+# LOCOMOTION_LEG_MIN_M (Run_Female 64 / 77 mm female / male) and the whole
+# tail LOCOMOTION_FLOOR_MIN_M above the floor (Run_Female 37 / 123 mm).
+# Batch B review: R3 had moved the limits to just past what the drape reaches
+# and gated the floor only in Sitting_Idle and Death_A and the rise only in
+# three clips, with Meditate exempt. Rigid on the pelvis, the drape sinks
+# into the floor when the pelvis drops or tilts back (Meditate, the sit
+# action, 906 / 808 mm; the attack_primary lunge Sword_Regular_A 395 /
+# 296 mm) and stands up when it bends forward (Death_A 690 / 632 mm above the
+# pelvis), and no static drape meets the design limits in those clips (R3
+# candidates in race_b/tail). The clips that miss them are listed in
+# TAIL_CLIP_WAIVERS at the achieved value (SAMPLE_FPS, rounded at least
+# 1 mm outward to 5 mm) so that a rebuild cannot get worse unseen. THEY ARE
+# WAIVERS PENDING THE LEAD'S TAIL CALL, not accepted values; every other
+# playable clip is held to the design limits.
 LEG_CLEARANCE_MIN_M = {'ssarathi_male': .090, 'ssarathi_female': .100}
+LOCOMOTION_CLIPS = ('Idle_Subtle', 'Walk', 'Run_Female')
+LOCOMOTION_LEG_MIN_M = {'ssarathi_male': .065, 'ssarathi_female': .055}
+LOCOMOTION_FLOOR_MIN_M = .020
 FLOOR_MIN_M = -.030
-FLOOR_CLIPS = ('Sitting_Idle', 'Death_A')
-EXEMPT_CLIPS = ('Meditate',)
+RISE_MAX_M = .30
+# {slug: {clip: {'legM' | 'floorM' | 'riseM': limit}}} (see above).
+TAIL_CLIP_WAIVERS = {
+    'ssarathi_female': {
+        'Meditate': {'floorM': -.910},
+        'Sword_Regular_A': {'legM': .065, 'floorM': -.400},
+        'Sword_Regular_A_Rec': {'legM': .075, 'floorM': -.385},
+        'Sword_Regular_B': {'legM': .090, 'floorM': -.375},
+        'Two-hand_Blast': {'floorM': -.370},
+        'Death_A': {'legM': .020, 'floorM': -.365, 'riseM': .695},
+        'Power_Up': {'floorM': -.360},
+        'Backflip': {'floorM': -.280, 'riseM': 1.045},
+        'Sitting_Idle': {'floorM': -.250},
+        'Sitting_Exit': {'floorM': -.250},
+        'Shivering': {'floorM': -.095},
+        'Hit_Chest': {'floorM': -.090},
+        'Farm_Harvest': {'floorM': -.060, 'riseM': .425},
+        'Tired_Hunched': {'riseM': .310}},
+    'ssarathi_male': {
+        'Meditate': {'floorM': -.810},
+        'Sword_Regular_A': {'legM': .065, 'floorM': -.300},
+        'Sword_Regular_A_Rec': {'legM': .070, 'floorM': -.285},
+        'Death_A': {'legM': .025, 'floorM': -.280, 'riseM': .635},
+        'Sword_Regular_B': {'floorM': -.275},
+        'Two-hand_Blast': {'floorM': -.270},
+        'Power_Up': {'floorM': -.265},
+        'Backflip': {'floorM': -.190, 'riseM': .945},
+        'Sitting_Idle': {'floorM': -.165},
+        'Sitting_Exit': {'floorM': -.165},
+        'Farm_Harvest': {'riseM': .390}}}
 SAMPLE_FPS = 15.
+TIP_BAND_M = .03
 ARC_TOLERANCE = .01
 ROOT_X_MAX_M = .005
 DEFAULT_ALIASES = {'head': 'Head'}
@@ -198,15 +293,62 @@ def rmf(t, first_normal=None):
     return n
 
 
-def hang_curve(length, start, theta, arcs, side=0., samples=800):
-    """The new centreline at arc positions `arcs`: from `start`, straight back
-    (-z) pitched theta[0] degrees down at the root to theta[1] at the tip
-    (smoothstep in arc), in the plane x = start.x (+ side drift)."""
+def tail_shape(shape=None):
+    """A drape shape: a TAIL_SHAPES name (default TAIL_SHAPE) or a dict;
+    returns (name, {'pitch', 'yaw', 'length'})."""
+    if shape is None:
+        shape = TAIL_SHAPE
+    if isinstance(shape, str):
+        if shape not in TAIL_SHAPES:
+            raise ValueError(f'unknown tail shape {shape!r} (one of {sorted(TAIL_SHAPES)})')
+        name, spec = shape, TAIL_SHAPES[shape]
+    else:
+        name, spec = 'custom', shape
+    pitch = tuple((float(u), float(v)) for u, v in spec['pitch'])
+    yaw = tuple((float(u), float(v)) for u, v in spec.get('yaw', ((0., 0.), (1., 0.))))
+    for knots in (pitch, yaw):
+        if knots[0][0] != 0 or knots[-1][0] != 1 or any(b[0] <= a[0] for a, b in zip(knots, knots[1:])):
+            raise ValueError(f'shape knots must run 0 -> 1 in increasing arc fraction: {knots}')
+    return name, {'pitch': pitch, 'yaw': yaw, 'length': float(spec.get('length', 1.))}
+
+
+def profile(knots, u):
+    """Piecewise smoothstep through (u, value) knots: zero slope at every
+    knot, so extremes sit on knots."""
+    u = np.clip(np.asarray(u, float), 0, 1)
+    out = np.full_like(u, knots[0][1])
+    for (u0, v0), (u1, v1) in zip(knots[:-1], knots[1:]):
+        t = np.clip((u-u0)/(u1-u0), 0, 1)
+        out = np.where(u >= u0, v0+(v1-v0)*t*t*(3-2*t), out)
+    return out
+
+
+def arc_map(a, total, scale, keep=KEEP_ROOT_M, ramp=KEEP_RAMP_M):
+    """New arc position and local stretch (d new / d old) of old centreline
+    arc `a` for a tail scaled to `scale` of `total`: identity up to `keep`,
+    then one factor c past keep + ramp (smoothstep in between), with
+    c chosen so that the whole arc maps to scale * total."""
+    a = np.asarray(a, float)
+    if scale == 1:
+        return a.copy(), np.ones_like(a)
+    if total <= keep+ramp:
+        raise ValueError('tail shorter than its kept root')
+    c = 1+(scale-1)*total/(total-keep-ramp/2)
+    t = np.clip((a-keep)/ramp, 0, 1)
+    integral = np.where(a <= keep+ramp, ramp*(t**3-t**4/2), ramp/2+(a-keep-ramp))
+    return a+(c-1)*integral, 1+(c-1)*t*t*(3-2*t)
+
+
+def shape_curve(length, start, shape, arcs, samples=800):
+    """The new centreline at arc positions `arcs` (on a curve of arc length
+    `length`): from `start`, pitched below the horizontal (straight back, -z)
+    by profile(shape['pitch']) and turned towards +x by profile(shape['yaw'])
+    of the arc fraction."""
     s = np.linspace(0, length, samples)
     u = s/length
-    th = np.radians(theta[0]+(theta[1]-theta[0])*u*u*(3-2*u))
-    direction = np.stack([np.full_like(s, side), -np.sin(th), -np.cos(th)], 1)
-    direction /= np.linalg.norm(direction, axis=1, keepdims=True)
+    th = np.radians(profile(shape['pitch'], u))
+    ya = np.radians(profile(shape['yaw'], u))
+    direction = np.stack([np.cos(th)*np.sin(ya), -np.sin(th), -np.cos(th)*np.cos(ya)], 1)
     ds = s[1]-s[0]
     pts = np.asarray(start, float)+np.concatenate([[np.zeros(3)], np.cumsum(.5*(direction[1:]+direction[:-1])*ds, 0)])
     return np.array([np.interp(arcs, s, pts[:, k]) for k in range(3)]).T
@@ -243,18 +385,21 @@ def _frames_at(knots, curve, t, n, s):
     return c, np.stack([nn, np.cross(tt, nn), tt], 2)
 
 
-def reemit(p, normals, faces, pelvis, start, theta=HANG_DEGREES, bins=CENTRELINE_BINS, side=0.,
-           root_blend=ROOT_BLEND_M):
-    """POSITION/NORMAL re-emitted along the hang curve (per input row; rows not
-    used by `faces` are returned unchanged) plus the geometry it was built on.
+def reemit(p, normals, faces, pelvis, start, shape=None, bins=CENTRELINE_BINS, root_blend=ROOT_BLEND_M):
+    """POSITION/NORMAL re-emitted along the shape's curve (per input row; rows
+    not used by `faces` are returned unchanged) plus the geometry it was
+    built on.
 
     Knots: the root-ring centroid at s = 0, then the smoothed geodesic-band
     centroids. Near the root the iso-distance slices lie parallel to the
     (oblique) root ring, so the old tangent there is the ring normal, blended
     to the centreline tangent by `root_blend` m; the ring therefore stays
     parallel to the seat (its plane normal goes onto the new root tangent).
-    The new curve is sampled at the old centreline's cumulative arc length,
-    so the tail keeps its length."""
+    The new curve is sampled at the old centreline's cumulative arc length
+    mapped by arc_map (identity for a full-length shape), and each vertex's
+    offset along the tangent is stretched by the local arc_map factor
+    (cross-sections kept; normals take the inverse stretch)."""
+    _, shape = tail_shape(shape)
     p = np.asarray(p, float)
     ids, pw, dist, root, loops = tail_geodesic(p, faces, pelvis)
     used = np.unique(ids[faces])
@@ -268,7 +413,9 @@ def reemit(p, normals, faces, pelvis, start, theta=HANG_DEGREES, bins=CENTRELINE
     old = np.vstack([ring_c, bands])
     arcs = np.concatenate([[0.], np.cumsum(np.linalg.norm(np.diff(old, axis=0), axis=1))])
     total = float(arcs[-1]+(length-mids[-1]))
-    new = hang_curve(total, start, theta, arcs, side)
+    new_arcs, _ = arc_map(arcs, total, shape['length'])
+    new_total = float(arc_map([total], total, shape['length'])[0][0])
+    new = shape_curve(new_total, start, shape, new_arcs)
     u = np.clip(knots/root_blend, 0, 1)
     t_old = _slerp_dirs(np.tile(ring_n, (len(knots), 1)), tangents(old), u*u*(3-2*u))
     n_old = rmf(t_old)
@@ -278,13 +425,18 @@ def reemit(p, normals, faces, pelvis, start, theta=HANG_DEGREES, bins=CENTRELINE
     s = dist[ids[rows]]
     c0, f0 = _frames_at(knots, old, t_old, n_old, s)
     c1, f1 = _frames_at(knots, new, t_new, n_new, s)
-    rotation = np.einsum('nij,nkj->nik', f1, f0)       # F1 @ F0^T
+    _, stretch = arc_map(np.interp(s, knots, arcs), total, shape['length'])
+    local = np.einsum('nji,nj->ni', f0, p[rows]-c0)    # F0^T (p - c0): [N, B, T] offsets
+    local[:, 2] *= stretch
     out_p, out_n = p.copy(), np.asarray(normals, float).copy()
-    out_p[rows] = c1+np.einsum('nij,nj->ni', rotation, p[rows]-c0)
-    rn = np.einsum('nij,nj->ni', rotation, out_n[rows])
+    out_p[rows] = c1+np.einsum('nij,nj->ni', f1, local)
+    ln = np.einsum('nji,nj->ni', f0, out_n[rows])
+    ln[:, 2] /= stretch
+    rn = np.einsum('nij,nj->ni', f1, ln)
     out_n[rows] = rn/np.maximum(np.linalg.norm(rn, axis=1, keepdims=True), 1e-12)
     geometry = {'ids': ids, 'dist': dist, 'root': root, 'openLoops': loops, 'knots': knots, 'arcs': arcs,
-                'oldCentreline': old, 'newCentreline': new, 'length': length, 'centrelineArcM': total,
+                'newArcs': new_arcs, 'oldCentreline': old, 'newCentreline': new, 'length': length,
+                'centrelineArcM': total, 'newCentrelineArcM': new_total, 'shape': shape,
                 'ringNormal': ring_n, 'ringObliquityDegrees': float(np.degrees(np.arccos(np.clip(ring_n@tangents(old)[min(3, len(old)-1)], -1, 1))))}
     return out_p, out_n, geometry
 
@@ -333,8 +485,10 @@ def _vertex_normals(p, faces, ids):
 
 def sink_root(p, normals, faces, geo, surface_tris, depth=SINK_DEPTH_M, falloff=SINK_FALLOFF_M):
     """Push root-ring rows shallower than `depth` (or outside) to `depth`
-    inside the Human surface, fading the push over `falloff` m of geodesic
-    arc; normals follow the change of the geometric vertex normals."""
+    inside the Human surface (rows the push leaves in a fold are pulled
+    towards the ring centre until they are that deep), fading the push over
+    `falloff` m of geodesic arc; normals follow the change of the geometric
+    vertex normals."""
     p = np.asarray(p, float).copy()
     normals = np.asarray(normals, float).copy()
     ids, dist = geo['ids'], geo['dist']
@@ -343,6 +497,21 @@ def sink_root(p, normals, faces, geo, surface_tris, depth=SINK_DEPTH_M, falloff=
     outward = np.where((d0 > 0)[:, None], closest-p[ring], p[ring]-closest)
     outward /= np.maximum(np.linalg.norm(outward, axis=1, keepdims=True), 1e-12)
     move = np.where((d0 < depth)[:, None], closest-outward*depth-p[ring], 0.)
+    pushed, _ = surface_depth(p[ring]+move, surface_tris)
+    shallow = np.flatnonzero(pushed < depth*SINK_PULL_BELOW)
+    pulled = len(shallow)
+    if pulled:
+        _, first = np.unique(ids[ring], return_index=True)
+        centre = p[ring][first].mean(0)
+        start = p[ring][shallow]+move[shallow]
+        for f in np.linspace(0, 1, SINK_PULL_STEPS+1)[1:]:
+            q = start+f*(centre-start)
+            dq, _ = surface_depth(q, surface_tris)
+            ok = dq >= depth
+            move[shallow[ok]] = q[ok]-p[ring][shallow[ok]]
+            shallow, start = shallow[~ok], start[~ok]
+            if not len(shallow):
+                break
     rows = np.unique(faces)
     s = dist[ids[rows]]
     near = rows[s < falloff]
@@ -366,6 +535,7 @@ def sink_root(p, normals, faces, geo, surface_tris, depth=SINK_DEPTH_M, falloff=
     d1, _ = surface_depth(p1[ring], surface_tris)
     return p1, normals, {'targetDepthM': depth, 'falloffM': falloff, 'ringRows': int(len(ring)),
                          'pushedRingRows': int((np.linalg.norm(move, axis=1) > 0).sum()),
+                         'pulledRingRows': int(pulled-len(shallow)), 'unresolvedRingRows': int(len(shallow)),
                          'maxShiftM': float(np.linalg.norm(shift, axis=1).max()), 'movedRows': int(moved.sum()),
                          'ringDepthBeforeM': [float(d0.min()), float(np.median(d0))],
                          'ringDepthAfterM': [float(d1.min()), float(np.median(d1))]}
@@ -413,7 +583,7 @@ def feather_weights(s, seat, pelvis_index, feather=FEATHER_M):
 # The re-root
 # ---------------------------------------------------------------------------
 
-def reroot_tail(tail, trouser, joints, names, slug=None, sacrum=None, theta=HANG_DEGREES,
+def reroot_tail(tail, trouser, joints, names, slug=None, sacrum=None, shape=None,
                 feather=FEATHER_M, bins=CENTRELINE_BINS, surface_tris=None):
     """Re-root a race_tail primitive at the sacrum.
 
@@ -426,6 +596,7 @@ def reroot_tail(tail, trouser, joints, names, slug=None, sacrum=None, theta=HANG
     surface_tris: (n,3,3) closed Human below-neck surface (rebase_race_body
              human_surface(lower)); when given, the root ring is sunk to
              SINK_DEPTH_M inside it (sink_root)
+    shape:   a TAIL_SHAPES name or dict (default TAIL_SHAPE)
     Returns {'POSITION','NORMAL','JOINTS_0','WEIGHTS_0' (input row count and
     dtypes; TEXCOORD_0 untouched), 'faces' (fragments dropped), 'report',
     'geometry'} (geometry['featherArc']: per-row geodesic distance from the
@@ -437,7 +608,8 @@ def reroot_tail(tail, trouser, joints, names, slug=None, sacrum=None, theta=HANG
     p0 = np.asarray(tail['POSITION'], float)
     faces, fragments = drop_fragments(p0, np.asarray(tail['faces'], int))
     pelvis = np.asarray(joints['pelvis'], float)
-    p1, n1, geo = reemit(p0, tail['NORMAL'], faces, pelvis, sacrum, theta, bins)
+    shape_name, shape = tail_shape(shape)
+    p1, n1, geo = reemit(p0, tail['NORMAL'], faces, pelvis, sacrum, shape, bins)
     sink = None
     if surface_tris is not None:
         p1, n1, sink = sink_root(p1, n1, faces, geo, surface_tris)
@@ -467,7 +639,9 @@ def reroot_tail(tail, trouser, joints, names, slug=None, sacrum=None, theta=HANG
     final = dense(out_j[rows], out_w[rows], width)
     seat_mean = seat[s[rows] < .02].mean(0) if (s[rows] < .02).any() else seat.mean(0)
     report = {
-        'slug': slug, 'sacrumM': [float(x) for x in sacrum], 'hangDegrees': [float(x) for x in theta],
+        'slug': slug, 'sacrumM': [float(x) for x in sacrum],
+        'shape': {'name': shape_name, 'pitchDegrees': [list(k) for k in shape['pitch']],
+                  'yawDegrees': [list(k) for k in shape['yaw']], 'length': shape['length']},
         'featherM': feather, 'centrelineBins': bins,
         'triangles': int(len(faces)), 'trianglesBefore': int(len(tail['faces'])), **fragments,
         'openLoops': geo['openLoops'], 'rootLoopVertices': int(len(geo['root'])),
@@ -484,7 +658,8 @@ def reroot_tail(tail, trouser, joints, names, slug=None, sacrum=None, theta=HANG
             'pelvisMinBeyondFeather': float(final[s[rows] >= feather, names.index('pelvis')].min(initial=1)),
             'rule': f'seat (inverse-square mix of the {RESEAT_NEIGHBOURS} nearest wardrobe_pants rows) at the root, '
                     f'smoothstep to pure pelvis by {feather} m of geodesic arc from the root ring (re-emitted tail)'},
-        'normalsRule': 'input normal turned by the frame rotation (old centreline RMF -> new), per vertex',
+        'normalsRule': 'input normal turned by the frame rotation (old centreline RMF -> new), per vertex; '
+                       'the tangent component divided by the arc stretch of a shortened shape',
         'unchanged': ['TEXCOORD_0', 'faces (after fragment drop)', 'image'],
     }
     report['arcLengthM']['ratio'] = report['arcLengthM']['after']/report['arcLengthM']['before']
@@ -507,7 +682,7 @@ def tail_capsule(result, pelvis_world, length=CAPSULE_LENGTH_M, margin=CAPSULE_M
     geo = result['geometry']
     p = np.asarray(result['POSITION'], float)
     s_row = geo['dist'][geo['ids']]
-    knots, arcs, curve = geo['knots'], geo['arcs'], geo['newCentreline']
+    knots, arcs, curve = geo['knots'], geo['newArcs'], geo['newCentreline']
     a = curve[0]
     b = np.array([np.interp(length, arcs, curve[:, k]) for k in range(3)])
     s_end = float(np.interp(length, arcs, knots))
@@ -821,8 +996,10 @@ def action_clips(root, library, animation_map=None):
 def clip_clearance(rig, library, tail, s, clips, slug=None, pieces=None, fps=SAMPLE_FPS, root_band=ROOT_BAND_M,
                    centre_bins=None):
     """Per clip: leg-capsule clearance of the skinned tail beyond `root_band`,
-    the tail's lowest point, and per piece the tail-centreline crossings
-    (arc distances) and the tail-vertex clearance beyond the root band.
+    the tail's lowest point, its highest point above the pelvis joint, the
+    tip's height range (rows within TIP_BAND_M of the tip), and per piece the
+    tail-centreline crossings (arc distances) and the tail-vertex clearance
+    beyond the root band.
 
     tail:   {'POSITION','JOINTS_0','WEIGHTS_0', 'faces'} rest arrays (body joints)
     s:      geodesic arc distance per tail row (from reroot_tail geometry)
@@ -834,6 +1011,8 @@ def clip_clearance(rig, library, tail, s, clips, slug=None, pieces=None, fps=SAM
     sr = np.asarray(s, float)[rows]
     free = sr >= root_band
     length = float(sr.max())
+    tip = sr >= length-TIP_BAND_M
+    pelvis = rig.names.index('pelvis')
     nb = centre_bins or CENTRELINE_BINS
     band = np.minimum((sr/length*nb).astype(int), nb-1)
     band_s = (np.arange(nb)+.5)*length/nb
@@ -843,7 +1022,7 @@ def clip_clearance(rig, library, tail, s, clips, slug=None, pieces=None, fps=SAM
     results = {}
     for clip in clips:
         worst_leg, worst_t, ymin, ymin_t = np.inf, None, np.inf, None
-        foot = np.inf
+        foot, rise, tip_lo, tip_hi = np.inf, -np.inf, np.inf, -np.inf
         per_piece = {label: {'crossArcM': [], 'framesCrossing': 0, 'minClearanceM': np.inf, 'crossingsBeyond': 0}
                      for label in prepared}
         for time in library.times(clip, fps):
@@ -857,6 +1036,9 @@ def clip_clearance(rig, library, tail, s, clips, slug=None, pieces=None, fps=SAM
             if y < ymin:
                 ymin, ymin_t = y, float(time)
             foot = min(foot, min(float(world[rig.names.index(n)][1, 3]) for n in ('foot_l', 'foot_r', 'ball_l', 'ball_r')))
+            rise = max(rise, float(q[:, 1].max()-world[pelvis][1, 3]))
+            tip_y = float(q[tip, 1].min())
+            tip_lo, tip_hi = min(tip_lo, tip_y), max(tip_hi, tip_y)
             if not prepared:
                 continue
             centre = np.array([q[band == k].mean(0) for k in range(nb)])
@@ -878,7 +1060,8 @@ def clip_clearance(rig, library, tail, s, clips, slug=None, pieces=None, fps=SAM
                 dmin, _ = cKDTree(np.concatenate(verts)).query(q[free])
                 rec['minClearanceM'] = min(rec['minClearanceM'], float(dmin.min()))
         entry = {'legClearanceM': worst_leg, 'legClearanceAtS': worst_t, 'minTailY': ymin, 'minTailYAtS': ymin_t,
-                 'minFootJointY': foot, 'frames': int(len(library.times(clip, fps)))}
+                 'minFootJointY': foot, 'maxTailAbovePelvisM': rise, 'tipYM': [tip_lo, tip_hi],
+                 'frames': int(len(library.times(clip, fps)))}
         if prepared:
             entry['pieces'] = {label: {'framesCrossing': rec['framesCrossing'],
                                        'crossArcM': [round(min(rec['crossArcM']), 3), round(max(rec['crossArcM']), 3)] if rec['crossArcM'] else None,
@@ -890,16 +1073,40 @@ def clip_clearance(rig, library, tail, s, clips, slug=None, pieces=None, fps=SAM
 
 
 def clip_gates(results, slug):
-    """Design V18 clip gates on clip_clearance output."""
-    need = LEG_CLEARANCE_MIN_M.get(slug, .09)
-    legs = {c: r['legClearanceM'] for c, r in results.items() if c not in EXEMPT_CLIPS}
-    floor = {c: results[c]['minTailY'] for c in FLOOR_CLIPS if c in results}
+    """V18 clip gates on clip_clearance output: in every clip of `results`
+    leg clearance (LEG_CLEARANCE_MIN_M), lowest tail point (FLOOR_MIN_M) and
+    rise above the pelvis (RISE_MAX_M), each at the design limit unless
+    TAIL_CLIP_WAIVERS waives that clip; leg clearance and floor in
+    LOCOMOTION_CLIPS at the locomotion limits. A locomotion or waived clip
+    missing from `results` fails."""
+    need = LEG_CLEARANCE_MIN_M.get(slug, min(LEG_CLEARANCE_MIN_M.values()))
+    loco_need = LOCOMOTION_LEG_MIN_M.get(slug, min(LOCOMOTION_LEG_MIN_M.values()))
+    waivers = TAIL_CLIP_WAIVERS.get(slug, {})
+
+    def limit(clip, key, design):
+        return waivers.get(clip, {}).get(key, design)
+    legs = {c: r['legClearanceM'] for c, r in results.items() if c not in LOCOMOTION_CLIPS}
+    loco = {c: results[c]['legClearanceM'] for c in LOCOMOTION_CLIPS if c in results}
+    loco_floor = {c: results[c]['minTailY'] for c in LOCOMOTION_CLIPS if c in results}
+    floor = {c: r['minTailY'] for c, r in results.items()}
+    rise = {c: r['maxTailAbovePelvisM'] for c, r in results.items()}
+    missing = sorted(c for c in (*LOCOMOTION_CLIPS, *waivers) if c not in results)
     worst_leg = min(legs, key=legs.get) if legs else None
-    return {'legClearanceMinM': need, 'worstLegClip': worst_leg, 'worstLegClearanceM': legs.get(worst_leg),
-            'legFailures': sorted(c for c, v in legs.items() if v < need),
-            'floorMinM': FLOOR_MIN_M, 'floor': floor, 'floorFailures': sorted(c for c, v in floor.items() if v < FLOOR_MIN_M),
-            'exempt': list(EXEMPT_CLIPS),
-            'ok': bool(legs) and all(v >= need for v in legs.values()) and all(v >= FLOOR_MIN_M for v in floor.values())}
+    waived = {c: {k: {'limit': v, 'achieved': {'legM': legs, 'floorM': floor, 'riseM': rise}[k].get(c)}
+                  for k, v in w.items()} for c, w in waivers.items()}
+    gates = {'legClearanceMinM': need, 'worstLegClip': worst_leg, 'worstLegClearanceM': legs.get(worst_leg),
+             'legFailures': sorted(c for c, v in legs.items() if v < limit(c, 'legM', need)),
+             'locomotionLegMinM': loco_need, 'locomotionLegM': loco,
+             'locomotionLegFailures': sorted(c for c, v in loco.items() if v < loco_need),
+             'locomotionFloorMinM': LOCOMOTION_FLOOR_MIN_M, 'locomotionFloor': loco_floor,
+             'locomotionFloorFailures': sorted(c for c, v in loco_floor.items() if v < LOCOMOTION_FLOOR_MIN_M),
+             'floorMinM': FLOOR_MIN_M, 'floorFailures': sorted(c for c, v in floor.items() if v < limit(c, 'floorM', FLOOR_MIN_M)),
+             'riseMaxM': RISE_MAX_M, 'riseFailures': sorted(c for c, v in rise.items() if v > limit(c, 'riseM', RISE_MAX_M)),
+             'waivers': waived, 'waiversPending': 'the lead tail call (TAIL_CLIP_WAIVERS)',
+             'clipsOverDesign': sorted(waivers), 'missingClips': missing}
+    gates['ok'] = bool(legs) and not missing and not any(gates[k] for k in (
+        'legFailures', 'locomotionLegFailures', 'locomotionFloorFailures', 'floorFailures', 'riseFailures'))
+    return gates
 
 
 # ---------------------------------------------------------------------------
@@ -979,16 +1186,20 @@ def v18_gate(root, slug, candidate, head, fps=SAMPLE_FPS):
     """V18 for a re-rooted tail, measured on the built candidate GLB against
     its v2 head: (ok, values).
 
+    shape: the build recorded (sharedBodyShape.tail.shape) TAIL_SHAPE with
+           its current parameters.
     rest:  triangles are the v2 tail's minus its loose fragments (per-triangle
-           UV bytes equal); centreline arc length within ARC_TOLERANCE of v2;
-           welded root-ring centroid |x| <= ROOT_X_MAX_M; every root-ring
-           vertex >= SINK_DEPTH_M/2 inside the Human below-neck surface.
+           UV bytes equal); centreline arc length within ARC_TOLERANCE of the
+           shape's length times v2's; welded root-ring centroid |x| <=
+           ROOT_X_MAX_M; every root-ring vertex >= SINK_DEPTH_M/2 inside the
+           Human below-neck surface.
     clips: on the clips the actor can play (action map + combat recipe
            sources, the library the client loads, NativeAnimationImporter
-           semantics): leg-capsule clearance of the tail past ROOT_BAND_M >=
-           LEG_CLEARANCE_MIN_M[slug] except EXEMPT_CLIPS, lowest tail point
-           >= FLOOR_MIN_M in FLOOR_CLIPS. The lowest tail points of every
-           playable clip are reported (crouching attacks go under the floor)."""
+           semantics): clip_gates (leg clearance past ROOT_BAND_M, floor and
+           rise above the pelvis in every playable clip at the design limits
+           or the clip's TAIL_CLIP_WAIVERS entry; idle/walk/run legs and
+           floor). The lowest tail points of every playable clip are
+           reported."""
     root = Path(root)
     cd, cb = ea.read_glb(Path(candidate))
     hd, hb = ea.read_glb(Path(head))
@@ -998,6 +1209,10 @@ def v18_gate(root, slug, candidate, head, fps=SAMPLE_FPS):
         return False, {'reason': 'no race_tail primitive', 'candidate': tail is not None, 'v2': v2 is not None}
     if v2_names != names:
         return False, {'reason': 'skeletons differ'}
+    name, shape = tail_shape()
+    expected = {'name': name, 'pitchDegrees': [list(k) for k in shape['pitch']],
+                'yawDegrees': [list(k) for k in shape['yaw']], 'length': shape['length']}
+    recorded = cd['asset'].get('extras', {}).get('sharedBodyShape', {}).get('tail', {}).get('shape')
     p = np.asarray(tail['POSITION'], float)
     ids, pw, dist, ring, loops = tail_geodesic(p, tail['faces'], joints['pelvis'])
     v2_faces, fragments = drop_fragments(np.asarray(v2['POSITION'], float), v2['faces'])
@@ -1018,9 +1233,11 @@ def v18_gate(root, slug, candidate, head, fps=SAMPLE_FPS):
     clips = action_clips(root, library)
     results = clip_clearance(BodyRig(cd, cb), library, tail, dist[ids], clips, slug, fps=fps)
     gates = clip_gates(results, slug)
-    values = {'trianglesV2': int(len(v2['faces'])), 'fragmentTriangles': fragments['fragmentTriangles'],
+    values = {'shape': {'expected': expected, 'recorded': recorded, 'ok': recorded == expected},
+              'trianglesV2': int(len(v2['faces'])), 'fragmentTriangles': fragments['fragmentTriangles'],
               'triangles': int(len(tail['faces'])), 'uvTrianglesEqualV2': bool(uv_same),
-              'arcLengthM': {'v2': v2_arc, 'candidate': arc, 'ratio': arc/v2_arc, 'tolerance': ARC_TOLERANCE,
+              'arcLengthM': {'v2': v2_arc, 'candidate': arc, 'ratio': arc/v2_arc, 'shapeLength': shape['length'],
+                             'tolerance': ARC_TOLERANCE,
                              'rowsMatched': int(len(rows_c)), 'measure': 'root-ring centre + smoothed centroids of '
                              'the v2 geodesic bands (rows matched through UV-equal triangles)'},
               'rootRing': {'centre': centre.tolist(), 'sacrum': list(SACRUM.get(slug, (np.nan,)*3)),
@@ -1029,12 +1246,13 @@ def v18_gate(root, slug, candidate, head, fps=SAMPLE_FPS):
               'clipGates': gates, 'clipsChecked': len(clips), 'sampleFps': fps,
               'lowestTail': sorted(([c, r['minTailY']] for c, r in results.items()), key=lambda x: x[1])[:8],
               'legClearanceM': {c: r['legClearanceM'] for c, r in results.items()}}
-    ok = (uv_same and abs(arc/v2_arc-1) <= ARC_TOLERANCE and abs(centre[0]) <= ROOT_X_MAX_M
+    ok = (recorded == expected and uv_same and abs(arc/v2_arc/shape['length']-1) <= ARC_TOLERANCE
+          and abs(centre[0]) <= ROOT_X_MAX_M
           and depth.min() >= SINK_DEPTH_M/2 and gates['ok'])
     return bool(ok), values
 
 
-def check(root, slug, head=None, body=None, clips='action', kits=True, fps=SAMPLE_FPS, theta=HANG_DEGREES):
+def check(root, slug, head=None, body=None, clips='action', kits=True, fps=SAMPLE_FPS, shape=None):
     """Re-root the tail of `head` (v2 backup; default the installed body) onto
     the trousers of `body` (default: the installed race GLB) and measure."""
     root = Path(root)
@@ -1048,7 +1266,7 @@ def check(root, slug, head=None, body=None, clips='action', kits=True, fps=SAMPL
     if hnames != names:
         raise ValueError('head and body skeletons differ')
     surface = body_surface(bd, bb)
-    result = reroot_tail(tail, trouser, joints, names, slug=slug, theta=theta, surface_tris=surface)
+    result = reroot_tail(tail, trouser, joints, names, slug=slug, shape=shape, surface_tris=surface)
     rest = rest_checks(result, surface)
     capsule = tail_capsule(result, np.linalg.inv(ibm[names.index('pelvis')]))
     library = ClipLibrary(root/'godot-client/assets/actors/native/shared/Universal_Animation_Library.glb')
@@ -1096,10 +1314,11 @@ def main():
     c.add_argument('--clips', default='action', help="'action' (gated), 'all' (action gated + the rest of the "
                                                      "library reported) or a comma list")
     c.add_argument('--no-kits', action='store_true')
+    c.add_argument('--shape', choices=sorted(TAIL_SHAPES), help=f'drape shape (default {TAIL_SHAPE})')
     c.add_argument('--out')
     args = ap.parse_args()
     clips = args.clips if args.clips in ('action', 'all') else args.clips.split(',')
-    report, _ = check(args.root, args.slug, args.head, args.body, clips, not args.no_kits)
+    report, _ = check(args.root, args.slug, args.head, args.body, clips, not args.no_kits, shape=args.shape)
     text = json.dumps(report, indent=2, default=float)+'\n'
     if args.out:
         out = Path(args.out).resolve()

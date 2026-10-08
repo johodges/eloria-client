@@ -1160,7 +1160,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:110": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_02.glb",
@@ -1862,7 +1863,8 @@
           0
         ]
       },
-      "raceFeatures": "show"
+      "raceFeatures": "show",
+      "raceShoulders": "hide"
     },
     "3:112": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_04.glb",
@@ -2916,7 +2918,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:115": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_07.glb",
@@ -3267,7 +3270,8 @@
           0
         ]
       },
-      "raceFeatures": "show"
+      "raceFeatures": "show",
+      "raceShoulders": "hide"
     },
     "3:116": {
       "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_08.glb",
@@ -5377,7 +5381,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:122": {
       "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_06.glb",
@@ -6080,7 +6085,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:124": {
       "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_08.glb",
@@ -6431,7 +6437,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "6:200": {
       "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_01.glb",
@@ -7759,7 +7766,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:127": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_03.glb",
@@ -8814,7 +8822,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:130": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_06.glb",
@@ -9165,7 +9174,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:131": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_07.glb",
@@ -9516,7 +9526,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:132": {
       "scene": "res://assets/actors/native/equipment/legendary_eloria_helm_08.glb",
@@ -10571,7 +10582,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:135": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_03.glb",
@@ -10922,7 +10934,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:136": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_04.glb",
@@ -11273,7 +11286,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:137": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_05.glb",
@@ -11976,7 +11990,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:139": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_07.glb",
@@ -12327,7 +12342,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:140": {
       "scene": "res://assets/actors/native/equipment/militia_helmet_08.glb",
@@ -12678,7 +12694,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:141": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_01.glb",
@@ -13029,7 +13046,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:142": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_02.glb",
@@ -13380,7 +13398,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:143": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_03.glb",
@@ -13731,7 +13750,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:144": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_04.glb",
@@ -15138,7 +15158,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:148": {
       "scene": "res://assets/actors/native/equipment/knightly_headgear_08.glb",
@@ -16544,7 +16565,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:152": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_04.glb",
@@ -16895,7 +16917,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:153": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_05.glb",
@@ -17246,7 +17269,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:154": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_06.glb",
@@ -17949,7 +17973,8 @@
           0
         ]
       },
-      "raceFeatures": "show"
+      "raceFeatures": "show",
+      "raceShoulders": "hide"
     },
     "3:156": {
       "scene": "res://assets/actors/native/equipment/frontier_hat_08.glb",
@@ -18652,7 +18677,8 @@
           0
         ]
       },
-      "raceFeatures": "show"
+      "raceFeatures": "show",
+      "raceShoulders": "hide"
     },
     "3:158": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_02.glb",
@@ -19003,7 +19029,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:159": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_03.glb",
@@ -19354,7 +19381,8 @@
           0
         ]
       },
-      "raceFeatures": "show"
+      "raceFeatures": "show",
+      "raceShoulders": "hide"
     },
     "3:160": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_04.glb",
@@ -19705,7 +19733,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:161": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_05.glb",
@@ -20056,7 +20085,8 @@
           0
         ]
       },
-      "raceFeatures": "show"
+      "raceFeatures": "show",
+      "raceShoulders": "hide"
     },
     "3:162": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_06.glb",
@@ -20407,7 +20437,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:163": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_07.glb",
@@ -20758,7 +20789,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:164": {
       "scene": "res://assets/actors/native/equipment/adventurer_headwear_08.glb",
@@ -21461,7 +21493,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:166": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_02.glb",
@@ -21812,7 +21845,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:167": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_03.glb",
@@ -22163,7 +22197,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:168": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_04.glb",
@@ -22866,7 +22901,8 @@
           0
         ]
       },
-      "raceFeatures": "hide"
+      "raceFeatures": "hide",
+      "raceShoulders": "hide"
     },
     "3:170": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_06.glb",
@@ -23217,7 +23253,8 @@
           0
         ]
       },
-      "raceFeatures": "show"
+      "raceFeatures": "show",
+      "raceShoulders": "hide"
     },
     "3:171": {
       "scene": "res://assets/actors/native/equipment/sunmane_steppe_headgear_07.glb",

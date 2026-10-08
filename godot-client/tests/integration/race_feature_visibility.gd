@@ -26,6 +26,10 @@ const BUCKLED_HOOD := 159
 const SUN_HEADBAND := 170
 ## A hood whose scarf reaches the shoulder growths (policy shoulders "hide").
 const SCARF_HOOD := 171
+## Pieces that stay clear of the shoulder growths in every played clip (policy
+## shoulders "none"): a cloth cap and an open hood.
+const CLEAR_CAP := 149
+const CLEAR_HOOD := 110
 ## The class-kit torsos and one cape: what a new character first wears.
 const KIT_TORSOS := [209, 225, 222, 189]
 const CAPE := 100
@@ -222,11 +226,11 @@ func _check_shoulders(models: Dictionary, equipment: Dictionary) -> void:
 		actor.apply_equipment_visuals({2: CAPE, 5: KIT_TORSOS[0]})
 		actor.apply_equipment_visuals({2: CAPE})
 		expect(not growths.visible, slug + " the cape keeps them hidden once the torso is off")
-		actor.apply_equipment_visuals({3: LEATHER_HELM, 4: 230, 6: 226})
+		actor.apply_equipment_visuals({3: CLEAR_CAP, 4: 230, 6: 226})
 		expect(growths.visible, slug + " head, legs and feet leave the growths alone")
 		actor.apply_equipment_visuals({3: SCARF_HOOD})
 		expect(not growths.visible, slug + " a hood whose scarf reaches the shoulders hides the growths")
-		actor.apply_equipment_visuals({3: BUCKLED_HOOD})
+		actor.apply_equipment_visuals({3: CLEAR_HOOD})
 		expect(growths.visible, slug + " a hood clear of the shoulders leaves them")
 		actor.apply_appearance_variants({"skin": 5})
 		expect(growths.material_override == null

@@ -42,6 +42,13 @@ The split runs after clean_head and before every texture step:
            caps of their own: kept, they doubled those caps (z-fighting); any
            other floating component keeps its faces and caps
            (raceFeatures.floatingIslands).
+  layered  (batch B) the crowned Glasswarden female's shard fringe under the
+           crest, inside the skull fit, joins the feature by ray crossings
+           from the neck axis (layered_faces).
+  repaint  (batch B, after split) glass-coloured paint the split leaves in
+           the dyed head takes the local skin colour in the head source the
+           bake samples (the Glasswarden male's flecks and crystal bases);
+           V20 glassLeft measures the baked atlas (glass_left).
 rebase_race_body.verify: V3 becomes head = v2 - cleanup - features - dropped
 islands (caps set aside) and V20 (verify_features) checks the node, its
 weights, material and v2 provenance, the caps (watertight, never above their
@@ -106,12 +113,23 @@ MATERIALS = {
 FEATURES = {
     'votary_male': {'kind': 'horn', 'seed': .015, 'grow': .003, 'seedOn': ('scalp',)},
     'votary_female': {'kind': 'horn', 'seed': .015, 'grow': .003, 'seedOn': ('scalp',)},
+    # Batch B review: grown over 4 mm the male crown took the forehead, the
+    # temples and the brow ridge (4-10 mm proud of the skull fit: carved skin,
+    # not crown) as a stone band that stays grey at dyed skins around a dyed
+    # patch. frontGrow: in front of the skull centre (+ zOverSkullCentreM) a
+    # face joins only over frontGrow.grow, so only the spikes and their bases
+    # split there; behind it the rear spikes keep the 4 mm rule (grown over
+    # 10 mm everywhere, their base caps rose 2-7 mm through the Knotwork Helm
+    # 3:131, 28 V20 capHeadwear pokes).
     'stoneborn_male': {'kind': 'stone', 'seed': .010, 'grow': .004, 'seedOn': ('scalp',), 'aboveEyeM': .005,
-                       'behindSkullM': .04},
+                       'behindSkullM': .04, 'frontGrow': {'grow': .010, 'zOverSkullCentreM': 0.}},
     'stoneborn_female': {'kind': 'stone', 'seed': .010, 'grow': .004, 'seedOn': ('scalp',), 'aboveEyeM': .005,
                          'behindSkullM': .04},
+    # Batch B review: flat flecks and crystal bases left in the head keep the
+    # glass paint and take the skin dye; repaint (below) gives them skin.
     'glasswarden_male': {'kind': 'glass', 'seed': .006, 'grow': .001, 'seedOn': HEADISH,
-                         'colour': {'seed': 205., 'grow': 185.}},
+                         'colour': {'seed': 205., 'grow': 185.},
+                         'repaint': {'colourDistance': 45., 'eyeBehindM': .035, 'eyeAboveM': .03, 'leftLimitCm2': 2.}},
     # P6 crowned head only (race_heads_2026-10 Meshy run); the current v2 head
     # has no crystals, only glassy ear rims. Ported from race_p47/features/
     # gwf2.py: seed over 12 mm above the eye line, grow over 3 mm from 1 cm
@@ -129,11 +147,21 @@ FEATURES = {
     # (V7's rule) into the feature, then splits again.
     # R2: requiresSourceSHA256 is the crowned Meshy original
     # (race_head_prepare.MESHY_HEADS); the head's highResolutionHead names it.
+    # Batch B review: under the crest a fringe of overlapping shards runs round
+    # the back of the skull to the nape (3.6 surface layers against about one
+    # on the v2 head), all inside the tall skull fit (excess -17 to 0 mm), so
+    # neither the excess rule nor aboveEyeM reaches it and it took the dye.
+    # layered: below the eye line + belowEyeM and behind the skull centre +
+    # behindSkullM, a head face (off the rim by rimMarginM) whose ray from the
+    # neck axis through its centroid crosses the head minCrossings times or
+    # more (skin plus at least one shard, both its sides) joins the feature
+    # (layered_faces), forced like foldHidden's faces.
     'glasswarden_female': {'kind': 'glass', 'seed': .012, 'grow': .003, 'seedOn': HEADISH,
                            'seedAboveEyeM': 0., 'aboveEyeM': -.010,
                            'ear': {'absXOver': .095, 'yUnderEye': .07, 'zOverEye': -1.},
                            'requiresSourceSHA256': 'b9ed0125b47bb8a5737250d79bb59aa09260d0d45aa386fd07419ec4a9880643',
-                           'skullFrom': 'uncleaned', 'foldHidden': True},
+                           'skullFrom': 'uncleaned', 'foldHidden': True,
+                           'layered': {'belowEyeM': -.010, 'behindSkullM': 0., 'rimMarginM': .006, 'minCrossings': 3}},
 }
 
 
@@ -284,6 +312,32 @@ def skull_fit(upper, head):
     return fit_skull({k[0]: local[np.unique(upper['f'][k])] for k in keys})
 
 
+def layered_faces(p, faces, local, centre, headish, travel, upper_cut, origin, axis, q, ey, rule):
+    """spec 'layered' (the crowned Glasswarden female's shard fringe): head
+    faces below ey + belowEyeM, behind the skull centre + behindSkullM and
+    with every corner rimMarginM over the cut, whose ray from the neck axis
+    (at the centroid's travel) through the centroid crosses the head
+    (headish faces) at least minCrossings times. One smooth skin layer is
+    one crossing; a shard over it adds two. Rays go through trimesh's
+    numpy intersector (no embree), so the result is deterministic."""
+    import trimesh
+    from trimesh.ray.ray_triangle import RayMeshIntersector
+    cand = (headish & (centre[:, 1] < ey+rule['belowEyeM']) & (centre[:, 2] < q[1]-rule['behindSkullM'])
+            & (travel[faces].min(1)-upper_cut > rule['rimMarginM']))
+    out = np.zeros(len(faces), bool)
+    idx = np.flatnonzero(cand)
+    if not len(idx):
+        return out
+    world = p[faces[idx]].mean(1)
+    foot = origin+np.outer((world-origin)@axis, axis)
+    direction = world-foot
+    direction /= np.maximum(np.linalg.norm(direction, axis=1, keepdims=True), 1e-12)
+    mesh = trimesh.Trimesh(p, faces[headish], process=False)
+    _, ray, _ = RayMeshIntersector(mesh).intersects_location(foot, direction, multiple_hits=True)
+    out[idx] = np.bincount(ray, minlength=len(idx)) >= rule['minCrossings']
+    return out
+
+
 def segment(upper, spec, pixels, head, origin, axis, upper_cut, rim_band=.002, skull=None, include=None):
     """Feature mask over head_parts(upper) faces (plus the measures). skull:
     a (q, eye y, eye z) fit to use instead of fitting this head (skullFrom);
@@ -302,6 +356,9 @@ def segment(upper, spec, pixels, head, origin, axis, upper_cut, rim_band=.002, s
     headish = np.isin(part, HEADISH) & ~rim
     seed = np.isin(part, spec['seedOn']) & headish & (fex > spec['seed'])
     allowed = headish & (fex > spec['grow'])
+    if 'frontGrow' in spec:
+        front = centre[:, 2] > q[1]+spec['frontGrow']['zOverSkullCentreM']
+        allowed &= ~front | (fex > spec['frontGrow']['grow'])
     if 'aboveEyeM' in spec:
         above = centre[:, 1] > ey+spec['aboveEyeM']
         if 'behindSkullM' in spec:
@@ -320,9 +377,15 @@ def segment(upper, spec, pixels, head, origin, axis, upper_cut, rim_band=.002, s
         seed &= ~ear; allowed &= ~ear
     feature = grow(adjacency, seed, allowed)
     forced = np.zeros(len(faces), bool) if include is None else np.asarray(include, bool) & headish
+    included = forced.copy()
+    layered = None
+    if 'layered' in spec:
+        layered = layered_faces(p, faces, local, centre, headish, travel, upper_cut, origin, axis, q, ey, spec['layered'])
+        forced |= layered
     feature |= forced
     return feature, {'keys': keys, 'faces': faces, 'part': part, 'ids': ids, 'adjacency': adjacency, 'local': local,
-                     'skull': q, 'eye': (ey, ez), 'fex': fex, 'rim': rim, 'lum': lum, 'seed': seed, 'forced': forced}
+                     'skull': q, 'eye': (ey, ez), 'fex': fex, 'rim': rim, 'lum': lum, 'seed': seed, 'forced': forced,
+                     'layered': layered, 'included': included}
 
 
 def settle(feature, info):
@@ -815,8 +878,11 @@ def split(upper, slug, spec, pixels, head, origin, axis, upper_cut, head_index, 
               'capRule': 'the last caps[<mesh>] triangles of that race_head primitive, welded to the hole boundary; '
                          'the primitive owning most of the hole edges',
               'holes': cap_reports, 'capEdgeM': CAP_EDGE_M, 'sourceDensityPxPerCm': density}
-    if info['forced'].any():
-        report['foldedHidden'] = {'triangles': int(info['forced'].sum()), 'inFeature': int((info['forced'] & feature).sum()),
+    if info['layered'] is not None:
+        report['layered'] = {'triangles': int(info['layered'].sum()), 'inFeature': int((info['layered'] & feature).sum()),
+                             'rule': spec['layered']}
+    if info['included'].any():
+        report['foldedHidden'] = {'triangles': int(info['included'].sum()), 'inFeature': int((info['included'] & feature).sum()),
                                   'rule': 'head faces a first split left robustly hidden (V7 rule) under its caps'}
     if island_reports:
         report['floatingIslands'] = {
@@ -856,6 +922,158 @@ def add_node(d, mesh_index):
     else:
         d['nodes'][parent]['children'].append(index)
     return index
+
+
+# ---------------------------------------------------------------------------
+# Glass flecks (batch B review): feature-coloured paint left in the dyed head
+# ---------------------------------------------------------------------------
+
+# A head face (body/scalp; caps, the rim band and the eye-front box out)
+# whose 7-sample median colour lies within repaint['colourDistance'] (sRGB
+# 0-255) of the feature's median colour is glass paint the split left in the
+# dyed head: flecks too flat to seed (under 6 mm proud on the Glasswarden
+# male), crystal pieces under FOLD_FACES (V20 wants >= 20-face feature
+# components) and the painted bases of the crystals. Their texels, in a copy
+# of the source image, take the local skin colour (the area-weighted
+# luminance median of the head faces within REPAINT_RADIUS_M whose colour is
+# over REPAINT_SKIN_DISTANCE from the glass) scaled by the texel's own
+# luminance against the glass median, clamped to REPAINT_SHADE, so the skin
+# dye tints skin there and not glass. Faces in front of the eyes (eye glow
+# paint: eyeBehindM behind the eye line, up to eyeAboveM above it) keep their
+# colour. Texels of feature, eye and eyebrow faces are never written. V20
+# then measures what is left on the baked atlas (glass_left).
+REPAINT_RADIUS_M = .025
+REPAINT_SKIN_DISTANCE = 70.
+REPAINT_SHADE = (.9, 1.08)
+REPAINT_DILATE_PX = 2
+
+
+def _uv_mask(uv, faces, size, colours=None):
+    """Texels whose centre lies in the faces' UV triangles (PIL fill) as a
+    bool mask, plus per-texel colours (one sRGB 0-255 colour per face) when
+    given. Faces spanning over half the image (wrapped charts) are skipped."""
+    from PIL import Image, ImageDraw
+    h, w = size
+    mask = Image.new('L', (w, h), 0)
+    draw = ImageDraw.Draw(mask)
+    paint = None if colours is None else Image.new('RGB', (w, h), (0, 0, 0))
+    pdraw = None if paint is None else ImageDraw.Draw(paint)
+    for i, f in enumerate(faces):
+        pts = [(float(u*w-.5), float(v*h-.5)) for u, v in (np.asarray(uv[f], float) % 1)]
+        xs, ys = [x for x, _ in pts], [y for _, y in pts]
+        if max(xs)-min(xs) > w/2 or max(ys)-min(ys) > h/2:
+            continue
+        draw.polygon(pts, fill=255)
+        if pdraw is not None:
+            pdraw.polygon(pts, fill=tuple(int(round(c)) for c in colours[i]))
+    out = np.asarray(mask) > 0
+    return (out, np.asarray(paint).astype(float)) if paint is not None else out
+
+
+def _eye_line(local_eyes):
+    return float(np.median(local_eyes[:, 1])), float(np.median(local_eyes[:, 2]))
+
+
+def repaint(upper, spec, pixels, head, caps, origin, axis, upper_cut, rim_band=.002):
+    """Repaint the glass flecks the split left in the dyed head (spec
+    'repaint'; run after split). Returns (pixels copy, report); `pixels`
+    (the 0-1 head source) is not modified."""
+    from scipy import ndimage
+    rule = spec['repaint']
+    a = upper['a']
+    p = a['POSITION'].astype(float)
+    uv = a['TEXCOORD_0'].astype(float)
+    local = to_local(p, head)
+    feature = upper['f'][KEY]
+    glass = np.median(face_colours(pixels, uv, feature), 0)
+    ey, ez = _eye_line(local[np.unique(np.concatenate([f for k, f in upper['f'].items() if k[0] == 'eyes']))])
+    travel = (p-origin)@axis
+    faces, parts = [], []
+    for k, f in upper['f'].items():
+        if k[0] not in HEADISH:
+            continue
+        own = f[:len(f)-caps.get(k, {'count': 0})['count']]
+        faces.append(own)
+        parts += [k[0]]*len(own)
+    faces, parts = np.concatenate(faces), np.array(parts)
+    colour = face_colours(pixels, uv, faces)
+    distance = np.linalg.norm(colour-glass, axis=1)
+    centre = local[faces].mean(1)
+    rim = (np.abs(travel-upper_cut) < rim_band)[faces].any(1)
+    eye_front = (centre[:, 2] > ez-rule['eyeBehindM']) & (centre[:, 1] < ey+rule['eyeAboveM'])
+    pick = (distance < rule['colourDistance']) & ~rim & ~eye_front
+    skin = (distance > REPAINT_SKIN_DISTANCE) & ~rim
+    report = {'glassRGB': np.round(glass, 1).tolist(),
+              'rule': {**rule, 'radiusM': REPAINT_RADIUS_M, 'skinDistance': REPAINT_SKIN_DISTANCE,
+                       'shade': list(REPAINT_SHADE), 'dilatePx': REPAINT_DILATE_PX},
+              'faces': {n: int((pick & (parts == n)).sum()) for n in HEADISH},
+              'areaCm2': round(float(area3(p, faces[pick]).sum()*1e4), 2),
+              'eyeFrontKept': int(((distance < rule['colourDistance']) & eye_front & ~rim).sum())}
+    if not pick.any():
+        report['texels'] = 0
+        return pixels, report
+    picked = faces[pick]
+    sc, sw, scol = p[faces[skin]].mean(1), area3(p, faces[skin]), colour[skin]
+    tree = cKDTree(sc)
+    fills = []
+    for c in p[picked].mean(1):
+        near = tree.query_ball_point(c, REPAINT_RADIUS_M)
+        near = np.array(near if near else tree.query(c, k=8)[1].tolist())
+        order = np.argsort(scol[near]@LUMA)
+        cw = np.cumsum(sw[near][order])
+        fills.append(scol[near][order[np.searchsorted(cw, cw[-1]/2)]])
+    fills = np.array(fills)
+    size = pixels.shape[:2]
+    inside, paint = _uv_mask(uv, picked, size, fills)
+    grown = ndimage.binary_dilation(inside, iterations=REPAINT_DILATE_PX)
+    protect = _uv_mask(uv, np.concatenate([feature]+[f for k, f in upper['f'].items() if k[0] in PROTECTED]), size)
+    target = grown & ~protect
+    # Dilated texels take the nearest picked texel's fill.
+    _, (iy, ix) = ndimage.distance_transform_edt(~inside, return_indices=True)
+    fill = paint[iy, ix]/255
+    shade = np.clip((pixels@LUMA)/max(float(glass@LUMA)/255, 1e-6), *REPAINT_SHADE)
+    out = pixels.copy()
+    out[target] = np.clip(fill[target]*shade[target, None], 0, 1)
+    report.update(texels=int(target.sum()), protectedTexels=int((grown & protect).sum()),
+                  fillRGB={'min': np.round(fills.min(0), 1).tolist(), 'median': np.round(np.median(fills, 0), 1).tolist(),
+                           'max': np.round(fills.max(0), 1).tolist()})
+    return out, report
+
+
+def glass_left(d, b, parts, caps, head, accessor, rule):
+    """V20 measure for a 'repaint' spec: area of dyed-head faces (race_head
+    body/scalp, caps out, the eye-front box out) whose colour on the baked
+    head atlas lies within rule['colourDistance'] of the feature node's median
+    colour on the same atlas."""
+    import io
+    from PIL import Image
+    body = next(m for m in d['meshes'] if m['name'] == 'body')
+    head_prim = next(q for q in body['primitives'] if q.get('extras', {}).get('sourceRole') == 'race_head')
+    tex = d['materials'][head_prim['material']]['pbrMetallicRoughness']['baseColorTexture']['index']
+    view = d['bufferViews'][d['images'][d['textures'][tex]['source']]['bufferView']]
+    start = view.get('byteOffset', 0)
+    atlas = np.asarray(Image.open(io.BytesIO(bytes(b[start:start+view['byteLength']]))).convert('RGB')).astype(float)/255
+    fprim = next(m for m in d['meshes'] if m['name'] == NODE)['primitives'][0]
+    ff = accessor(d, b, fprim['indices']).astype(int).reshape(-1, 3)
+    glass = np.median(face_colours(atlas, accessor(d, b, fprim['attributes']['TEXCOORD_0']).astype(float), ff), 0)
+    ey, ez = _eye_line(np.concatenate([to_local(q['POSITION'][np.unique(f)].astype(float), head)
+                                       for name, role, q, f in parts if role == 'race_head' and name == 'eyes']))
+    area, count = 0., 0
+    for name, role, q, f in parts:
+        if role != 'race_head' or name not in HEADISH:
+            continue
+        own = f[:len(f)-caps.get(name, 0)]
+        qp = q['POSITION'].astype(float)
+        centre = to_local(qp[own].mean(1), head)
+        eye_front = (centre[:, 2] > ez-rule['eyeBehindM']) & (centre[:, 1] < ey+rule['eyeAboveM'])
+        hit = (np.linalg.norm(face_colours(atlas, q['TEXCOORD_0'].astype(float), own)-glass, axis=1)
+               < rule['colourDistance']) & ~eye_front
+        area += float(area3(qp, own[hit]).sum())
+        count += int(hit.sum())
+    return {'glassRGB': np.round(glass, 1).tolist(), 'areaCm2': round(area*1e4, 2), 'faces': count,
+            'limitCm2': rule['leftLimitCm2'], 'colourDistance': rule['colourDistance'],
+            'rule': 'dyed-head faces (caps and the eye-front box out) within colourDistance of the feature median '
+                    'colour on the baked atlas'}
 
 
 # ---------------------------------------------------------------------------

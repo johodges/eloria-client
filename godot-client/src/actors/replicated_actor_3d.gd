@@ -1945,8 +1945,8 @@ func _apply_equipment_hides(part: int, part_config: Dictionary,
 ##
 ## Mycelari shoulder growths go under any torso piece and any cape unless the
 ## item says "show", and under headwear whose `raceShoulders` is "hide" (the
-## pieces whose mantle, scarf or neck guard reaches the growths; from the
-## policy table's `shoulders`).
+## pieces whose rim, mantle, scarf or neck guard reaches the growths in some
+## played clip; from the policy table's `shoulders`).
 func _race_feature_hides(part: int, model_config: Dictionary) -> Array[String]:
 	var hides: Array[String] = []
 	var policy: String = str(model_config.get("raceFeatures", ""))
