@@ -46,6 +46,7 @@ SHALLOW_RIVER = ((110.0, 30.0), (150.0, 30.0), 3.0, 10.2)     # 0.2 m deep: wade
 HOUSE = (104.0, 110.0, 4.0, 10.0)          # four walls, no roof or floor: a Meshy shell
 DOORWAY_HOUSE = (104.0, 110.0, 14.0, 20.0)  # the same with a 2.8 m doorway in its south wall
 PARAPET = (113.0, 119.0, 4.0, 10.0)        # a 1 m wall round the placement's own deck
+HARVEST = (126.5, 20.5)                    # a harvest node on open flat ground, continent metres
 
 
 def ground(x, z):
@@ -140,7 +141,8 @@ def fixture_territories():
                 ("doorway-house", [(local(EAST, walls(*DOORWAY_HOUSE, 10.0, 13.0, gap=(105.6, 108.4))), False)],
                  nothing),
                 ("parapet", [(local(EAST, walls(*PARAPET, 10.0, 11.0)), False)], parapet_deck)],
-        spawn=(130.0 - 130.0, 22.0 - 30.0))
+        spawn=(130.0 - 130.0, 22.0 - 30.0),
+        harvest_tiles=[EAST.tile_of_continent(*HARVEST)])
     return [west, east]
 
 
@@ -268,6 +270,14 @@ def test_a_shell_with_a_way_out_or_its_own_deck_inside_stays_open(exported, code
     x0, x1, z0, z1 = PARAPET
     assert all(code_at(codes, EAST, x, z) for x in np.arange(x0 + 1.5, x1 - 1) for z in np.arange(z0 + 1.5, z1 - 1))
     assert code_at(codes, EAST, x0 + .5, z0 + 2.5) == 0                 # the parapet itself still blocks
+
+
+def test_a_harvest_node_blocks_its_own_tile_and_is_harvested_from_its_ring(exported, codec):
+    _grid, codes = served(exported, "east", codec)
+    x, z = HARVEST
+    assert code_at(codes, EAST, x, z) == 0
+    assert all(code_at(codes, EAST, x + dx, z + dz) for dx in (-1, 0, 1) for dz in (-1, 0, 1) if dx or dz)
+    assert exported["report"]["maps"]["east"]["exportStatistics"]["harvestNodeTiles"] == 1
 
 
 def test_a_solid_tree_blocks_its_trunk_not_its_crown():

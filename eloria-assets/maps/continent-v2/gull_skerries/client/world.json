@@ -182,6 +182,7 @@
    "waterCells": 1742936,
    "structuralCells": 3745,
    "crossSeamSolidCells": 8,
+   "harvestNodeTiles": 0,
    "noGroundCells": 0,
    "seamCollarCells": 1109,
    "ownWalkableCells": 172535
@@ -207,8 +208,8 @@
      "servedGridSha256": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66"
     },
     "sw_isle": {
-     "snapshotSha256": "d4148d32296b3fdd967fd94d3a3dc8eac90b8a5392858b87050e6e8cc7867396",
-     "servedGridSha256": "f2a52895c60987e6f31fe9907fdab3ea1e57dc1cbe3d5f8509a0093953aae58b"
+     "snapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389",
+     "servedGridSha256": "7fcd6be4c34178c16c7bccf58c13ba6a54195fcb30123136c17711e9a2a58bca"
     },
     "tollholms": {
      "snapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",

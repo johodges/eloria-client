@@ -277035,7 +277035,7 @@ extras = {
 }
 
 [node name="opt-tideline-shell" type="Marker3D" parent="Gameplay/RuntimePoints/TutorialTargets" unique_id=476475946]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 777.5, 1.928, 864.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 776.5, 1.928, 864.5)
 gizmo_extents = 0.8
 script = ExtResource("marker")
 record_id = "opt-tideline-shell"

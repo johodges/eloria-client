@@ -7,7 +7,7 @@
   "recipe": "the tollholms editor-pass check bake (a3/run_a3_check.sh) of the committed scene: <bake>/continent-authoring.json"
  },
  "collision": {
-  "sidecarSha256": "cf2064cee89b98c599deef75d33a4a1dfba5fa449e769d0581a7980041b802fd",
+  "sidecarSha256": "ee56411d134747fcfeb422fa52321a48f05e008edc70ad5bec57c989fb60dd81",
   "collisionSha256": "c963c99f164c3d82cb7bd034a1896453692d0a30f89d3b17f4e9c8a80949af12",
   "servedGridSha256": "0185531e86f5b75754495e83a6d1a297338b7c82dadffea01d8e91d6ad18cb45",
   "walkableCells": 987660,
@@ -194,17 +194,17 @@
   "14_20": 11.0
  },
  "timings": {
-  "snapshot_s": 3.1,
-  "terrain_s": 0.4,
+  "snapshot_s": 2.2,
+  "terrain_s": 0.3,
   "water_s": 0.0,
-  "overlays_s": 11.7,
+  "overlays_s": 10.3,
   "bridges_s": 0.0,
   "surface_glb_bytes": 414400380,
   "walk_kit_nodes": 29,
-  "library_s": 2.9,
-  "chunks_s": 6.0
+  "library_s": 2.0,
+  "chunks_s": 4.4
  },
- "seconds": 28.0,
+ "seconds": 23.5,
  "imagePolicy": {
   "surface": {
    "imagesResampled": 46,

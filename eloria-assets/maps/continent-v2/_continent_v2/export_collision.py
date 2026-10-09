@@ -31,8 +31,9 @@ z = z1 - (r + .5) / 2 with (x0, z1) = collisionOriginMetres, and tile (tx, ty) h
   actor prism (collision_export.structural_mask, imported, never copied), nor on the ground an open (not
   watertight) placement's blocked cells wall in on every side, its own walk surface excepted (enclosed: a Meshy
   house is a shell, and without this its floor was open inside a ring of wall), whichever map's scene the placement
-  is in: a piece whose body reaches over a border closes the neighbour's own ground as well, judged in the neighbour's
-  frame on the neighbour's surface, so both maps' grids agree over it;
+  is in: a piece whose body reaches over a border closes the neighbour's own ground as well, judged in the
+  neighbour's frame on the neighbour's surface, so both maps' grids agree over it; and not on a harvest node's served
+  tile (the node is a body, harvested from the ring round it: harvest_mask);
 - walkable = this map's own ground (the stub's ownership polygon) and standable, or the collar: the neighbour's first
   tile across an open border (the plan's openSeams and moles), eight-connected and one tile deep, taken at the
   neighbour's surface where the neighbour's own export is open and none of this map's solids closes it;
@@ -168,6 +169,7 @@ class Territory:
     walk: np.ndarray = field(default_factory=lambda: np.zeros((0, 3, 3)))
     solids: list = field(default_factory=list)      # [(object id, [(triangles, closed), ...], own walk triangles)]
     spawn: tuple | None = None                      # local (x, z) of the default spawn point
+    harvest_tiles: list = field(default_factory=list)  # served (tx, ty) of each harvest node: the node's own body
     sources: dict = field(default_factory=dict)
     walk_sources: dict = field(default_factory=dict)
 
@@ -363,13 +365,15 @@ def load_bake(region, bake, checkout=DEFAULT_CHECKOUT, *, sea_level=0.0, log=say
                       "solidTriangles": int(sum(len(t_) for _, groups, _deck in solids for t_, _c in groups)),
                       "prototypes": len(Prototype.cache), "seconds": round(time.time() - t, 1)}
     spawn = default_spawn(doc, region)["position"]
+    harvest_tiles = sorted({tuple(frame.tile(float(h["position"][0]), float(h["position"][2])))
+                            for h in doc.get("gameplay", {}).get("harvestables", [])})
     log(f"{region}: bake read in {time.time() - t0:.1f} s ({json.dumps(sources)})")
     return Territory(
         region=region, frame=frame, polygon=[[float(v) for v in p] for p in territory.polygon],
         heights=np.asarray(territory.height, float), terrain_origin=tuple(float(v) for v in doc["terrain"]["origin"]),
         terrain_cell=float(doc["terrain"]["cellMetres"]), sea_level=float(sea_level), lakes=lakes, rivers=rivers,
         walk=np.concatenate(walk) if walk else np.zeros((0, 3, 3)), solids=solids,
-        spawn=(float(spawn[0]), float(spawn[2])),
+        spawn=(float(spawn[0]), float(spawn[2])), harvest_tiles=harvest_tiles,
         sources={"bake": snapshot_path.parent.name, "snapshotSha256": sha256_file(snapshot_path),
                  "sceneSha256": doc["sources"]["scene"]["sha256"],
                  "resolvedHeightsSha256": sha256_file(territory.snapshot.resolved_heights_path)},
@@ -601,6 +605,16 @@ def structure_mask(solids, floor, x0, z1, *, workers=None):
 
 # --- the group export ------------------------------------------------------------------------------------------------
 
+def harvest_mask(t, shape):
+    """The half-cells of every harvest node's served tile: a node is a body on its tile (a tree, a rock, a bush),
+    harvested from the ring round it, so its own tile is closed as a solid's are (tile (tx, ty) holds half-cells
+    2tx..2tx+1 by 2ty..2ty+1)."""
+    mask = np.zeros(shape, bool)
+    for tx, ty in t.harvest_tiles:
+        mask[2 * ty:2 * ty + 2, 2 * tx:2 * tx + 2] = True
+    return mask
+
+
 def _offset(a, b):
     """Half-cell (row, column) offsets from map a's grid to map b's: the frames share whole continent metres."""
     ax, az = a.frame.lattice
@@ -688,7 +702,8 @@ def export_group(territories, links, codec, *, log=say, workers=None):
         floors[t.region] = floor
         x0, z1 = t.frame.collision_origin
         filled = np.where(np.isfinite(floor), floor, FLOOR_FILL)
-        structures[t.region] = structure_mask(t.solids, filled, x0, z1, workers=workers)
+        mask, tested = structure_mask(t.solids, filled, x0, z1, workers=workers)
+        structures[t.region] = (mask | harvest_mask(t, mask.shape), tested)
         timings[t.region]["solids_s"] = round(time.time() - started, 1)
         log(f"{t.region}: solids in {timings[t.region]['solids_s']} s")
     # Pass 2b: a solid whose body reaches over a border blocks the ground it stands on whichever map owns it. Each
@@ -791,6 +806,7 @@ def export_group(territories, links, codec, *, log=say, workers=None):
             "waterCells": int((own[region] & f["submerged"]).sum()),
             "structuralCells": int((own[region] & blocked & f["base_open"]).sum()),
             "crossSeamSolidCells": int((own[region] & f["base_open"] & crossing[region] & ~own_solids).sum()),
+            "harvestNodeTiles": len(t.harvest_tiles),
             "noGroundCells": int((own[region] & ~np.isfinite(f["surface"])).sum()),
             "seamCollarCells": int((collar_cells & walkable).sum()),
             "ownWalkableCells": int(own_open.sum()),

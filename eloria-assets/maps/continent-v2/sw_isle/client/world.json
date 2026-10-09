@@ -167,9 +167,9 @@
    "height": 2.1,
    "halfCellWidth": 0.5
   },
-  "walkableCells": 6588190,
-  "walkableFraction": 0.393455,
-  "sha256": "599ae22a53475e6d81c034c70166197bcf275b83f29f4c291f48b6fc3c221c5f",
+  "walkableCells": 6587406,
+  "walkableFraction": 0.393408,
+  "sha256": "a296221910c6bf3102e06781642b719cf8d720ad0341e50ed45ff30f886d76e7",
   "exportStatistics": {
    "walkTriangles": 854891,
    "structuralMeshes": 6879,
@@ -180,11 +180,12 @@
    "deckCells": 319283,
    "steepCells": 3089132,
    "waterCells": 7014407,
-   "structuralCells": 126820,
+   "structuralCells": 127604,
    "crossSeamSolidCells": 6,
+   "harvestNodeTiles": 196,
    "noGroundCells": 0,
    "seamCollarCells": 2433,
-   "ownWalkableCells": 6585757
+   "ownWalkableCells": 6584973
   },
   "seamCollar": {
    "gull_skerries": {
@@ -208,8 +209,8 @@
     "walkableTiles": 341
    }
   },
-  "sourceSnapshotSha256": "d4148d32296b3fdd967fd94d3a3dc8eac90b8a5392858b87050e6e8cc7867396",
-  "sourceSceneSha256": "0642b525beec5eacd2871e89c75063bdf47f042ec1ceacc55a473b8c2d3c7f7e",
+  "sourceSnapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389",
+  "sourceSceneSha256": "a308214ffee61f0557436621d57535a070f705ef33e02c6a7195c399bea663d9",
   "groupExport": {
    "maps": {
     "gull_skerries": {
@@ -217,8 +218,8 @@
      "servedGridSha256": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66"
     },
     "sw_isle": {
-     "snapshotSha256": "d4148d32296b3fdd967fd94d3a3dc8eac90b8a5392858b87050e6e8cc7867396",
-     "servedGridSha256": "f2a52895c60987e6f31fe9907fdab3ea1e57dc1cbe3d5f8509a0093953aae58b"
+     "snapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389",
+     "servedGridSha256": "7fcd6be4c34178c16c7bccf58c13ba6a54195fcb30123136c17711e9a2a58bca"
     },
     "tollholms": {
      "snapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",
@@ -235,8 +236,8 @@
    "originMetres": -100.0,
    "width": 2046,
    "height": 2046,
-   "openTiles": 1614899,
-   "sha256": "f2a52895c60987e6f31fe9907fdab3ea1e57dc1cbe3d5f8509a0093953aae58b"
+   "openTiles": 1614703,
+   "sha256": "7fcd6be4c34178c16c7bccf58c13ba6a54195fcb30123136c17711e9a2a58bca"
   },
   "note": "kit solids carry no client collision (the wrappers that name them are not meshes); the served grid blocks them"
  },
@@ -546,8 +547,8 @@
  ],
  "provenance": {
   "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
-  "snapshotSha256": "d4148d32296b3fdd967fd94d3a3dc8eac90b8a5392858b87050e6e8cc7867396",
-  "sceneSha256": "0642b525beec5eacd2871e89c75063bdf47f042ec1ceacc55a473b8c2d3c7f7e"
+  "snapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389",
+  "sceneSha256": "a308214ffee61f0557436621d57535a070f705ef33e02c6a7195c399bea663d9"
  },
  "externalResources": {
   "../../_continent_v2/shared-assets/0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630.png": "0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630",
