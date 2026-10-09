@@ -90,6 +90,12 @@ var server_scale := 1.0
 ## The client's own import scale for this model, kept so the two can be
 ## multiplied rather than one overwriting the other.
 var _import_scale := 1.0
+## Presentation boost for small creatures, chosen from the imported rest body
+## before server effects are applied so bosses retain the species' boost.
+var _small_creature_scale := 1.0
+var _is_creature := false
+const SMALL_CREATURE_MAX_SIZE := 1.0
+const SMALL_CREATURE_SCALE := 2.0
 ## The ground marker, kept rather than looked up: it is counter-rotated
 ## every physics frame and a node path lookup per frame per actor is
 ## not what that should cost.
@@ -314,6 +320,7 @@ const MAP_DOT_COLOUR := Color("9fd2ff")
 ## for the same reason MAP_DOT_COLOUR is.
 const INVASION_MAP_DOT_COLOUR := Color("fa5a5a")
 const CREATURE_MAP_DOT_COLOUR := Color("fcec38")
+const CREATURE_NAME_COLOUR := Color("ffff00")
 ## The actor kind the server gives every creature - EL's
 ## PKABLE_COMPUTER_CONTROLLED. Players are HUMAN and scenery NPCs are NPC, so
 ## this is what separates the two creature dots from everybody else's.
@@ -407,6 +414,8 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		model_config: Dictionary, animation_config: Dictionary,
 		equipment_config: Dictionary = {}) -> Array[String]:
 	actor_id = int(dto.actor_id)
+	_is_creature = int(dto.get("kind", 0)) == CREATURE_ACTOR_KIND
+	_small_creature_scale = 1.0
 	_metres_per_tile = maxf(0.01, adapter.metres_per_tile)
 	footprint = dto.get("footprint", Vector2i.ONE) as Vector2i
 	server_scale = maxf(0.01, float(dto.get("scale", 1.0)))
@@ -927,7 +936,7 @@ static func is_summon(dto: Dictionary) -> bool:
 ## name renders the colour byte as mojibake and the tag as part of the player's
 ## name. The decoder splits them; this draws the tag as a tag.
 ##
-## Natural creatures use their yellow map-dot colour. Other names keep the
+## Natural creatures use bright yellow. Other names keep the
 ## server's colour: a demigod's name is green, an invasion creature's red, a
 ## summon's light blue. A Label3D tints as one piece, so a guild tag takes the
 ## name's colour rather than its own.
@@ -944,9 +953,10 @@ func _add_nameplate(dto: Dictionary) -> void:
 	WORLD_LABEL_STYLE.apply(label, NAMEPLATE_FONT_SIZE, OVERHEAD_PIXEL,
 		OVERHEAD_OUTLINE_SIZE)
 	var name_colour: int = int(dto.get("name_colour", 0))
-	label.modulate = (CREATURE_MAP_DOT_COLOUR
+	label.modulate = (CREATURE_NAME_COLOUR
 		if int(dto.get("kind", 0)) == CREATURE_ACTOR_KIND and name_colour == 0
 		else EloriaProtocol.el_text_colour(name_colour))
+	label.outline_modulate = Color.BLACK
 	label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(label)
 	_nameplate = label
@@ -1000,6 +1010,7 @@ func _add_health_bar() -> void:
 	numbers.outline_render_priority = 2
 	WORLD_LABEL_STYLE.apply(numbers, HEALTH_NUMBER_FONT_SIZE, OVERHEAD_PIXEL,
 		OVERHEAD_OUTLINE_SIZE)
+	numbers.outline_modulate = Color.BLACK
 	numbers.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(numbers)
 	_health_label = numbers
@@ -1218,14 +1229,14 @@ func set_server_scale(value: float) -> void:
 	server_scale = next
 	_apply_model_scale()
 
-## The model's size is the two multipliers together: the client's import
-## scale for this GLB, and what the server says this actor is. Applied to
+## The model's size combines its import scale, small-creature presentation
+## boost, and what the server says this actor is. Applied to
 ## the model node rather than to the actor, so the nameplate, health bar,
 ## selection ring and map dot keep their own sizes - a giant's name should
 ## not be drawn in giant letters. Their heights do follow, below, or they
 ## would end up inside its head.
 func _apply_model_scale() -> void:
-	var total: float = _import_scale * server_scale
+	var total: float = _import_scale * _small_creature_scale * server_scale
 	for node_name: String in ["NativeModel", "MissingModelFallback"]:
 		var model := get_node_or_null(node_name) as Node3D
 		if model != null:
@@ -3345,6 +3356,12 @@ func _apply_import_adapter(config: Dictionary) -> void:
 	# The protocol position is a foot point. Normalize the imported visual at
 	# its root without flattening or rewriting the glTF hierarchy/skeleton.
 	var bounds: AABB = _native_visual_bounds(model)
+	var body_size: Vector3 = bounds.size * _import_scale
+	var longest_side: float = maxf(body_size.x, maxf(body_size.y, body_size.z))
+	_small_creature_scale = (SMALL_CREATURE_SCALE
+		if _is_creature and longest_side > 0.0
+		and longest_side < SMALL_CREATURE_MAX_SIZE else 1.0)
+	_apply_model_scale()
 	if bounds.size.y > 0.0:
 		model.position.y = -bounds.position.y
 	_native_body_bounds = bounds

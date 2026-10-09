@@ -68,8 +68,10 @@ func _run() -> void:
 			ReplicatedActor3D.SPEECH_BUBBLE_TEXT)
 		and bubble.outline_modulate.is_equal_approx(
 			ReplicatedActor3D.SPEECH_BUBBLE_SURROUND)
-		and bubble.outline_size * bubble.pixel_size
-			>= 6 * ReplicatedActor3D.OVERHEAD_PIXEL,
+		and (bubble.outline_size * bubble.pixel_size
+			>= 6 * ReplicatedActor3D.OVERHEAD_PIXEL
+			or is_equal_approx(bubble.outline_size * bubble.pixel_size,
+				6 * ReplicatedActor3D.OVERHEAD_PIXEL)),
 		"NPC words use cream ink over a low-cost dark surround")
 	_check_block(fox)
 	fox.set_server_scale(3.0)
