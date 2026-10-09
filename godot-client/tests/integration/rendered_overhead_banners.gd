@@ -196,10 +196,8 @@ func _check_matches_the_players_banner(main: Control, camera: Camera3D,
 		"the numbers are the size of the player's own")
 	_expect(actor_name.font == banner_name.get_theme_font("font"),
 		"world names use the player's typeface")
-	_expect(is_equal_approx(actor_name.outline_size * actor_name.pixel_size
-		/ ReplicatedActor3D.OVERHEAD_PIXEL,
-		float(banner_name.get_theme_constant("outline_size"))),
-		"higher resolution preserves the player's outline thickness")
+	_expect(actor_name.outline_size == 0 and actor_numbers.outline_size == 0,
+		"world banners use the reference's plain letters over a dark backing")
 	_expect(is_equal_approx(-actor_numbers.offset.y * actor_numbers.pixel_size,
 		ReplicatedActor3D.HEALTH_LABEL_DROP * ReplicatedActor3D.OVERHEAD_PIXEL),
 		"higher resolution preserves the gap between name and health numbers")
