@@ -130,8 +130,7 @@ static func keeps_hole(node: MeshInstance3D) -> bool:
 ## - HOLE for a painted crown whatever its size: a painted crown has no
 ##   blended copy (OccluderFade would leave it solid), its leaf cards would
 ##   sort into a smear if it had, and it never vanishes (a tree the player
-##   walks under stays a tree). The crowns nearest the camera fade by their
-##   own distance (painted_foliage_body, LookProfile.CROWN_NEAR_FADE_METRES).
+##   walks under stays a tree). Camera distance alone never hides a crown.
 ## - VANISH for a mesh whose footprint holds the player under its top, a thin
 ##   one (LookProfile.FADE_THIN_METRES across, or a post or pillar at least
 ##   FADE_PILLAR_RATIO times as tall as it is wide), and one whose box covers

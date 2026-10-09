@@ -130,10 +130,10 @@ func _run() -> void:
 	var trunk_paint := trunk.get_surface_override_material(0) as ShaderMaterial
 	_expect(trunk_paint != null and trunk_paint.shader == LookFoliage.SHADER_CHROMA
 		and is_equal_approx(float(trunk_paint.get_shader_parameter(&"look_near_cut")),
-			LookProfile.CROWN_NEAR_FADE_METRES.x)
+			0.0)
 		and is_equal_approx(float(trunk_paint.get_shader_parameter(&"look_chroma")), 1.0)
 		and trunk_paint.get_meta(LookFade.FADED_SHADER_META) == LookFade.SHADER_STANDARD,
-		"a tree's trunk is drawn as its bark is, and cut near the camera where its crown is")
+		"a tree trunk keeps its bark and is not cut by camera distance")
 	_expect(litter.get_surface_override_material(0) == null,
 		"fallen leaves on the ground are not a crown")
 	_expect(pines.get_surface_override_material(0) == null
@@ -141,6 +141,9 @@ func _run() -> void:
 		"a merged scatter mesh and a vertex-coloured one are left alone")
 	_expect(patch.get_surface_override_material(0) == null,
 		"ground is never painted as a crown, whatever its material")
+	_expect(canopy_paint.get_shader_parameter(&"look_near_fade") == Vector2.ZERO
+		and maple_paint.get_shader_parameter(&"look_near_fade") == Vector2.ZERO,
+		"nearby crowns stay visible when they do not obstruct the player")
 	var maple_min: Vector3 = maple_paint.get_shader_parameter(&"look_crown_min")
 	var canopy_min: Vector3 = canopy_paint.get_shader_parameter(&"look_crown_min")
 	_expect(is_equal_approx(maple_min.y, 9.0 * LookProfile.CROWN_FLOOR)
