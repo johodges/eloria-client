@@ -7,7 +7,7 @@
   "recipe": "the gull_skerries editor-pass check bake (a3b/run_a3b_check.sh) of the committed scene: <bake>/continent-authoring.json"
  },
  "collision": {
-  "sidecarSha256": "2154a079a82d13852f4de3ef77ff94b84fbb66edcd1d871214a857d128f39948",
+  "sidecarSha256": "4e3dcff8f0893e3547fc81c3c58b17486eb00136eb8902fcadfd34933854f10f",
   "collisionSha256": "2cae83b392251fa263ac4605b6fd3960b8d7e356afdad4d99fd3f8d71ed9951a",
   "servedGridSha256": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66",
   "walkableCells": 173644,
@@ -114,17 +114,17 @@
   "16_18": 11.2
  },
  "timings": {
-  "snapshot_s": 0.6,
+  "snapshot_s": 0.9,
   "terrain_s": 0.2,
   "water_s": 0.0,
-  "overlays_s": 1.6,
+  "overlays_s": 1.9,
   "bridges_s": 0.0,
   "surface_glb_bytes": 99654996,
   "walk_kit_nodes": 0,
   "library_s": 0.7,
-  "chunks_s": 1.1
+  "chunks_s": 1.2
  },
- "seconds": 6.2,
+ "seconds": 6.8,
  "imagePolicy": {
   "surface": {
    "imagesResampled": 9,

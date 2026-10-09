@@ -9544,7 +9544,7 @@ metadata/map_asset_id = "sw_isle:kit-sw-causeway-arch-ramp-g053"
 metadata/map_asset_scene = "res://world_authoring/regions/sw_isle/assets/prototypes/kit-sw-causeway-arch-ramp-g053.glb"
 
 [node name="Sw Causeway Arch Ramp G 037" type="Node3D" parent="AuthoredAssets" unique_id=710348707]
-transform = Transform3D(0.1512608, 0, 0.9884939, 0, 1, 0, -0.9884939, 0, 0.1512608, -496.928, 119.523, 90.312)
+transform = Transform3D(0.1512608, 0, 0.9884939, 0, 1, 0, -0.9884939, 0, 0.1512608, -494.928, 119.523, 90.312)
 script = ExtResource("19_jaile")
 asset_id = "sw_isle-kit-sw-causeway-arch-ramp-g037-001"
 node_name = "Authored_sw_isle_kit_sw_causeway_arch_ramp_g037_001"

@@ -20,12 +20,12 @@
     ]
    },
    "bake": {
-    "snapshotSha256": "45fba168d08155f1f559699860a03323434a4005e5520e48b8cd267c741363c7",
-    "sceneSha256": "4059090f6605000092c3c35ae3239c6edef5369335935bdb6b3154e0e08d588b"
+    "snapshotSha256": "d4148d32296b3fdd967fd94d3a3dc8eac90b8a5392858b87050e6e8cc7867396",
+    "sceneSha256": "0642b525beec5eacd2871e89c75063bdf47f042ec1ceacc55a473b8c2d3c7f7e"
    },
    "package": {
-    "collisionSha256": "9449f59807c520a5ea9d9363c4fa030546d2756a1d38cbcee13aa1c62f6b536b",
-    "servedGridSha256": "06462c6d2ae9ca0fac6936d288efce45be453bea11b168db8645acc9d59125da"
+    "collisionSha256": "599ae22a53475e6d81c034c70166197bcf275b83f29f4c291f48b6fc3c221c5f",
+    "servedGridSha256": "f2a52895c60987e6f31fe9907fdab3ea1e57dc1cbe3d5f8509a0093953aae58b"
    },
    "arrival": [
     580,
@@ -40,7 +40,7 @@
     "laneDepartures": 549
    },
    "npcPosts": 10,
-   "servedReachTiles": 1458491
+   "servedReachTiles": 1458490
   },
   "tollholms": {
    "frame": {
@@ -122,7 +122,7 @@
   }
  },
  "inputs": {
-  "crossingsSha256": "258fd93ec825b193a676c9722dad1a882525fe82f6f2cf6c535e0cbb7428b0d1",
+  "crossingsSha256": "038e21eed86a4af7ef2a6f4ac896d0db483928082715051a7d8a1b80a18e3935",
   "contentTables": {
    "eloria-assets/maps/continent-v2/_continent_v2/content/server-rows.json": "affd619e5625276293594cc7a3153ed4f7bb4c91c39c38637e9d432ef1c5568f",
    "eloria-assets/maps/continent-v2/_continent_v2/content/server-tables.json": "0dfb5c3d5b8414124845047a51b2f4efa23f6f8392dcd6405cc9927601fb015e",
@@ -176,7 +176,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "36ae0ab2e0a7a5781b84690364a0a8ef6705ca5748ee84481fd3477d3d07535b"
+    "manifestBlockSha256": "9644050c01d2fca5d1412c556fd72ac733c76a88a29ab4ac081bc7d6c24f566f"
    },
    "m2": {
     "files": [
@@ -192,7 +192,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "fd6e3173917f8eaa933395d62a4b0dd1aecd7d36a8b62d482f81bf951c72562f"
+    "manifestBlockSha256": "357b9646cb579ae1fcb3de30aeb62f56629ea24a219f5595c7fcd3e37539213f"
    },
    "m3": {
     "files": [
@@ -208,7 +208,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "a43468ab0c21313aeb684715270a8cb5d56a573ec37450c1ee3fc67a54d43e13"
+    "manifestBlockSha256": "6d78afa2796688de9cf3cb7b6135fd34ab73914c5c82512c03403f4eb2c25244"
    },
    "m4": {
     "files": [
@@ -224,12 +224,12 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "6a68a6c842c91256f0887d132e29f161ba0ab6ee787a463c4902505cc300c2e3"
+    "manifestBlockSha256": "83cc61fd0170f0c072c3e29c8fa7d321e1f9b74caa07ec8cd8a16734aa515f06"
    }
   },
   "manifestEntriesSha256": "e77abd66fa01bed23f8c9e9e0db60fd8a73882b59b3a42c70c97e4762e8dd0ed",
   "vendored": {
-   "sw_isle": "06462c6d2ae9ca0fac6936d288efce45be453bea11b168db8645acc9d59125da",
+   "sw_isle": "f2a52895c60987e6f31fe9907fdab3ea1e57dc1cbe3d5f8509a0093953aae58b",
    "tollholms": "0185531e86f5b75754495e83a6d1a297338b7c82dadffea01d8e91d6ad18cb45",
    "gull_skerries": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66"
   }

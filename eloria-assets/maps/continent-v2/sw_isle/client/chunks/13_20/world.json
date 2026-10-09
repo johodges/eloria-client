@@ -264,8 +264,8 @@
  ],
  "provenance": {
   "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
-  "snapshotSha256": "45fba168d08155f1f559699860a03323434a4005e5520e48b8cd267c741363c7",
-  "sceneSha256": "4059090f6605000092c3c35ae3239c6edef5369335935bdb6b3154e0e08d588b"
+  "snapshotSha256": "d4148d32296b3fdd967fd94d3a3dc8eac90b8a5392858b87050e6e8cc7867396",
+  "sceneSha256": "0642b525beec5eacd2871e89c75063bdf47f042ec1ceacc55a473b8c2d3c7f7e"
  },
  "externalResources": {
   "../../../../_continent_v2/shared-assets/4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04.png": "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04",

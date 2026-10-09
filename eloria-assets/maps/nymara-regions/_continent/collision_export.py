@@ -25,11 +25,6 @@ import glb_reader as GR
 
 CELL = .5
 MAX_GRADE = .65
-# The continuous grass apron south of the north gate reaches a 0.75 grade.
-# It has no cliff or unsupported edge; use a walking grade on this short
-# approach so the quarry-side tower can be rounded into the gate passage.
-NORTH_GATE_APPROACH = (-24., -118., -7., -110.)
-NORTH_GATE_APPROACH_GRADE = .8
 WADE = .35
 ACTOR_FLOOR_CLEARANCE = .06
 ACTOR_HEIGHT = 2.1
@@ -53,16 +48,6 @@ def terrain_grade(world, x, z):
     dx = np.where(u + v <= 1, b - a, d - c) / spacing
     dz = np.where(u + v <= 1, c - a, d - b) / spacing
     return np.hypot(dx, dz)
-
-
-def terrain_grade_limit(region, x, z):
-    """Keep steep terrain closed except for the surveyed north-gate apron."""
-    limit = np.full(np.broadcast_shapes(np.shape(x), np.shape(z)), MAX_GRADE)
-    if region == 'four_gates':
-        x0, z0, x1, z1 = NORTH_GATE_APPROACH
-        apron = (x >= x0) & (x <= x1) & (z >= z0) & (z <= z1)
-        limit = np.where(apron, NORTH_GATE_APPROACH_GRADE, limit)
-    return limit
 
 
 def water_samples(world, x, z):
@@ -382,7 +367,7 @@ The caller installs collision metadata into its final world manifest itself.
                                 upward=1 / math.sqrt(1 + MAX_GRADE ** 2) - 1e-9)
     deck_support = covered & (deck >= surface - .03)
     np.copyto(surface, deck, where=deck_support)
-    slope_allowed = (grade <= terrain_grade_limit(region, lx, lz) + 1e-9) | deck_support
+    slope_allowed = (grade <= MAX_GRADE + 1e-9) | deck_support
     halo = gate_halo(world, region, gx, gz) & deck_support
     collar = seam_collar(world, region, gx, gz)
     collar &= (gx >= world.x0) & (gz >= world.z0) & (gx < world.x1) & (gz < world.z1)
@@ -413,9 +398,6 @@ The caller installs collision metadata into its final world manifest itself.
             'steepCells': int((own & ~slope_allowed).sum()), 'waterCells': int((own & submerged).sum()),
             'structuralCells': int((own & structure).sum()), 'thresholdHaloCells': int(halo.sum()),
             'seamCollarCells': int((collar & ~own & ~halo & walkable).sum())})
-    if region == 'four_gates':
-        collision['terrainGradeApproaches'] = [{'id': 'north-gate-quarry-apron',
-            'boundsMetres': list(NORTH_GATE_APPROACH), 'maximumGrade': NORTH_GATE_APPROACH_GRADE}]
     if 'authoringSpecSha256' in declared:
         collision['authoringSpecSha256'] = declared['authoringSpecSha256']
     return {'collision': collision, 'heights': surface.astype(np.float32), 'walkable': walkable, 'grid': grid}
