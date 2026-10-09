@@ -143,8 +143,13 @@ The bootstrap writes this README only when it is missing; it is maintained by ha
   `-g037` are the prepared N12 scaled x0.8799 along the span and sheared up a 0.5282 or 0.3708 grade about the
   deck-top origin (rampant arches: deck, parapets and crowns follow the grade, the piers stay vertical), with
   the cut ends capped and the `Walk_` deck sheared with them. For the coast's deck dressing it derives
-  (`DERIVED`) `kit-sw-causeway-arch-tier`, N12 without its parapets, stacked level under a top module so a
-  causeway's arcade reaches the ground (its deck is renamed out of `Walk_`: a tier is never walked), and
+  (`DERIVED`) the legacy `kit-sw-causeway-arch-tier`, N12 without its parapets (its deck is renamed out of
+  `Walk_`). Landfall no longer places these tiers: `repair_causeways.py` continues each top span's four
+  legs down to the resolved terrain, repeating the accepted stone UV band, and closes the deck and
+  parapet joints with decorative stone infills. These generated supports and joints have no `Walk_`
+  child and use collision role `none`; the original walk and solid meshes remain unchanged. The tool
+  records its terrain digest and every changed streamed chunk in `causeway-repair-record.json`.
+  `prepare_meshy_kit.py` also derives
   `kit-sw-trestle-pier-span-long24` / `-long40`, N13 with its four bent posts lengthened to -24 / -40 m for the
   seabed trenches under the piers.
   The polish pass adds 7 more reuse models at no credits (the L12 gorge lip's waterfall sheet from Ssarathi,
@@ -192,5 +197,5 @@ come from the asset reviews and are kept for reference; the map framework has no
 served export (`collision_export.py`, `_mesh_groups` and `structural_mask`) blocks a half-cell wherever a
 *solid* placement's real triangle crosses the actor prism, and every `Walk_` subtree is a walk surface, never
 solid. A placement's own collision role decides: the dressed causeway and pier spans are solid (their parapets
-and rails bound the walk; their `Walk_` decks are walked), the arcade tiers below them are walk-through. The
+and rails bound the walk; their `Walk_` decks are walked), the extended legs and joint dressing are walk-through. The
 VARIANTS and DERIVED pieces carry no extras of their own.
