@@ -2,17 +2,17 @@
  "region": "sw_isle",
  "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
  "snapshot": {
-  "sha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389",
-  "sceneSha256": "a308214ffee61f0557436621d57535a070f705ef33e02c6a7195c399bea663d9",
+  "sha256": "f1ba33622acef45d64c0a20eb63631ed32aa76baefd9c743ffc9baf4b1c51609",
+  "sceneSha256": "87ab1f0f3767bc7c0048b2219270ed68947a618adbd78ef7b91166e49f394d81",
   "recipe": "the sw_isle editor-pass check bake (run_check.sh) of the committed scene: <bake>/continent-authoring.json"
  },
  "collision": {
-  "sidecarSha256": "2dce011717e24b53f8a519d44ee321b0dfa4c0af63781a49025a23ef70726ef0",
-  "collisionSha256": "a296221910c6bf3102e06781642b719cf8d720ad0341e50ed45ff30f886d76e7",
-  "servedGridSha256": "7fcd6be4c34178c16c7bccf58c13ba6a54195fcb30123136c17711e9a2a58bca",
-  "walkableCells": 6587406,
-  "openTiles": 1614703,
-  "sourceSnapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389"
+  "sidecarSha256": "1c131f498dc965ee78d38a3756819bc10f620b4432f90a749e6590b9b62ed0e6",
+  "collisionSha256": "44366eb579bd5675387c6fd497a3ec836946059d9c78aef53a9dc424777c51e9",
+  "servedGridSha256": "b18c41a2e7f3bd8192770e85de8e06fc1f083bbf200e222fb5c3cefcd620075f",
+  "walkableCells": 6587434,
+  "openTiles": 1614715,
+  "sourceSnapshotSha256": "f1ba33622acef45d64c0a20eb63631ed32aa76baefd9c743ffc9baf4b1c51609"
  },
  "chunks": 484,
  "kitPlacementsOutsideWindow": 0,
@@ -509,17 +509,17 @@
   "21_21": 11.1
  },
  "timings": {
-  "snapshot_s": 9.1,
-  "terrain_s": 2.7,
-  "water_s": 0.0,
-  "overlays_s": 62.6,
+  "snapshot_s": 11.1,
+  "terrain_s": 2.8,
+  "water_s": 0.1,
+  "overlays_s": 68.8,
   "bridges_s": 0.2,
   "surface_glb_bytes": 1022998168,
   "walk_kit_nodes": 216,
-  "library_s": 5.2,
-  "chunks_s": 16.1
+  "library_s": 7.3,
+  "chunks_s": 16.0
  },
- "seconds": 105.5,
+ "seconds": 116.7,
  "imagePolicy": {
   "surface": {
    "imagesResampled": 64,

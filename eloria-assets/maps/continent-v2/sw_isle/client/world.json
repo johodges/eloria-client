@@ -167,9 +167,9 @@
    "height": 2.1,
    "halfCellWidth": 0.5
   },
-  "walkableCells": 6587406,
-  "walkableFraction": 0.393408,
-  "sha256": "a296221910c6bf3102e06781642b719cf8d720ad0341e50ed45ff30f886d76e7",
+  "walkableCells": 6587434,
+  "walkableFraction": 0.39341,
+  "sha256": "44366eb579bd5675387c6fd497a3ec836946059d9c78aef53a9dc424777c51e9",
   "exportStatistics": {
    "walkTriangles": 854891,
    "structuralMeshes": 6879,
@@ -177,15 +177,15 @@
    "structuralTriangles": 4570727,
    "structuralTrianglesTested": 3858384,
    "ownCells": 16613776,
-   "deckCells": 319283,
-   "steepCells": 3089132,
+   "deckCells": 319259,
+   "steepCells": 3089122,
    "waterCells": 7014407,
-   "structuralCells": 127604,
+   "structuralCells": 127586,
    "crossSeamSolidCells": 6,
    "harvestNodeTiles": 196,
    "noGroundCells": 0,
    "seamCollarCells": 2433,
-   "ownWalkableCells": 6584973
+   "ownWalkableCells": 6585001
   },
   "seamCollar": {
    "gull_skerries": {
@@ -209,8 +209,8 @@
     "walkableTiles": 341
    }
   },
-  "sourceSnapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389",
-  "sourceSceneSha256": "a308214ffee61f0557436621d57535a070f705ef33e02c6a7195c399bea663d9",
+  "sourceSnapshotSha256": "f1ba33622acef45d64c0a20eb63631ed32aa76baefd9c743ffc9baf4b1c51609",
+  "sourceSceneSha256": "87ab1f0f3767bc7c0048b2219270ed68947a618adbd78ef7b91166e49f394d81",
   "groupExport": {
    "maps": {
     "gull_skerries": {
@@ -218,8 +218,8 @@
      "servedGridSha256": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66"
     },
     "sw_isle": {
-     "snapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389",
-     "servedGridSha256": "7fcd6be4c34178c16c7bccf58c13ba6a54195fcb30123136c17711e9a2a58bca"
+     "snapshotSha256": "f1ba33622acef45d64c0a20eb63631ed32aa76baefd9c743ffc9baf4b1c51609",
+     "servedGridSha256": "b18c41a2e7f3bd8192770e85de8e06fc1f083bbf200e222fb5c3cefcd620075f"
     },
     "tollholms": {
      "snapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",
@@ -236,8 +236,8 @@
    "originMetres": -100.0,
    "width": 2046,
    "height": 2046,
-   "openTiles": 1614703,
-   "sha256": "7fcd6be4c34178c16c7bccf58c13ba6a54195fcb30123136c17711e9a2a58bca"
+   "openTiles": 1614715,
+   "sha256": "b18c41a2e7f3bd8192770e85de8e06fc1f083bbf200e222fb5c3cefcd620075f"
   },
   "note": "kit solids carry no client collision (the wrappers that name them are not meshes); the served grid blocks them"
  },
@@ -547,8 +547,8 @@
  ],
  "provenance": {
   "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
-  "snapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389",
-  "sceneSha256": "a308214ffee61f0557436621d57535a070f705ef33e02c6a7195c399bea663d9"
+  "snapshotSha256": "f1ba33622acef45d64c0a20eb63631ed32aa76baefd9c743ffc9baf4b1c51609",
+  "sceneSha256": "87ab1f0f3767bc7c0048b2219270ed68947a618adbd78ef7b91166e49f394d81"
  },
  "externalResources": {
   "../../_continent_v2/shared-assets/0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630.png": "0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630",
@@ -24978,12 +24978,12 @@
    2038
   ],
   "pixelsPerMetre": 1,
-  "imageSha256": "db137d4996def98b7989d20fbae883513b22a9e9ad8f9459ca8cd57c9e874cfb",
+  "imageSha256": "12d9a2ddd2e0a4a9bc9a35f394552aca31a3f95afec0fea18404f315428baa75",
   "renderedFrom": "the package's chunk GLBs (the shared cartography renderer, window by window)",
   "cartographyRender": {
    "generator": "eloria-assets/maps/continent-v2/_continent_v2/render_minimap.py",
    "styleVersion": 4,
-   "chunksSha256": "71a7cc75d213d9e2fa9fd357a1f04bd84e139e4dd1ca68bd3c8b87e2b2da0c69",
+   "chunksSha256": "a1fb82c1d39c5a507404962840ed892e9e6e1e9b426efff1e30954a4fbf7e616",
    "neighbourChunksSha256": {
     "gull_skerries": "0ec3eff7485c5ffbf4039a3160ae3476759bfe5381eb3f03bfea5ed76874ad68",
     "tollholms": "5e096458c2ff4e95888a89dd59c7781e148aca9a3512349ad656eac8d6b5135c"

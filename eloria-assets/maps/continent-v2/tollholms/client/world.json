@@ -208,8 +208,8 @@
      "servedGridSha256": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66"
     },
     "sw_isle": {
-     "snapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389",
-     "servedGridSha256": "7fcd6be4c34178c16c7bccf58c13ba6a54195fcb30123136c17711e9a2a58bca"
+     "snapshotSha256": "f1ba33622acef45d64c0a20eb63631ed32aa76baefd9c743ffc9baf4b1c51609",
+     "servedGridSha256": "b18c41a2e7f3bd8192770e85de8e06fc1f083bbf200e222fb5c3cefcd620075f"
     },
     "tollholms": {
      "snapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",
@@ -8493,7 +8493,7 @@
    "styleVersion": 4,
    "chunksSha256": "5e096458c2ff4e95888a89dd59c7781e148aca9a3512349ad656eac8d6b5135c",
    "neighbourChunksSha256": {
-    "sw_isle": "71a7cc75d213d9e2fa9fd357a1f04bd84e139e4dd1ca68bd3c8b87e2b2da0c69"
+    "sw_isle": "a1fb82c1d39c5a507404962840ed892e9e6e1e9b426efff1e30954a4fbf7e616"
    },
    "supersample": 2,
    "windowMetres": 256,

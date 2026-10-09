@@ -208,8 +208,8 @@
      "servedGridSha256": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66"
     },
     "sw_isle": {
-     "snapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389",
-     "servedGridSha256": "7fcd6be4c34178c16c7bccf58c13ba6a54195fcb30123136c17711e9a2a58bca"
+     "snapshotSha256": "f1ba33622acef45d64c0a20eb63631ed32aa76baefd9c743ffc9baf4b1c51609",
+     "servedGridSha256": "b18c41a2e7f3bd8192770e85de8e06fc1f083bbf200e222fb5c3cefcd620075f"
     },
     "tollholms": {
      "snapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",
@@ -3566,14 +3566,14 @@
    1550
   ],
   "pixelsPerMetre": 1,
-  "imageSha256": "cfb54bf09ca5765a4bc9c314dcc2ceff24a501071bae2872903398b2a12443a1",
+  "imageSha256": "0aa0561e13830697fe382c85e54fec24919d174eb3c579e5512ff0e2778ee62b",
   "renderedFrom": "the package's chunk GLBs (the shared cartography renderer, window by window)",
   "cartographyRender": {
    "generator": "eloria-assets/maps/continent-v2/_continent_v2/render_minimap.py",
    "styleVersion": 4,
    "chunksSha256": "0ec3eff7485c5ffbf4039a3160ae3476759bfe5381eb3f03bfea5ed76874ad68",
    "neighbourChunksSha256": {
-    "sw_isle": "71a7cc75d213d9e2fa9fd357a1f04bd84e139e4dd1ca68bd3c8b87e2b2da0c69"
+    "sw_isle": "a1fb82c1d39c5a507404962840ed892e9e6e1e9b426efff1e30954a4fbf7e616"
    },
    "supersample": 2,
    "windowMetres": 256,

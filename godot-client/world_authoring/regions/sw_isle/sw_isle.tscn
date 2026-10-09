@@ -9504,7 +9504,7 @@ metadata/map_asset_id = "sw_isle:kit-sw-gatehouse"
 metadata/map_asset_scene = "res://world_authoring/regions/sw_isle/assets/prototypes/kit-sw-gatehouse.glb"
 
 [node name="Sw Causeway Arch Ramp G 053" type="Node3D" parent="AuthoredAssets" unique_id=494860015]
-transform = Transform3D(0.1512608, 0, 0.9884939, 0, 1, 0, -0.9884939, 0, 0.1512608, -500.121, 109.2, 111.186)
+transform = Transform3D(0.1512608, 0, 0.9884939, 0, 1, 0, -0.9884939, 0, 0.1512608, -498.121, 109.2, 111.186)
 script = ExtResource("19_jaile")
 asset_id = "sw_isle-kit-sw-causeway-arch-ramp-g053-001"
 node_name = "Authored_sw_isle_kit_sw_causeway_arch_ramp_g053_001"
@@ -9524,7 +9524,7 @@ metadata/map_asset_id = "sw_isle:kit-sw-causeway-arch-ramp-g053"
 metadata/map_asset_scene = "res://world_authoring/regions/sw_isle/assets/prototypes/kit-sw-causeway-arch-ramp-g053.glb"
 
 [node name="Sw Causeway Arch Ramp G 054" type="Node3D" parent="AuthoredAssets" unique_id=95118649]
-transform = Transform3D(0.1512608, 0, 0.9884939, 0, 1, 0, -0.9884939, 0, 0.1512608, -498.524, 114.777, 100.749)
+transform = Transform3D(0.1512608, 0, 0.9884939, 0, 1, 0, -0.9884939, 0, 0.1512608, -496.524, 114.777, 100.749)
 script = ExtResource("19_jaile")
 asset_id = "sw_isle-kit-sw-causeway-arch-ramp-g053-002"
 node_name = "Authored_sw_isle_kit_sw_causeway_arch_ramp_g053_002"
