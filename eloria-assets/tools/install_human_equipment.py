@@ -17,11 +17,17 @@ The registry gains, for every fitted visual key, two variants:
 with `authoredFor` set to `human_male` / `human_female`.  Those keys have no
 girth or foot-anchor entries, so the client wears each variant exactly as it
 was fitted (no runtime widening or sole drop); headwear keeps the socket the
-fitter measured on the new head.  `fitGroups` for luminous_male/female then
-list the Human group first and keep their former canonical_luminous_* group
-as the fallback (every model with a canonical_luminous_* variant also has a
-Human one, so the fallback is never chosen; it keeps each of those groups'
-authoring body a member of it).  No other race's groups change.
+fitter measured on the new head.  `fitGroups` for luminous_male/female list
+only their Human group (`[canonical_human_male]` / `[canonical_human_female]`).
+The retired canonical_luminous_* fits and the old-male base scenes they fell
+back to were deleted in the race programme's P7 cleanup (2026-10); a model
+whose base scene is its canonical_human_male file keeps its base fields
+(authoredFor, fitProfile, socket) equal to that variant's, so the install
+refreshes them with the variant.  No other race's groups change; race variants
+are installed by refit_race_headwear.py `install`, which writes variants only.
+
+The registry and the catalogue are written as json.dumps(indent=2) with the
+platform's line endings, which is what git's autocrlf checks out (CRLF here).
 
 Every install then refreshes native_asset_catalog.json's structural inventory
 (refresh_catalog_validation): a validate_glb result for each installed
@@ -71,11 +77,26 @@ def refresh_catalog_validation(catalog_path: Path = CATALOG) -> dict:
         results[key] = validate_glb(path)
     on_disk = {path.relative_to(ROOT).as_posix() for path in NATIVE.rglob('*.glb')}
     catalog['validation']['files'] = len(on_disk)
-    with open(catalog_path, 'w', encoding='utf-8', newline='\n') as handle:
-        handle.write(json.dumps(catalog, indent=2) + '\n')
+    catalog_path.write_text(json.dumps(catalog, indent=2) + '\n', encoding='utf-8')
     return {'validated': len(installed), 'added': len(added), 'removed': len(removed),
             'files': len(on_disk),
             'unrecorded': sorted(on_disk - set(results)), 'stale': sorted(set(results) - on_disk)}
+
+
+def apply_variant(model: dict, group: str, entry: dict) -> None:
+    """Record one installed variant; a base that IS the human_male file follows it.
+
+    Fields are assigned in place, so a reinstall of the same fit leaves the
+    registry byte-identical (key order included); `socket` is dropped from the
+    base only when the new fit has none.
+    """
+    model.setdefault('variants', {})[group] = entry
+    if group == 'canonical_human_male' and model.get('scene') == entry['scene']:
+        # The base IS this variant's file (P7): keep its fields equal.
+        for field, value in entry.items():
+            model[field] = value
+        if 'socket' not in entry:
+            model.pop('socket', None)
 
 
 def main() -> int:
@@ -121,14 +142,14 @@ def main() -> int:
                      'authoredFor': folder, 'fitProfile': 'canonical'}
             if 'socket' in variant:
                 entry['socket'] = variant['socket']
-            model.setdefault('variants', {})[group] = entry
+            apply_variant(model, group, entry)
             installed += 1
     for texture in sorted(new_textures):
         (ROOT / texture).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(stage / texture, ROOT / texture)
     for group, rig in RIG.items():
-        registry['fitGroups'][rig] = [group, f'canonical_{rig}']
-    registry_path.write_text(json.dumps(registry, indent=2) + '\n', encoding='utf-8', newline='\n')
+        registry['fitGroups'][rig] = [group]
+    registry_path.write_text(json.dumps(registry, indent=2) + '\n', encoding='utf-8')
     catalog = refresh_catalog_validation()
     print(json.dumps({'variants': installed, 'new_textures': len(new_textures), 'reused_textures': len(reused),
                       'catalog': catalog}))

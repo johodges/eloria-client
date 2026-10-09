@@ -4,8 +4,9 @@ extends SceneTree
 
 const Extras := preload("res://src/actors/glb_mesh_extras.gd")
 const BODY := "res://assets/actors/native/races/luminous_male.glb"
-const TORSO := "res://assets/actors/native/equipment/amberwood_woodland_cuirass_01.glb"
-const HELM := "res://assets/actors/native/equipment/amberwood_forest_helm_01.glb"
+# The Human male fits (each generated piece's base scene since the P7 cleanup).
+const TORSO := "res://assets/actors/native/equipment/variants/human_male/amberwood_woodland_cuirass_01.glb"
+const HELM := "res://assets/actors/native/equipment/variants/human_male/amberwood_forest_helm_01.glb"
 
 var _checks := 0
 var _failures := 0

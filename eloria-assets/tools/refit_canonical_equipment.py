@@ -157,6 +157,13 @@ def build_one(piece, race, tag, body_hash, code_hashes, resume, head_reference=N
 
 
 def build(slugs, races, tag, inherit=None, jobs=1, resume=False, measurements=None, head_reference=None, anatomy_reference=None):
+    # Retired 2026-10 (race programme P7): this writes the retired layout
+    # (canonical_luminous_* variants, old-male base scenes, per-race fitGroups).
+    # build_one and tool_hashes stay; refit_human_bodies.py and
+    # refit_race_headwear.py drive them.
+    raise RuntimeError('refit_canonical_equipment build is retired (2026-10, race programme P7): fit the Human '
+                       'bodies with refit_human_bodies.py + install_human_equipment.py and race headwear with '
+                       'refit_race_headwear.py fit/install')
     if Path(tag).name!=tag or tag in ('.','..'):raise ValueError('Tag must be a directory name')
     registry_path = SCRATCH/f'out/{inherit}/equipment.json' if inherit else ce.CLIENT/'data/actors/equipment.json'
     registry = json.loads(registry_path.read_text())

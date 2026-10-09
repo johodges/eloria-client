@@ -3,6 +3,13 @@
 Uses existing neutral hair textures and caps; added swept locks are actual
 geometry. Raw styles remain unskinned and fitted copies use the body's 77-joint
 bind pose. Existing style IDs and assets are preserved.
+
+RETIRED (2026-10, race programme P7): `run` refuses. It refits every player
+body's hair with the retired protrusion proxy and rewrites models.json and the
+catalogue, which would overwrite the P5 race fits and the Human fits. The raw
+styles it authored (native/hair/<style>_<sex>.glb, recorded as
+"expand_hairstyles.py:<style>" in the catalogue) stay the inputs of
+fit_human_hair.py (Human) and fit_character_appearance.py --race (races).
 """
 import argparse
 import copy
@@ -120,7 +127,13 @@ def author(root):
             g.write(folder/f'{style}_{sex}.glb',document,binary)
 
 
+RETIRED = ('expand_hairstyles.py is retired (2026-10, race programme P7): its refit would overwrite the '
+           'installed hair fits. Fit Human hair with fit_human_hair.py and race hair with '
+           'fit_character_appearance.py --race <slug>.')
+
+
 def run(root, slugs):
+    raise SystemExit(RETIRED)
     author(root)
     client = root/'godot-client'
     model_path = client/'data/actors/models.json'

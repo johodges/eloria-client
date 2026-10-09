@@ -14,7 +14,7 @@ left in the picture is the difference the conform made.
 
     python3 eloria-assets/tools/compare_conformed_piece.py \
         --out qa/phoenix.png \
-        godot-client/assets/actors/native/equipment/legendary_hero_cuirass_01.glb \
+        godot-client/assets/actors/native/equipment/variants/human_male/legendary_hero_cuirass_01.glb \
         ../generate_models/meshy-armor-individual-glb/Eight...c01.glb.orig
 
 Pass `--yaw 90` for the side view, and `--drop-material Liner` to hide the

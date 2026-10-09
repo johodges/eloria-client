@@ -1,4 +1,13 @@
-"""Install validated high-resolution head grafts, refit hair, and measure equipment."""
+"""Install validated high-resolution head grafts, refit hair, and measure equipment.
+
+RETIRED (2026-10, race programme P7): `run` refuses. The race bodies are now
+built and installed by rebase_race_body.py (build/verify/install/post-import)
+and their hair by fit_character_appearance.py --race; this installer would
+overwrite the rebased bodies, their face masks and the P5 hair fits with the
+retired protrusion proxy. The code stays readable because race_head_prepare.py
+documents the asset.extras stamping and compact_materials pass it reproduces
+by reference to this file.
+"""
 import argparse
 import copy
 import json
@@ -14,7 +23,12 @@ from build_face_masks import bake
 from compact_character_materials import compact_materials
 
 
+RETIRED = ('install_high_resolution_race_heads.py is retired (2026-10, race programme P7): install race bodies '
+           'with rebase_race_body.py and race hair with fit_character_appearance.py --race <slug>.')
+
+
 def run(root, candidates, body_name="body.glb"):
+    raise SystemExit(RETIRED)
     client=root/'godot-client';native=client/'assets/actors/native'
     files={'models':client/'data/actors/models.json','catalog':client/'data/actors/native_asset_catalog.json',
            'equipment':client/'data/actors/equipment.json','masks':native/'face_masks/manifest.json',

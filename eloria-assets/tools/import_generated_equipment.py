@@ -28,6 +28,20 @@ drift apart.
 Idempotent.  The server blocks are fenced by markers and rewritten whole; the
 client entries are merged into the registry by key, so the authored models
 around them are left alone rather than regenerated.
+
+Since the race programme's P7 cleanup (2026-10) the mesh an installed piece
+ships is its Human fit, ``variants/human_male|human_female/<slug>.glb``
+(refit_human_bodies.py, install_human_equipment.py,
+share_human_equipment_textures.py), and its base ``scene`` names the
+human_male file.  The old-male ``equipment/<slug>.glb`` this tool builds was
+deleted for those pieces, so it is no longer rebuilt in place: that would only
+leave an untracked file nothing names.  New pieces still build there.  To
+rebuild installed pieces for an audit, build them into a scratch folder:
+
+  python import_generated_equipment.py --meshes-only --build-dir <scratch>
+
+and point audit_torso_remap.py / audit_limb_head_remap.py ``--directory``
+(or render_generated_armour_sets.py ``--equipment``) at it.
 """
 from __future__ import annotations
 
@@ -571,6 +585,18 @@ def fence(text: str, opener: str, closer: str, body: str) -> str:
     return text.rstrip("\n") + "\n\n" + block + "\n"
 
 
+def shipped_as_human_fit(registry: dict, piece) -> bool:
+    """True when the piece's base scene is its canonical_human_male fit.
+
+    That is every installed generated piece since the P7 cleanup (2026-10):
+    its old-male equipment/<slug>.glb is deleted and nothing names it.
+    """
+    model = registry.get("models", {}).get(
+        "%d:%d" % (piece.part, piece.visual), {})
+    human = model.get("variants", {}).get("canonical_human_male", {})
+    return bool(human) and model.get("scene") == human.get("scene")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(
         description="build the generated armour set and define it on both sides")
@@ -593,7 +619,17 @@ def main() -> int:
                     help="rebuild meshes and leave every definition alone: "
                          "the item stats belong to whoever balances them, and "
                          "a refit has no business restating them")
+    ap.add_argument("--build-dir", type=Path, default=None,
+                    help="with --meshes-only: build into this scratch folder "
+                         "instead of the client's equipment/, including the "
+                         "installed pieces whose shipped base is their Human "
+                         "fit (which are otherwise not rebuilt)")
     args = ap.parse_args()
+    if args.build_dir is not None:
+        if not args.meshes_only:
+            ap.error("--build-dir builds scratch meshes; it needs --meshes-only")
+        if args.build_dir.resolve().is_relative_to(CLIENT.resolve()):
+            ap.error("--build-dir is a scratch folder, not inside the client")
     items_path = args.server / "config/eloria/items.txt"
     items_py_path = args.server / "eloria/items.py"
 
@@ -622,10 +658,16 @@ def main() -> int:
     race_path = ce.RACES / ("%s.glb" % args.race)
     rig = ea.load_rig(race_path, ce.BODY_MESH)
     built, failed = 0, 0
+    build_dir = args.build_dir or EQUIPMENT
+    shipped = json.loads(REGISTRY.read_text(encoding="utf-8"))
+    refused = [] if args.build_dir else [
+        piece.slug for piece in pieces if shipped_as_human_fit(shipped, piece)]
     if not args.skip_build:
-        EQUIPMENT.mkdir(parents=True, exist_ok=True)
+        build_dir.mkdir(parents=True, exist_ok=True)
         for piece in pieces:
-            target = EQUIPMENT / ("%s.glb" % piece.slug)
+            if piece.slug in refused:
+                continue
+            target = build_dir / ("%s.glb" % piece.slug)
             try:
                 span = next((value for slug, value in SHEET_SPAN.items()
                              if piece.slug.startswith(slug)), None)
@@ -647,10 +689,19 @@ def main() -> int:
                      info["vertices"], info["bytes"] / 1e6,
                      "pose " + " ".join(posed) if posed else ""))
 
+    if refused and not args.skip_build:
+        print("\n%d piece(s) not rebuilt: each ships its Human fit "
+              "(base scene variants/human_male/<slug>.glb), and the old-male "
+              "equipment/<slug>.glb built here was retired in P7 (2026-10).\n"
+              "  refit them: refit_human_bodies.py, then "
+              "install_human_equipment.py and share_human_equipment_textures.py\n"
+              "  or inspect: --meshes-only --build-dir <scratch>" % len(refused))
     if args.meshes_only:
         print("\nmeshes only: %d built, %d failed -- registry, items and "
               "visuals left untouched" % (built, failed))
-        return 0 if failed == 0 else 1
+        if failed:
+            return 1
+        return 2 if refused and not built else 0
 
     # Definitions always cover the WHOLE roster: --sheet narrows which
     # meshes rebuild, but the fences are rewritten whole, and writing them
@@ -670,7 +721,22 @@ def main() -> int:
             entry["attach"] = "socket"
             if piece.part == 3:
                 entry["hides"] = list(ea.PARTS[3]["hides"])
-        registry["models"]["%d:%d" % (piece.part, piece.visual)] = entry
+        # Merge, never replace: the fitted variants (install_human_equipment,
+        # refit_race_headwear), the race feature/shoulder policy, sockets and
+        # profiles belong to later tools.  Since the race programme's P7
+        # cleanup (2026-10) an installed piece's base IS its canonical_human_male
+        # fit and the old-male equipment/<slug>.glb is gone, so such a base
+        # keeps its scene/authoredFor/fitProfile/socket; a rebuilt
+        # equipment/<slug>.glb only becomes the base of a new piece.
+        key = "%d:%d" % (piece.part, piece.visual)
+        old = registry["models"].get(key, {})
+        merged = dict(old)
+        merged.update(entry)
+        if shipped_as_human_fit(registry, piece):
+            for field in ("scene", "authoredFor", "fitProfile", "socket"):
+                if field in old:
+                    merged[field] = old[field]
+        registry["models"][key] = merged
     # A piece that changes part or visual -- a slot correction, say -- leaves
     # its old "part:visual" key behind still pointing at its mesh, which now
     # holds the rebuilt geometry: a stale key hands a boot to the leg slot, and
@@ -715,7 +781,7 @@ def main() -> int:
     items_py_path.write_text(source, encoding="utf-8")
 
     print("\n%d built, %d failed" % (built, failed))
-    print("  meshes   %s" % EQUIPMENT)
+    print("  meshes   %s" % build_dir)
     print("  registry %s" % REGISTRY)
     print("  items    %s" % items_path)
     print("  visuals  %s" % items_py_path)

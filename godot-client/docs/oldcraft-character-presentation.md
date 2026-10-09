@@ -172,30 +172,17 @@ names and quantities. Switching race rebuilds the same selected loadout on the
 new body. Players can temporarily hide class gear to inspect hair and wardrobe
 colours without changing the selected class or the items creation will grant.
 
-The reviewed class-equipment geometry is reproducible with
-`eloria-assets/tools/revise_class_equipment_fit.py`. It consumes an explicit,
-unmodified packed baseline plus the fresh canonical torso-refit output, writes
-only to a new review directory, and refuses to install anything. The finalizer
-preserves packed GLB metadata, materials, UVs, skinning, and draw counts. Its
-torso path performs an audited reference-topology rebuild that removes hidden,
-oversized upper-arm faces, while the Arcanist leg/boot cuff path changes only
-POSITION/NORMAL accessors and preserves topology. Its orientation gate rejects
-folded or newly degenerate triangles before a candidate can be reviewed in-client.
-`eloria-assets/qa/class-equipment-fit-baseline.json` pins every baseline,
-torso-reference, rig, and accepted-output SHA-256. All input validation
-completes before the output directory is created, so a prior result cannot be
-double-baked. Each generated GLB is then required to match its accepted-output
-hash.
-
-To reproduce the inputs in a clean build-kit checkout, extract
-`sourceGitPath` at `sourceGitCommit` and the two luminous body GLBs under
-`anatomyGitPath` at `anatomyGitCommit`, using the exact revisions recorded in
-that manifest. Run `build_class_equipment_fit_references.py` with `--anatomy`
-and a fresh `--output` to rebuild and hash-check the eight torso references
-from the existing local authoring sources; it performs no network or generation
-call. Then pass the extracted packed baseline and the printed reference root to
-`revise_class_equipment_fit.py`. Every external texture is content-addressed,
-verified before output creation, and included in the final provenance report.
+The class kits wear the Human fits (`eloria-assets/tools/refit_human_bodies.py`
+installed by `install_human_equipment.py`); every race falls back to them, and
+headwear has a fit per race body (`refit_race_headwear.py`). The class-equipment
+pass reviewed before the race programme (the four class torsos and the Arcanist
+and Ranger legs and boots, on the retired Luminous bodies) was produced by
+`revise_class_equipment_fit.py` and `build_class_equipment_fit_references.py`.
+Both tools and the test that pinned their outputs were retired in the race
+programme's P7 cleanup (2026-10), together with those outputs: no body wore the
+old-male base scenes or the `variants/luminous_female` scenes any more.
+`eloria-assets/qa/class-equipment-fit-baseline.json` stays as the record of
+that pass, and the tools remain in git history (last present at 326a40d7d).
 
 ## Asset-generation decision
 

@@ -108,8 +108,8 @@ def main():
     ap.add_argument(
         "--equipment",
         type=Path,
-        default=batch.EQUIPMENT,
-        help="override leg/boot/head directory; torsos fall back to shipped assets",
+        default=batch.EQUIPMENT / "variants" / "human_male",
+        help="override leg/boot/head directory; torsos fall back to the shipped Human male fits",
     )
     ap.add_argument(
         "--set",
@@ -139,7 +139,9 @@ def main():
                 continue
             slugs = [f"{sheet}_{index:02}" for sheet in sheets]
             paths = [args.equipment / (slug + ".glb") for slug in slugs]
-            paths = [p if p.exists() else batch.EQUIPMENT / p.name for p in paths]
+            # The shipped pieces are the Human male fits; the old-male base
+            # scenes equipment/<slug>.glb were deleted in P7 (2026-10).
+            paths = [p if p.exists() else batch.EQUIPMENT / "variants" / "human_male" / p.name for p in paths]
             if not all(p.exists() for p in paths):
                 raise SystemExit("Missing outfit: " + key)
             records.append(

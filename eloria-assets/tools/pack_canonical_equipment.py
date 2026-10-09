@@ -3,6 +3,12 @@
 Packing never writes client assets. Installation checks every destination against
 the start snapshot, then checks it again immediately before atomic replacement.
 Item definitions, bodies, animation clips and appearance metadata are protected.
+
+The batch `pack` and `install` commands are retired (2026-10, race programme
+P7): they write the old layout (the old-male base scenes equipment/<slug>.glb
+and `canonical_<race>` variants for every body, luminous_* included) that the
+P7 cleanup deleted. `pack_glb`, `validate` and the provenance helpers stay;
+install_human_equipment.py and refit_race_headwear.py `install` use them.
 """
 from __future__ import annotations
 
@@ -315,7 +321,13 @@ def fitting_provenance(report, codes, previous_torso_source=None, previous_head_
     return {'compatibility': proofs}
 
 
+RETIRED = ('pack_canonical_equipment {} is retired (2026-10, race programme P7): it writes the deleted '
+           'old-male base scenes and canonical_luminous_* variants. Install Human fits with '
+           'install_human_equipment.py and race headwear with refit_race_headwear.py install')
+
+
 def pack(tag, out_tag, overlays=(), previous_torso_source=None, previous_head_source=None):
+    raise RuntimeError(RETIRED.format('pack'))
     if Path(out_tag).name != out_tag or out_tag in ('.', '..'):
         raise ValueError('Output tag must be a directory name')
     stage = SCRATCH / 'packed' / out_tag
@@ -407,6 +419,7 @@ def pack(tag, out_tag, overlays=(), previous_torso_source=None, previous_head_so
 
 
 def install(tag):
+    raise RuntimeError(RETIRED.format('install'))
     stage = SCRATCH / 'packed' / tag
     manifest = json.loads((stage / 'manifest.json').read_text())
     for path, digest in manifest['protected'].items():

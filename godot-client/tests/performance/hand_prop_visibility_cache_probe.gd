@@ -366,7 +366,7 @@ func _check_reconfigure(pair: Array, rows: Dictionary) -> void:
 	var models := altered_equipment.models as Dictionary
 	var melee := (models["0:114"] as Dictionary).duplicate(true)
 	var variants := (melee.get("variants", {}) as Dictionary).duplicate(true)
-	variants["canonical_luminous_female"] = {
+	variants["canonical_human_female"] = {
 		"rangedAnimationScene":
 			"res://assets/actors/native/equipment/amberwood_ranger_bow.glb",
 	}

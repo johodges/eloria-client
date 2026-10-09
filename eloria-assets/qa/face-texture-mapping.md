@@ -50,9 +50,13 @@ From the repository root:
 
 ```powershell
 python eloria-assets/tools/build_face_masks.py --models godot-client/assets/actors/native/races --out godot-client/assets/actors/native/face_masks
-python eloria-assets/tools/build_neck_textures.py --models godot-client/assets/actors/native/races --sources ../work-output/face-mapping/canonical-source --out godot-client/assets/actors/native/neck_textures
 python -m pytest -p no:cacheprovider godot-client/tests/test_face_texture_mapping.py -q
 ```
+
+`build_neck_textures.py`, which baked `neck_textures/`, was retired in the race
+programme's P7 cleanup (2026-10): the rebased race bodies carry the Human neck
+and no model names a neck texture any more (the manifest is `{}`). The baked
+PNGs stay as the inputs `test_face_texture_mapping.py` still checks.
 
 The reviewed polygon annotations are in `tools/face_regions.json`. Coordinates
 refer to the canonical rest mesh projected from +Z; the JSON records the scale

@@ -65,6 +65,11 @@ stay put; the boots are new items and need theirs written:
 
   python import_generated_equipment.py --sheet legendary_leg_armor --meshes-only
   python import_generated_equipment.py --sheet legendary_sabatons
+
+Since the race programme's P7 cleanup (2026-10) both sheets ship as their
+Human fits, so the importer no longer rebuilds them in place: refit them with
+refit_human_bodies.py, install_human_equipment.py and
+share_human_equipment_textures.py (a new sheet still builds as above).
 """
 from __future__ import annotations
 

@@ -27,7 +27,9 @@ Do not reuse the retired head field without migrating this encoding.
 
 - `calibrate_skin_palettes.py --root <checkout>` measures the original UV-mapped
   skin albedo and records each source GLB hash in `models.json`.
-- `expand_hairstyles.py --root <checkout>` rebuilds and fits the five styles.
+- `expand_hairstyles.py` authored the five raw styles; its refit is retired
+  (2026-10) and refuses to run. Fit Human hair with `fit_human_hair.py` and
+  race hair with `fit_character_appearance.py --race <slug>`.
 - `appearance_palette_preview.gd` captures every skin or hair choice using the
   actual client renderer; select `ELORIA_PALETTE_MODE=skin` or `hair` and set
   `ELORIA_ARTIFACT_DIR` to a scratch output directory.

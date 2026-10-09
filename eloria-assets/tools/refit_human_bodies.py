@@ -2,13 +2,14 @@
 
     python eloria-assets/tools/refit_human_bodies.py --bodies <dir> --out <scratch> [--pieces a,b|all] [--jobs 4]
 
-All sixteen races share the Luminous male/female body below the neck, and the
-canonical fits (`canonical_luminous_*` and the base scenes) are built on it.
-The Human bodies regenerated on 2026-10-05 replace only `luminous_male` and
-`luminous_female`, so their equipment is a separate set: every piece is fitted
-to the new bodies here and recorded under `canonical_human_male` /
-`canonical_human_female`, which only the two Human rigs list in `fitGroups`.
-Every other race keeps the fits it has.
+The Human bodies regenerated on 2026-10-05 replaced `luminous_male` and
+`luminous_female`; every piece is fitted to the new bodies here and recorded
+under `canonical_human_male` / `canonical_human_female`. Since the race rebase
+every race shares these bodies below the neck and falls back to the Human
+fits, and since the race programme's P7 cleanup (2026-10) each generated
+piece's base scene is its `canonical_human_male` file: the older
+`canonical_luminous_*` fits and the old-male base scenes they were built on
+are deleted.
 
 `--bodies` holds the new `luminous_male.glb` / `luminous_female.glb` (the
 packed client files). They are both the fitting body and the torso anatomy

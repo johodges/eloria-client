@@ -36,7 +36,13 @@ def depth(points, triangles, xy):
     return result
 
 
-def audit():
+#: The shipped torsos fitted to the Human male body (luminous_male.glb). The
+#: old-male base scenes equipment/<slug>.glb were deleted in the race
+#: programme's P7 cleanup (2026-10); each piece's base scene is now this file.
+HUMAN_MALE = batch.EQUIPMENT / 'variants' / 'human_male'
+
+
+def audit(directory: Path = HUMAN_MALE):
     rig = ea.load_rig(ce.RACES / 'luminous_male.glb', ce.BODY_MESH)
     x, y = np.meshgrid(np.linspace(-.23, .23, 185), np.linspace(1.05, 1.48, 87))
     xy = np.column_stack((x.ravel(), y.ravel()))
@@ -51,7 +57,7 @@ def audit():
     for piece in batch.roster():
         if piece.part != 5:
             continue
-        path = batch.EQUIPMENT / (piece.slug + '.glb')
+        path = directory / (piece.slug + '.glb')
         surface, _ = ce.read_source(path)
         armour = depth(surface.positions, surface.indices.reshape(-1, 3), xy)
         proud = skin & (armour >= body)
@@ -83,8 +89,9 @@ def audit():
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--out', type=Path, required=True)
+    ap.add_argument('--directory', type=Path, default=HUMAN_MALE)
     args = ap.parse_args()
-    report = audit()
+    report = audit(args.directory)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2) + '\n')
     print(report['summary'])

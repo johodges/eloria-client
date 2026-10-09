@@ -130,6 +130,16 @@ Use `--set legendary_01` to render one outfit, `--yaw 90` for a side view, or
 whose source files and render options have not changed. Rebuild an individual
 sheet with `import_generated_equipment.py --meshes-only --sheet <sheet>`.
 
+Since the race programme's P7 cleanup (2026-10) the old-male base scenes
+`equipment/<slug>.glb` are deleted: each piece ships as its Human fit
+(`variants/human_male|human_female/<slug>.glb`, refit with
+`refit_human_bodies.py` and installed with `install_human_equipment.py`), and
+the renderer and `audit_limb_head_remap.py` default to the Human male fits.
+The importer no longer rebuilds an installed piece in place; rebuild a sheet
+into scratch with `import_generated_equipment.py --meshes-only --sheet <sheet>
+--build-dir <scratch>` and pass that folder as `--equipment` (renderer) or
+`--directory` (audit).
+
 Representative images and family contact sheets are committed in
 `generated-armour-comparisons/`; the full PNG/Blender gallery remains in the
 local QA directory and can be regenerated with the command above.

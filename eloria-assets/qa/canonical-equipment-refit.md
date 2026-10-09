@@ -1,5 +1,40 @@
 # Equipment on shared canonical player bodies
 
+## Current layout (2026-10, after the race programme)
+
+The text below this section records the September 2026 shared-body delivery.
+Since then:
+
+- **Bodies.** The Human bodies (`races/luminous_<sex>.glb`) were regenerated on
+  2026-10-05, and all fourteen race bodies were rebuilt on them below the neck
+  by `rebase_race_body.py` (build, verify, install, post-import), with horns,
+  crowns, crystals and growths on their own `race_feature_*` nodes.
+- **Torso, legs, boots (200 designs).** One fit per sex, on the Human body:
+  `variants/human_male|human_female/<slug>.glb`, registry groups
+  `canonical_human_male|female`. Every race lists its own group first and
+  falls back to the Human group of its sex.
+- **Headwear (64 designs).** The Human fits plus one fit per race body:
+  `variants/<race>/<slug>.glb`, group `canonical_<race>` (896 race variants).
+- **Base scenes.** Each generated model's base `scene` is its
+  `canonical_human_male` file (`authoredFor: human_male`, mapped to
+  `luminous_male` by `authoringRigs`). The race programme's P7 cleanup
+  (2026-10-08) deleted the old-male base scenes `equipment/<slug>.glb` (264),
+  the `variants/luminous_female` scenes (264) and the 128 textures only they
+  named, dropped the `canonical_luminous_*` variants, and set
+  `fitGroups.luminous_<sex>` to `[canonical_human_<sex>]`. A simulation of all
+  6,864 body-by-model resolutions showed nothing worn changed.
+- **Retired tools.** `refit_canonical_equipment.py build` and
+  `pack_canonical_equipment.py pack|install` raise (`build_one`,
+  `tool_hashes`, `pack_glb` and `validate` drive the current tools);
+  `import_generated_equipment.py` no longer rebuilds an installed piece's
+  `equipment/<slug>.glb` (it builds installed pieces only into scratch, with
+  `--meshes-only --build-dir`);
+  `build_shared_player_body_set.py`, `prepare_shared_registry.py`,
+  `revise_class_equipment_fit.py`, `build_class_equipment_fit_references.py`,
+  `install_neck_refinements.py`, `repair_ssarathi_*`, `build_neck_textures.py`
+  and `verify_orun_neck_apron_mask.py` are deleted; they remain in git history
+  (last present at 326a40d7d).
+
 All races now use the Luminous male or female body shape below the neck, with
 their original heads and Ssarathi tails retained. A continuous neck adaptor
 joins each head to its body. Equipment is rebuilt from the original Meshy
@@ -157,6 +192,46 @@ client assets. Recover the sixteen original canonical bodies from commit
 (binary-safe Git extraction); retain them as read-only anatomical references.
 Original Meshy `.glb.orig` files remain in the adjacent `generate_models` folder.
 
+**Current path (2026-10).** Fit the Human bodies, then each race body's
+headwear; both drive `refit_canonical_equipment.build_one` from the original
+Meshy sources. Install order is pack, then share textures, then commit.
+
+```powershell
+python eloria-assets/tools/refit_human_bodies.py --bodies <dir holding luminous_male.glb and luminous_female.glb> --out <scratch> --pieces all --jobs 4
+python eloria-assets/tools/install_human_equipment.py <scratch> --tag human
+python eloria-assets/tools/share_human_equipment_textures.py
+python eloria-assets/tools/refit_race_headwear.py fit --out <scratch> --tag <t> --pieces all --races all --jobs 4
+python eloria-assets/tools/refit_race_headwear.py measure --out <scratch> --tag <t>
+python eloria-assets/tools/refit_race_headwear.py human-check --out <scratch> --tag <t>
+python eloria-assets/tools/refit_race_headwear.py install --out <scratch> --tag <t> --rigs <race slugs, comma separated>
+```
+
+`install_human_equipment.py` writes the two Human variants per piece, keeps a
+piece's base fields equal to its `canonical_human_male` variant and sets
+`fitGroups.luminous_<sex>` to the Human group alone. `refit_race_headwear.py
+install` refuses fits whose recorded fitter, race-pass, body or policy hashes no
+longer match the checkout, writes `variants["canonical_<race>"]` only and never
+touches `fitGroups`. Race bodies come from `rebase_race_body.py`; race hair from
+`fit_character_appearance.py --race`.
+
+**Refit before reinstalling.** `tool_hashes()` hashes
+`refit_canonical_equipment.py` itself, and its retirement edit (2026-10-08)
+changed that hash. Every fit recorded before it - the installed P5 headwear
+fits, and any `refit_human_bodies.py` tag - now fails the fitter check:
+`refit_race_headwear.py install` refuses it ("fitter changed since the fit")
+and `--resume` will not reuse it ("Use a new tag; candidate is not an
+unchanged resumable build"). The installed variants are unaffected; run the
+fit again under a new tag before the next install. Run
+`share_human_equipment_textures.py` after
+`install_human_equipment.py` and before committing: it matches only shipped
+(1024 px) textures, so after a commit a piece whose other scenes no longer name
+the shipped texture is re-encoded into a duplicate.
+
+The rest of this section is the September 2026 path, kept as history. Its
+`build_shared_player_body_set.py`, `prepare_shared_registry.py`,
+`refit_canonical_equipment.py build` and `pack_canonical_equipment.py
+pack|install` steps are retired (see the top of this file).
+
 ```powershell
 (Get-Process -Id $PID).ProcessorAffinity = [intptr]255
 $env:OPENBLAS_NUM_THREADS = '1'
@@ -168,7 +243,7 @@ python eloria-assets/tools/build_shared_player_body_set.py --sources equipment-f
 ```
 
 `verify_shared_player_bodies.py` checks original head/tail/common-body triangles,
-skeleton and every neck boundary. `prepare_shared_registry.py` prepares measured
+skeleton and every neck boundary. `prepare_shared_registry.py` prepared measured
 equipment/model/catalogue metadata for reviewed scratch body candidates.
 `install_shared_equipment.py install --plan <reviewed-plan.json>` installs only
 explicit replacements/removals after validating all expected hashes. The plan
@@ -193,7 +268,8 @@ The builder deduplicates body-template work while retaining sixteen head fits.
 `pack_equipment_revision.py` supports partial original-source revisions with
 explicit parent, audit and body evidence, including original-art identity guards.
 Installation remains separate from packing. Never regenerate item definitions;
-always use `--meshes-only` if invoking the older batch driver.
+always use `--meshes-only` if invoking the older batch driver (since 2026-10
+also `--build-dir <scratch>`: it no longer rebuilds installed pieces in place).
 
 `capture_canonical_equipment.ps1` and `canonical_equipment_preview.gd` reproduce
 actual client views. `compare_conformed_piece.py --ensemble --save-blend`

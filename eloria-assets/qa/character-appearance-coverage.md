@@ -1,5 +1,18 @@
 # Shirt coverage and fitted hairstyles
 
+**Status (2026-10).** This page records the September 8 repair of the shared
+canonical bodies, which are retired. The Human bodies were regenerated on
+2026-10-05 (`pack_human_body.py`, their own shirt and collar) and the fourteen
+race bodies rebuilt on them by `rebase_race_body.py`. Hair now has nine styles
+per body: Human fits come from `fit_human_hair.py`, race fits from
+`fit_character_appearance.py --race <slug>` (with its `tuck_ears` pass and
+`--install`); horns, crowns and crystals live on `race_feature_*` nodes and
+show through hair. The retired refits `expand_hairstyles.py` and
+`install_high_resolution_race_heads.py` refuse to run, and
+`restore_buzzcuts.py` is deleted, so none of them can overwrite these fits.
+The `--model` reproduction below rebuilds the September candidates from their
+archived inputs only.
+
 The September 8 repair updates all sixteen shared canonical bodies and adds
 three fitted hairstyles per body under `assets/actors/native/hair/fitted/`.
 Appearance style 0 is bald, including after changing styles or removing a helmet.

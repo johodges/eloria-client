@@ -118,12 +118,15 @@ class EquipmentFitTest(unittest.TestCase):
                 self.assertNotEqual(self.girth[slug], self.registry['authoredBodyGirth'][slug])
 
     def test_skinned_models_name_the_rig_they_were_authored_on(self) -> None:
+        # A label like human_male names an authoring set; authoringRigs maps
+        # it to the installed body it was fitted on (the generated pieces'
+        # base IS their canonical_human_male fit since the P7 cleanup).
         for key, model in self.models.items():
             if model.get("attach") != "skinned":
                 continue
             author = model.get("authoredFor", "")
             self.assertTrue(author, f"{key} does not say what body it fits")
-            self.assertIn(author, self.girth,
+            self.assertIn(authoring_rig(self.registry, author), self.girth,
                           f"{key} was authored for the unmeasured rig {author}")
 
     @staticmethod

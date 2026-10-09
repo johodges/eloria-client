@@ -7,14 +7,27 @@ texture is the full-resolution original of an image the shipped piece already
 references as a 1024 px JPEG (the shipped set was shrunk after packing).  For
 each image of each `variants/human_*/<slug>.glb`:
 
-* if one of the shipped base piece's images is the same picture (64 px
+* if one of the piece's shipped textures is the same picture (64 px
   thumbnails within 3/255 mean difference), the variant names that file;
 * otherwise (the "Fitted cloth" lining, sampled from the new body's shirt) it
   is re-encoded the shipped way - at most 1024 px, JPEG quality 85,
   content-addressed `textures/canonical_<sha>.jpg`.
 
+A piece's shipped textures are the git-tracked `textures/` files named by any
+scene the registry gives the piece (its base `scene` and every variant), read
+from the working tree and from HEAD.  Since the P7 cleanup (2026-10) the base
+scene of every generated piece IS its `variants/human_male` file, and the
+old-male base scenes this tool used to match against are gone; reading HEAD
+keeps the textures a reinstall has just overwritten in the working tree.  Only
+textures at most 1024 px (the shipped size) are candidates, so a full-resolution
+image is never "shared" with itself.  Run this after install_human_equipment.py
+and before committing: after a commit a piece can only match shipped textures
+its other scenes still name, and is otherwise re-encoded (a correct 1024 px
+file, but a duplicate of the shipped one).
+
 Only the JSON image entries change; geometry, skin and materials are untouched.
-Textures nothing references any more are deleted if git does not track them.
+Textures no equipment GLB references any more are deleted if git does not
+track them.
 """
 from __future__ import annotations
 
@@ -30,6 +43,8 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
 EQUIPMENT = ROOT / 'godot-client/assets/actors/native/equipment'
+#: The shipped equipment texture size (shrink_actor_textures.py's equipment cap).
+SHIPPED_MAX = 1024
 
 
 def read(path: Path):
@@ -51,20 +66,58 @@ def thumb(path: Path):
     return np.asarray(Image.open(path).convert('RGB').resize((64, 64), Image.BILINEAR)).astype(np.float32)
 
 
+def _header(data: bytes) -> dict:
+    n = struct.unpack('<I', data[12:16])[0]
+    return json.loads(data[20:20 + n])
+
+
+def scene_textures(scene: str, tracked: set[str]) -> list[Path]:
+    """Tracked textures one registry scene names, in the working tree and at HEAD."""
+    rel = 'godot-client/' + scene.removeprefix('res://')
+    path = ROOT / rel
+    documents = []
+    if path.exists():
+        documents.append(_header(path.read_bytes()))
+    head = subprocess.run(['git', 'show', f'HEAD:{rel}'], cwd=ROOT, capture_output=True)
+    if head.returncode == 0 and head.stdout[:4] == b'glTF':
+        documents.append(_header(head.stdout))
+    found = []
+    for document in documents:
+        for image in document.get('images', []):
+            if 'uri' not in image:
+                continue
+            texture = (path.parent / image['uri']).resolve()
+            if texture.exists() and texture.relative_to(ROOT.resolve()).as_posix() in tracked:
+                found.append(texture)
+    return found
+
+
+def piece_scenes(registry: dict) -> dict[str, list[str]]:
+    """Every scene the registry gives a piece, keyed by each of those scenes."""
+    scenes = {}
+    for model in registry['models'].values():
+        named = [model.get('scene', '')] + [v.get('scene', '') for v in model.get('variants', {}).values()]
+        named = list(dict.fromkeys(s for s in named if s.startswith('res://')))
+        for scene in named:
+            scenes.setdefault(scene, [])
+            scenes[scene] += [s for s in named if s not in scenes[scene]]
+    return scenes
+
+
 def main() -> int:
     tracked = set(subprocess.check_output(['git', 'ls-files', 'godot-client/assets/actors/native/equipment/textures'],
                                           cwd=ROOT, text=True).split())
+    registry = json.loads((ROOT / 'godot-client/data/actors/equipment.json').read_text(encoding='utf-8'))
+    pieces = piece_scenes(registry)
     shared = reencoded = 0
     referenced = set()
     for folder in ('human_male', 'human_female'):
         for path in sorted((EQUIPMENT / 'variants' / folder).glob('*.glb')):
             doc, rest = read(path)
-            base = EQUIPMENT / path.name
-            base_images = []
-            if base.exists():
-                bdoc, _ = read(base)
-                base_images = [EQUIPMENT / i['uri'] for i in bdoc.get('images', []) if 'uri' in i]
-            thumbs = [(p, thumb(p)) for p in base_images]
+            scene = 'res://' + path.relative_to(ROOT / 'godot-client').as_posix()
+            candidates = [t for s in pieces.get(scene, [scene]) for t in scene_textures(s, tracked)]
+            thumbs = [(p, thumb(p)) for p in dict.fromkeys(candidates)
+                      if max(Image.open(p).size) <= SHIPPED_MAX]
             changed = False
             for image in doc.get('images', []):
                 current = (path.parent / image['uri']).resolve()
@@ -91,6 +144,11 @@ def main() -> int:
                     changed = True
             if changed:
                 write(path, doc, rest)
+    # Race variants and the other equipment GLBs keep their textures too.
+    for path in EQUIPMENT.rglob('*.glb'):
+        for image in read(path)[0].get('images', []):
+            if 'uri' in image:
+                referenced.add((path.parent / image['uri']).resolve().name)
     removed = 0
     for tex in (EQUIPMENT / 'textures').glob('canonical_*'):
         if tex.suffix == '.import':
@@ -98,7 +156,7 @@ def main() -> int:
         rel = tex.relative_to(ROOT).as_posix()
         if rel in tracked or tex.name in referenced:
             continue
-        # untracked and unreferenced by the Human variants: a leftover of the raw install
+        # untracked and unreferenced by any equipment GLB: a leftover of the raw install
         still_used = False
         if not still_used:
             tex.unlink(); removed += 1

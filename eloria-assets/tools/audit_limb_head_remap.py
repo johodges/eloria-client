@@ -130,7 +130,8 @@ def audit(directory, output, before=None, slugs=None):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--directory", type=Path, default=batch.EQUIPMENT)
+    # The Human male fits; the old-male base scenes were deleted in P7 (2026-10).
+    ap.add_argument("--directory", type=Path, default=batch.EQUIPMENT / "variants" / "human_male")
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--before", type=Path)
     ap.add_argument("--piece", action="append", default=[])

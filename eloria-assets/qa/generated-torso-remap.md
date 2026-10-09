@@ -91,6 +91,22 @@ and exact restoration on all 16 races, plus 48 actual equip/unequip cycles for
 the three selected generated pieces on every race. Hair and eye meshes are
 excluded from body replacement.
 
+The second block below is the September 2026 run, which rebuilt the old-male
+base scenes `equipment/<slug>.glb` in place. Those scenes were deleted in the race
+programme's P7 cleanup (2026-10): every torso now ships as its Human fit
+(`variants/human_male|human_female/<slug>.glb`, refit with
+`refit_human_bodies.py` and installed with `install_human_equipment.py`), and
+`import_generated_equipment.py` no longer rebuilds an installed piece in place.
+To repeat this audit on rebuilt meshes, build them into scratch and audit that
+folder; without `--directory` the audit reads the installed Human male fits:
+
+```powershell
+python eloria-assets/tools/import_generated_equipment.py --meshes-only --build-dir <scratch>
+python eloria-assets/tools/audit_torso_remap.py --directory <scratch> --out <scratch>/generated-torso-remap.json
+```
+
+The September 2026 run (history; its first line no longer rebuilds anything):
+
 ```powershell
 python eloria-assets/tools/import_generated_equipment.py --meshes-only
 python eloria-assets/tools/audit_torso_remap.py --out eloria-assets/qa/generated-torso-remap.json

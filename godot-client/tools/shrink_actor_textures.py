@@ -74,7 +74,11 @@ NATIVE = CLIENT / "assets" / "actors" / "native"
 EQUIPMENT = NATIVE / "equipment"
 SHARED_TEXTURES = EQUIPMENT / "textures"
 
-DEFAULT_CAPS = {"equipment": 1024, "races": 1024, "creatures": 1024, "hair": 512}
+# Races cap at 2048 since the 2026-10 race rebase: every race GLB carries the
+# Human body's 2048 TintableAtlas and race skin, and three race heads (with
+# their face masks) are 2048. A 1024 cap would halve all sixteen, head atlases
+# and masks included, by the one shared factor.
+DEFAULT_CAPS = {"equipment": 1024, "races": 2048, "creatures": 1024, "hair": 512}
 MIN_SAVING = 0.10
 MIN_BYTES = 64_000  # palette thumbnails and flat masks are not worth touching
 COLOUR_QUALITY = 88

@@ -44,6 +44,11 @@ the final neck exports are named `compact-body.glb` (`--body-name` selects
 them). Renders and preservation/packing reports are in
 `work-output/race-heads` outside the checkout.
 
+Retired 2026-10: the race bodies are now rebuilt and installed by
+`rebase_race_body.py` and their hair fitted by `fit_character_appearance.py
+--race`, so `install_high_resolution_race_heads.py` refuses to run (it would
+overwrite both).
+
 ## Ssarathi and Glasswarden neck refinement — 2026-09-09
 
 Both sexes now use a longer transition to the source neck, ending at 0.130 m
@@ -69,5 +74,7 @@ from three angles, tinted walking views and equipped views are stored in
 `work-output/neck-refinement`, with installation and preservation reports.
 
 Use the source builder for fresh candidates; it passes the high-resolution
-extraction to the neck bake. `install_neck_refinements.py` installs reviewed
-four-model candidates while preserving existing hair, face masks and tails.
+extraction to the neck bake. `install_neck_refinements.py` installed reviewed
+four-model candidates while preserving existing hair, face masks and tails; it
+was retired in the race programme's P7 cleanup (2026-10), since the race bodies
+are now rebuilt on the Human body by `rebase_race_body.py`.

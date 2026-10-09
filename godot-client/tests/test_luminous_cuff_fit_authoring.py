@@ -1,4 +1,12 @@
-"""Regression coverage for the installed Luminous-female cuff pass."""
+"""Regression coverage for the Luminous-female cuff pass, now retired history.
+
+The pass installed four Luminous-female leg/boot variants and the canonical
+Warded Boots base scene. The race programme's P7 cleanup (2026-10) deleted
+every variants/luminous_female scene and every old-male base scene, because no
+body resolved to them any more; the manifests are marked retired and their
+reviewed outputs stay as history. The authoring tool's own guards are still
+checked here.
+"""
 from __future__ import annotations
 
 import copy
@@ -32,11 +40,12 @@ CANONICAL_WARDED_BOOTS_MANIFEST = (
     ROOT / "eloria-assets/qa/canonical-warded-boots-fit.json")
 # The installed Human female body. The cuff pass produced it until the
 # 2026-10-05 Human regeneration replaced it with a new Meshy body
-# (eloria-assets/tools/pack_human_body.py); the manifest now records that
-# mapping under installation.retiredMappings, so it is not in INSTALLED.
+# (eloria-assets/tools/pack_human_body.py); the manifest records that mapping
+# under installation.retiredMappings.
 HUMAN_FEMALE_BODY = (
     ROOT / "godot-client/assets/actors/native/races/luminous_female.glb")
-INSTALLED = {
+# The four equipment outputs the pass installed, deleted in P7 (2026-10).
+RETIRED_OUTPUTS = {
     "arcanistLegs": (
         ROOT / "godot-client/assets/actors/native/equipment/variants/"
         "luminous_female/arcane_leg_armor_01.glb"),
@@ -50,54 +59,47 @@ INSTALLED = {
         ROOT / "godot-client/assets/actors/native/equipment/variants/"
         "luminous_female/frontier_boots_01.glb"),
 }
+EXPECTED_BINDINGS = {
+    "4:179": (
+        "res://assets/actors/native/equipment/variants/luminous_female/"
+        "arcane_leg_armor_01.glb"),
+    "6:192": (
+        "res://assets/actors/native/equipment/variants/luminous_female/"
+        "arcane_fantasy_boots_01.glb"),
+    "4:230": (
+        "res://assets/actors/native/equipment/variants/luminous_female/"
+        "rugged_ranger_legwear_04.glb"),
+    "6:224": (
+        "res://assets/actors/native/equipment/variants/luminous_female/"
+        "frontier_boots_01.glb"),
+}
 
 
 def _manifest() -> dict:
     return cuff.load_manifest(MANIFEST)
 
 
-def _semantic_spec(reviewed: dict, key: str) -> dict:
-    if key in ("body", "rangerLegs", "rangerBoots"):
-        return reviewed[key]["semanticMeshes"]
-    mesh_name = {
-        "arcanistLegs": "Warded Legguards",
-        "arcanistBoots": "Warded Boots",
-    }[key]
-    return {mesh_name: reviewed[key]["semanticMesh"]}
-
-
-def test_canonical_warded_boots_drop_the_detached_upper_shin_guards():
+def test_canonical_warded_boots_fit_is_retired_with_its_output():
     manifest = json.loads(
         CANONICAL_WARDED_BOOTS_MANIFEST.read_text(encoding="utf-8"))
-    assert cuff.digest(CANONICAL_WARDED_BOOTS) == manifest["output"]["sha256"]
+    assert manifest["status"] == "retired"
+    assert not CANONICAL_WARDED_BOOTS.exists()
+    equipment = json.loads(EQUIPMENT.read_text(encoding="utf-8"))
+    assert equipment["models"]["6:192"]["scene"] == (
+        equipment["models"]["6:192"]["variants"]["canonical_human_male"]["scene"])
+    # The reviewed contract stays as history.
     assert manifest["contract"]["additionalPerFrameOperations"] == 0
     assert manifest["contract"]["drawsBefore"] == manifest["contract"]["drawsAfter"]
     assert manifest["contract"]["materialsBefore"] == manifest["contract"]["materialsAfter"]
     assert manifest["contract"]["jointsBefore"] == manifest["contract"]["jointsAfter"]
-
-    document, binary = cuff.ea.read_glb(CANONICAL_WARDED_BOOTS)
-    primitive = cuff.mesh(document, "Warded Boots")["primitives"][0]
-    points = cuff.ea.accessor_array(
-        document, binary, primitive["attributes"]["POSITION"]).astype(float)
-    faces = cuff.ea.accessor_array(
-        document, binary, primitive["indices"]).astype(int).reshape(-1, 3)
-    _, labels = cuff.component_labels(points, faces)
-    detached_guards = []
-    for label in cuff.np.unique(labels):
-        own = labels == label
-        low = float(points[own, 1].min())
-        high = float(points[own, 1].max())
-        if int(own.sum()) >= 200 and low > .20 and high > .40:
-            detached_guards.append(int(label))
-    assert detached_guards == []
-    assert len(points) == manifest["output"]["outputVertices"]
-    assert len(faces) == manifest["output"]["outputTriangles"]
+    assert manifest["output"]["outputVertices"] == 1296
+    assert manifest["output"]["outputTriangles"] == 1049
 
 
 def test_manifest_preserves_historical_inputs_and_zero_runtime_cost():
     manifest = _manifest()
     assert manifest["schema"] == "eloria-luminous-female-cuff-fit-v2"
-    assert manifest["status"] == "installed-production"
+    assert manifest["status"] == "retired"
     assert manifest["authority"]["sourceSHA256"] == (
         "39a4dbc151d6f04813fa843803ef5e8c71eca61e59b700d9c876274a9c7f9d66")
     assert manifest["authority"]["hiddenOverlapRangeMm"] == pytest.approx(
@@ -165,68 +167,53 @@ def test_manifest_preserves_historical_inputs_and_zero_runtime_cost():
         "path": "godot-client/data/actors/equipment.json",
         "blobOID": "30c6585b669858e47747e6e9d6f306c41f9a38fb",
     }
-    expected_bindings = {
-        "4:179": (
-            "res://assets/actors/native/equipment/variants/luminous_female/"
-            "arcane_leg_armor_01.glb"),
-        "6:192": (
-            "res://assets/actors/native/equipment/variants/luminous_female/"
-            "arcane_fantasy_boots_01.glb"),
-        "4:230": (
-            "res://assets/actors/native/equipment/variants/luminous_female/"
-            "rugged_ranger_legwear_04.glb"),
-        "6:224": (
-            "res://assets/actors/native/equipment/variants/luminous_female/"
-            "frontier_boots_01.glb"),
-    }
-    assert equipment_spec["semanticBindings"] == expected_bindings
-    validation = cuff.validate_equipment_config(EQUIPMENT, equipment_spec)
-    assert validation["semanticBindings"] == expected_bindings
-    assert validation["sha256"] == cuff.digest(EQUIPMENT)
-    assert validation["historicalSHA256"] == equipment_spec["sourceSHA256"]
-    assert validation["matchesHistoricalSHA256"] is (
-        validation["sha256"] == validation["historicalSHA256"])
+    assert equipment_spec["semanticBindings"] == EXPECTED_BINDINGS
+    # The live registry no longer carries the retired canonical_luminous_female
+    # group, so a rerun of the pass is refused at its binding check.
+    with pytest.raises(ValueError, match="binding is missing"):
+        cuff.validate_equipment_config(EQUIPMENT, equipment_spec)
 
 
 def test_equipment_validation_rejects_cuff_binding_drift():
+    # A synthetic registry in the layout the pass authored against.
     manifest = _manifest()
-    equipment = json.loads(EQUIPMENT.read_text(encoding="utf-8"))
+    bindings = manifest["inputs"]["equipmentConfig"]["semanticBindings"]
+    equipment = {"models": {
+        slot: {"variants": {"canonical_luminous_female": {"scene": scene}}}
+        for slot, scene in bindings.items()}}
+    assert cuff.validate_equipment_bindings(equipment, bindings) == bindings
     equipment["models"]["4:179"]["variants"][
         "canonical_luminous_female"]["scene"] = "res://wrong/legs.glb"
     with pytest.raises(ValueError, match="4:179"):
-        cuff.validate_equipment_bindings(
-            equipment,
-            manifest["inputs"]["equipmentConfig"]["semanticBindings"])
+        cuff.validate_equipment_bindings(equipment, bindings)
+    del equipment["models"]["6:192"]["variants"]["canonical_luminous_female"]
+    with pytest.raises(ValueError, match="6:192/canonical_luminous_female"):
+        cuff.validate_equipment_bindings(equipment, bindings)
 
 
-def test_installed_outputs_match_reviewed_hashes_and_semantic_contracts():
+def test_every_cuff_mapping_is_retired_and_its_output_deleted():
     manifest = _manifest()
-    mappings = manifest["installation"]["mappings"]
-    assert len(mappings) == len(INSTALLED) == 4
-    assert {item["inputKey"] for item in mappings} == set(INSTALLED)
-    assert {item["reviewedOutputKey"] for item in mappings} == set(INSTALLED)
-    assert len({item["targetPath"] for item in mappings}) == len(INSTALLED)
-    # The body mapping is retired, not lost: its reviewed output stays as
-    # history and is marked as no longer installed.
-    retired = manifest["installation"]["retiredMappings"]
-    assert [item["inputKey"] for item in retired] == ["body"]
-    assert ROOT / retired[0]["targetPath"] == HUMAN_FEMALE_BODY
-    assert manifest["reviewedOutputs"]["body"]["installed"] is False
-    assert cuff.digest(HUMAN_FEMALE_BODY) != (
-        manifest["reviewedOutputs"]["body"]["outputSHA256"])
-
+    installation = manifest["installation"]
+    assert installation["mappings"] == []
+    retired = installation["retiredMappings"]
+    assert [item["inputKey"] for item in retired] == [
+        "body", "arcanistLegs", "arcanistBoots", "rangerLegs", "rangerBoots"]
     reviewed = manifest["reviewedOutputs"]
-    for mapping in mappings:
-        key = mapping["inputKey"]
-        assert mapping["reviewedOutputKey"] == key
-        installed = ROOT / mapping["targetPath"]
-        assert installed == INSTALLED[key]
-        assert cuff.digest(installed) == reviewed[key]["outputSHA256"]
-        expected = _semantic_spec(reviewed, key)
-        actual = cuff.semantic_mesh_contracts(installed, expected)
-        cuff._require_semantic_contracts(
-            actual, expected, f"Installed {key}")
+    for item in retired:
+        key = item["inputKey"]
+        assert item["reviewedOutputKey"] == key
+        assert item["retiredAt"] and item["reason"]
+        assert reviewed[key]["installed"] is False
+        if key == "body":
+            assert ROOT / item["targetPath"] == HUMAN_FEMALE_BODY
+            assert cuff.digest(HUMAN_FEMALE_BODY) != reviewed["body"]["outputSHA256"]
+        else:
+            assert ROOT / item["targetPath"] == RETIRED_OUTPUTS[key]
+            assert not RETIRED_OUTPUTS[key].exists(), key
+    assert not (ROOT / "godot-client/assets/actors/native/equipment/"
+                "variants/luminous_female").is_dir()
 
+    # The reviewed geometry stays as history.
     assert reviewed["body"]["geometry"] == {
         "sourceVertices": 4828,
         "outputVertices": 4601,
@@ -238,8 +225,8 @@ def test_installed_outputs_match_reviewed_hashes_and_semantic_contracts():
     assert reviewed["arcanistLegs"]["geometry"]["boundaryEdges"] == 36
     assert reviewed["rangerLegs"]["geometry"]["visibleBreeches"][
         "boundaryVertices"] == 70
-    # The cut opens 327 lining boundary vertices; all of them are sealed in
-    # the cut plane so the paired lining stays one closed solid.
+    # The cut opened 327 lining boundary vertices; all of them were sealed in
+    # the cut plane so the paired lining stayed one closed solid.
     lining = reviewed["rangerLegs"]["geometry"]["pairedLegBacking"]
     assert lining["cutBoundaryVertices"] == 327
     assert lining["boundaryEdges"] == lining["boundaryVertices"] == 0
@@ -247,28 +234,6 @@ def test_installed_outputs_match_reviewed_hashes_and_semantic_contracts():
     assert reviewed["rangerBoots"]["geometry"]["pairedBootBacking"][
         "boundaryVertices"] == 215
     assert reviewed["rangerBoots"]["removedComponentLabels"] == []
-
-
-def _open_welded_edges(path: Path, mesh_name: str) -> int:
-    document, binary = cuff.ea.read_glb(path)
-    primitive = cuff.mesh(document, mesh_name)["primitives"][0]
-    points = cuff.ea.accessor_array(
-        document, binary, primitive["attributes"]["POSITION"])
-    faces = cuff.ea.accessor_array(
-        document, binary, primitive["indices"]).astype(int).reshape(-1, 3)
-    _, welded = cuff.np.unique(points, axis=0, return_inverse=True)
-    welded = welded.reshape(-1)[faces]
-    edges = cuff.Counter(
-        tuple(sorted((int(a), int(b))))
-        for tri in welded for a, b in ((tri[0], tri[1]), (tri[1], tri[2]),
-                                       (tri[2], tri[0])))
-    return sum(1 for count in edges.values() if count % 2)
-
-
-def test_ranger_lining_is_sealed_while_the_breeches_keep_their_hidden_cut():
-    installed = INSTALLED["rangerLegs"]
-    assert _open_welded_edges(installed, "GeneratedLegBackingWithBoots") == 0
-    assert _open_welded_edges(installed, "Sidelace Breeches") > 0
     assert cuff.SEALED_RANGER_LININGS == ("GeneratedLegBackingWithBoots",)
 
 
@@ -350,24 +315,10 @@ def test_historical_body_provenance_is_valid_without_baseline_binary():
             invalid, body_spec, actual_hash=asset_hash)
 
 
-def test_installed_outputs_are_rejected_as_second_pass_sources():
+def test_installed_body_is_rejected_as_a_second_pass_source():
     inputs = _manifest()["inputs"]
     with pytest.raises(ValueError, match="Body semantic surface"):
         cuff.validate_body_source(HUMAN_FEMALE_BODY, inputs["body"])
-    with pytest.raises(ValueError, match="Arcanist legs SHA-256 changed"):
-        cuff.validate_pinned_source(
-            INSTALLED["arcanistLegs"], inputs["arcanistLegs"],
-            "Arcanist legs")
-    with pytest.raises(ValueError, match="Arcanist boots SHA-256 changed"):
-        cuff.validate_pinned_source(
-            INSTALLED["arcanistBoots"], inputs["arcanistBoots"],
-            "Arcanist boots")
-    with pytest.raises(ValueError, match="Ranger legs SHA-256 changed"):
-        cuff.validate_pinned_asset(
-            INSTALLED["rangerLegs"], inputs["rangerLegs"], "Ranger legs")
-    with pytest.raises(ValueError, match="Ranger boots SHA-256 changed"):
-        cuff.validate_pinned_asset(
-            INSTALLED["rangerBoots"], inputs["rangerBoots"], "Ranger boots")
 
 
 def test_authoring_refuses_a_production_output_path():
