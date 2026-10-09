@@ -6,7 +6,7 @@ signal backdrop_changed(backdrop_id: String)
 const SETTINGS_PATH := "user://eloria_hud.cfg"
 const ASSET_ROOT := "res://assets/ui/start_screen/"
 const BACKDROPS: Array[Dictionary] = [
-	{"id": "oldcraft_waygate", "label": "Oldcraft · Waygate", "file": "06-oldcraft-waygate"},
+	{"id": "oldcraft_landfall", "label": "Oldcraft · Landfall", "file": "06-oldcraft-landfall"},
 	{"id": "crownwater", "label": "Crownwater · First Light", "file": "01-crownwater-first-light"},
 	{"id": "amberwood", "label": "Amberwood · Lantern Path", "file": "02-amberwood-lantern-path"},
 	{"id": "whitehorn", "label": "Whitehorn · Silent Ascent", "file": "03-whitehorn-silent-ascent"},
@@ -14,13 +14,14 @@ const BACKDROPS: Array[Dictionary] = [
 	{"id": "amethyst", "label": "Amethyst Barrens · Starwatch", "file": "05-amethyst-barrens-starwatch"},
 ]
 
-var selected_id := "oldcraft_waygate"
+var selected_id := "oldcraft_landfall"
+var animation_enabled := true
 var settings_path := SETTINGS_PATH
 var selector: OptionButton
+var animation_toggle: CheckBox
 var video: VideoStreamPlayer
 var poster: TextureRect
 var _active := false
-var _quality := 2
 
 
 func _ready() -> void:
@@ -46,11 +47,20 @@ func _ready() -> void:
 	_fit_video()
 	_build_selector()
 	var config := ConfigFile.new()
+	var migrated := false
 	if config.load(settings_path) == OK:
 		var saved: Variant = config.get_value("start_screen", "backdrop", selected_id)
+		if saved == "oldcraft_waygate":
+			saved = "oldcraft_landfall"
+			migrated = true
 		if saved is String and _index_of(saved) >= 0:
 			selected_id = saved
+		var motion: Variant = config.get_value("start_screen", "animated", true)
+		animation_enabled = motion if motion is bool else true
+	animation_toggle.set_pressed_no_signal(animation_enabled)
 	_select(selected_id, false)
+	if migrated:
+		_save_preferences()
 
 
 func _build_selector() -> void:
@@ -61,7 +71,7 @@ func _build_selector() -> void:
 	panel.anchor_right = 0.77
 	panel.offset_left = -180
 	panel.offset_right = 180
-	panel.offset_top = -88
+	panel.offset_top = -96
 	panel.offset_bottom = -20
 	var frame := StyleBoxFlat.new()
 	frame.bg_color = Color(0.025, 0.028, 0.037, 0.82)
@@ -77,11 +87,22 @@ func _build_selector() -> void:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 3)
 	panel.add_child(column)
+	var header := HBoxContainer.new()
+	column.add_child(header)
 	var label := Label.new()
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.text = "Start screen"
 	label.add_theme_color_override("font_color", Color(0.83, 0.75, 0.60))
 	label.add_theme_font_size_override("font_size", 12)
-	column.add_child(label)
+	header.add_child(label)
+	animation_toggle = CheckBox.new()
+	animation_toggle.name = "AnimateBackdrop"
+	animation_toggle.text = "Animate"
+	animation_toggle.tooltip_text = "Play this scene on every graphics quality. Turn off for a still background."
+	animation_toggle.add_theme_font_size_override("font_size", 12)
+	animation_toggle.add_theme_color_override("font_color", Color(0.96, 0.90, 0.76))
+	header.add_child(animation_toggle)
+	animation_toggle.toggled.connect(set_animation_enabled)
 	selector = OptionButton.new()
 	selector.name = "BackdropChoice"
 	selector.custom_minimum_size.y = 30
@@ -152,12 +173,7 @@ func _select(backdrop_id: String, persist: bool) -> void:
 		poster.texture = ImageTexture.create_from_image(image) if image != null else null
 	_update_playback()
 	if persist:
-		var config := ConfigFile.new()
-		config.load(settings_path)
-		config.set_value("start_screen", "backdrop", selected_id)
-		var error := config.save(settings_path)
-		if error != OK:
-			push_warning("Could not save the start-screen choice: %s" % error_string(error))
+		_save_preferences()
 		backdrop_changed.emit(selected_id)
 
 
@@ -167,27 +183,42 @@ func set_active(value: bool) -> void:
 	_update_playback()
 
 
-func set_quality(level: int) -> void:
-	_quality = clampi(level, 0, 2)
+func set_animation_enabled(value: bool) -> void:
+	animation_enabled = value
+	animation_toggle.set_pressed_no_signal(value)
 	_update_playback()
+	_save_preferences()
+
+
+func _save_preferences() -> void:
+	var config := ConfigFile.new()
+	config.load(settings_path)
+	config.set_value("start_screen", "backdrop", selected_id)
+	config.set_value("start_screen", "animated", animation_enabled)
+	var error := config.save(settings_path)
+	if error != OK:
+		push_warning("Could not save the start-screen choice: %s" % error_string(error))
 
 
 func _update_playback() -> void:
 	if video == null:
 		return
-	if not _active or _quality == 0:
+	if not _active or not animation_enabled:
 		video.stop()
 		video.stream = null
 		video.hide()
 		return
 	if video.stream == null:
 		var path: String = ASSET_ROOT + BACKDROPS[_index_of(selected_id)].file + ".ogv"
-		if not FileAccess.file_exists(path):
+		if not ResourceLoader.exists(path):
+			push_warning("Start-screen animation is missing: " + path)
 			video.hide()
 			return
-		var stream := VideoStreamTheora.new()
-		stream.file = path
-		video.stream = stream
+		video.stream = load(path) as VideoStream
+		if video.stream == null:
+			push_warning("Could not load the start-screen animation: " + path)
+			video.hide()
+			return
 	video.show()
 	if not video.is_playing():
 		video.play()
