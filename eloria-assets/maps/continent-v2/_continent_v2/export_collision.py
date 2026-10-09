@@ -28,8 +28,10 @@ z = z1 - (r + .5) / 2 with (x0, z1) = collisionOriginMetres, and tile (tx, ty) h
   at the plan's level wherever the ground lies below it, the lake ellipses (waterRegions) and the river ribbons
   (paths of kind river, which are NOT waterRegions: each segment's capsule at the width interpolated between its
   points, surface at the points' y); not where a solid placement's (collisionRole solid) real triangles cross the
-  actor prism (collision_export.structural_mask, imported, never copied), whichever map's scene the placement is
-  in: a piece whose body reaches over a border closes the neighbour's own ground as well, judged in the neighbour's
+  actor prism (collision_export.structural_mask, imported, never copied), nor on the ground an open (not
+  watertight) placement's blocked cells wall in on every side, its own walk surface excepted (enclosed: a Meshy
+  house is a shell, and without this its floor was open inside a ring of wall), whichever map's scene the placement
+  is in: a piece whose body reaches over a border closes the neighbour's own ground as well, judged in the neighbour's
   frame on the neighbour's surface, so both maps' grids agree over it;
 - walkable = this map's own ground (the stub's ownership polygon) and standable, or the collar: the neighbour's first
   tile across an open border (the plan's openSeams and moles), eight-connected and one tile deep, taken at the
@@ -103,6 +105,18 @@ ORTHOGONAL = ((0, 1), (1, 0), (0, -1), (-1, 0))
 DIAGONAL = ((1, 1), (1, -1), (-1, 1), (-1, -1))
 FOUR = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
 EIGHT = np.ones((3, 3), bool)
+# A solid kit model with one of these words in its file name blocks its trunk only (the owner's call for the landing
+# isle, 2026-10-09: a crown or frond that droops into an actor's height is walked under, the trunk is not). The trunk
+# is the narrowest horizontal slice of the model between TRUNK_BAND metres, read in slices TRUNK_SLICE thick (palm
+# trunks lean: the base stands metres from the model's origin), as a closed TRUNK_SIDES-gon prism of that slice's
+# median radius within TRUNK_RADIUS, from TRUNK_SPAN below the origin to above it.
+TRUNK_WORDS = ("tree",)
+TRUNK_BAND = (0.3, 2.1)
+TRUNK_SLICE = 0.3
+TRUNK_MIN_VERTICES = 8
+TRUNK_RADIUS = (0.25, 1.0)
+TRUNK_SIDES = 8
+TRUNK_SPAN = (-1.0, 3.0)
 
 
 def say(*parts):
@@ -152,7 +166,7 @@ class Territory:
     lakes: list = field(default_factory=list)       # waterRegions: center, radii, level (ellipses only)
     rivers: list = field(default_factory=list)      # paths of kind river: points [{position, width}]
     walk: np.ndarray = field(default_factory=lambda: np.zeros((0, 3, 3)))
-    solids: list = field(default_factory=list)      # [(object id, [(triangles, closed), ...])]
+    solids: list = field(default_factory=list)      # [(object id, [(triangles, closed), ...], own walk triangles)]
     spawn: tuple | None = None                      # local (x, z) of the default spawn point
     sources: dict = field(default_factory=dict)
     walk_sources: dict = field(default_factory=dict)
@@ -189,6 +203,7 @@ class Prototype:
         self.walk = np.concatenate(walk) if walk else np.zeros((0, 3, 3))
         self.every = np.concatenate(every) if every else np.zeros((0, 3, 3))
         self.solid = solid
+        self.trunk = trunk(self.every) if any(word in Path(path).stem for word in TRUNK_WORDS) else None
 
     @classmethod
     def load(cls, path, sha256=None):
@@ -201,6 +216,41 @@ class Prototype:
                     raise ExportError(f"{path}: sha256 {found} differs from the bake's {sha256}: re-bake the scene")
             cls.cache[key] = cls(path)
         return cls.cache[key]
+
+
+def trunk(triangles):
+    """A tree model's trunk as one closed prism group [(triangles, True)] in its own space, or None when no slice in
+    TRUNK_BAND holds enough of the model to measure (the whole model then stays the solid)."""
+    points = np.asarray(triangles, float).reshape(-1, 3)
+    best = None
+    low = TRUNK_BAND[0]
+    while low < TRUNK_BAND[1] - 1e-9:
+        ring = points[(points[:, 1] >= low) & (points[:, 1] < min(low + TRUNK_SLICE, TRUNK_BAND[1]))][:, [0, 2]]
+        low += TRUNK_SLICE
+        if len(ring) < TRUNK_MIN_VERTICES:
+            continue
+        centre = ring.mean(axis=0)
+        radius = float(np.median(np.hypot(*(ring - centre).T)))
+        if best is None or radius < best[1]:
+            best = (centre, radius)
+    if best is None:
+        return None
+    (cx, cz), radius = best[0], float(np.clip(best[1], *TRUNK_RADIUS))
+    angles = np.arange(TRUNK_SIDES) * (2 * math.pi / TRUNK_SIDES)
+    ring = np.stack([cx + radius * np.cos(angles), cz + radius * np.sin(angles)], axis=1)
+    y0, y1 = TRUNK_SPAN
+    faces = []
+    for (ax, az), (bx, bz) in zip(ring, np.roll(ring, -1, axis=0)):
+        faces.append([[cx, y1, cz], [ax, y1, az], [bx, y1, bz]])            # top cap
+        faces.append([[cx, y0, cz], [bx, y0, bz], [ax, y0, az]])            # bottom cap
+        faces.append([[ax, y0, az], [bx, y0, bz], [bx, y1, bz]])            # side
+        faces.append([[ax, y0, az], [bx, y1, bz], [ax, y1, az]])
+    faces = np.asarray(faces, float)
+    # Outward winding (structural_mask's winding counts a face up as +1 and down as -1).
+    normals = np.cross(faces[:, 1] - faces[:, 0], faces[:, 2] - faces[:, 0])
+    outward = np.einsum("ij,ij->i", normals, faces.mean(axis=1) - [cx, (y0 + y1) / 2, cz]) < 0
+    faces[outward] = faces[outward][:, [0, 2, 1]]
+    return [(faces, True)]
 
 
 def placed(triangles, matrix):
@@ -305,10 +355,12 @@ def load_bake(region, bake, checkout=DEFAULT_CHECKOUT, *, sea_level=0.0, log=say
             walk.append(placed(proto.walk, entry["matrix"]))
             kit_walk += len(proto.walk)
         if role == "solid" and proto.solid:
-            solids.append((entry["id"], [(placed(tris, entry["matrix"]), closed) for tris, closed in proto.solid]))
+            body = proto.trunk or proto.solid
+            solids.append((entry["id"], [(placed(tris, entry["matrix"]), closed) for tris, closed in body],
+                           placed(proto.walk, entry["matrix"])))
     sources["kit"] = {"placements": kept, "outsideWindow": outside, "walkFaces": kit_walk,
                       "walkInlayPlacements": stem_walk, "solidPlacements": len(solids),
-                      "solidTriangles": int(sum(len(t_) for _, groups in solids for t_, _c in groups)),
+                      "solidTriangles": int(sum(len(t_) for _, groups, _deck in solids for t_, _c in groups)),
                       "prototypes": len(Prototype.cache), "seconds": round(time.time() - t, 1)}
     spawn = default_spawn(doc, region)["position"]
     log(f"{region}: bake read in {time.time() - t0:.1f} s ({json.dumps(sources)})")
@@ -472,19 +524,41 @@ def surface_fields(t, own):
                 base_open=base_open, window=window, counts=counts)
 
 
+def enclosed(shell, deck=None):
+    """The cells a placement's blocked shell walls in on every side: an open (not watertight) mesh closes only the
+    cells its triangles cross, so a building is a ring of wall with a walkable floor inside it. Ground the ring
+    leaves a way out of (a doorway, an arcade, a passage under an arch) is not enclosed and stays open, and so does
+    the placement's own walk surface (a gatehouse passage, a pier or causeway deck between its parapets)."""
+    inside = ndimage.binary_fill_holes(shell) & ~shell
+    if deck is not None:
+        inside &= ~deck
+    return inside
+
+
 def _mask_batch(batch):
-    """A worker's share of the solid placements: [(index, blocked sub-window)]."""
-    return [(index, CE.structural_mask(keep, sub, sx0, sz1)) for index, keep, sub, sx0, sz1 in batch]
+    """A worker's share of the solid placements: [(index, blocked sub-window)]. An open mesh's shell also blocks
+    the ground it encloses (enclosed); a closed one is already solid inside (collision_export's winding)."""
+    results = []
+    for index, keep, deck, sub, sx0, sz1 in batch:
+        mask = CE.structural_mask(keep, sub, sx0, sz1)
+        if not all(closed for _tris, closed in keep):
+            walk = None
+            if len(deck):
+                walk = GR.rasterise(deck, sub.shape[1], sub.shape[0], sx0, sz1, CELL, upward=UPWARD)[0]
+            mask |= enclosed(mask, walk)
+        results.append((index, mask))
+    return results
 
 
 def structure_mask(solids, floor, x0, z1, *, workers=None):
     """collision_export.structural_mask, one placement at a time over its own window (open meshes' triangles beyond
-    the floor's reach are dropped first: they cannot cross an actor's prism). The placements are independent and
-    their masks are OR-ed, so a large map spreads them over worker processes with the same result."""
+    the floor's reach are dropped first: they cannot cross an actor's prism), with the ground an open mesh's shell
+    encloses blocked too. The placements are independent and their masks are OR-ed, so a large map spreads them over
+    worker processes with the same result."""
     rows, cols = floor.shape
     blocked = np.zeros((rows, cols), bool)
     tasks, triangles = [], 0
-    for _identity, groups in solids:
+    for _identity, groups, deck in solids:
         points = np.concatenate([g.reshape(-1, 3) for g, _closed in groups])
         c0 = max(0, int(math.floor((points[:, 0].min() - 1 - x0) / CELL)))
         c1 = min(cols, int(math.floor((points[:, 0].max() + 1 - x0) / CELL)) + 1)
@@ -506,7 +580,8 @@ def structure_mask(solids, floor, x0, z1, *, workers=None):
         if keep:
             size = sum(len(k) for k, _ in keep)
             triangles += size
-            tasks.append((size, (len(tasks), keep, sub.copy(), x0 + c0 * CELL, z1 - r0 * CELL), (r0, r1, c0, c1)))
+            tasks.append((size, (len(tasks), keep, np.asarray(deck, float).reshape(-1, 3, 3), sub.copy(),
+                                 x0 + c0 * CELL, z1 - r0 * CELL), (r0, r1, c0, c1)))
     workers = min(16, os.cpu_count() or 1) if workers is None else workers
     windows = {task[1][0]: task[2] for task in tasks}
     if workers <= 1 or triangles < PARALLEL_TRIANGLES:
@@ -546,14 +621,15 @@ def solids_over(t, o, own_o):
     x0, z1 = o.frame.collision_origin
     rows, cols = own_o.shape
     picked = []
-    for identity, groups in t.solids:
+    for identity, groups, deck in t.solids:
         points = np.concatenate([g.reshape(-1, 3) for g, _closed in groups]) + shift
         c0 = max(0, int(math.floor((points[:, 0].min() - 1 - x0) / CELL)))
         c1 = min(cols, int(math.floor((points[:, 0].max() + 1 - x0) / CELL)) + 1)
         r0 = max(0, int(math.floor((z1 - points[:, 2].max() - 1) / CELL)))
         r1 = min(rows, int(math.floor((z1 - points[:, 2].min() + 1) / CELL)) + 1)
         if c1 > c0 and r1 > r0 and own_o[r0:r1, c0:c1].any():
-            picked.append((identity, [(tris + shift, closed) for tris, closed in groups]))
+            picked.append((identity, [(tris + shift, closed) for tris, closed in groups],
+                           np.asarray(deck, float).reshape(-1, 3, 3) + shift))
     return picked
 
 
@@ -705,9 +781,9 @@ def export_group(territories, links, codec, *, log=say, workers=None):
         step_free_tiles = (own[region] & f["base_open"] & ~blocked).reshape(quad).all(axis=(1, 3))
         statistics = {
             "walkTriangles": int(len(t.walk)),
-            "structuralMeshes": int(sum(len(groups) for _, groups in t.solids)),
+            "structuralMeshes": int(sum(len(groups) for _, groups, _deck in t.solids)),
             "structuralPlacements": int(len(t.solids)),
-            "structuralTriangles": int(sum(len(tris) for _, groups in t.solids for tris, _c in groups)),
+            "structuralTriangles": int(sum(len(tris) for _, groups, _deck in t.solids for tris, _c in groups)),
             "structuralTrianglesTested": int(solid_triangles),
             "ownCells": int(own[region].sum()),
             "deckCells": int((own[region] & f["support"]).sum()),

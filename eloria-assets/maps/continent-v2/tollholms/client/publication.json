@@ -7,11 +7,11 @@
   "recipe": "the tollholms editor-pass check bake (a3/run_a3_check.sh) of the committed scene: <bake>/continent-authoring.json"
  },
  "collision": {
-  "sidecarSha256": "6514cac393fb207bd021907ce8d48b39190d176dd716226ba06144021f75903a",
-  "collisionSha256": "cc8cb3f752147e683d51955d42dede4906cd0c6b336444424528a5c10a301b2a",
-  "servedGridSha256": "3b98a123030a6df8d772c5a0fe5e37fae78234993de276edcf246a0b7a6584be",
-  "walkableCells": 988357,
-  "openTiles": 242166,
+  "sidecarSha256": "3bf269c72573814a8d201a3ad009b305ed3a2c90816921b108ec77207a87bd3c",
+  "collisionSha256": "c963c99f164c3d82cb7bd034a1896453692d0a30f89d3b17f4e9c8a80949af12",
+  "servedGridSha256": "0185531e86f5b75754495e83a6d1a297338b7c82dadffea01d8e91d6ad18cb45",
+  "walkableCells": 987660,
+  "openTiles": 242065,
   "sourceSnapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0"
  },
  "chunks": 169,
@@ -194,17 +194,17 @@
   "14_20": 11.0
  },
  "timings": {
-  "snapshot_s": 2.2,
-  "terrain_s": 0.4,
+  "snapshot_s": 2.4,
+  "terrain_s": 0.3,
   "water_s": 0.0,
-  "overlays_s": 10.4,
+  "overlays_s": 9.3,
   "bridges_s": 0.0,
   "surface_glb_bytes": 414400380,
   "walk_kit_nodes": 29,
-  "library_s": 2.0,
+  "library_s": 2.4,
   "chunks_s": 3.8
  },
- "seconds": 22.9,
+ "seconds": 21.8,
  "imagePolicy": {
   "surface": {
    "imagesResampled": 46,

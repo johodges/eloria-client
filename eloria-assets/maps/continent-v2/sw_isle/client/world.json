@@ -167,35 +167,35 @@
    "height": 2.1,
    "halfCellWidth": 0.5
   },
-  "walkableCells": 6654092,
-  "walkableFraction": 0.397391,
-  "sha256": "37ee05cdfed6933861ba2a6797d0d564231a758caa44572d97b7578f6964caaf",
+  "walkableCells": 6588156,
+  "walkableFraction": 0.393453,
+  "sha256": "9449f59807c520a5ea9d9363c4fa030546d2756a1d38cbcee13aa1c62f6b536b",
   "exportStatistics": {
    "walkTriangles": 854891,
-   "structuralMeshes": 1429,
-   "structuralPlacements": 1414,
-   "structuralTriangles": 3991015,
-   "structuralTrianglesTested": 3323328,
+   "structuralMeshes": 6879,
+   "structuralPlacements": 6859,
+   "structuralTriangles": 4570727,
+   "structuralTrianglesTested": 3858384,
    "ownCells": 16613776,
    "deckCells": 319320,
    "steepCells": 3089135,
    "waterCells": 7014407,
-   "structuralCells": 60921,
+   "structuralCells": 126851,
    "crossSeamSolidCells": 6,
    "noGroundCells": 0,
-   "seamCollarCells": 2439,
-   "ownWalkableCells": 6651653
+   "seamCollarCells": 2433,
+   "ownWalkableCells": 6585723
   },
   "seamCollar": {
    "gull_skerries": {
     "cells": 8884,
-    "openCells": 1061,
+    "openCells": 1055,
     "closedByTheNeighbour": 7821,
-    "closedByThisMapsSolids": 2,
+    "closedByThisMapsSolids": 8,
     "closedByThirdMapsSolids": 0,
     "droppedByTheHeightScale": 0,
-    "walkableCells": 1061,
-    "walkableTiles": 260
+    "walkableCells": 1055,
+    "walkableTiles": 258
    },
    "tollholms": {
     "cells": 7227,
@@ -208,21 +208,21 @@
     "walkableTiles": 341
    }
   },
-  "sourceSnapshotSha256": "285b5d14cec512e92953c12926377fd9da84f1aaafa4209b746faa177f84fe81",
-  "sourceSceneSha256": "2b868e8bc6cafe767078466ee462e6a133add51c307123005c905aff8653e38f",
+  "sourceSnapshotSha256": "45fba168d08155f1f559699860a03323434a4005e5520e48b8cd267c741363c7",
+  "sourceSceneSha256": "4059090f6605000092c3c35ae3239c6edef5369335935bdb6b3154e0e08d588b",
   "groupExport": {
    "maps": {
     "gull_skerries": {
      "snapshotSha256": "1b50c3bd7674af83f3a409072afa8cae85bb82ed0d59d49febe0a5d73c74541d",
-     "servedGridSha256": "64e7e986253fd3daee4d790a1f5d3cdd30cf282a7951ac4e368e9dae69e75e6b"
+     "servedGridSha256": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66"
     },
     "sw_isle": {
-     "snapshotSha256": "285b5d14cec512e92953c12926377fd9da84f1aaafa4209b746faa177f84fe81",
-     "servedGridSha256": "77d2ccda4bf21263eb4c09be6adba3683a3206ad9dc9a309fe5bf8cfab70ddd0"
+     "snapshotSha256": "45fba168d08155f1f559699860a03323434a4005e5520e48b8cd267c741363c7",
+     "servedGridSha256": "06462c6d2ae9ca0fac6936d288efce45be453bea11b168db8645acc9d59125da"
     },
     "tollholms": {
      "snapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",
-     "servedGridSha256": "3b98a123030a6df8d772c5a0fe5e37fae78234993de276edcf246a0b7a6584be"
+     "servedGridSha256": "0185531e86f5b75754495e83a6d1a297338b7c82dadffea01d8e91d6ad18cb45"
     }
    }
   },
@@ -235,8 +235,8 @@
    "originMetres": -100.0,
    "width": 2046,
    "height": 2046,
-   "openTiles": 1639849,
-   "sha256": "77d2ccda4bf21263eb4c09be6adba3683a3206ad9dc9a309fe5bf8cfab70ddd0"
+   "openTiles": 1614893,
+   "sha256": "06462c6d2ae9ca0fac6936d288efce45be453bea11b168db8645acc9d59125da"
   },
   "note": "kit solids carry no client collision (the wrappers that name them are not meshes); the served grid blocks them"
  },
@@ -546,8 +546,8 @@
  ],
  "provenance": {
   "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
-  "snapshotSha256": "285b5d14cec512e92953c12926377fd9da84f1aaafa4209b746faa177f84fe81",
-  "sceneSha256": "2b868e8bc6cafe767078466ee462e6a133add51c307123005c905aff8653e38f"
+  "snapshotSha256": "45fba168d08155f1f559699860a03323434a4005e5520e48b8cd267c741363c7",
+  "sceneSha256": "4059090f6605000092c3c35ae3239c6edef5369335935bdb6b3154e0e08d588b"
  },
  "externalResources": {
   "../../_continent_v2/shared-assets/0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630.png": "0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630",

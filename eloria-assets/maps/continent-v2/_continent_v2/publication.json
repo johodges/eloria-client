@@ -20,12 +20,12 @@
     ]
    },
    "bake": {
-    "snapshotSha256": "285b5d14cec512e92953c12926377fd9da84f1aaafa4209b746faa177f84fe81",
-    "sceneSha256": "2b868e8bc6cafe767078466ee462e6a133add51c307123005c905aff8653e38f"
+    "snapshotSha256": "45fba168d08155f1f559699860a03323434a4005e5520e48b8cd267c741363c7",
+    "sceneSha256": "4059090f6605000092c3c35ae3239c6edef5369335935bdb6b3154e0e08d588b"
    },
    "package": {
-    "collisionSha256": "37ee05cdfed6933861ba2a6797d0d564231a758caa44572d97b7578f6964caaf",
-    "servedGridSha256": "77d2ccda4bf21263eb4c09be6adba3683a3206ad9dc9a309fe5bf8cfab70ddd0"
+    "collisionSha256": "9449f59807c520a5ea9d9363c4fa030546d2756a1d38cbcee13aa1c62f6b536b",
+    "servedGridSha256": "06462c6d2ae9ca0fac6936d288efce45be453bea11b168db8645acc9d59125da"
    },
    "arrival": [
     580,
@@ -37,10 +37,10 @@
     "npcs": 5,
     "homeNpcs": 5,
     "interactives": 2,
-    "laneDepartures": 555
+    "laneDepartures": 549
    },
    "npcPosts": 10,
-   "servedReachTiles": 1479565
+   "servedReachTiles": 1458491
   },
   "tollholms": {
    "frame": {
@@ -63,8 +63,8 @@
     "sceneSha256": "5a6538eb7c201182676f5aecde6282c11683681696b32eba35f1afab2cbd27ba"
    },
    "package": {
-    "collisionSha256": "cc8cb3f752147e683d51955d42dede4906cd0c6b336444424528a5c10a301b2a",
-    "servedGridSha256": "3b98a123030a6df8d772c5a0fe5e37fae78234993de276edcf246a0b7a6584be"
+    "collisionSha256": "c963c99f164c3d82cb7bd034a1896453692d0a30f89d3b17f4e9c8a80949af12",
+    "servedGridSha256": "0185531e86f5b75754495e83a6d1a297338b7c82dadffea01d8e91d6ad18cb45"
    },
    "arrival": [
     382,
@@ -102,8 +102,8 @@
     "sceneSha256": "ecf94e4fb4a174449748395680892a923cb62410091306e80474638d4133272f"
    },
    "package": {
-    "collisionSha256": "d74477b8dbbd44bf7ac742ee51fcd37ccdce03d4bf6734763aca32daa40cebab",
-    "servedGridSha256": "64e7e986253fd3daee4d790a1f5d3cdd30cf282a7951ac4e368e9dae69e75e6b"
+    "collisionSha256": "2cae83b392251fa263ac4605b6fd3960b8d7e356afdad4d99fd3f8d71ed9951a",
+    "servedGridSha256": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66"
    },
    "arrival": [
     858,
@@ -115,19 +115,19 @@
     "npcs": 0,
     "homeNpcs": 0,
     "interactives": 0,
-    "laneDepartures": 242
+    "laneDepartures": 236
    },
    "npcPosts": 0,
-   "servedReachTiles": 18606
+   "servedReachTiles": 18598
   }
  },
  "inputs": {
-  "crossingsSha256": "c2678c5c3970465d17e9ea351032a0c710e9db0452d3263733ee5fcc797986e5",
+  "crossingsSha256": "258fd93ec825b193a676c9722dad1a882525fe82f6f2cf6c535e0cbb7428b0d1",
   "contentTables": {
    "eloria-assets/maps/continent-v2/_continent_v2/content/server-rows.json": "affd619e5625276293594cc7a3153ed4f7bb4c91c39c38637e9d432ef1c5568f",
    "eloria-assets/maps/continent-v2/_continent_v2/content/server-tables.json": "0dfb5c3d5b8414124845047a51b2f4efa23f6f8392dcd6405cc9927601fb015e",
    "eloria-assets/maps/continent-v2/_continent_v2/content/questlines.txt": "e56083b720cca73939cd985489e4183e38c5c11de46b2e02909c97176e18e975",
-   "eloria-assets/maps/continent-v2/sw_isle/content/spawns.json": "642f95fdce17da8a40cad1619693f685ea1d9b02b13ed05575f52d34116b69c7",
+   "eloria-assets/maps/continent-v2/sw_isle/content/spawns.json": "3266e3487ba268177b9ed49882063236598d47abcfcdf94f9c301d90db52f5b6",
    "eloria-assets/maps/continent-v2/gull_skerries/content/spawns.json": "2f38b96c00f60fc81f2cee56b7dca7cf7a663617761b73ef4058665904bf996e",
    "eloria-assets/maps/continent-v2/tollholms/content/spawns.json": "431c6e3985f332996aae67d256cc92a723333149d23409179749f5ca2c98dd45"
   }
@@ -151,12 +151,12 @@
  "server": {
   "overlay": {
    "README": "0a3b8522e76f606964bda3f2d4585d805d7242c5024acf773686c43c3c523f1a",
-   "maps.txt": "c4299c352c17b9759454b932214e221d55d20556afff8ee75b012c5f663e9f5f",
-   "spawns.txt": "e4dd923c1d8e77f94c4f9626e194c562a3463a4479bcb178f58b7aa070603e79",
+   "maps.txt": "f800fe4c2dfa071414fe4926e6fe48e129e5ad555056af4c0947cbee2e01fc1f",
+   "spawns.txt": "5b5cedf2db4a7fc755c186de9a2493022a5c22681e95eb8ea12639ef690afcec",
    "harvesting.txt": "ab35deaf87b226cfa4b5eeabf8f086742d6e76fb81df18ecda6d59df9cf07537",
    "npcs.txt": "e15ee40cf54f840b54a1c2d895a94369637f89d551a1f9e67c7a997b989db471",
    "interactives.txt": "5d3096710a2b27adcace194e1a10910263037b321c491c2e363cab645e8f691f",
-   "exterior_connections.json": "53dddade0356087f2d3082061faafe01472156b94f76d10f76e54405565fd1a3",
+   "exterior_connections.json": "ee6450d6364aec423751ed07fd94f9f119da09ea8427f7871781e3329c5f4430",
    "questlines.txt": "6a20b9d774c5d6b5b14eae7dc901a33ebf941e81850ef005a0012b335a5d3cc8",
    "landing.json": "393f80524a13358069c30f0442806ed77b8ae8625455e67b486e1e9c86ed0d25",
    "homes.json": "b15d1eec2a9b9ee153e8c5774708873dc85f51560b2eb73064de9c93cb53cde7",
@@ -176,7 +176,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "66e9e0a39205662c9d0a8c55daa8eab907dd873d0f419e63b06b366872999218"
+    "manifestBlockSha256": "36ae0ab2e0a7a5781b84690364a0a8ef6705ca5748ee84481fd3477d3d07535b"
    },
    "m2": {
     "files": [
@@ -192,7 +192,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "0aa75052e4849e13847e116439028a63ffba7c2e47614de917ef9397fb0550f5"
+    "manifestBlockSha256": "fd6e3173917f8eaa933395d62a4b0dd1aecd7d36a8b62d482f81bf951c72562f"
    },
    "m3": {
     "files": [
@@ -208,7 +208,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "e24918297cfa5ef449426f182f70a55398e2729f01201bd5038b29ad17892f24"
+    "manifestBlockSha256": "a43468ab0c21313aeb684715270a8cb5d56a573ec37450c1ee3fc67a54d43e13"
    },
    "m4": {
     "files": [
@@ -224,14 +224,14 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "8b502218c70566a0d8cc0b8b7915d679f7661b8d9a88f83ac5cf1a8527114387"
+    "manifestBlockSha256": "6a68a6c842c91256f0887d132e29f161ba0ab6ee787a463c4902505cc300c2e3"
    }
   },
-  "manifestEntriesSha256": "283bf964779df060a9668cf3bfd692a353a52f8f138691d7459253389e328f4e",
+  "manifestEntriesSha256": "e77abd66fa01bed23f8c9e9e0db60fd8a73882b59b3a42c70c97e4762e8dd0ed",
   "vendored": {
-   "sw_isle": "77d2ccda4bf21263eb4c09be6adba3683a3206ad9dc9a309fe5bf8cfab70ddd0",
-   "tollholms": "3b98a123030a6df8d772c5a0fe5e37fae78234993de276edcf246a0b7a6584be",
-   "gull_skerries": "64e7e986253fd3daee4d790a1f5d3cdd30cf282a7951ac4e368e9dae69e75e6b"
+   "sw_isle": "06462c6d2ae9ca0fac6936d288efce45be453bea11b168db8645acc9d59125da",
+   "tollholms": "0185531e86f5b75754495e83a6d1a297338b7c82dadffea01d8e91d6ad18cb45",
+   "gull_skerries": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66"
   }
  }
 }

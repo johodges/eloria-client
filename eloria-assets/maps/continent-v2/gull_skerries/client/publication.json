@@ -7,11 +7,11 @@
   "recipe": "the gull_skerries editor-pass check bake (a3b/run_a3b_check.sh) of the committed scene: <bake>/continent-authoring.json"
  },
  "collision": {
-  "sidecarSha256": "2033701c152b92c14816260e7513d4fa77705f962c5bcdf2f2626e9583a27d44",
-  "collisionSha256": "d74477b8dbbd44bf7ac742ee51fcd37ccdce03d4bf6734763aca32daa40cebab",
-  "servedGridSha256": "64e7e986253fd3daee4d790a1f5d3cdd30cf282a7951ac4e368e9dae69e75e6b",
-  "walkableCells": 173725,
-  "openTiles": 42344,
+  "sidecarSha256": "2154a079a82d13852f4de3ef77ff94b84fbb66edcd1d871214a857d128f39948",
+  "collisionSha256": "2cae83b392251fa263ac4605b6fd3960b8d7e356afdad4d99fd3f8d71ed9951a",
+  "servedGridSha256": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66",
+  "walkableCells": 173644,
+  "openTiles": 42331,
   "sourceSnapshotSha256": "1b50c3bd7674af83f3a409072afa8cae85bb82ed0d59d49febe0a5d73c74541d"
  },
  "chunks": 89,
@@ -114,17 +114,17 @@
   "16_18": 11.2
  },
  "timings": {
-  "snapshot_s": 0.5,
+  "snapshot_s": 0.6,
   "terrain_s": 0.2,
   "water_s": 0.0,
-  "overlays_s": 1.7,
+  "overlays_s": 1.6,
   "bridges_s": 0.0,
   "surface_glb_bytes": 99654996,
   "walk_kit_nodes": 0,
-  "library_s": 0.6,
-  "chunks_s": 1.0
+  "library_s": 0.7,
+  "chunks_s": 1.1
  },
- "seconds": 6.0,
+ "seconds": 6.2,
  "imagePolicy": {
   "surface": {
    "imagesResampled": 9,
