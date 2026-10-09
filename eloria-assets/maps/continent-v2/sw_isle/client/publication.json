@@ -7,11 +7,11 @@
   "recipe": "the sw_isle editor-pass check bake (run_check.sh) of the committed scene: <bake>/continent-authoring.json"
  },
  "collision": {
-  "sidecarSha256": "2dce011717e24b53f8a519d44ee321b0dfa4c0af63781a49025a23ef70726ef0",
-  "collisionSha256": "a296221910c6bf3102e06781642b719cf8d720ad0341e50ed45ff30f886d76e7",
-  "servedGridSha256": "7fcd6be4c34178c16c7bccf58c13ba6a54195fcb30123136c17711e9a2a58bca",
-  "walkableCells": 6587406,
-  "openTiles": 1614703,
+  "sidecarSha256": "ff143a300076903b2f5d3def922d38fec5f147b76ff6c28b2b72b538c62d20bb",
+  "collisionSha256": "9f3325cc25ee50310a9f0f9c22ca3630161d9b9156f3ae0717f0bf9f1c467545",
+  "servedGridSha256": "f2be609b0884a29ff26859210c5b5c9dfdaeb836a6d56f5fe24ba4773d6251a1",
+  "walkableCells": 6587391,
+  "openTiles": 1614697,
   "sourceSnapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389"
  },
  "chunks": 484,
@@ -509,17 +509,17 @@
   "21_21": 11.1
  },
  "timings": {
-  "snapshot_s": 9.1,
+  "snapshot_s": 7.5,
   "terrain_s": 2.7,
   "water_s": 0.0,
-  "overlays_s": 62.6,
+  "overlays_s": 64.6,
   "bridges_s": 0.2,
   "surface_glb_bytes": 1022998168,
   "walk_kit_nodes": 216,
-  "library_s": 5.2,
-  "chunks_s": 16.1
+  "library_s": 7.1,
+  "chunks_s": 17.6
  },
- "seconds": 105.5,
+ "seconds": 109.1,
  "imagePolicy": {
   "surface": {
    "imagesResampled": 64,

@@ -167,9 +167,9 @@
    "height": 2.1,
    "halfCellWidth": 0.5
   },
-  "walkableCells": 6587406,
-  "walkableFraction": 0.393408,
-  "sha256": "a296221910c6bf3102e06781642b719cf8d720ad0341e50ed45ff30f886d76e7",
+  "walkableCells": 6587391,
+  "walkableFraction": 0.393407,
+  "sha256": "9f3325cc25ee50310a9f0f9c22ca3630161d9b9156f3ae0717f0bf9f1c467545",
   "exportStatistics": {
    "walkTriangles": 854891,
    "structuralMeshes": 6879,
@@ -180,23 +180,23 @@
    "deckCells": 319283,
    "steepCells": 3089132,
    "waterCells": 7014407,
-   "structuralCells": 127604,
-   "crossSeamSolidCells": 6,
+   "structuralCells": 127608,
+   "crossSeamSolidCells": 10,
    "harvestNodeTiles": 196,
    "noGroundCells": 0,
-   "seamCollarCells": 2433,
-   "ownWalkableCells": 6584973
+   "seamCollarCells": 2422,
+   "ownWalkableCells": 6584969
   },
   "seamCollar": {
    "gull_skerries": {
     "cells": 8884,
-    "openCells": 1055,
-    "closedByTheNeighbour": 7821,
+    "openCells": 1044,
+    "closedByTheNeighbour": 7832,
     "closedByThisMapsSolids": 8,
     "closedByThirdMapsSolids": 0,
     "droppedByTheHeightScale": 0,
-    "walkableCells": 1055,
-    "walkableTiles": 258
+    "walkableCells": 1044,
+    "walkableTiles": 255
    },
    "tollholms": {
     "cells": 7227,
@@ -214,16 +214,16 @@
   "groupExport": {
    "maps": {
     "gull_skerries": {
-     "snapshotSha256": "1b50c3bd7674af83f3a409072afa8cae85bb82ed0d59d49febe0a5d73c74541d",
-     "servedGridSha256": "b91c93ad7dfa3c3c10dc98fe618a368ec924efe90d23caae8ee6ac171a050b66"
+     "snapshotSha256": "05114f6bdde034ccb3e158e2641c43a5765928d1e8351ae9ec278c22e2a50321",
+     "servedGridSha256": "cf058ae63eae1b6e10a029cf89925a2aec2185515854aea970db93acc0df218e"
     },
     "sw_isle": {
      "snapshotSha256": "2ba341dbbb11a19917ccf37887b9c006533fcfad02e3b40b52c1f48be22c6389",
-     "servedGridSha256": "7fcd6be4c34178c16c7bccf58c13ba6a54195fcb30123136c17711e9a2a58bca"
+     "servedGridSha256": "f2be609b0884a29ff26859210c5b5c9dfdaeb836a6d56f5fe24ba4773d6251a1"
     },
     "tollholms": {
-     "snapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",
-     "servedGridSha256": "0185531e86f5b75754495e83a6d1a297338b7c82dadffea01d8e91d6ad18cb45"
+     "snapshotSha256": "fdb530269590516a59599e93e65d9d334dd39c3ca9f5f977578cb8ac0a59a407",
+     "servedGridSha256": "f9fd894ce8d8ca81a40349755f1381094031edfb4b87d14c3aa5a115b625ea96"
     }
    }
   },
@@ -236,8 +236,8 @@
    "originMetres": -100.0,
    "width": 2046,
    "height": 2046,
-   "openTiles": 1614703,
-   "sha256": "7fcd6be4c34178c16c7bccf58c13ba6a54195fcb30123136c17711e9a2a58bca"
+   "openTiles": 1614697,
+   "sha256": "f2be609b0884a29ff26859210c5b5c9dfdaeb836a6d56f5fe24ba4773d6251a1"
   },
   "note": "kit solids carry no client collision (the wrappers that name them are not meshes); the served grid blocks them"
  },

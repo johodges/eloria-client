@@ -2,17 +2,17 @@
  "region": "tollholms",
  "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
  "snapshot": {
-  "sha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",
-  "sceneSha256": "5a6538eb7c201182676f5aecde6282c11683681696b32eba35f1afab2cbd27ba",
+  "sha256": "fdb530269590516a59599e93e65d9d334dd39c3ca9f5f977578cb8ac0a59a407",
+  "sceneSha256": "96341027aee45d5c3a0298bae966c1e62a668237eebd2e07eab092c2652720e2",
   "recipe": "the tollholms editor-pass check bake (a3/run_a3_check.sh) of the committed scene: <bake>/continent-authoring.json"
  },
  "collision": {
-  "sidecarSha256": "ee56411d134747fcfeb422fa52321a48f05e008edc70ad5bec57c989fb60dd81",
-  "collisionSha256": "c963c99f164c3d82cb7bd034a1896453692d0a30f89d3b17f4e9c8a80949af12",
-  "servedGridSha256": "0185531e86f5b75754495e83a6d1a297338b7c82dadffea01d8e91d6ad18cb45",
-  "walkableCells": 987660,
-  "openTiles": 242065,
-  "sourceSnapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0"
+  "sidecarSha256": "534e3bb2713c0518cabac0796bcabd0309d2cb26e7d2f2f6b395f1df75735750",
+  "collisionSha256": "c6bf567b5d805e9a8a51a7fc9d3c8ac43303d14b19310f628e7d3028e27c4c34",
+  "servedGridSha256": "f9fd894ce8d8ca81a40349755f1381094031edfb4b87d14c3aa5a115b625ea96",
+  "walkableCells": 978064,
+  "openTiles": 237882,
+  "sourceSnapshotSha256": "fdb530269590516a59599e93e65d9d334dd39c3ca9f5f977578cb8ac0a59a407"
  },
  "chunks": 169,
  "kitPlacementsOutsideWindow": 0,
@@ -194,17 +194,17 @@
   "14_20": 11.0
  },
  "timings": {
-  "snapshot_s": 2.2,
-  "terrain_s": 0.3,
+  "snapshot_s": 2.5,
+  "terrain_s": 0.4,
   "water_s": 0.0,
-  "overlays_s": 10.3,
+  "overlays_s": 10.8,
   "bridges_s": 0.0,
   "surface_glb_bytes": 414400380,
   "walk_kit_nodes": 29,
-  "library_s": 2.0,
-  "chunks_s": 4.4
+  "library_s": 2.4,
+  "chunks_s": 4.3
  },
- "seconds": 23.5,
+ "seconds": 25.0,
  "imagePolicy": {
   "surface": {
    "imagesResampled": 46,
