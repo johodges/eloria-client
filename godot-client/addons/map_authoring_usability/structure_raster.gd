@@ -21,6 +21,15 @@ extends RefCounted
 ## test), and a closed solid also blocks the cells inside it (signed winding
 ## of a ray from standing + 1.05 m).
 ##
+## A continent-v2 territory publishes through _continent_v2/export_collision.py,
+## which adds two rules (gather's `continent_v2`):
+## - trunk: a solid model whose file stem contains "tree" blocks only its trunk,
+##   a closed 8-gon prism at the narrowest 0.3 m slice of the model between 0.3
+##   and 2.1 m (that slice's median radius, clipped to 0.25-1.0 m), from 1 m
+##   below the model's origin to 3 m above it;
+## - enclosed: an open (not watertight) solid also blocks the ground its blocked
+##   shell walls in on every side, except the cells its own Walk_ deck covers.
+##
 ## blocked_cells is pure and runs on a worker thread; everything that reads the
 ## scene or a Mesh stays on the main thread.
 
@@ -32,6 +41,17 @@ const ACTOR_HEIGHT := 2.1
 const MAX_GRADE := 0.65
 const DECK_TOLERANCE := 0.03
 const CEILINGS := ["ceiling", "soffit", "underside", "roof"]
+## export_collision.py's TRUNK_* constants.
+const TRUNK_WORDS := ["tree"]
+const TRUNK_BAND_LOW := 0.3
+const TRUNK_BAND_HIGH := 2.1
+const TRUNK_SLICE := 0.3
+const TRUNK_MIN_VERTICES := 8
+const TRUNK_RADIUS_MIN := 0.25
+const TRUNK_RADIUS_MAX := 1.0
+const TRUNK_SIDES := 8
+const TRUNK_SPAN_LOW := -1.0
+const TRUNK_SPAN_HIGH := 3.0
 
 ## Mesh instance id -> {"faces": local triangles in glTF (counter-clockwise)
 ## order, "closed": bool}. Meshes are immutable once imported; a reimport makes
@@ -41,8 +61,11 @@ static var _mesh_cache := {}
 
 ## Every authored asset's meshes as the bake sees them, in root-local space:
 ## {"solids": [{"key", "name", "signature", "low", "high", "parts": [{"faces",
-## "transform", "closed"}]}], "decks": [{"name", "triangles"}]}.
-static func gather(root: Node3D) -> Dictionary:
+## "transform", "closed"}], "enclose", "deck"}], "decks": [{"name",
+## "triangles"}]}. With `continent_v2` a tree's parts are its trunk prism, and
+## "enclose" asks blocked_cells to fill what an open solid walls in, sparing
+## "deck" (the asset's own Walk_ triangles).
+static func gather(root: Node3D, continent_v2 := false) -> Dictionary:
 	var solids: Array = []
 	var decks: Array = []
 	var assets := root.get_node_or_null("AuthoredAssets")
@@ -58,6 +81,7 @@ static func gather(root: Node3D) -> Dictionary:
 			placement = String(asset.name)
 		var roots := _scene_roots(asset as Node3D)
 		var parts: Array = []
+		var own_deck := PackedVector3Array()
 		var signature := PackedStringArray()
 		var low := Vector3(INF, INF, INF)
 		var high := -low
@@ -95,6 +119,7 @@ static func gather(root: Node3D) -> Dictionary:
 					for index in local.size():
 						triangles[index] = transform * local[index]
 					decks.append({"name": String(asset.name), "triangles": triangles})
+					own_deck.append_array(triangles)
 				if solid:
 					parts.append({"faces": shape.faces, "transform": transform,
 						"closed": bool(shape.closed), "aabb": mesh_node.mesh.get_aabb()})
@@ -102,11 +127,130 @@ static func gather(root: Node3D) -> Dictionary:
 					var box: AABB = transform * mesh_node.mesh.get_aabb()
 					low = low.min(box.position)
 					high = high.max(box.end)
-		if not parts.is_empty():
-			solids.append({"key": "%s#%d" % [placement, asset.get_instance_id()],
-				"name": String(asset.name), "parts": parts, "low": low, "high": high,
-				"signature": "|".join(signature)})
+		if parts.is_empty():
+			continue
+		if continent_v2 and _trunk_model(String(asset.get("scene_path"))):
+			var prism := trunk(_model_points(asset as Node3D))
+			if not prism.is_empty():
+				var placed: Transform3D = inverse * (asset as Node3D).global_transform
+				var box := AABB(prism[0], Vector3.ZERO)
+				for point in prism:
+					box = box.expand(point)
+				parts = [{"faces": prism, "transform": placed, "closed": true, "aabb": box}]
+				signature.append("trunk%s" % str(placed))
+				var placed_box: AABB = placed * box
+				low = placed_box.position
+				high = placed_box.end
+		solids.append({"key": "%s#%d" % [placement, asset.get_instance_id()],
+			"name": String(asset.name), "parts": parts, "low": low, "high": high,
+			"enclose": continent_v2, "deck": own_deck if continent_v2 else PackedVector3Array(),
+			"signature": ("v2|" if continent_v2 else "") + "|".join(signature)})
 	return {"solids": solids, "decks": decks}
+
+
+## Whether export_collision.py reads a placement of this scene as a tree: its
+## baked source is the .glb itself (a .tscn bakes to a hashed prototype name)
+## and the file's stem contains a TRUNK_WORDS word.
+static func _trunk_model(scene_path: String) -> bool:
+	if not scene_path.get_extension().to_lower() in ["glb", "gltf"]:
+		return false
+	var stem := scene_path.get_file().get_basename()
+	for word: String in TRUNK_WORDS:
+		if word in stem:
+			return true
+	return false
+
+
+## Every triangle corner of an asset's model, in the model file's own space (the
+## imported scene root's), as export_collision.Prototype's `every` holds them.
+static func _model_points(asset: Node3D) -> PackedVector3Array:
+	var points := PackedVector3Array()
+	var content: Node3D = asset.call("content_root")
+	if content == null:
+		return points
+	var to_model := content.global_transform.affine_inverse()
+	var meshes: Array = [content] if content is MeshInstance3D else []
+	meshes.append_array(content.find_children("*", "MeshInstance3D", true, false))
+	for mesh_value in meshes:
+		var mesh_node := mesh_value as MeshInstance3D
+		if mesh_node.mesh == null:
+			continue
+		var transform: Transform3D = to_model * mesh_node.global_transform
+		var faces: PackedVector3Array = mesh_shape(mesh_node.mesh).faces
+		for point in faces:
+			points.append(transform * point)
+	return points
+
+
+## export_collision.trunk: the closed prism a tree blocks with, as glTF-wound
+## triangles in the model's space, or empty when no slice of TRUNK_BAND holds
+## TRUNK_MIN_VERTICES corners (the whole model then stays the solid).
+static func trunk(points: PackedVector3Array) -> PackedVector3Array:
+	var found := false
+	var best_x := 0.0
+	var best_z := 0.0
+	var best_radius := INF
+	var low := TRUNK_BAND_LOW
+	while low < TRUNK_BAND_HIGH - 1e-9:
+		var top := minf(low + TRUNK_SLICE, TRUNK_BAND_HIGH)
+		var xs := PackedFloat64Array()
+		var zs := PackedFloat64Array()
+		for point in points:
+			if point.y >= low and point.y < top:
+				xs.append(point.x)
+				zs.append(point.z)
+		low += TRUNK_SLICE
+		if xs.size() < TRUNK_MIN_VERTICES:
+			continue
+		var cx := 0.0
+		var cz := 0.0
+		for index in xs.size():
+			cx += xs[index]
+			cz += zs[index]
+		cx /= float(xs.size())
+		cz /= float(xs.size())
+		var distances := PackedFloat64Array()
+		distances.resize(xs.size())
+		for index in xs.size():
+			distances[index] = sqrt((xs[index] - cx) * (xs[index] - cx) +
+				(zs[index] - cz) * (zs[index] - cz))
+		distances.sort()
+		var middle := distances.size() / 2
+		var radius := distances[middle] if distances.size() % 2 == 1 else \
+			(distances[middle - 1] + distances[middle]) * 0.5
+		if not found or radius < best_radius:
+			found = true
+			best_x = cx
+			best_z = cz
+			best_radius = radius
+	var prism := PackedVector3Array()
+	if not found:
+		return prism
+	var radius := clampf(best_radius, TRUNK_RADIUS_MIN, TRUNK_RADIUS_MAX)
+	var ring: Array[Vector2] = []
+	for side in TRUNK_SIDES:
+		var angle := float(side) * TAU / float(TRUNK_SIDES)
+		ring.append(Vector2(best_x + radius * cos(angle), best_z + radius * sin(angle)))
+	var y0 := TRUNK_SPAN_LOW
+	var y1 := TRUNK_SPAN_HIGH
+	var centre := Vector3(best_x, (y0 + y1) * 0.5, best_z)
+	for side in TRUNK_SIDES:
+		var a := ring[side]
+		var b := ring[(side + 1) % TRUNK_SIDES]
+		for face: Array in [
+				[Vector3(best_x, y1, best_z), Vector3(a.x, y1, a.y), Vector3(b.x, y1, b.y)],
+				[Vector3(best_x, y0, best_z), Vector3(b.x, y0, b.y), Vector3(a.x, y0, a.y)],
+				[Vector3(a.x, y0, a.y), Vector3(b.x, y0, b.y), Vector3(b.x, y1, b.y)],
+				[Vector3(a.x, y0, a.y), Vector3(b.x, y1, b.y), Vector3(a.x, y1, a.y)]]:
+			var p: Vector3 = face[0]
+			var q: Vector3 = face[1]
+			var r: Vector3 = face[2]
+			# Outward winding: structural_mask counts a face up as +1, down as -1.
+			if (q - p).cross(r - p).dot((p + q + r) / 3.0 - centre) < 0.0:
+				prism.append_array([p, r, q])
+			else:
+				prism.append_array([p, q, r])
+	return prism
 
 
 ## A mesh's triangles in glTF winding (Godot imports them clockwise, so every
@@ -160,6 +304,29 @@ static func closed_faces(faces: PackedVector3Array) -> bool:
 ## and returns {half-cell index: highest upward face height at its centre} for
 ## the cells a deck supports, plus "sources" naming the deck of each.
 static func deck_cells(ground: Dictionary, decks: Array) -> Dictionary:
+	var raster := deck_tops(ground, decks)
+	var top: Dictionary = raster.top
+	var sources: Dictionary = raster.sources
+	var columns := int(ground.columns)
+	var x0 := float(ground.x0)
+	var z0 := float(ground.z0)
+	var supported := {}
+	var named := {}
+	for cell_index: int in top:
+		var column := cell_index % columns
+		var row := cell_index / columns
+		var height := float(top[cell_index])
+		if height >= terrain_at(ground, x0 + (float(column) + 0.5) * CELL,
+				z0 + (float(row) + 0.5) * CELL) - DECK_TOLERANCE:
+			supported[cell_index] = height
+			named[cell_index] = sources[cell_index]
+	return {"cells": supported, "sources": named}
+
+
+## Every half-cell a deck's upward faces cover, supported by the ground or not
+## (glb_reader.rasterise): {"top": {half-cell index: highest face height},
+## "sources": {half-cell index: deck name}}.
+static func deck_tops(ground: Dictionary, decks: Array) -> Dictionary:
 	var columns := int(ground.columns)
 	var rows := int(ground.rows)
 	var x0 := float(ground.x0)
@@ -201,17 +368,7 @@ static func deck_cells(ground: Dictionary, decks: Array) -> Dictionary:
 					if height > float(top.get(cell_index, -INF)):
 						top[cell_index] = height
 						sources[cell_index] = String(deck.name)
-	var supported := {}
-	var named := {}
-	for cell_index: int in top:
-		var column := cell_index % columns
-		var row := cell_index / columns
-		var height := float(top[cell_index])
-		if height >= terrain_at(ground, x0 + (float(column) + 0.5) * CELL,
-				z0 + (float(row) + 0.5) * CELL) - DECK_TOLERANCE:
-			supported[cell_index] = height
-			named[cell_index] = sources[cell_index]
-	return {"cells": supported, "sources": named}
+	return {"top": top, "sources": sources}
 
 
 ## The half-cell frame and terrain a structure test reads; plain data, so a
@@ -275,8 +432,13 @@ static func solid_signature(solid: Dictionary, ground: Dictionary) -> String:
 
 
 ## The half-cells (row * columns + column) one solid asset blocks, exactly as
-## structural_mask decides them. Pure: reads only `parts` and `ground`.
-static func blocked_cells(parts: Array, ground: Dictionary) -> PackedInt32Array:
+## structural_mask decides them. With `enclose` (a continent-v2 placement), an
+## asset with an open part that reaches the actor's height also blocks the
+## ground its blocked cells wall in (export_collision.enclosed), except the
+## cells `own_deck` (its Walk_ triangles) covers. Pure: reads only its
+## arguments.
+static func blocked_cells(parts: Array, ground: Dictionary, enclose := false,
+		own_deck := PackedVector3Array()) -> PackedInt32Array:
 	var columns := int(ground.columns)
 	var x0 := float(ground.x0)
 	var z0 := float(ground.z0)
@@ -287,6 +449,7 @@ static func blocked_cells(parts: Array, ground: Dictionary) -> PackedInt32Array:
 	var lift := (ACTOR_FLOOR_CLEARANCE + ACTOR_HEIGHT) * 0.5
 	var middle := ACTOR_HEIGHT * 0.5
 	var result := {}
+	var open_shell := false
 	for part: Dictionary in parts:
 		var faces: PackedVector3Array = part.faces
 		var transform: Transform3D = part.transform
@@ -323,6 +486,7 @@ static func blocked_cells(parts: Array, ground: Dictionary) -> PackedInt32Array:
 				highest = maxf(highest, value)
 		if high.y < lowest + ACTOR_FLOOR_CLEARANCE or low.y > highest + ACTOR_HEIGHT:
 			continue
+		open_shell = open_shell or not closed
 		var blocked := PackedByteArray()
 		blocked.resize(width * height)
 		var winding := PackedInt32Array()
@@ -432,7 +596,70 @@ static func blocked_cells(parts: Array, ground: Dictionary) -> PackedInt32Array:
 		for local in width * height:
 			if blocked[local] != 0 or (closed and winding[local] != 0):
 				result[(region.z + local / width) * columns + region.x + local % width] = true
+	if enclose and open_shell and not result.is_empty():
+		_enclosed(result, ground, own_deck)
 	return PackedInt32Array(result.keys())
+
+
+## export_collision.enclosed: adds to `shell` (half-cell index -> true) the
+## cells it walls in on every side, those no 4-connected way through unblocked
+## cells leads out of (binary_fill_holes), less the cells `own_deck` covers.
+static func _enclosed(shell: Dictionary, ground: Dictionary, own_deck: PackedVector3Array) -> void:
+	var columns := int(ground.columns)
+	var rows := int(ground.rows)
+	var c0 := columns
+	var c1 := -1
+	var r0 := rows
+	var r1 := -1
+	for cell_index: int in shell:
+		c0 = mini(c0, cell_index % columns)
+		c1 = maxi(c1, cell_index % columns)
+		r0 = mini(r0, cell_index / columns)
+		r1 = maxi(r1, cell_index / columns)
+	# One free ring round the shell's box is the way out, as the exporter's
+	# window (the placement's box and a metre) leaves one.
+	c0 = maxi(c0 - 1, 0)
+	r0 = maxi(r0 - 1, 0)
+	c1 = mini(c1 + 1, columns - 1)
+	r1 = mini(r1 + 1, rows - 1)
+	var width := c1 - c0 + 1
+	var height := r1 - r0 + 1
+	# 0 open, 1 shell, 2 reached from outside.
+	var state := PackedByteArray()
+	state.resize(width * height)
+	for cell_index: int in shell:
+		state[(cell_index / columns - r0) * width + cell_index % columns - c0] = 1
+	var queue := PackedInt32Array()
+	for local in width * height:
+		var column := local % width
+		var row := local / width
+		if (column == 0 or row == 0 or column == width - 1 or row == height - 1) and state[local] == 0:
+			state[local] = 2
+			queue.append(local)
+	var head := 0
+	while head < queue.size():
+		var local := queue[head]
+		head += 1
+		var column := local % width
+		var row := local / width
+		for step: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var x := column + step.x
+			var y := row + step.y
+			if x < 0 or y < 0 or x >= width or y >= height:
+				continue
+			var next := y * width + x
+			if state[next] == 0:
+				state[next] = 2
+				queue.append(next)
+	var deck := {}
+	if not own_deck.is_empty():
+		deck = deck_tops(ground, [{"name": "", "triangles": own_deck}]).top
+	for local in width * height:
+		if state[local] != 0:
+			continue
+		var cell_index := (r0 + local / width) * columns + c0 + local % width
+		if not deck.has(cell_index):
+			shell[cell_index] = true
 
 
 ## Cell bounds [x, x_end) × [z, z_end) of the half-cells whose centres lie
