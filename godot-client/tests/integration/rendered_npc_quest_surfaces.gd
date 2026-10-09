@@ -77,6 +77,25 @@ func _run() -> void:
 	_assert_quest_state()
 	await _capture("quest-offer.png", true)
 
+	var saved_merchant: Dictionary = (_app_state.get("merchant") as Dictionary).duplicate(true)
+	_app_state.set("npc_dialogue", {"open": false})
+	_main.call("_sync_dialogue")
+	_app_state.set("merchant", {"open": true, "actor_id": 91,
+		"npc_name": "Bettany Orl", "gold": 500, "carried": 12, "capacity": 80,
+		"items": [{"index": 0, "name": "Bread", "buy_price": 8,
+			"sell_price": 2, "owned": 40}]})
+	var windows: Control = _main.get("extension_windows") as Control
+	windows.call("_sync_merchant")
+	(windows.get("merchant_quantity") as LineEdit).text = "37"
+	for unused: int in range(5):
+		await process_frame
+	_expect((windows.get("merchant_quantity") as LineEdit).is_visible_in_tree(),
+		"merchant shows the exact-quantity entry field")
+	_expect(root.get_texture().get_image().save_png(
+		_artifacts.path_join("merchant-quantity.png")) == OK,
+		"merchant quantity preview is saved")
+	_app_state.set("merchant", saved_merchant)
+
 	_app_state.set("npc_dialogue", _saved_dialogue)
 	_app_state.set("authenticated", _saved_authenticated)
 	_main.queue_free()
@@ -118,14 +137,12 @@ func _assert_production_hierarchy() -> void:
 		"the cached Oldcraft-inspired style hook is installed")
 	if panel == null or speaker == null or page == null:
 		return
-	var plaque := speaker.get_theme_stylebox("normal") as StyleBoxFlat
-	var parchment := page.get_theme_stylebox("normal") as StyleBoxTexture
-	_expect(frame_art != null and frame_art.texture != null
-		and frame_art.texture.resource_path.ends_with(
-			"/assets/ui/oldcraft_inspired/eloria_carved_frame.png"),
-		"a textured carved-and-brass frame surrounds the surface")
-	_expect(plaque != null and plaque.bg_color.is_equal_approx(DialogueStyle.BURGUNDY),
-		"the NPC identity is carried by the Eloria oxblood plaque")
+	var backdrop := _main.get_node("%DialogueBackdrop") as Panel
+	var parchment := backdrop.get_theme_stylebox("panel") as StyleBoxTexture
+	_expect(frame_art != null and not frame_art.visible,
+		"the wide decorative frame is replaced by a compact border")
+	_expect(speaker.get_theme_stylebox("normal") is StyleBoxEmpty,
+		"NPC identity shares the parchment background")
 	_expect(parchment != null and parchment.texture != null
 		and parchment.texture.resource_path.ends_with(
 			"/assets/ui/oldcraft_inspired/eloria_parchment.png")
@@ -163,8 +180,8 @@ func _assert_conversation_state() -> void:
 		var first := choices.get_child(0) as Button
 		_expect(first != null and first.text.begins_with("›")
 			and first.alignment == HORIZONTAL_ALIGNMENT_LEFT
-			and (first.get_theme_stylebox("normal") as StyleBoxFlat).corner_radius_top_left >= 10,
-			"conversation responses use readable, rounded icon-led rows")
+			and first.custom_minimum_size.y == 32.0,
+			"conversation responses use compact readable icon-led rows")
 
 
 func _assert_quest_state() -> void:

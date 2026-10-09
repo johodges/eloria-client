@@ -11233,6 +11233,7 @@ func _sync_dialogue() -> void:
 		else str(dialogue.get("name", "NPC")))
 	dialogue_text.text = str(dialogue.get("text", ""))
 	for child: Node in dialogue_options.get_children():
+		dialogue_options.remove_child(child)
 		child.queue_free()
 	var raw_options: Variant = dialogue.get("options", [])
 	var valid_options: Array[Dictionary] = []
@@ -11252,6 +11253,7 @@ func _sync_dialogue() -> void:
 		button.pressed.connect(_on_dialogue_option.bind(
 			int(option.get("actor_id", -1)), int(option.get("response_id", -1))))
 		dialogue_options.add_child(button)
+	OldcraftDialogueStyleScript.layout_content(self)
 
 func _on_dialogue_option(actor_id: int, response_id: int) -> void:
 	if actor_id < 0 or response_id < 0:
@@ -11873,9 +11875,8 @@ func _apply_eloria_theme() -> void:
 	# Login and creation keep their own heavier fantasy frame and moonlit
 	# preview stage rather than inheriting the compact in-game HUD chrome.
 	OldcraftEntryStyleScript.apply(self)
-	# NPC communication uses the same forged Eloria materials, but its inset
-	# parchment and speaker plaque follow the reference game's readable quest
-	# hierarchy. The helper only applies static styles; no actor update pays it.
+	# NPC communication uses a shared parchment surface and compact choices.
+	# The helper applies static styles; no actor update pays for this treatment.
 	OldcraftDialogueStyleScript.apply(self)
 
 ## The right rail used to be six separate boxes with gaps between them, so its

@@ -87,7 +87,7 @@ var detail_text: RichTextLabel
 var merchant_panel: PanelContainer
 var merchant_header: Label
 var merchant_list: ItemList
-var merchant_quantity: OptionButton
+var merchant_quantity: LineEdit
 var merchant_status: Label
 var market_panel: PanelContainer
 var market_header: Label
@@ -109,15 +109,6 @@ var achievements_status: Label
 ## Which category is showing. The player's choice about their own window; the
 ## pages themselves are the server's, one per category in the catalogue.
 var _achievements_page := ""
-
-# The quantity ladder the server offers for a shop trade, and the response ids
-# that drive one. These are the legacy dialogue response ids; a client with
-# merchant_window_v1 sends them without the dialogue ever being drawn.
-const SHOP_QUANTITIES: Array[int] = [1, 5, 10, 20, 50, 100, 200, 500, 1000]
-const SHOP_BUY_ITEM := 3100
-const SHOP_SELL_ITEM := 3200
-const SHOP_QUANTITY := 3300
-const SHOP_MAX := SHOP_QUANTITY + 9
 
 var _merchant_mode := "buy"
 ## The quest the player asked to keep on screen, by its title. Which quest to
@@ -652,26 +643,27 @@ func _on_merchant_mode(mode: String) -> void:
 	_merchant_mode = mode
 	_sync_merchant()
 
-## A shop trade is two authoritative steps: choose the item, then the quantity.
-## The dialogue response ids are the same ones the legacy menu used; with
-## merchant_window_v1 the server answers with an updated window instead of a
-## dialogue, so the menu is never drawn.
-func _on_merchant_trade() -> void:
+## The dedicated shop command accepts an exact quantity in one request. The
+## server validates stock, gold, carrying capacity and ownership as before.
+func _merchant_trade_command() -> String:
+	var quantity_text := merchant_quantity.text.strip_edges()
+	if not quantity_text.is_valid_int() or int(quantity_text) < 1 or int(quantity_text) > 1000000:
+		merchant_status.text = "Enter a whole quantity between 1 and 1,000,000."
+		return ""
 	var actor_id: int = int(AppState.merchant.get("actor_id", -1))
 	var selected: PackedInt32Array = merchant_list.get_selected_items()
 	if actor_id < 0 or selected.is_empty():
 		merchant_status.text = "Select an item first."
-		return
+		return ""
 	var item_index: int = int(merchant_list.get_item_metadata(int(selected[0])))
-	var base: int = SHOP_BUY_ITEM if _merchant_mode == "buy" else SHOP_SELL_ITEM
-	var select_error: Error = Network.respond_to_npc(actor_id, base + item_index)
-	if select_error != OK:
-		merchant_status.text = "Merchant request failed: " + error_string(select_error)
+	return "#shop %s %d %d %d" % [_merchant_mode, actor_id, item_index, int(quantity_text)]
+
+
+func _on_merchant_trade() -> void:
+	var command := _merchant_trade_command()
+	if command.is_empty():
 		return
-	var quantity_index: int = merchant_quantity.get_selected_id()
-	var response: int = (SHOP_MAX if quantity_index < 0
-		else SHOP_QUANTITY + quantity_index)
-	var trade_error: Error = Network.respond_to_npc(actor_id, response)
+	var trade_error: Error = Network.send_chat(command)
 	if trade_error != OK:
 		merchant_status.text = "Merchant request failed: " + error_string(trade_error)
 		return
@@ -1189,11 +1181,16 @@ func _build() -> void:
 	sell_mode.text = "Sell"
 	sell_mode.pressed.connect(_on_merchant_mode.bind("sell"))
 	merchant_actions.add_child(sell_mode)
-	merchant_quantity = OptionButton.new()
+	var quantity_label := Label.new()
+	quantity_label.text = "Quantity"
+	merchant_actions.add_child(quantity_label)
+	merchant_quantity = LineEdit.new()
 	merchant_quantity.name = "MerchantQuantity"
-	for index: int in range(SHOP_QUANTITIES.size()):
-		merchant_quantity.add_item(str(SHOP_QUANTITIES[index]), index)
-	merchant_quantity.select(0)
+	merchant_quantity.text = "1"
+	merchant_quantity.placeholder_text = "Amount"
+	merchant_quantity.custom_minimum_size.x = 90.0
+	merchant_quantity.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	merchant_quantity.tooltip_text = "Number of items to buy or sell (1–1,000,000)"
 	merchant_actions.add_child(merchant_quantity)
 	var trade := Button.new()
 	trade.name = "MerchantTrade"

@@ -302,23 +302,23 @@ offset_bottom = 688.0
 
 [node name="DialogueContent" type="VBoxContainer" parent="GameView/DialoguePanel" unique_id=1434935607]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 
 [node name="DialogueKicker" type="Label" parent="GameView/DialoguePanel/DialogueContent"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 20)
+custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "A VOICE OF ELORIA"
-horizontal_alignment = 1
+horizontal_alignment = 0
 
 [node name="DialogueName" type="Label" parent="GameView/DialoguePanel/DialogueContent" unique_id=288768166]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 21
 text = "NPC"
-horizontal_alignment = 1
+horizontal_alignment = 0
 vertical_alignment = 1
 
 [node name="DialogueDivider" type="HSeparator" parent="GameView/DialoguePanel/DialogueContent"]
@@ -327,7 +327,7 @@ layout_mode = 2
 
 [node name="DialogueText" type="RichTextLabel" parent="GameView/DialoguePanel/DialogueContent" unique_id=1140118479]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 220)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -339,16 +339,16 @@ text = "CHOOSE YOUR RESPONSE"
 
 [node name="DialogueOptionsScroll" type="ScrollContainer" parent="GameView/DialoguePanel/DialogueContent"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 96)
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 0
 horizontal_scroll_mode = 0
 
 [node name="DialogueOptions" type="VBoxContainer" parent="GameView/DialoguePanel/DialogueContent/DialogueOptionsScroll" unique_id=291149601]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 6
+theme_override_constants/separation = 3
 
 [node name="DialogueFooter" type="Label" parent="GameView/DialoguePanel/DialogueContent"]
 unique_name_in_owner = true
