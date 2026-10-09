@@ -96,6 +96,7 @@ var _small_creature_scale := 1.0
 var _is_creature := false
 const SMALL_CREATURE_MAX_SIZE := 1.0
 const SMALL_CREATURE_SCALE := 2.0
+const SMALL_CREATURE_MIN_SIZE := 0.7
 ## The ground marker, kept rather than looked up: it is counter-rotated
 ## every physics frame and a node path lookup per frame per actor is
 ## not what that should cost.
@@ -267,6 +268,7 @@ var _title_line: Label3D
 var _speech_bubble: Label3D
 var _speech_bubble_expiry_msec := 0
 var _health_bar_background: MeshInstance3D
+var _overhead_background: MeshInstance3D
 var _health_bar_fill: MeshInstance3D
 var _health_label: Label3D
 var _health_current := -1
@@ -350,8 +352,8 @@ const NAMEPLATE_CLEARANCE := 0.6
 ## distance and with every notch of the zoom until a name across the field was
 ## a smudge. A name is text, not scenery. So the block is drawn at a fixed
 ## screen size, in the same pixels - and at the same sizes - as the banner it
-## is now a copy of: 12 for the name and 11 for the numbers, over a 56 by 7
-## bar, all of it outlined 4, which is what main.tscn gives ActorResourceOverlay.
+## is now a copy of: 12 for the name and 11 for the numbers, beside a 56 by 7
+## bar. The reference uses plain letters over a translucent black backing.
 ##
 ## `fixed_size` is what holds the size: it scales a billboard by its own view
 ## depth, which cancels the perspective divide, so a local unit covers
@@ -376,7 +378,10 @@ const HEALTH_BAR_THICKNESS := 7.0
 const HEALTH_BAR_BORDER := 2.0
 const HEALTH_BAR_BACKING := Color(0.05, 0.04, 0.03, 0.78)
 const HEALTH_BAR_DROP := 16.0
-const HEALTH_LABEL_DROP := 32.0
+const HEALTH_LABEL_DROP := HEALTH_BAR_DROP
+const HEALTH_NUMBER_GAP := 5.0
+const OVERHEAD_BACKING := Color(0.0, 0.0, 0.0, 0.45)
+static var _health_gradient: GradientTexture2D
 ## The speech bubble sits above the name instead, and wraps well short of the
 ## screen it is now measured against.
 const SPEECH_BUBBLE_RISE := 28.0
@@ -951,7 +956,7 @@ func _add_nameplate(dto: Dictionary) -> void:
 	label.no_depth_test = true
 	label.fixed_size = true
 	WORLD_LABEL_STYLE.apply(label, NAMEPLATE_FONT_SIZE, OVERHEAD_PIXEL,
-		OVERHEAD_OUTLINE_SIZE)
+		0)
 	var name_colour: int = int(dto.get("name_colour", 0))
 	label.modulate = (CREATURE_NAME_COLOUR
 		if int(dto.get("kind", 0)) == CREATURE_ACTOR_KIND and name_colour == 0
@@ -961,6 +966,8 @@ func _add_nameplate(dto: Dictionary) -> void:
 	add_child(label)
 	_nameplate = label
 	_add_health_bar()
+	_add_overhead_background()
+	_layout_overhead()
 	apply_vitals(int(dto.get("health", 0)), int(dto.get("max_health", 0)))
 
 ## The overhead health bar and its numbers. Not drawn for everyone: every
@@ -992,7 +999,8 @@ func _add_health_bar() -> void:
 	fill_quad.size = Vector2(HEALTH_BAR_WIDTH, HEALTH_BAR_THICKNESS) * OVERHEAD_PIXEL
 	fill_quad.center_offset = Vector3(
 		0.0, -HEALTH_BAR_DROP * OVERHEAD_PIXEL, 0.0)
-	fill_quad.material = _overhead_material(Color(0.24, 0.78, 0.29, 1.0), 2)
+	fill_quad.material = _overhead_material(Color.GREEN, 2)
+	(fill_quad.material as StandardMaterial3D).albedo_texture = _health_bar_texture()
 	fill.mesh = fill_quad
 	fill.position.y = NAMEPLATE_HEIGHT
 	fill.layers = GAMEPLAY_ONLY_VISUAL_LAYER
@@ -1009,11 +1017,67 @@ func _add_health_bar() -> void:
 	numbers.render_priority = 3
 	numbers.outline_render_priority = 2
 	WORLD_LABEL_STYLE.apply(numbers, HEALTH_NUMBER_FONT_SIZE, OVERHEAD_PIXEL,
-		OVERHEAD_OUTLINE_SIZE)
+		0)
 	numbers.outline_modulate = Color.BLACK
 	numbers.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(numbers)
 	_health_label = numbers
+
+## The name and inline health row share one compact translucent rectangle.
+func _add_overhead_background() -> void:
+	var backing := MeshInstance3D.new()
+	backing.name = "OverheadBackground"
+	backing.mesh = QuadMesh.new()
+	(backing.mesh as QuadMesh).material = _overhead_material(OVERHEAD_BACKING, 0)
+	backing.position.y = NAMEPLATE_HEIGHT
+	backing.layers = GAMEPLAY_ONLY_VISUAL_LAYER
+	backing.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(backing)
+	_overhead_background = backing
+
+## Measure the actual numbers so long health pairs never run into the bar.
+## Offsets live in billboard pixels; moving nodes would offset them in world space.
+func _layout_overhead() -> void:
+	if not is_instance_valid(_nameplate) or not is_instance_valid(_health_label):
+		return
+	var raster: float = float(WORLD_LABEL_STYLE.RASTER_SCALE)
+	var name_width: float = _nameplate.font.get_string_size(_nameplate.text,
+		HORIZONTAL_ALIGNMENT_LEFT, -1, _nameplate.font_size).x / raster
+	var number_width: float = _health_label.font.get_string_size(_health_label.text,
+		HORIZONTAL_ALIGNMENT_LEFT, -1, _health_label.font_size).x / raster
+	# Reserve the full pair so taking damage across a digit boundary does not
+	# make the bar slide sideways while the actor is standing still.
+	var full_pair := "%d/%d" % [_health_maximum, _health_maximum]
+	number_width = maxf(number_width, _health_label.font.get_string_size(full_pair,
+		HORIZONTAL_ALIGNMENT_LEFT, -1, _health_label.font_size).x / raster)
+	var row_width: float = HEALTH_BAR_WIDTH + HEALTH_NUMBER_GAP + number_width
+	var bar_center: float = -(HEALTH_NUMBER_GAP + number_width) * 0.5
+	_health_label.offset = Vector2((HEALTH_BAR_WIDTH + HEALTH_NUMBER_GAP) * 0.5,
+		-HEALTH_LABEL_DROP) * raster
+	var background := _health_bar_background.mesh as QuadMesh
+	background.center_offset.x = bar_center * OVERHEAD_PIXEL
+	var fill := _health_bar_fill.mesh as QuadMesh
+	fill.center_offset.x = (bar_center - (HEALTH_BAR_WIDTH
+		- fill.size.x / OVERHEAD_PIXEL) * 0.5) * OVERHEAD_PIXEL
+	if is_instance_valid(_overhead_background):
+		var quad := _overhead_background.mesh as QuadMesh
+		var has_health: bool = _health_shown and _health_maximum > 0
+		var bottom: float = HEALTH_BAR_DROP + 8.0 if has_health else 10.0
+		quad.size = Vector2(maxf(name_width, row_width if has_health else 0.0)
+			+ 8.0, 10.0 + bottom) * OVERHEAD_PIXEL
+		quad.center_offset = Vector3(0.0, (10.0 - bottom) * 0.5 * OVERHEAD_PIXEL, 0.0)
+
+static func _health_bar_texture() -> GradientTexture2D:
+	if _health_gradient == null:
+		_health_gradient = GradientTexture2D.new()
+		_health_gradient.width = 1
+		_health_gradient.height = 16
+		_health_gradient.fill_from = Vector2.ZERO
+		_health_gradient.fill_to = Vector2(0.0, 1.0)
+		_health_gradient.gradient = Gradient.new()
+		_health_gradient.gradient.colors = PackedColorArray([
+			Color.WHITE, Color(0.45, 0.45, 0.45)])
+	return _health_gradient
 
 ## Billboarded, unshaded and depth-test free, so the bar reads the same against
 ## terrain, water and another actor standing in front of it. Draw order is the
@@ -1046,11 +1110,13 @@ func apply_vitals(current: int, maximum: int) -> void:
 			or not is_instance_valid(_health_label):
 		return
 	if maximum <= 0:
+		_layout_overhead()
 		_refresh_overhead_health()
 		return
 	var clamped: int = clampi(current, 0, maximum)
 	var ratio: float = float(clamped) / float(maximum)
 	_health_label.text = "%d/%d" % [clamped, maximum]
+	_health_label.modulate = _health_colour(ratio)
 	var fill_quad: QuadMesh = _health_bar_fill.mesh as QuadMesh
 	if clamped > 0:
 		var width: float = HEALTH_BAR_WIDTH * ratio
@@ -1066,6 +1132,7 @@ func apply_vitals(current: int, maximum: int) -> void:
 			-HEALTH_BAR_DROP * OVERHEAD_PIXEL, 0.0)
 		var material: StandardMaterial3D = fill_quad.material as StandardMaterial3D
 		material.albedo_color = _health_colour(ratio)
+	_layout_overhead()
 	_refresh_overhead_health()
 
 ## Whether this actor's condition is worth the space over its head - which is
@@ -1074,6 +1141,7 @@ func set_health_visible(enabled: bool) -> void:
 	if enabled == _health_shown:
 		return
 	_health_shown = enabled
+	_layout_overhead()
 	_refresh_overhead_health()
 
 ## The bar, its backing and its numbers all appear together, and only when the
@@ -1094,6 +1162,9 @@ func _refresh_overhead_health() -> void:
 	if is_instance_valid(_health_label):
 		_health_label.visible = showing
 		_fade_label(_health_label)
+	if is_instance_valid(_overhead_background):
+		_overhead_background.visible = _overhead_shown()
+		_fade_quad(_overhead_background, OVERHEAD_BACKING.a)
 
 ## Whether the overhead block is drawn at all: the banner options allow it,
 ## the actor is inside the name distance, and it is inside the draw distance.
@@ -1111,11 +1182,9 @@ func _fade_quad(quad: MeshInstance3D, opacity: float) -> void:
 	material.albedo_color.a = opacity * _overhead_fade
 
 static func _health_colour(ratio: float) -> Color:
-	if ratio > 0.6:
-		return Color(0.24, 0.78, 0.29, 1.0)
-	if ratio > 0.3:
-		return Color(0.93, 0.76, 0.16, 1.0)
-	return Color(0.86, 0.21, 0.16, 1.0)
+	var fraction := clampf(ratio, 0.0, 1.0)
+	return Color(clampf((1.0 - fraction) * 2.0, 0.0, 1.0),
+		clampf(fraction / 1.25 * 2.0, 0.0, 1.0), 0.0)
 
 func set_nameplate_visible(enabled: bool) -> void:
 	_overhead_visible = enabled
@@ -1260,7 +1329,7 @@ func _lift_overhead(factor: float) -> void:
 	# below the name inside the block rather than at world heights of their
 	# own, so the gaps between them hold their size along with the text.
 	for node_name: String in ["Nameplate", "TitleLine", "HealthBarBackground",
-			"HealthBarFill", "HealthNumbers", "SpeechBubble"]:
+			"HealthBarFill", "HealthNumbers", "SpeechBubble", "OverheadBackground"]:
 		var node := get_node_or_null(node_name) as Node3D
 		if node != null:
 			node.position.y = height
@@ -3358,7 +3427,8 @@ func _apply_import_adapter(config: Dictionary) -> void:
 	var bounds: AABB = _native_visual_bounds(model)
 	var body_size: Vector3 = bounds.size * _import_scale
 	var longest_side: float = maxf(body_size.x, maxf(body_size.y, body_size.z))
-	_small_creature_scale = (SMALL_CREATURE_SCALE
+	_small_creature_scale = (maxf(SMALL_CREATURE_SCALE,
+		SMALL_CREATURE_MIN_SIZE / longest_side)
 		if _is_creature and longest_side > 0.0
 		and longest_side < SMALL_CREATURE_MAX_SIZE else 1.0)
 	_apply_model_scale()

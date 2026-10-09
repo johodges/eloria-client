@@ -4,14 +4,13 @@
 [ext_resource type="Script" uid="uid://dbpi40yl6pryr" path="res://src/camera/isometric_camera_controller.gd" id="2"]
 [ext_resource type="Script" uid="uid://dqdcovlp0tml2" path="res://src/world/world_loader.gd" id="3"]
 
-[sub_resource type="Shader" id="Shader_login_waygate"]
-code = "shader_type canvas_item;\nrender_mode unshaded;\n\nuniform float animation_strength : hint_range(0.0, 1.0) = 1.0;\nuniform float motion_amount : hint_range(0.0, 0.01) = 0.0024;\nuniform vec2 portal_center = vec2(0.68, 0.48);\n\nvoid fragment() {\n\tfloat slow_wave = sin(TIME * 0.12);\n\tfloat slow_lift = cos(TIME * 0.09);\n\tfloat zoom = 1.008 + (0.002 * sin(TIME * 0.07) * animation_strength);\n\tvec2 sample_uv = (UV - vec2(0.5)) * zoom + vec2(0.5);\n\tsample_uv += vec2(slow_wave, slow_lift) * motion_amount * animation_strength;\n\tvec4 painted_scene = texture(TEXTURE, clamp(sample_uv, vec2(0.001), vec2(0.999)));\n\n\tvec2 portal_delta = (UV - portal_center) / vec2(0.17, 0.34);\n\tfloat portal_mask = exp(-dot(portal_delta, portal_delta) * 2.2);\n\tfloat pulse = (0.5 + (0.5 * sin(TIME * 0.83))) * 0.055 * animation_strength;\n\tvec3 living_light = vec3(0.08, 0.48, 0.62) * portal_mask * pulse;\n\tCOLOR = vec4(painted_scene.rgb + living_light, painted_scene.a);\n}\n"
+[sub_resource type="Shader" id="Shader_login_landfall"]
+code = "shader_type canvas_item;\nrender_mode unshaded;\n\nuniform float animation_strength : hint_range(0.0, 1.0) = 1.0;\nuniform float motion_amount : hint_range(0.0, 0.01) = 0.0024;\n\nvoid fragment() {\n\tfloat slow_wave = sin(TIME * 0.12);\n\tfloat slow_lift = cos(TIME * 0.09);\n\tfloat zoom = 1.008 + (0.002 * sin(TIME * 0.07) * animation_strength);\n\tvec2 sample_uv = (UV - vec2(0.5)) * zoom + vec2(0.5);\n\tsample_uv += vec2(slow_wave, slow_lift) * motion_amount * animation_strength;\n\tvec4 painted_scene = texture(TEXTURE, clamp(sample_uv, vec2(0.001), vec2(0.999)));\n\n\tCOLOR = painted_scene;\n}\n"
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_login_waygate"]
-shader = SubResource("Shader_login_waygate")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_login_landfall"]
+shader = SubResource("Shader_login_landfall")
 shader_parameter/animation_strength = 1.0
 shader_parameter/motion_amount = 0.0024
-shader_parameter/portal_center = Vector2(0.68, 0.48)
 
 [sub_resource type="Environment" id="Environment_world"]
 background_mode = 1
@@ -92,7 +91,7 @@ color = Color(0.035, 0.055, 0.08, 1)
 
 [node name="LoginBackground" type="TextureRect" parent="." unique_id=2073448342]
 unique_name_in_owner = true
-material = SubResource("ShaderMaterial_login_waygate")
+material = SubResource("ShaderMaterial_login_landfall")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -303,23 +302,23 @@ offset_bottom = 688.0
 
 [node name="DialogueContent" type="VBoxContainer" parent="GameView/DialoguePanel" unique_id=1434935607]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 
 [node name="DialogueKicker" type="Label" parent="GameView/DialoguePanel/DialogueContent"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 20)
+custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "A VOICE OF ELORIA"
-horizontal_alignment = 1
+horizontal_alignment = 0
 
 [node name="DialogueName" type="Label" parent="GameView/DialoguePanel/DialogueContent" unique_id=288768166]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 21
 text = "NPC"
-horizontal_alignment = 1
+horizontal_alignment = 0
 vertical_alignment = 1
 
 [node name="DialogueDivider" type="HSeparator" parent="GameView/DialoguePanel/DialogueContent"]
@@ -328,7 +327,7 @@ layout_mode = 2
 
 [node name="DialogueText" type="RichTextLabel" parent="GameView/DialoguePanel/DialogueContent" unique_id=1140118479]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 220)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -340,16 +339,16 @@ text = "CHOOSE YOUR RESPONSE"
 
 [node name="DialogueOptionsScroll" type="ScrollContainer" parent="GameView/DialoguePanel/DialogueContent"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 96)
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 0
 horizontal_scroll_mode = 0
 
 [node name="DialogueOptions" type="VBoxContainer" parent="GameView/DialoguePanel/DialogueContent/DialogueOptionsScroll" unique_id=291149601]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 6
+theme_override_constants/separation = 3
 
 [node name="DialogueFooter" type="Label" parent="GameView/DialoguePanel/DialogueContent"]
 unique_name_in_owner = true

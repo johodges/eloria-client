@@ -10,7 +10,9 @@ extends RefCounted
 ##   triangle is at most MAX_GRADE, water no deeper than WADE, no solid
 ##   structure in the actor's body height, and inside the owned polygon.
 ##   Grade, ownership, solids and Walk_ decks follow the bake on its half-metre
-##   cells (structure_raster.gd), folded to tiles as the server folds them: a
+##   cells (structure_raster.gd; a continent-v2 territory adds
+##   export_collision.py's tree-trunk, enclosed-floor and harvest-node rules,
+##   see continent_v2), folded to tiles as the server folds them: a
 ##   tile is blocked when any of its half-cells is. Solids are checked on a
 ##   worker thread; until an asset's check finishes it is estimated from its
 ##   mesh boxes. Water is tested on the same half-cells against where the
@@ -35,6 +37,7 @@ const WATER_SCRIPT := preload("res://src/dev/map_authoring_region/water_region_c
 const Structures := preload("res://addons/map_authoring_usability/structure_raster.gd")
 const PlanWater := preload("res://addons/map_authoring_usability/plan_water.gd")
 const Published := preload("res://addons/map_authoring_usability/published_context.gd")
+const MARKER_SCRIPT := preload("res://src/dev/map_authoring_region/gameplay_marker.gd")
 const NODE_NAME := "__MapAuthoringWalkability"
 
 enum Mode { OFF, PUBLISHED, LIVE, CHANGES }
@@ -424,7 +427,7 @@ func _start_structures() -> void:
 		if cancel[0]:
 			return
 		var job: Dictionary = jobs[index]
-		job["cells"] = Structures.blocked_cells(job.parts, ground)
+		job["cells"] = Structures.blocked_cells(job.parts, ground, job.enclose, job.deck)
 	_group_task = WorkerThreadPool.add_group_task(work, jobs.size(),
 		clampi(OS.get_processor_count() / 2, 1, 4), false, "Live walkability structures")
 
@@ -503,7 +506,8 @@ static func compute_live(root: Node3D, cache: Variant = null, defer := false) ->
 		"x0": terrain_origin.x, "z0": terrain_origin.z, "width": width, "rows": rows,
 		"classes": classes, "blockers": {}, "decks": {}}
 	_grade_pass(data)
-	var shapes := Structures.gather(root)
+	var v2 := continent_v2(root)
+	var shapes := Structures.gather(root, v2)
 	var published := Published.context_for(root)
 	var decks: Array = shapes.decks.duplicate()
 	for deck: Dictionary in published.get("decks", []):
@@ -514,6 +518,8 @@ static func compute_live(root: Node3D, cache: Variant = null, defer := false) ->
 	_deck_pass(root, data, ground, decks)
 	_water_pass(root, data, ground)
 	_structure_pass(data, ground, solids, cache if cache is Dictionary else {}, defer)
+	if v2:
+		harvest_pass(root, data, ground)
 	data.ground = ground
 	data.published_decks = (published.get("decks", []) as Array).size()
 	data.published_solids = (published.get("solids", []) as Array).size()
@@ -531,6 +537,26 @@ static func compute_live(root: Node3D, cache: Variant = null, defer := false) ->
 	data.texture = ImageTexture.create_from_image(Image.create_from_data(width, rows, false,
 		Image.FORMAT_L8, data.classes))
 	return data
+
+
+## Whether the territory publishes its collision through the continent-v2
+## exporter (_continent_v2/export_collision.py), whose trunk and enclosed rules
+## (structure_raster.gd) and harvest-node rule (harvest_pass) LIVE then
+## applies: its region authoring spec names a continent-v2 adapter. The spec
+## is the catalog entry's authoringSpecPath, else
+## the region-authoring-spec.json beside the open scene. Legacy territories
+## publish through _continent/collision_export.py and keep its rules.
+static func continent_v2(root: Node3D) -> bool:
+	var region: Variant = root.get("region_id")
+	var spec_path := String(TimeOfDay.catalog_entry(String(region) if region != null else "").get(
+		"authoringSpecPath", ""))
+	if spec_path.is_empty() and not root.scene_file_path.is_empty():
+		spec_path = root.scene_file_path.get_base_dir().path_join("region-authoring-spec.json")
+	if spec_path.is_empty() or not FileAccess.file_exists(spec_path):
+		return false
+	var spec: Variant = JSON.parse_string(FileAccess.get_file_as_string(spec_path))
+	return spec is Dictionary and (spec as Dictionary).has("continentV2") and \
+		String((spec as Dictionary).get("adapter", "")).begins_with("continent-v2")
 
 
 ## Solid records (structure_raster.gd gather's shape) for the published
@@ -818,6 +844,46 @@ static func _cell_range(ground: Dictionary, position: Vector2, size: Vector2) ->
 	return Vector4i(xa, maxi(xa, xb), za, maxi(za, zb))
 
 
+## A continent-v2 harvest node closes its served tile (export_collision.py
+## harvest_mask): the node is a body, harvested from the ring round it. The
+## tile is the marker's, as the bake derives it (region_snapshot _server_tile:
+## half-cells 2tx..2tx+1 by 2ty..2ty+1 of the served frame).
+static func harvest_pass(root: Node3D, data: Dictionary, ground: Dictionary) -> void:
+	var gameplay := root.get_node_or_null("Gameplay")
+	if gameplay == null:
+		return
+	var origin: Vector2i = root.get("server_origin") if root.get("server_origin") is Vector2i \
+		else Vector2i.ZERO
+	var inverse := root.global_transform.affine_inverse()
+	var classes: PackedByteArray = data.classes
+	var blockers: Dictionary = data.blockers
+	var width := int(data.width)
+	var sub := int(ground.sub)
+	var columns := int(ground.columns)
+	var rows := int(ground.rows)
+	for marker in gameplay.find_children("*", "Node3D", true, false):
+		if marker.get_script() != MARKER_SCRIPT or String(marker.call("output_section")) != "harvestables":
+			continue
+		var followed: Node3D = marker.call("followed_asset")
+		var world: Vector3 = (marker as Node3D).global_position if followed == null else \
+			followed.global_transform * Vector3(marker.get("follow_asset_offset"))
+		var local: Vector3 = inverse * world
+		var tx := floori(local.x + float(origin.x))
+		var ty := floori(float(origin.y) - local.z)
+		for oz in 2:
+			for ox in 2:
+				var x := float(tx - origin.x) + 0.25 + 0.5 * float(ox)
+				var z := float(origin.y - ty) - 0.25 - 0.5 * float(oz)
+				var column := floori((x - float(ground.x0)) / Structures.CELL)
+				var row := floori((z - float(ground.z0)) / Structures.CELL)
+				if column < 0 or row < 0 or column >= columns or row >= rows:
+					continue
+				var tile_index := (row / sub) * width + column / sub
+				classes[tile_index] = Tile.BLOCKED
+				blockers[tile_index] = "harvest node %s" % String(marker.get("record_id"))
+	data.classes = classes
+
+
 ## Solid assets as the bake tests them (structure_raster.gd), folded from
 ## half-cells to tiles. Blocking is final: no deck or water class overrides it.
 static func _structure_pass(data: Dictionary, ground: Dictionary, solids: Array,
@@ -836,10 +902,13 @@ static func _structure_pass(data: Dictionary, ground: Dictionary, solids: Array,
 			for cell_index: int in cached.cells:
 				tiles.append((cell_index / columns / sub) * width + (cell_index % columns) / sub)
 		elif defer:
-			pending.append({"key": solid.key, "signature": signature, "parts": solid.parts})
+			pending.append({"key": solid.key, "signature": signature, "parts": solid.parts,
+				"enclose": bool(solid.get("enclose", false)),
+				"deck": solid.get("deck", PackedVector3Array())})
 			tiles = _box_estimate(data, solid)
 		else:
-			var cells := Structures.blocked_cells(solid.parts, ground)
+			var cells := Structures.blocked_cells(solid.parts, ground,
+				bool(solid.get("enclose", false)), solid.get("deck", PackedVector3Array()))
 			cache[solid.key] = {"signature": signature, "cells": cells}
 			for cell_index in cells:
 				tiles.append((cell_index / columns / sub) * width + (cell_index % columns) / sub)

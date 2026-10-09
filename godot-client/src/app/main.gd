@@ -1574,7 +1574,7 @@ func _on_creation_back_pressed() -> void:
 	creation_panel.hide()
 	_set_login_screen_visible(true)
 
-## The painted waygate and its shader belong only to the login screen. Hiding
+## The painted scenery and its animation belong only to the login screen. Hiding
 ## both together means the ambient pass has no draw cost during creation or in
 ## crowded gameplay scenes.
 func _set_login_screen_visible(value: bool) -> void:
@@ -9542,13 +9542,10 @@ func _apply_graphics_quality() -> void:
 	_update_border_lighting()
 	print("look_quality stage=applied quality=", LookProfile.quality_name(LookProfile.quality()))
 
-## Keep the entry scene inside the same Low / Medium / High contract as actor
-## meshes. Low keeps the selected still; Medium and High play its loop.
-## The original waygate shader remains the fallback behind those layers.
+## Quality tunes the fallback painting's lightweight drift. Video playback is
+## controlled by the entry screen's saved Animate switch at every quality.
 func _apply_login_backdrop_quality() -> void:
 	var level := clampi(int(LookProfile.quality()), 0, 2)
-	if is_instance_valid(start_screen_backdrop):
-		start_screen_backdrop.set_quality(level)
 	var backdrop_material := login_background.material as ShaderMaterial
 	if backdrop_material == null:
 		return
@@ -11236,6 +11233,7 @@ func _sync_dialogue() -> void:
 		else str(dialogue.get("name", "NPC")))
 	dialogue_text.text = str(dialogue.get("text", ""))
 	for child: Node in dialogue_options.get_children():
+		dialogue_options.remove_child(child)
 		child.queue_free()
 	var raw_options: Variant = dialogue.get("options", [])
 	var valid_options: Array[Dictionary] = []
@@ -11255,6 +11253,7 @@ func _sync_dialogue() -> void:
 		button.pressed.connect(_on_dialogue_option.bind(
 			int(option.get("actor_id", -1)), int(option.get("response_id", -1))))
 		dialogue_options.add_child(button)
+	OldcraftDialogueStyleScript.layout_content(self)
 
 func _on_dialogue_option(actor_id: int, response_id: int) -> void:
 	if actor_id < 0 or response_id < 0:
@@ -11712,7 +11711,7 @@ func _cursor_context_at(viewport_position: Vector2) -> Dictionary:
 
 func _apply_eloria_art() -> void:
 	login_background.texture = _external_texture(
-		"res://assets/ui/eloria_login_waygate_background.jpg")
+		"res://assets/ui/eloria_login_landfall_background.png")
 	%CreationBackdrop.texture = _external_texture(
 		"res://assets/ui/eloria_character_creation_background.jpg")
 	var logo_texture: Texture2D = _external_texture("res://assets/ui/eloria_logo_master.png")
@@ -11876,9 +11875,8 @@ func _apply_eloria_theme() -> void:
 	# Login and creation keep their own heavier fantasy frame and moonlit
 	# preview stage rather than inheriting the compact in-game HUD chrome.
 	OldcraftEntryStyleScript.apply(self)
-	# NPC communication uses the same forged Eloria materials, but its inset
-	# parchment and speaker plaque follow the reference game's readable quest
-	# hierarchy. The helper only applies static styles; no actor update pays it.
+	# NPC communication uses a shared parchment surface and compact choices.
+	# The helper applies static styles; no actor update pays for this treatment.
 	OldcraftDialogueStyleScript.apply(self)
 
 ## The right rail used to be six separate boxes with gaps between them, so its
@@ -11988,7 +11986,7 @@ static func _style_meter(bar: ProgressBar, color: Color) -> void:
 	bar.add_theme_stylebox_override("fill", fill)
 
 static func _external_texture(path: String) -> Texture2D:
-	if path.begins_with("res://assets/"):
+	if path.begins_with("res://assets/") and ResourceLoader.exists(path):
 		var imported: Resource = ResourceLoader.load(path)
 		if imported is Texture2D:
 			return imported as Texture2D

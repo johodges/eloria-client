@@ -27,20 +27,25 @@ func _run() -> void:
 	light.rotation_degrees = Vector3(-45, -30, 0)
 	stage.add_child(light)
 	var camera := Camera3D.new()
+	camera.fov = 50.0
 	camera.cull_mask = 3
-	camera.position = Vector3(0, 5, 10)
+	camera.position = Vector3(0, 6, 12)
 	stage.add_child(camera)
 	camera.look_at(Vector3(0, 0.8, 0))
 	camera.current = true
 	var index := 0
-	for species: String in ["rabbit", "squirrel", "red_fox", "black_bear"]:
+	for species: String in ["rabbit", "gecko", "dormouse", "shrew", "red_fox", "black_bear"]:
 		var original := _actor(species, 2)
 		var enlarged := _actor(species, 5)
-		original.position = Vector3(-3.3 + index * 2.2, 0, -1)
-		enlarged.position = Vector3(-3.3 + index * 2.2, 0, 1)
+		original.position = Vector3(-5.5 + index * 2.2, 0, -1.5)
+		enlarged.position = Vector3(-5.5 + index * 2.2, 0, 1.5)
 		var original_model := original.get_node("NativeModel") as Node3D
 		var enlarged_model := enlarged.get_node("NativeModel") as Node3D
 		var multiplier := 1.0 if species == "black_bear" else 2.0
+		if species in ["gecko", "dormouse", "shrew"]:
+			var authored_bounds: AABB = original.get("_native_body_bounds")
+			var original_size := authored_bounds.size * original_model.scale
+			multiplier = 0.7 / maxf(original_size.x, maxf(original_size.y, original_size.z))
 		_expect(enlarged_model.scale.is_equal_approx(original_model.scale * multiplier),
 			"%s body scale: %.1fx" % [species, multiplier])
 		var initial_height := enlarged.head_height()
@@ -56,10 +61,31 @@ func _run() -> void:
 			"%s label clears its enlarged body" % species)
 		_expect(nameplate.modulate == Color.YELLOW and not nameplate.shaded,
 			"%s uses full-bright yellow text" % species)
-		_expect(nameplate.outline_modulate == Color.BLACK,
-			"%s uses an opaque black outline" % species)
+		_expect(nameplate.outline_size == 0, "%s uses the reference's plain letters" % species)
+		var health := enlarged.get_node("HealthNumbers") as Label3D
+		var fill := (enlarged.get_node("HealthBarFill") as MeshInstance3D).mesh as QuadMesh
+		_expect(health.modulate == Color.GREEN, "full health numbers use saturated green")
+		_expect(health.offset.x > 0.0 and fill.center_offset.x < 0.0,
+			"health numbers sit beside the bar")
+		_expect(is_equal_approx(health.offset.y * health.pixel_size,
+			fill.center_offset.y), "health numbers and bar share one row")
+		_expect((enlarged.get_node("OverheadBackground") as MeshInstance3D).visible,
+			"the name and health share a dark backing")
+		var original_left: float = fill.center_offset.x - fill.size.x * 0.5
+		enlarged.apply_vitals(5, 10)
+		_expect(is_equal_approx(fill.center_offset.x - fill.size.x * 0.5, original_left),
+			"the health bar drains from the right without jumping at digit boundaries")
+		_expect(health.modulate.is_equal_approx(Color(1.0, 0.8, 0.0)),
+			"half health uses the Eternal Lands yellow-orange ramp")
+		_expect(health.modulate.is_equal_approx(
+			(fill.material as StandardMaterial3D).albedo_color),
+			"health numbers match their bar at partial health")
+		enlarged.apply_vitals(10, 10)
 		enlarged.set_overhead_fade(0.5)
 		_expect(is_equal_approx(nameplate.modulate.a, 0.5), "distance fade still applies")
+		_expect(is_equal_approx(((enlarged.get_node("OverheadBackground")
+			as MeshInstance3D).mesh as QuadMesh).material.albedo_color.a, 0.225),
+			"the dark backing fades with its text")
 		enlarged.set_overhead_fade(1.0)
 		index += 1
 	var invasion := _actor("rabbit", 5, 14)

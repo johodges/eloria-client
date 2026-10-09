@@ -145,7 +145,7 @@ func run() -> void:
 			await go_target();net.use_map_object(7203);await create_timer(.6).timeout
 			main.extension_windows._on_merchant_mode("buy")
 			main.extension_windows.merchant_list.select(0)
-			main.extension_windows.merchant_quantity.select(0)
+			main.extension_windows.merchant_quantity.text = "1"
 			main.extension_windows._on_merchant_trade()
 		elif old=="fitting":net.use_map_object(7203)
 		elif old=="final_ready":await book_cast("Blink",1,-1,Vector2i(60,29));await keeper(1466)

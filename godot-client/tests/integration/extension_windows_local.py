@@ -48,7 +48,7 @@ ELORIA_NAVIGATION_STATE = 230
 CAPABILITIES = (
     "actor16_v1,combat_hud_v1,inventory_window_v1,item_detail_v1,"
     "mail_window_v1,market_window_v1,merchant_window_v1,navigation_hud_v1,"
-    "quest_journal_v1,special_events_v1")
+    "quest_journal_v1,special_events_v1,lantern_tutorial_v1")
 
 SHOP_BUY_ITEM = 3100
 SHOP_QUANTITY = 3300
@@ -115,6 +115,14 @@ async def probe(port: int) -> None:
     plain_reader, plain_writer, _ = await login(port, plain_name, plain_password)
     try:
         await ask(writer, reader, "#clientcaps " + CAPABILITIES)
+        # The shop fixture is beyond the current opening tutorial.
+        tutorial_frames = await ask(writer, reader, "#tutorial skip")
+        for command, payload in tutorial_frames:
+            if command == 83 and struct.unpack_from("<H", payload)[0] in (4100, 4150):
+                # Confirm Skip on this disposable character's tutorial popup.
+                writer.write(packet(50, payload[:2] + bytes((1, 1))))
+                await writer.drain()
+                await drain(reader)
 
         frames = await ask(writer, reader, "#inventory")
         check("226 inventory state answers an advertised inventory_window_v1",
@@ -156,7 +164,7 @@ async def probe(port: int) -> None:
               bool(cleared) and cleared[0][0] == 0, str(commands(frames)))
 
         # The merchant window, and the dialogue that must no longer appear.
-        frames = await ask(writer, reader, "#tp 64 60 crownwater", 2.5)
+        frames = await ask(writer, reader, "#tp 268 118 crownwater", 2.5)
         merchant_id = find_actor(frames, "Daro Pell")
         if merchant_id is None:
             check("the shop NPC is on the map after teleporting", False,
@@ -187,6 +195,18 @@ async def probe(port: int) -> None:
               and NPC_OPTIONS_LIST not in commands(frames), str(commands(frames)))
         check("the server states the trade it performed",
               "bought 1 Bread" in texts(frames), texts(frames))
+
+        await ask(writer, reader, "#give Gold Coins 500")
+        frames = await ask(writer, reader, f"#shop buy {merchant_id} 0 3")
+        check("an exact typed quantity buys three items in one request",
+              "bought 3 Bread" in texts(frames)
+              and ELORIA_MERCHANT_STATE in commands(frames)
+              and NPC_TEXT not in commands(frames), texts(frames))
+        frames = await ask(writer, reader, f"#shop sell {merchant_id} 0 3")
+        check("an exact typed quantity sells three items in one request",
+              "sold 3 Bread" in texts(frames)
+              and ELORIA_MERCHANT_STATE in commands(frames)
+              and NPC_TEXT not in commands(frames), texts(frames))
     finally:
         await close_client(writer)
         await close_client(plain_writer)
