@@ -18,14 +18,14 @@
   ],
   "bounds": {
    "min": [
-    768.7000122070312,
-    -21.47000026702881,
+    768.699951171875,
+    -16.5999991607666,
     609.0
    ],
    "max": [
     934.0,
     3.721910238265991,
-    705.0997324598148
+    705.0997568130493
    ]
   },
   "playableBounds": {
@@ -265,7 +265,8 @@
  "provenance": {
   "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
   "snapshotSha256": "f1ba33622acef45d64c0a20eb63631ed32aa76baefd9c743ffc9baf4b1c51609",
-  "sceneSha256": "87ab1f0f3767bc7c0048b2219270ed68947a618adbd78ef7b91166e49f394d81"
+  "sceneSha256": "87ab1f0f3767bc7c0048b2219270ed68947a618adbd78ef7b91166e49f394d81",
+  "bridgeDressing": "landfall-causeway-repair-v1"
  },
  "externalResources": {
   "../../../../_continent_v2/shared-assets/4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04.png": "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04",
@@ -276,20 +277,20 @@
  },
  "bounds": {
   "min": [
-   768.7000122070312,
-   -21.47000026702881,
+   768.699951171875,
+   -16.5999991607666,
    609.0
   ],
   "max": [
    934.0,
    3.721910238265991,
-   705.0997324598148
+   705.0997568130493
   ]
  },
  "performance": {
-  "glbBytes": 1284148,
-  "nodes": 122,
-  "meshes": 29,
+  "glbBytes": 1879804,
+  "nodes": 129,
+  "meshes": 36,
   "externalResources": {
    "../../../../_continent_v2/shared-assets/4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04.png": "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04",
    "../../../../_continent_v2/shared-assets/d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac.png": "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac",

@@ -548,7 +548,13 @@
  "provenance": {
   "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
   "snapshotSha256": "f1ba33622acef45d64c0a20eb63631ed32aa76baefd9c743ffc9baf4b1c51609",
-  "sceneSha256": "87ab1f0f3767bc7c0048b2219270ed68947a618adbd78ef7b91166e49f394d81"
+  "sceneSha256": "87ab1f0f3767bc7c0048b2219270ed68947a618adbd78ef7b91166e49f394d81",
+  "bridgeDressing": {
+   "revision": "landfall-causeway-repair-v1",
+   "tool": "eloria-assets/maps/continent-v2/sw_isle/source/repair_causeways.py",
+   "sourceSceneSha256": "4e61457d63f7effb4f74d4ad53ce8bf13c90c06c14409bfddb7812706307eb08",
+   "servedGeometryUnchanged": true
+  }
  },
  "externalResources": {
   "../../_continent_v2/shared-assets/0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630.png": "0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630",
@@ -15329,18 +15335,18 @@
     "bounds": {
      "min": [
       124.41229241792587,
-      -9.062000036239624,
+      -8.420321464538574,
       -832.6752645958015
      ],
      "max": [
-      225.0,
-      32.50709100341797,
+      225.4820274517212,
+      32.5070915222168,
       -735.0
      ]
     },
-    "estimatedResidentBytes": 200800546,
-    "glbBytes": 3493452,
-    "geometryResidentBytes": 3493452,
+    "estimatedResidentBytes": 202094726,
+    "glbBytes": 4787632,
+    "geometryResidentBytes": 4787632,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -15984,19 +15990,19 @@
     "manifest": "chunks/12_11/world.json",
     "bounds": {
      "min": [
-      111.35382409974977,
-      40.770999908447266,
+      111.3538818359375,
+      41.72966384887695,
       -69.71961001365932
      ],
      "max": [
-      234.87999725341797,
+      234.8800048828125,
       94.08367228507996,
-      38.00100003565149
+      38.0009765625
      ]
     },
-    "estimatedResidentBytes": 174979376,
-    "glbBytes": 4211304,
-    "geometryResidentBytes": 4211304,
+    "estimatedResidentBytes": 175419088,
+    "glbBytes": 4651016,
+    "geometryResidentBytes": 4651016,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -16049,9 +16055,9 @@
     "manifest": "chunks/12_12/world.json",
     "bounds": {
      "min": [
-      48.220001220703125,
+      48.219970703125,
       -23.758296966552734,
-      22.200000762939453
+      22.2001953125
      ],
      "max": [
       231.62320887437465,
@@ -16059,9 +16065,9 @@
       134.8848473882132
      ]
     },
-    "estimatedResidentBytes": 174704132,
-    "glbBytes": 3960980,
-    "geometryResidentBytes": 3960980,
+    "estimatedResidentBytes": 175257940,
+    "glbBytes": 4514788,
+    "geometryResidentBytes": 4514788,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -16244,9 +16250,9 @@
       419.2184135182777
      ]
     },
-    "estimatedResidentBytes": 99699886,
-    "glbBytes": 3143500,
-    "geometryResidentBytes": 3143500,
+    "estimatedResidentBytes": 100459882,
+    "glbBytes": 3903496,
+    "geometryResidentBytes": 3903496,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "1299b4e247c3ed8a7c7ccb1a0269ac7d8e7383333243ed7769df4fecba418ef5": 5592406,
@@ -16762,19 +16768,19 @@
     "manifest": "chunks/13_03/world.json",
     "bounds": {
      "min": [
-      217.02561557696072,
-      -10.510999917984009,
+      217.025634765625,
+      -10.489975929260254,
       -831.0
      ],
      "max": [
-      327.70179887507084,
+      327.7017822265625,
       23.800602119515787,
       -735.0
      ]
     },
-    "estimatedResidentBytes": 35061106,
-    "glbBytes": 1331908,
-    "geometryResidentBytes": 1331908,
+    "estimatedResidentBytes": 37371442,
+    "glbBytes": 3642244,
+    "geometryResidentBytes": 3642244,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -17483,19 +17489,19 @@
     "manifest": "chunks/13_15/world.json",
     "bounds": {
      "min": [
-      195.02960846485234,
+      195.0296630859375,
       -3.78515387079198,
       321.0
      ],
      "max": [
       321.0,
       47.446998596191406,
-      443.78427552258654
+      443.7841796875
      ]
     },
-    "estimatedResidentBytes": 157677002,
-    "glbBytes": 2312972,
-    "geometryResidentBytes": 2312972,
+    "estimatedResidentBytes": 159537358,
+    "glbBytes": 4173328,
+    "geometryResidentBytes": 4173328,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -17543,9 +17549,9 @@
       513.0
      ]
     },
-    "estimatedResidentBytes": 157809228,
-    "glbBytes": 2445188,
-    "geometryResidentBytes": 2445188,
+    "estimatedResidentBytes": 159873508,
+    "glbBytes": 4509468,
+    "geometryResidentBytes": 4509468,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -17806,13 +17812,13 @@
      ],
      "max": [
       423.14005002002364,
-      22.658929306030274,
-      -824.0567975800923
+      22.6589298248291,
+      -824.056640625
      ]
     },
-    "estimatedResidentBytes": 111072828,
-    "glbBytes": 1846148,
-    "geometryResidentBytes": 1846148,
+    "estimatedResidentBytes": 111153180,
+    "glbBytes": 1926500,
+    "geometryResidentBytes": 1926500,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -17851,9 +17857,9 @@
       -735.0
      ]
     },
-    "estimatedResidentBytes": 34956342,
-    "glbBytes": 1227144,
-    "geometryResidentBytes": 1227144,
+    "estimatedResidentBytes": 35796354,
+    "glbBytes": 2067156,
+    "geometryResidentBytes": 2067156,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -18491,7 +18497,7 @@
     "manifest": "chunks/14_16/world.json",
     "bounds": {
      "min": [
-      301.0009244268506,
+      301.0009765625,
       -13.840887069702148,
       417.0
      ],
@@ -18501,9 +18507,9 @@
       515.7843482424767
      ]
     },
-    "estimatedResidentBytes": 170848056,
-    "glbBytes": 2901092,
-    "geometryResidentBytes": 2901092,
+    "estimatedResidentBytes": 173656244,
+    "glbBytes": 5709280,
+    "geometryResidentBytes": 5709280,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -18576,17 +18582,17 @@
      "min": [
       321.0,
       -16.0,
-      496.9635136305178
+      496.96337890625
      ],
      "max": [
-      438.46197993225496,
+      438.4620361328125,
       25.77350094831894,
       609.0
      ]
     },
-    "estimatedResidentBytes": 34895462,
-    "glbBytes": 1166264,
-    "geometryResidentBytes": 1166264,
+    "estimatedResidentBytes": 35154162,
+    "glbBytes": 1424964,
+    "geometryResidentBytes": 1424964,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -19030,14 +19036,14 @@
       -453.1419575132519
      ],
      "max": [
-      515.0750539362855,
-      45.342448669433594,
+      515.0750732421875,
+      45.34244918823242,
       -350.85659592831075
      ]
     },
-    "estimatedResidentBytes": 273238662,
-    "glbBytes": 6026484,
-    "geometryResidentBytes": 6026484,
+    "estimatedResidentBytes": 273359966,
+    "glbBytes": 6147788,
+    "geometryResidentBytes": 6147788,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -19547,14 +19553,14 @@
       510.0883264337418
      ],
      "max": [
-      556.2244740562076,
+      556.2244873046875,
       24.774500399002534,
-      623.9263398703424
+      623.92626953125
      ]
     },
-    "estimatedResidentBytes": 35042282,
-    "glbBytes": 1313084,
-    "geometryResidentBytes": 1313084,
+    "estimatedResidentBytes": 37843158,
+    "glbBytes": 4113960,
+    "geometryResidentBytes": 4113960,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -19998,9 +20004,9 @@
       -343.3405036450449
      ]
     },
-    "estimatedResidentBytes": 151126284,
-    "glbBytes": 2752760,
-    "geometryResidentBytes": 2752760,
+    "estimatedResidentBytes": 152897316,
+    "glbBytes": 4523792,
+    "geometryResidentBytes": 4523792,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -20494,9 +20500,9 @@
       615.4275920830879
      ]
     },
-    "estimatedResidentBytes": 34883874,
-    "glbBytes": 1154676,
-    "geometryResidentBytes": 1154676,
+    "estimatedResidentBytes": 35436190,
+    "glbBytes": 1706992,
+    "geometryResidentBytes": 1706992,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -20520,9 +20526,9 @@
       705.2869339103422
      ]
     },
-    "estimatedResidentBytes": 132705436,
-    "glbBytes": 3208120,
-    "geometryResidentBytes": 3208120,
+    "estimatedResidentBytes": 133288612,
+    "glbBytes": 3791296,
+    "geometryResidentBytes": 3791296,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -20992,18 +20998,18 @@
     "bounds": {
      "min": [
       609.0,
-      -18.657999992370605,
+      -16.61609912109375,
       -543.0
      ],
      "max": [
-      713.6987379651632,
+      713.69873046875,
       22.93480906756517,
       -438.87522876476504
      ]
     },
-    "estimatedResidentBytes": 34942914,
-    "glbBytes": 1213716,
-    "geometryResidentBytes": 1213716,
+    "estimatedResidentBytes": 37405590,
+    "glbBytes": 3676392,
+    "geometryResidentBytes": 3676392,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -21017,9 +21023,9 @@
     "manifest": "chunks/17_07/world.json",
     "bounds": {
      "min": [
-      602.2290622699413,
-      -18.93299961090088,
-      -454.10687517589304
+      602.22900390625,
+      -16.616086639404298,
+      -454.10693359375
      ],
      "max": [
       705.0,
@@ -21027,9 +21033,9 @@
       -351.0
      ]
     },
-    "estimatedResidentBytes": 34960602,
-    "glbBytes": 1231404,
-    "geometryResidentBytes": 1231404,
+    "estimatedResidentBytes": 36520646,
+    "glbBytes": 2791448,
+    "geometryResidentBytes": 2791448,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -21852,7 +21858,7 @@
     "bounds": {
      "min": [
       705.0,
-      -18.20699977874756,
+      -16.615008270263672,
       -543.0
      ],
      "max": [
@@ -21861,9 +21867,9 @@
       -447.0
      ]
     },
-    "estimatedResidentBytes": 35020146,
-    "glbBytes": 1290948,
-    "geometryResidentBytes": 1290948,
+    "estimatedResidentBytes": 39753538,
+    "glbBytes": 6024340,
+    "geometryResidentBytes": 6024340,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -22382,9 +22388,9 @@
       705.2028593352667
      ]
     },
-    "estimatedResidentBytes": 47837034,
-    "glbBytes": 1524920,
-    "geometryResidentBytes": 1524920,
+    "estimatedResidentBytes": 47859526,
+    "glbBytes": 1547412,
+    "geometryResidentBytes": 1547412,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -22780,8 +22786,8 @@
     "manifest": "chunks/19_06/world.json",
     "bounds": {
      "min": [
-      788.1711697052137,
-      -17.097000122070312,
+      788.171142578125,
+      -16.61382473754883,
       -550.2560943396415
      ],
      "max": [
@@ -22790,9 +22796,9 @@
       -447.0
      ]
     },
-    "estimatedResidentBytes": 43434024,
-    "glbBytes": 1316216,
-    "geometryResidentBytes": 1316216,
+    "estimatedResidentBytes": 46932172,
+    "glbBytes": 4814364,
+    "geometryResidentBytes": 4814364,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -23242,19 +23248,19 @@
     "manifest": "chunks/19_18/world.json",
     "bounds": {
      "min": [
-      768.7000122070312,
-      -21.47000026702881,
+      768.699951171875,
+      -16.5999991607666,
       609.0
      ],
      "max": [
       934.0,
       3.721910238265991,
-      705.0997324598148
+      705.0997568130493
      ]
     },
-    "estimatedResidentBytes": 35013346,
-    "glbBytes": 1284148,
-    "geometryResidentBytes": 1284148,
+    "estimatedResidentBytes": 35609002,
+    "glbBytes": 1879804,
+    "geometryResidentBytes": 1879804,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -24182,13 +24188,13 @@
      ],
      "max": [
       995.7454006127272,
-      78.36609979248047,
-      705.0997324598148
+      78.36609649658203,
+      705.0997568130493
      ]
     },
-    "estimatedResidentBytes": 155418888,
-    "glbBytes": 2153868,
-    "geometryResidentBytes": 2153868,
+    "estimatedResidentBytes": 155594484,
+    "glbBytes": 2329464,
+    "geometryResidentBytes": 2329464,
     "sharedResourceResidentBytes": {
      "4573d835bf96740648677912295983b8056582fe495d78b0ee87267843d05f04": 87382,
      "d512e75e38a49aeff6270cb3475898e45a8b6dd95ca2e858fc89741bbd897bac": 87382,
@@ -24978,12 +24984,12 @@
    2038
   ],
   "pixelsPerMetre": 1,
-  "imageSha256": "12d9a2ddd2e0a4a9bc9a35f394552aca31a3f95afec0fea18404f315428baa75",
+  "imageSha256": "df941e96e40580b187ef90a4437c7179e776788752198b0ee1c11b77318b1fc0",
   "renderedFrom": "the package's chunk GLBs (the shared cartography renderer, window by window)",
   "cartographyRender": {
    "generator": "eloria-assets/maps/continent-v2/_continent_v2/render_minimap.py",
    "styleVersion": 4,
-   "chunksSha256": "a1fb82c1d39c5a507404962840ed892e9e6e1e9b426efff1e30954a4fbf7e616",
+   "chunksSha256": "ba53459be35b725b9863b9f4b67ad55ffa760fa343289aab1ae99feb7f3886e6",
    "neighbourChunksSha256": {
     "gull_skerries": "0ec3eff7485c5ffbf4039a3160ae3476759bfe5381eb3f03bfea5ed76874ad68",
     "tollholms": "5e096458c2ff4e95888a89dd59c7781e148aca9a3512349ad656eac8d6b5135c"
