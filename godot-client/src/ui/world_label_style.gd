@@ -13,3 +13,8 @@ static func apply(label: Label3D, font_size: int, pixel_size: float,
 	label.offset *= RASTER_SCALE
 	label.width *= RASTER_SCALE
 	label.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
+	# The default outline priority (-1) puts it behind alpha-blended scenery,
+	# even with depth testing disabled. Draw both passes after world effects,
+	# keeping the outline behind the letters.
+	label.outline_render_priority = 10
+	label.render_priority = 11
