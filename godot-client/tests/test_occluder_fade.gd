@@ -165,6 +165,8 @@ func _run_pass() -> void:
 	_test_causeway_structures()
 	_test_authored_ground_patches()
 
+	_test_precise_blockers()
+
 	world.queue_free()
 	await process_frame
 
@@ -252,7 +254,7 @@ func _test_authored_ground_patches() -> void:
 			"AuthoredGround_amberwood_ground-04_leaf_litter",
 			"StreamView_amberwood-four-gates__AuthoredGround_amberwood_ground-07_leaf_litter"]:
 		var patch := _box(node_name, PLAYER_POSITION)
-		(patch.mesh as BoxMesh).size = Vector3(28.0, 0.6, 38.0)
+		(patch.mesh as BoxMesh).size = Vector3(28.0, 1.6, 38.0)
 		patches.append(patch)
 	# A walk surface is still known by its collision whatever it is called.
 	var deck := _box("Deck_Harbour", ON_THE_LINE)
@@ -279,6 +281,62 @@ func _test_authored_ground_patches() -> void:
 	_expect(blocker.get_surface_override_material(0) != null,
 		"an obstacle standing on a ground patch still fades")
 	fade.reset()
+
+func _test_precise_blockers() -> void:
+	var stage := Node3D.new()
+	root.add_child(stage)
+	var view := Camera3D.new()
+	view.position = CAMERA_POSITION
+	stage.add_child(view)
+	var actor := Node3D.new()
+	stage.add_child(actor)
+	var nearby := _box("Nearby", ON_THE_LINE + Vector3(1.55, 0, 0))
+	var behind := _box("BehindPlayer", Vector3(0, -3.5, -5))
+	# Two separated triangles enclose the sight line in their combined bounds,
+	# but leave a real gap where the character is visible.
+	var mesh := ArrayMesh.new()
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = PackedVector3Array([
+		Vector3(-3, -1, 0), Vector3(-1, -1, 0), Vector3(-2, 1, 0),
+		Vector3(1, -1, 0), Vector3(3, -1, 0), Vector3(2, 1, 0)])
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	mesh.surface_set_material(0, StandardMaterial3D.new())
+	var gap := MeshInstance3D.new()
+	gap.mesh = mesh
+	gap.position = ON_THE_LINE
+	stage.add_child(gap)
+	var solid := _box("Solid", ON_THE_LINE)
+	for prop: MeshInstance3D in [nearby, behind, solid]:
+		prop.reparent(stage, false)
+	var fade: RefCounted = OccluderFadeScript.new()
+	fade.configure(null, stage)
+	fade.set_enabled(true)
+	fade.update(0.09, view, actor)
+	_expect(nearby.get_surface_override_material(0) == null,
+		"nearby scenery outside the tight body probe stays opaque")
+	_expect(behind.get_surface_override_material(0) == null,
+		"geometry behind the player stays opaque")
+	_expect(gap.get_surface_override_material(0) == null,
+		"empty space inside mesh bounds does not count as a blocker")
+	var partial: Material = solid.get_surface_override_material(0)
+	_expect(partial != null and _opacity(partial) > OccluderFadeScript.FADED_ALPHA
+		and _opacity(partial) < 1.0, "a real blocker fades gradually")
+	fade.update(SETTLE, view, actor)
+	var alpha: float = _opacity(solid.get_surface_override_material(0))
+	view.position.x = 20
+	actor.position.x = 20
+	fade.update(0.09, view, actor)
+	_expect(is_equal_approx(_opacity(solid.get_surface_override_material(0)), alpha),
+		"a brief clear sample holds the fade to avoid flicker")
+	fade.update(0.09, view, actor)
+	_expect(_opacity(solid.get_surface_override_material(0)) > alpha,
+		"scenery restores smoothly after the hold")
+	fade.update(SETTLE, view, actor)
+	_expect(solid.get_surface_override_material(0) == null,
+		"clear scenery regains its original material")
+	fade.reset()
+	stage.queue_free()
 
 func _box(node_name: String, position: Vector3) -> MeshInstance3D:
 	var mesh := BoxMesh.new()

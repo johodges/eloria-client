@@ -184,12 +184,25 @@ func _check_matches_the_players_banner(main: Control, camera: Camera3D,
 		"%ActorResourceOverlay").get_node("Rows/HealthRow/Number") as Label
 	var banner_bar: ProgressBar = main.get_node(
 		"%ActorResourceOverlay").get_node("Rows/HealthRow/Bar") as ProgressBar
-	_expect(ReplicatedActor3D.NAMEPLATE_FONT_SIZE
-		== banner_name.get_theme_font_size("font_size"),
+	var actor_name := actors[0].get_node("Nameplate") as Label3D
+	var actor_numbers := actors[0].get_node("HealthNumbers") as Label3D
+	_expect(is_equal_approx(actor_name.font_size * actor_name.pixel_size
+		/ ReplicatedActor3D.OVERHEAD_PIXEL,
+		float(banner_name.get_theme_font_size("font_size"))),
 		"a name over a creature is the size of the player's own name")
-	_expect(ReplicatedActor3D.HEALTH_NUMBER_FONT_SIZE
-		== banner_number.get_theme_font_size("font_size"),
+	_expect(is_equal_approx(actor_numbers.font_size * actor_numbers.pixel_size
+		/ ReplicatedActor3D.OVERHEAD_PIXEL,
+		float(banner_number.get_theme_font_size("font_size"))),
 		"the numbers are the size of the player's own")
+	_expect(actor_name.font == banner_name.get_theme_font("font"),
+		"world names use the player's typeface")
+	_expect(is_equal_approx(actor_name.outline_size * actor_name.pixel_size
+		/ ReplicatedActor3D.OVERHEAD_PIXEL,
+		float(banner_name.get_theme_constant("outline_size"))),
+		"higher resolution preserves the player's outline thickness")
+	_expect(is_equal_approx(-actor_numbers.offset.y * actor_numbers.pixel_size,
+		ReplicatedActor3D.HEALTH_LABEL_DROP * ReplicatedActor3D.OVERHEAD_PIXEL),
+		"higher resolution preserves the gap between name and health numbers")
 	_expect(is_equal_approx(ReplicatedActor3D.HEALTH_BAR_THICKNESS,
 		banner_bar.custom_minimum_size.y),
 		"the bar is as thick as the player's own: %.1f against %.1f"
