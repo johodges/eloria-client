@@ -20,7 +20,8 @@ extends RefCounted
 ## straight through the very rocks this exists to fade. The loaded meshes are
 ## instead indexed once into a flat XZ grid, and each probe tests the
 ## camera-to-player segment against the oriented box of every mesh registered in
-## the cells that segment crosses. The geometry is static, so the index is built
+## the cells that segment crosses, then checks real triangles around the chest.
+## The geometry is static, so the index is built
 ## once per imported root. Its grid stays in that root's coordinates, so a
 ## streamed root can move or become active without rebuilding it.
 
@@ -29,7 +30,7 @@ extends RefCounted
 const CELL_METRES := 16.0
 ## The probe is a segment, but a player is not. Boxes are grown by this much, so
 ## an obstacle covering a shoulder counts as covering the player.
-const PROBE_RADIUS := 0.9
+const PROBE_RADIUS := 0.25
 ## Where on the actor the probe aims: chest height, so a low wall the player can
 ## be seen over does not fade and a doorway pillar does.
 const PROBE_HEIGHT := 1.0
@@ -38,10 +39,13 @@ const PROBE_HEIGHT := 1.0
 const PROBE_NEAR := 1.2
 ## Opacity an obstacle settles at while it covers the player: enough to read the
 ## character through, enough to keep the obstacle's own shape legible.
-const FADED_ALPHA := 0.35
-## Seconds for a full fade in either direction. Short enough to feel immediate,
+const FADED_ALPHA := 0.5
+## Seconds for a full fade towards transparency. Short enough to feel immediate,
 ## long enough that walking past a fence post does not strobe.
-const FADE_SECONDS := 0.14
+const FADE_SECONDS := 0.24
+## Restore more gently and hold briefly through gaps between probe samples.
+const RESTORE_SECONDS := 0.32
+const RELEASE_HOLD_SECONDS := 0.12
 ## Probes per second. The camera and the player both move smoothly, so the set
 ## of obstacles changes far more slowly than the frame rate does; the fades
 ## themselves are still animated on every frame.
@@ -71,6 +75,7 @@ class Occluder extends RefCounted:
 	var target := 0.0
 	var applied := false
 	var faded_alpha := FADED_ALPHA
+	var release_hold := 0.0
 
 	var _saved_override: Material
 	var _saved_surfaces: Array[Material] = []
@@ -233,6 +238,8 @@ class Occluder extends RefCounted:
 
 var _enabled := false
 var _grid: Dictionary = {}
+## Built lazily after a bounds hit and shared by instances of the same mesh.
+var _triangle_meshes: Dictionary = {}
 var _occluders: Array[Occluder] = []
 var _active: Array[Occluder] = []
 var _max_extent := MAX_EXTENT_METRES
@@ -287,6 +294,7 @@ func reset() -> void:
 	_active.clear()
 	_occluders.clear()
 	_grid.clear()
+	_triangle_meshes.clear()
 	_probe_countdown = 0.0
 	_root = null
 
@@ -315,6 +323,7 @@ func set_enabled(enabled: bool) -> void:
 	if not enabled:
 		for occluder: Occluder in _active:
 			occluder.target = 0.0
+			occluder.release_hold = 0.0
 
 ## Called every frame. The probe runs on its own slower clock; the fades it
 ## decided are animated on every one of them.
@@ -355,10 +364,31 @@ func _probe(camera: Camera3D, player: Node3D) -> void:
 		var into_local: Transform3D = occluder.node.global_transform.affine_inverse()
 		if not _segment_hits_box(occluder.box, into_local * from, into_local * to):
 			continue
+		if not _blocks_body(occluder, into_local, from, to, camera):
+			continue
 		occluder.target = 1.0
+		occluder.release_hold = RELEASE_HOLD_SECONDS
 		if not occluder.applied:
 			occluder.apply()
 			_active.append(occluder)
+
+## Bounds only select candidates: gaps in a canopy or doorway must not fade
+## the whole object. Probe a small cross around the chest against real faces.
+func _blocks_body(occluder: Occluder, into_local: Transform3D,
+		from: Vector3, to: Vector3, camera: Camera3D) -> bool:
+	var mesh: Mesh = occluder.node.mesh
+	if not _triangle_meshes.has(mesh):
+		_triangle_meshes[mesh] = mesh.generate_triangle_mesh()
+	var triangles: TriangleMesh = _triangle_meshes[mesh] as TriangleMesh
+	if triangles == null:
+		return false
+	var right := camera.global_transform.basis.x.normalized() * PROBE_RADIUS
+	var up := camera.global_transform.basis.y.normalized() * PROBE_RADIUS
+	for offset: Vector3 in [Vector3.ZERO, right, -right, up, -up]:
+		if not triangles.intersect_segment(into_local * from,
+				into_local * (to + offset)).is_empty():
+			return true
+	return false
 
 ## Every mesh registered in a grid cell the segment's footprint covers. The
 ## footprint is used rather than a walked line because the rig never looks from
@@ -386,9 +416,15 @@ func _candidates(from: Vector3, to: Vector3) -> Array[Occluder]:
 func _advance(delta: float) -> void:
 	if _active.is_empty():
 		return
-	var step: float = delta / FADE_SECONDS
 	var settled: Array[Occluder] = []
 	for occluder: Occluder in _active:
+		var elapsed := delta
+		if occluder.target <= 0.0:
+			var held := minf(elapsed, occluder.release_hold)
+			occluder.release_hold -= held
+			elapsed -= held
+		var duration := FADE_SECONDS if occluder.target > 0.0 else RESTORE_SECONDS
+		var step := elapsed / duration
 		occluder.fade = move_toward(occluder.fade, occluder.target, step)
 		if occluder.fade <= 0.0 and occluder.target <= 0.0:
 			occluder.restore()
