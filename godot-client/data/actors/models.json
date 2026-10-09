@@ -314,7 +314,6 @@
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/votary_female.png"
       },
-      "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
         "sourceSHA256": "c27b499318c3cc229a8ad045f2e5b7b4b9c8c0317d751ca71f19c0db8200a68e",
@@ -456,7 +455,6 @@
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/votary_male.png"
       },
-      "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
         "sourceSHA256": "6053585c0d3efbbc61cab57f4ccc0fd6b8a459fe7045c0d9e47467df74daf50a",
@@ -739,7 +737,6 @@
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/glasswarden_male.png"
       },
-      "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
         "sourceSHA256": "2dfcebc9ca766619bedfc820b973362c269361da590a76340d113e0d2b7fa19f",
@@ -1746,7 +1743,6 @@
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/stoneborn_female.png"
       },
-      "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
         "sourceSHA256": "4cdb4368861d86ed857f7af846486ea65ef71a5e8cec2eedaca8b6c99a902813",
@@ -1888,7 +1884,6 @@
         "sourceSurface": 1,
         "mask": "res://assets/actors/native/face_masks/stoneborn_male.png"
       },
-      "hairAllowsProtrusions": true,
       "skinPalette": {
         "version": 1,
         "sourceSHA256": "9c22f5c569bb6536d82fd2544158ee5843fcc38dbd4542a16d88d4d3c49db89e",

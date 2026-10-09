@@ -28,6 +28,22 @@ def mesh_for(document, binary, name):
     return trimesh.Trimesh(np.concatenate(vertices), np.concatenate(faces), process=False)
 
 
+def bald_cranium(document, binary):
+    """The scalp plus the race_head skin. On race bodies the horns, crowns,
+    crests and crystals are `race_feature_head`, and race_head skin caps the
+    cranium beneath them (on the crowned Glasswarden female it is all the crown
+    rays meet)."""
+    vertices, faces = [], []
+    offset = 0
+    for surface, role, a, f in primitives(document, binary):
+        if surface != 'scalp' and not (surface == 'body' and role == 'race_head'):
+            continue
+        vertices.append(a['POSITION'])
+        faces.append(f + offset)
+        offset += len(a['POSITION'])
+    return trimesh.Trimesh(np.concatenate(vertices), np.concatenate(faces), process=False)
+
+
 class CharacterAppearanceFitTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -113,10 +129,17 @@ class CharacterAppearanceFitTest(unittest.TestCase):
                         self.assertTrue((a['WEIGHTS_0'][ids]>=0).all())
                         np.testing.assert_allclose(a['WEIGHTS_0'][ids].sum(1),1,atol=2e-6)
                         self.assertLess(int(a['JOINTS_0'][ids].max()),len(bones))
+                        # A race fit's tuck once folded cut-off hair onto
+                        # tucked vertices: zero-area triangles, (0,0,0) normals.
+                        self.assertGreater(float(np.linalg.norm(a['NORMAL'][ids],axis=1).min()),.5)
+                        p = a['POSITION'].astype(float)
+                        area = np.linalg.norm(np.cross(p[f[:,1]]-p[f[:,0]],p[f[:,2]]-p[f[:,0]]),axis=1)
+                        self.assertGreater(float(area.min()),0.)
                     # Five rays at the top centre must hit the coiffure above
-                    # the bald scalp. Horns and side crystals are outside this
-                    # central patch and remain free to protrude through hair.
-                    scalp = mesh_for(body,bb,'scalp')
+                    # the bald cranium. Horns, crowns, crests and crystals are
+                    # separate race_feature_head meshes, not cranium, and remain
+                    # free to protrude through the hair on every race.
+                    scalp = bald_cranium(body,bb)
                     hair = mesh_for(d,b,d['meshes'][0]['name'])
                     origins=np.array([[x,2.,z] for x,z in [(0,0),(-.012,0),(.012,0),(0,-.012),(0,.012)]])
                     direction=np.tile([0.,-1.,0.],(len(origins),1))
@@ -126,12 +149,7 @@ class CharacterAppearanceFitTest(unittest.TestCase):
                     self.assertGreaterEqual(len(sd),3)
                     self.assertTrue(set(sd)<=set(hd))
                     for ray,height in sd.items():
-                        if not config.get('hairAllowsProtrusions'):
-                            self.assertGreater(hd[ray]-height,.001)
-                        else:
-                            # Crystals and horns remain exposed through a
-                            # closed coiffure instead of stretching it to tips.
-                            self.assertGreater(hd[ray],1.64)
+                        self.assertGreater(hd[ray]-height,.001)
 
 
 if __name__=='__main__':

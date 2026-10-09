@@ -53,6 +53,7 @@ jobs:
             godot-client/tests/test_class_equipment_fit_revision.py \
             godot-client/tests/test_luminous_cuff_fit_authoring.py \
             godot-client/tests/test_race_rebase.py \
+            godot-client/tests/test_race_headwear_clearance.py \
             -q
       - name: Validate canonical equipment and animation paths
         run: |
