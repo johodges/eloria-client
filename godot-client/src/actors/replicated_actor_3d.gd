@@ -6,6 +6,7 @@ const ACTOR_RENDER_QUALITY := preload("res://src/actors/actor_render_quality.gd"
 const OLDCRAFT_ACTOR_STYLE := preload("res://src/actors/oldcraft_actor_style.gd")
 const GLB_MESH_EXTRAS := preload("res://src/actors/glb_mesh_extras.gd")
 const WARDROBE_SHIRT_FIT := preload("res://src/actors/wardrobe_shirt_fit.gd")
+const WORLD_LABEL_STYLE := preload("res://src/ui/world_label_style.gd")
 
 @export var walk_presentation_speed := 6.0
 @export var run_presentation_speed := 9.0
@@ -940,9 +941,8 @@ func _add_nameplate(dto: Dictionary) -> void:
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
 	label.fixed_size = true
-	label.pixel_size = OVERHEAD_PIXEL
-	label.font_size = NAMEPLATE_FONT_SIZE
-	label.outline_size = OVERHEAD_OUTLINE_SIZE
+	WORLD_LABEL_STYLE.apply(label, NAMEPLATE_FONT_SIZE, OVERHEAD_PIXEL,
+		OVERHEAD_OUTLINE_SIZE)
 	var name_colour: int = int(dto.get("name_colour", 0))
 	label.modulate = (CREATURE_MAP_DOT_COLOUR
 		if int(dto.get("kind", 0)) == CREATURE_ACTOR_KIND and name_colour == 0
@@ -996,11 +996,10 @@ func _add_health_bar() -> void:
 	numbers.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	numbers.no_depth_test = true
 	numbers.fixed_size = true
-	numbers.pixel_size = OVERHEAD_PIXEL
 	numbers.render_priority = 3
 	numbers.outline_render_priority = 2
-	numbers.font_size = HEALTH_NUMBER_FONT_SIZE
-	numbers.outline_size = OVERHEAD_OUTLINE_SIZE
+	WORLD_LABEL_STYLE.apply(numbers, HEALTH_NUMBER_FONT_SIZE, OVERHEAD_PIXEL,
+		OVERHEAD_OUTLINE_SIZE)
 	numbers.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(numbers)
 	_health_label = numbers
@@ -1162,9 +1161,8 @@ func set_title(title: String) -> void:
 		# Fixed on screen like the name it sits over, or the two would drift
 		# apart as the camera zoomed.
 		label.fixed_size = true
-		label.pixel_size = OVERHEAD_PIXEL
-		label.font_size = TITLE_FONT_SIZE
-		label.outline_size = OVERHEAD_OUTLINE_SIZE
+		WORLD_LABEL_STYLE.apply(label, TITLE_FONT_SIZE, OVERHEAD_PIXEL,
+			OVERHEAD_OUTLINE_SIZE)
 		label.modulate = Color(0.85, 0.78, 0.45, 1.0)
 		label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 		add_child(label)
@@ -1188,15 +1186,13 @@ func show_speech_bubble(speech: String, duration_msec: int) -> void:
 		# Fixed on screen like the name it sits above, or the two would drift
 		# into one another as the camera zoomed.
 		label.fixed_size = true
-		label.pixel_size = OVERHEAD_PIXEL
-		label.font_size = SPEECH_BUBBLE_FONT_SIZE
 		# Oldcraft's ambient lines use cream lettering over a compact dark
 		# translucent bubble. Label3D cannot draw a nine-patch panel without a
 		# viewport per speaker, so the wider dark surround gives the same visual
 		# separation for a fraction of the memory and draw-call cost.
-		label.outline_size = 6
 		label.outline_modulate = SPEECH_BUBBLE_SURROUND
 		label.width = SPEECH_BUBBLE_WIDTH
+		WORLD_LABEL_STYLE.apply(label, SPEECH_BUBBLE_FONT_SIZE, OVERHEAD_PIXEL, 6)
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		label.modulate = SPEECH_BUBBLE_TEXT
 		label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
