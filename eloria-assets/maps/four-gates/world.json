@@ -2581,20 +2581,32 @@
       "height": 2.1,
       "halfCellWidth": 0.5
     },
-    "walkableCells": 368435,
-    "walkableFraction": 0.261053,
+    "walkableCells": 368657,
+    "walkableFraction": 0.26121,
     "sourceGlbSha256": "40126c30dcd49eedc0250056f3e17a85aa1a96f5d13761c78a46eeb31a7a5ac2",
     "exportStatistics": {
       "walkMeshes": 92,
       "structuralMeshes": 333,
       "structuralTriangles": 137893,
       "walkTriangles": 255024,
-      "steepCells": 68409,
+      "steepCells": 68187,
       "waterCells": 48749,
       "structuralCells": 28858,
       "thresholdHaloCells": 240,
       "seamCollarCells": 5234
-    }
+    },
+    "terrainGradeApproaches": [
+      {
+        "id": "north-gate-quarry-apron",
+        "boundsMetres": [
+          -24.0,
+          -118.0,
+          -7.0,
+          -110.0
+        ],
+        "maximumGrade": 0.8
+      }
+    ]
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -7289,7 +7301,7 @@
   "continentPublication": {
     "revision": "diagonal-spine-v1",
     "masterSha256": "09c0f06cc093218f821473b2ad674c850b84432645f5b73a699825aebfdb7aad",
-    "collisionSha256": "b1f3d3d01c017df628890909bdac0aec17acfc27923bef8b057bff245808b2f3",
+    "collisionSha256": "71f5a1d35d371efd0fb93d428af72544bde6f077da6a626c53d6826c5c5f3fda",
     "terrainRevision": "diagonal-spine-v1:3889c6f86056359285d567a04b6b42e2472714c74cdc2ef869c97dbdc68b8d8a",
     "storage": {
       "serverCells": [
