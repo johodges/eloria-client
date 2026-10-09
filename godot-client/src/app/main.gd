@@ -72,6 +72,7 @@ const EmotesWindowScript := preload("res://src/ui/emotes_window.gd")
 const RangingWindowScript := preload("res://src/ui/ranging_window.gd")
 const GuildWindowScript := preload("res://src/ui/guild_window.gd")
 const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
+const LoginBackdropScript := preload("res://src/ui/login_backdrop.gd")
 const ReferenceWindowScript := preload("res://src/ui/reference_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 const VramTextures := preload("res://src/world/vram_textures.gd")
@@ -301,6 +302,7 @@ var _pending_purchase: Array[String] = []
 @onready var dialogue_text: RichTextLabel = %DialogueText
 @onready var dialogue_options: VBoxContainer = %DialogueOptions
 @onready var login_background: TextureRect = %LoginBackground
+var start_screen_backdrop: Control
 @onready var login_logo: TextureRect = %LoginLogo
 
 var actor_nodes: Dictionary = {}
@@ -1200,6 +1202,8 @@ func _ready() -> void:
 	_randomize_creation_appearance()
 	_update_preview_camera()
 	_apply_eloria_art()
+	start_screen_backdrop = LoginBackdropScript.new()
+	login_background.add_child(start_screen_backdrop)
 	_configure_banner_menu()
 	_apply_eloria_theme()
 	# The crest is deliberately outside the compact login card so the painted
@@ -1581,6 +1585,9 @@ func _set_login_screen_visible(value: bool) -> void:
 
 func _sync_login_logo_visibility() -> void:
 	login_logo.visible = login_panel.visible
+	login_background.visible = login_panel.visible
+	if is_instance_valid(start_screen_backdrop):
+		start_screen_backdrop.set_active(login_panel.visible)
 
 func _on_create_race_item_selected(_index: int) -> void:
 	_populate_creation_sexes()
@@ -9536,13 +9543,15 @@ func _apply_graphics_quality() -> void:
 	print("look_quality stage=applied quality=", LookProfile.quality_name(LookProfile.quality()))
 
 ## Keep the entry scene inside the same Low / Medium / High contract as actor
-## meshes. Low is a static painting, Medium retains a restrained breath, and
-## High enables the full (still single-sample) parallax and portal pulse.
+## meshes. Low keeps the selected still; Medium and High play its loop.
+## The original waygate shader remains the fallback behind those layers.
 func _apply_login_backdrop_quality() -> void:
+	var level := clampi(int(LookProfile.quality()), 0, 2)
+	if is_instance_valid(start_screen_backdrop):
+		start_screen_backdrop.set_quality(level)
 	var backdrop_material := login_background.material as ShaderMaterial
 	if backdrop_material == null:
 		return
-	var level := clampi(int(LookProfile.quality()), 0, 2)
 	var animation_strengths: Array[float] = [0.0, 0.55, 1.0]
 	var motion_amounts: Array[float] = [0.0, 0.0012, 0.0024]
 	backdrop_material.set_shader_parameter("animation_strength",
