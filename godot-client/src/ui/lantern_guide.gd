@@ -195,7 +195,7 @@ func control_for_step() -> Control:
 			var desired := "sell" if str(state.get("key", "")) == "sell" else "buy"
 			if str(ext.get("_merchant_mode")) != desired:
 				return ext.find_child("MerchantSellMode" if desired=="sell" else "MerchantBuyMode",true,false) as Control
-			var list := ext.find_child("MerchantList",true,false) as ItemList
+			var list := ext.find_child("MerchantBackpack" if desired == "sell" else "MerchantList",true,false) as ItemList
 			return ext.find_child("MerchantTrade",true,false) as Control if _selected_item(list).contains(str(state.get("item",""))) else list
 	return null
 
