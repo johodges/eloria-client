@@ -30,7 +30,7 @@
   {"id": "gs-spawn-0006", "creature": "frilled_lizard", "local": [278.5, 482.5], "leash": 45, "zone": "adjacent:gull_skerries-fill", "band": "2-9", "level": 8, "habitat": "rock", "note": "review fix 2026-10-03: off reached ground on the built map's served-rule union check; moved to the nearest reached 3x3 tile of its habitat"},
   {"id": "gs-spawn-0007", "creature": "jackalope", "local": [389.0, 421.0], "leash": 45, "zone": "adjacent:south_tip", "band": "2-9", "level": 7, "habitat": "meadow"},
   {"id": "gs-spawn-0008", "creature": "jackalope", "local": [421.0, 437.0], "leash": 45, "zone": "adjacent:south_tip", "band": "2-9", "level": 7, "habitat": "meadow"},
-  {"id": "gs-spawn-0009", "creature": "magpie", "local": [289.0, 455.0], "leash": 45, "zone": "adjacent:south_tip", "band": "2-9", "level": 5, "habitat": "meadow"},
+  {"id": "gs-spawn-0009", "creature": "magpie", "local": [289.5, 455.5], "leash": 45, "zone": "adjacent:south_tip", "band": "2-9", "level": 5, "habitat": "meadow"},
   {"id": "gs-spawn-0010", "creature": "stoat", "local": [329.0, 467.0], "leash": 45, "zone": "adjacent:south_tip", "band": "2-9", "level": 6, "habitat": "forest"},
   {"id": "gs-spawn-0011", "creature": "frilled_lizard", "local": [306.5, 479.5], "leash": 45, "zone": "adjacent:south_tip", "band": "2-9", "level": 8, "habitat": "rock", "note": "review fix 2026-10-03: off reached ground on the built map's served-rule union check; moved to the nearest reached 3x3 tile of its habitat"}
  ]

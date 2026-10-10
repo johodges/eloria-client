@@ -506,6 +506,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-1-001"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_1_001"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-00",
@@ -532,6 +533,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-1-002"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_1_002"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-01",
@@ -558,6 +560,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-1-003"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_1_003"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-02",
@@ -584,6 +587,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-3-001"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_3_001"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-3"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-3.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-03",
@@ -610,6 +614,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-3-002"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_3_002"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-3"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-3.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-04",
@@ -777,6 +782,7 @@ asset_id = "gull_skerries-kit-cypress-tree-1-001"
 node_name = "Authored_gull_skerries_kit_cypress_tree_1_001"
 catalog_asset_id = "gull_skerries:kit-cypress-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-cypress-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-11",
@@ -830,6 +836,7 @@ asset_id = "gull_skerries-kit-fan-palm-tree-1-001"
 node_name = "Authored_gull_skerries_kit_fan_palm_tree_1_001"
 catalog_asset_id = "gull_skerries:kit-fan-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-fan-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-13",
@@ -856,6 +863,7 @@ asset_id = "gull_skerries-kit-fan-palm-tree-1-002"
 node_name = "Authored_gull_skerries_kit_fan_palm_tree_1_002"
 catalog_asset_id = "gull_skerries:kit-fan-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-fan-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-14",
@@ -882,6 +890,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-001"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_001"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-15",
@@ -908,6 +917,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-002"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_002"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-16",
@@ -934,6 +944,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-003"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_003"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-17",
@@ -960,6 +971,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-001"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_001"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-18",
@@ -987,6 +999,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-002"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_002"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-19",
@@ -1014,6 +1027,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-003"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_003"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-20",
@@ -1041,6 +1055,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-004"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_004"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-21",
@@ -1067,6 +1082,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-005"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_005"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-22",
@@ -1093,6 +1109,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-006"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_006"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-23",
@@ -1119,6 +1136,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-007"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_007"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-24",
@@ -1146,6 +1164,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-008"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_008"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-25",
@@ -1173,6 +1192,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-009"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_009"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-26",
@@ -1199,6 +1219,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-010"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_010"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-27",
@@ -1251,6 +1272,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-001"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_001"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-29",
@@ -1277,6 +1299,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-002"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_002"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "rehomed",
 "a3bPiece": "rehome-30",
@@ -1347,6 +1370,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-1-004"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_1_004"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00000",
@@ -1366,6 +1390,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-3-003"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_3_003"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-3"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-3.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00001",
@@ -1385,6 +1410,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-1-005"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_1_005"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00002",
@@ -1404,6 +1430,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-003"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_003"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00003",
@@ -1423,6 +1450,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-004"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_004"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00004",
@@ -1442,6 +1470,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-005"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_005"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00005",
@@ -1461,6 +1490,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-3-004"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_3_004"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-3"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-3.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00006",
@@ -1480,6 +1510,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-004"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_004"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00007",
@@ -1499,6 +1530,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-006"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_006"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00008",
@@ -1518,6 +1550,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-011"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_011"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00009",
@@ -1537,6 +1570,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-012"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_012"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00010",
@@ -1556,6 +1590,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-007"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_007"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00011",
@@ -1575,6 +1610,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-013"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_013"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00012",
@@ -1594,6 +1630,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-014"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_014"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00013",
@@ -1613,6 +1650,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-005"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_005"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00014",
@@ -1632,6 +1670,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-006"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_006"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00015",
@@ -1651,6 +1690,7 @@ asset_id = "gull_skerries-kit-cypress-tree-1-002"
 node_name = "Authored_gull_skerries_kit_cypress_tree_1_002"
 catalog_asset_id = "gull_skerries:kit-cypress-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-cypress-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00016",
@@ -1670,6 +1710,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-015"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_015"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00017",
@@ -1689,6 +1730,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-016"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_016"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00018",
@@ -1708,6 +1750,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-007"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_007"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00019",
@@ -1727,6 +1770,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-008"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_008"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00020",
@@ -1746,6 +1790,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-017"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_017"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00021",
@@ -1765,6 +1810,7 @@ asset_id = "gull_skerries-kit-fan-palm-tree-1-003"
 node_name = "Authored_gull_skerries_kit_fan_palm_tree_1_003"
 catalog_asset_id = "gull_skerries:kit-fan-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-fan-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00022",
@@ -1784,6 +1830,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-018"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_018"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00023",
@@ -1803,6 +1850,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-008"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_008"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00024",
@@ -1822,6 +1870,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-009"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_009"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00025",
@@ -1841,6 +1890,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-010"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_010"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00026",
@@ -1860,6 +1910,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-011"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_011"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00027",
@@ -1879,6 +1930,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-019"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_019"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00028",
@@ -1898,6 +1950,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-009"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_009"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00029",
@@ -1917,6 +1970,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-020"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_020"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00030",
@@ -1936,6 +1990,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-3-005"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_3_005"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-3"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-3.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00031",
@@ -1955,6 +2010,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-010"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_010"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00032",
@@ -1974,6 +2030,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-011"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_011"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00033",
@@ -1993,6 +2050,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-021"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_021"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00034",
@@ -2012,6 +2070,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-022"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_022"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00035",
@@ -2031,6 +2090,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-023"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_023"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00036",
@@ -2050,6 +2110,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-012"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_012"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00037",
@@ -2069,6 +2130,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-012"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_012"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00038",
@@ -2088,6 +2150,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-013"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_013"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00039",
@@ -2107,6 +2170,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-024"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_024"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00040",
@@ -2126,6 +2190,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-013"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_013"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00041",
@@ -2145,6 +2210,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-014"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_014"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00042",
@@ -2164,6 +2230,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-015"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_015"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00043",
@@ -2183,6 +2250,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-014"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_014"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00044",
@@ -2202,6 +2270,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-016"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_016"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00045",
@@ -2221,6 +2290,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-017"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_017"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00046",
@@ -2240,6 +2310,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-025"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_025"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00047",
@@ -2259,6 +2330,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-026"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_026"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00048",
@@ -2278,6 +2350,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-018"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_018"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00049",
@@ -2297,6 +2370,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-027"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_027"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00050",
@@ -2316,6 +2390,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-028"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_028"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00051",
@@ -2335,6 +2410,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-029"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_029"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00052",
@@ -2354,6 +2430,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-030"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_030"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00053",
@@ -2373,6 +2450,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-019"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_019"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00054",
@@ -2392,6 +2470,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-031"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_031"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00055",
@@ -2411,6 +2490,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-032"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_032"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00056",
@@ -2430,6 +2510,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-020"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_020"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00057",
@@ -2449,6 +2530,7 @@ asset_id = "gull_skerries-kit-fan-palm-tree-1-004"
 node_name = "Authored_gull_skerries_kit_fan_palm_tree_1_004"
 catalog_asset_id = "gull_skerries:kit-fan-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-fan-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00058",
@@ -2468,6 +2550,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-033"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_033"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00059",
@@ -2487,6 +2570,7 @@ asset_id = "gull_skerries-kit-fan-palm-tree-1-005"
 node_name = "Authored_gull_skerries_kit_fan_palm_tree_1_005"
 catalog_asset_id = "gull_skerries:kit-fan-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-fan-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00060",
@@ -2506,6 +2590,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-034"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_034"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00061",
@@ -2525,6 +2610,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-021"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_021"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00062",
@@ -2544,6 +2630,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-022"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_022"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00063",
@@ -2563,6 +2650,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-035"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_035"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00064",
@@ -2582,6 +2670,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-023"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_023"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00065",
@@ -2601,6 +2690,7 @@ asset_id = "gull_skerries-kit-cypress-tree-1-003"
 node_name = "Authored_gull_skerries_kit_cypress_tree_1_003"
 catalog_asset_id = "gull_skerries:kit-cypress-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-cypress-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00066",
@@ -2620,6 +2710,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-036"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_036"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00067",
@@ -2639,6 +2730,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-024"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_024"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00068",
@@ -2658,6 +2750,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-025"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_025"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00069",
@@ -2677,6 +2770,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-026"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_026"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00070",
@@ -2696,6 +2790,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-037"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_037"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00071",
@@ -2715,6 +2810,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-015"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_015"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00072",
@@ -2734,6 +2830,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-038"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_038"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00073",
@@ -2753,6 +2850,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-3-006"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_3_006"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-3"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-3.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00074",
@@ -2772,6 +2870,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-039"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_039"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00075",
@@ -2791,6 +2890,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-040"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_040"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00076",
@@ -2810,6 +2910,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-3-007"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_3_007"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-3"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-3.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00077",
@@ -2829,6 +2930,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-041"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_041"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00078",
@@ -2848,6 +2950,7 @@ asset_id = "gull_skerries-kit-umbrella-pine-tree-1-016"
 node_name = "Authored_gull_skerries_kit_umbrella_pine_tree_1_016"
 catalog_asset_id = "gull_skerries:kit-umbrella-pine-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-umbrella-pine-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00079",
@@ -2867,6 +2970,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-027"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_027"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00080",
@@ -2886,6 +2990,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-042"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_042"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00081",
@@ -2905,6 +3010,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-028"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_028"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00082",
@@ -2924,6 +3030,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-043"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_043"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00083",
@@ -2943,6 +3050,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-029"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_029"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00084",
@@ -2962,6 +3070,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-030"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_030"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00085",
@@ -2981,6 +3090,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-031"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_031"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00086",
@@ -3000,6 +3110,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-b-044"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_b_044"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-b"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-b.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00087",
@@ -3019,6 +3130,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-032"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_032"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00088",
@@ -3038,6 +3150,7 @@ asset_id = "gull_skerries-kit-sw-broadleaf-tree-a-033"
 node_name = "Authored_gull_skerries_kit_sw_broadleaf_tree_a_033"
 catalog_asset_id = "gull_skerries:kit-sw-broadleaf-tree-a"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-sw-broadleaf-tree-a.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00089",
@@ -3057,6 +3170,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-1-006"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_1_006"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00090",
@@ -3076,6 +3190,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-1-007"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_1_007"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00091",
@@ -3095,6 +3210,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-2-001"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_2_001"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-2"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-2.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00092",
@@ -3114,6 +3230,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-2-002"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_2_002"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-2"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-2.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00093",
@@ -3133,6 +3250,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-3-008"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_3_008"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-3"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-3.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00094",
@@ -3152,6 +3270,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-1-008"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_1_008"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00095",
@@ -3171,6 +3290,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-3-009"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_3_009"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-3"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-3.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00096",
@@ -3190,6 +3310,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-2-003"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_2_003"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-2"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-2.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00097",
@@ -3209,6 +3330,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-2-004"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_2_004"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-2"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-2.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00098",
@@ -3228,6 +3350,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-3-010"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_3_010"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-3"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-3.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00099",
@@ -3247,6 +3370,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-1-009"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_1_009"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-1"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-1.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "canopy",
 "a3bPiece": "a3b-nature-00100",
@@ -4501,6 +4625,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-4-001"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_4_001"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-4"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-4.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "understorey",
 "a3bPiece": "a3b-nature-00166",
@@ -4520,6 +4645,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-4-002"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_4_002"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-4"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-4.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "understorey",
 "a3bPiece": "a3b-nature-00167",
@@ -4539,6 +4665,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-4-003"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_4_003"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-4"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-4.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "understorey",
 "a3bPiece": "a3b-nature-00168",
@@ -4558,6 +4685,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-4-004"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_4_004"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-4"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-4.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "understorey",
 "a3bPiece": "a3b-nature-00169",
@@ -4577,6 +4705,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-4-005"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_4_005"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-4"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-4.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "understorey",
 "a3bPiece": "a3b-nature-00170",
@@ -4596,6 +4725,7 @@ asset_id = "gull_skerries-kit-beach-palm-tree-4-006"
 node_name = "Authored_gull_skerries_kit_beach_palm_tree_4_006"
 catalog_asset_id = "gull_skerries:kit-beach-palm-tree-4"
 scene_path = "res://world_authoring/regions/gull_skerries/assets/prototypes/kit-beach-palm-tree-4.glb"
+collision_role = "solid"
 metadata = {
 "a3bLayer": "understorey",
 "a3bPiece": "a3b-nature-00171",

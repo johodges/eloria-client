@@ -167,24 +167,25 @@
    "height": 2.1,
    "halfCellWidth": 0.5
   },
-  "walkableCells": 988357,
-  "walkableFraction": 0.068302,
-  "sha256": "cc8cb3f752147e683d51955d42dede4906cd0c6b336444424528a5c10a301b2a",
+  "walkableCells": 978064,
+  "walkableFraction": 0.067591,
+  "sha256": "c6bf567b5d805e9a8a51a7fc9d3c8ac43303d14b19310f628e7d3028e27c4c34",
   "exportStatistics": {
    "walkTriangles": 99515,
-   "structuralMeshes": 425,
-   "structuralPlacements": 425,
-   "structuralTriangles": 1240383,
-   "structuralTrianglesTested": 1156526,
+   "structuralMeshes": 1573,
+   "structuralPlacements": 1563,
+   "structuralTriangles": 1501483,
+   "structuralTrianglesTested": 1414034,
    "ownCells": 4859952,
    "deckCells": 40765,
    "steepCells": 667623,
    "waterCells": 3261138,
-   "structuralCells": 13770,
+   "structuralCells": 24063,
    "crossSeamSolidCells": 0,
+   "harvestNodeTiles": 0,
    "noGroundCells": 0,
    "seamCollarCells": 1348,
-   "ownWalkableCells": 987009
+   "ownWalkableCells": 976716
   },
   "seamCollar": {
    "sw_isle": {
@@ -198,21 +199,21 @@
     "walkableTiles": 330
    }
   },
-  "sourceSnapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",
-  "sourceSceneSha256": "5a6538eb7c201182676f5aecde6282c11683681696b32eba35f1afab2cbd27ba",
+  "sourceSnapshotSha256": "fdb530269590516a59599e93e65d9d334dd39c3ca9f5f977578cb8ac0a59a407",
+  "sourceSceneSha256": "96341027aee45d5c3a0298bae966c1e62a668237eebd2e07eab092c2652720e2",
   "groupExport": {
    "maps": {
     "gull_skerries": {
-     "snapshotSha256": "1b50c3bd7674af83f3a409072afa8cae85bb82ed0d59d49febe0a5d73c74541d",
-     "servedGridSha256": "64e7e986253fd3daee4d790a1f5d3cdd30cf282a7951ac4e368e9dae69e75e6b"
+     "snapshotSha256": "05114f6bdde034ccb3e158e2641c43a5765928d1e8351ae9ec278c22e2a50321",
+     "servedGridSha256": "cf058ae63eae1b6e10a029cf89925a2aec2185515854aea970db93acc0df218e"
     },
     "sw_isle": {
-     "snapshotSha256": "285b5d14cec512e92953c12926377fd9da84f1aaafa4209b746faa177f84fe81",
-     "servedGridSha256": "77d2ccda4bf21263eb4c09be6adba3683a3206ad9dc9a309fe5bf8cfab70ddd0"
+     "snapshotSha256": "b82544a0d3504458916bb10fe4cdebfd18256edaf609ecb52832004eb63b92c7",
+     "servedGridSha256": "17cc0fccb7d4b05199e6facc4ff8d55ccbd04b60e7aa0efa3cdb2038a8e61f54"
     },
     "tollholms": {
-     "snapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",
-     "servedGridSha256": "3b98a123030a6df8d772c5a0fe5e37fae78234993de276edcf246a0b7a6584be"
+     "snapshotSha256": "fdb530269590516a59599e93e65d9d334dd39c3ca9f5f977578cb8ac0a59a407",
+     "servedGridSha256": "f9fd894ce8d8ca81a40349755f1381094031edfb4b87d14c3aa5a115b625ea96"
     }
    }
   },
@@ -225,8 +226,8 @@
    "originMetres": -100.0,
    "width": 1902,
    "height": 1902,
-   "openTiles": 242166,
-   "sha256": "3b98a123030a6df8d772c5a0fe5e37fae78234993de276edcf246a0b7a6584be"
+   "openTiles": 237882,
+   "sha256": "f9fd894ce8d8ca81a40349755f1381094031edfb4b87d14c3aa5a115b625ea96"
   },
   "note": "kit solids carry no client collision (the wrappers that name them are not meshes); the served grid blocks them"
  },
@@ -501,8 +502,8 @@
  ],
  "provenance": {
   "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
-  "snapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",
-  "sceneSha256": "5a6538eb7c201182676f5aecde6282c11683681696b32eba35f1afab2cbd27ba"
+  "snapshotSha256": "fdb530269590516a59599e93e65d9d334dd39c3ca9f5f977578cb8ac0a59a407",
+  "sceneSha256": "96341027aee45d5c3a0298bae966c1e62a668237eebd2e07eab092c2652720e2"
  },
  "externalResources": {
   "../../_continent_v2/shared-assets/0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630.png": "0124bfa5b5c25908af99e832239ad2804211846a585b225946ec0cd2331d6630",
@@ -8492,7 +8493,7 @@
    "styleVersion": 4,
    "chunksSha256": "5e096458c2ff4e95888a89dd59c7781e148aca9a3512349ad656eac8d6b5135c",
    "neighbourChunksSha256": {
-    "sw_isle": "73f973ef300b514f676d1d03f48625dae3adf10a7cd4bcaf991e8d498f01751a"
+    "sw_isle": "ba53459be35b725b9863b9f4b67ad55ffa760fa343289aab1ae99feb7f3886e6"
    },
    "supersample": 2,
    "windowMetres": 256,

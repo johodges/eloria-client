@@ -762,21 +762,10 @@ const TAME_VALUE_FROM := Vector2(0.5, 0.9)
 ## phase. Gentle: the camera is 26 m away.
 const CROWN_SWAY_METRES := 0.07
 const CROWN_SWAY_SPEED := 1.1
-## A crown dissolves near the camera: gone nearer than x metres of view
-## depth, dithered one pixel at a time up to y, whole beyond. At the default
-## framing (pitch -60, 26 m) the player stands 26 m deep, a crown 20 m up over
-## them about 9 m, and one rising between the camera and them nearer still:
-## those drew as opaque leaf cards over a third of vs_road, cw_border_ss and
-## aw_deep_grove (measured with the depth debug view: the banyans and palms
-## in vs_road's and sr_border's upper frame at 10-15 m, cw_border_ss's oak
-## nearer than 10 m). A 12 m tree beside the player tops out about 15.5 m
-## deep and stays whole, and the low views (pitch -30 and -20) see the trees
-## round the player 18 m deep or more. The cut is clean, x equal to y: a
-## dithered band from 13 to 15.5 m drew the crowns in it as one-pixel grain
-## (hf95 15 to 84 at cw_border_ss, 34 to 64 at sr_border), the window-screen
-## look the first fade had; cut at one depth, the leaf cards end in their own
-## ragged edges.
-const CROWN_NEAR_FADE_METRES := Vector2(14.5, 14.5)
+## Camera distance alone must not hide a tree beside the player. Disable the
+## independent crown/trunk depth cut; OccluderFade owns player visibility and
+## opens a hole only in geometry that actually obstructs the character.
+const CROWN_NEAR_FADE_METRES := Vector2.ZERO
 ## ELORIA_LOOK_FOLIAGE_DEBUG=1 draws every painted crown flat by its view
 ## depth (red nearer than 10 m, yellow to 15, green to 20, blue beyond) with
 ## no near fade, for telling which crowns a frame's canopy is and how far.

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "sources": {
     "profile": "eloria",
-    "recipesSha256": "ff4684b4fa950c4f4117560fe2c2c89df0f77f0f39bd25b7a5f675bbfa52ceb1",
+    "recipesSha256": "1c75398e80b659ff75e125a6080a153595fb3e2724f2c67d45cc0038307f668a",
     "itemsSha256": "caa0563aaf2626bb486c7cdec0907b0ec0fe41c33601ec8b3560714341ad1859",
     "booksSha256": "dbaf97061c7578ece676a3d6ff122d25af0bb69a01d4c4bcec9b16653df00329"
   },
@@ -32892,6 +32892,47 @@
           "name": "Toadstool",
           "quantity": 1,
           "imageId": 107,
+          "ambiguousImage": false,
+          "imageAliases": []
+        }
+      ],
+      "tools": [
+        {
+          "name": "Mortar and Pestle",
+          "quantity": 1,
+          "imageId": 8,
+          "ambiguousImage": false,
+          "imageAliases": []
+        }
+      ]
+    },
+    {
+      "id": 540,
+      "skill": "potion",
+      "output": "Bandage",
+      "outputImageId": 56,
+      "level": 0,
+      "animalNexus": 0,
+      "experience": 5,
+      "food": 1,
+      "mana": 0,
+      "knowledge": "",
+      "knowledgeIndex": -1,
+      "ingredients": [
+        {
+          "name": "Sage",
+          "quantity": 2,
+          "imageId": 101,
+          "ambiguousImage": true,
+          "imageAliases": [
+            "Rosemary",
+            "Sage"
+          ]
+        },
+        {
+          "name": "Cloth Roll",
+          "quantity": 1,
+          "imageId": 36,
           "ambiguousImage": false,
           "imageAliases": []
         }

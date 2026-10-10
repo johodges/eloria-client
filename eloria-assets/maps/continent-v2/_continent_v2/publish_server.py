@@ -57,9 +57,11 @@ Checks, all fail closed (nothing is relocated; a row is moved in its source, nev
 - every row's tile and its eight neighbours are open on the served grid after storage erosion (the server's
   eloria.collision.with_storage_collision) and reached from some map's arrival over the land crossings (portal
   triggers are stepped onto and fire, never walked across) with every NPC post closed, as the server blocks the tile
-  an NPC stands on (an NPC's own post need only be open ground): spawns, harvest nodes, NPC posts (new and re-homed),
+  an NPC stands on (an NPC's own post need only be open ground; a harvest node's own tile is closed, as the node is a
+  body, and only its ring is judged): spawns, harvest nodes, NPC posts (new and re-homed),
   interactives, the ferry trigger, the arrivals and home points, every landing target, approach and cast post, and
-  every quest stage tile; every lane's departure and arrival are reached;
+  every quest stage tile (a landing target on a node, like one on a post, is walked to an approach tile); every
+  lane's departure and arrival are reached;
 - a spawn's creature exists, is passive, and its footprint fits (eloria.collision.erode_for_footprint);
 - every row lies inside its own map's ownership polygon;
 - object ids are unique per map across nodes and interactives, positive and below the exits' 60000;
@@ -415,9 +417,10 @@ class Checker:
         self.ground = codes if ground is None else ground
         self.failures = []
 
-    def ring(self, region, tile, kind, identity, *, ring=True, polygon=True, post=False):
+    def ring(self, region, tile, kind, identity, *, ring=True, polygon=True, post=False, body=False):
         """The tile and (ring) its eight neighbours open and reached; a `post` (an NPC's own tile, which no walker
-        enters) need only be open ground, its neighbours reached."""
+        enters) need only be open ground, its neighbours reached; a `body` (a harvest node's own tile, which the
+        served grid closes: export_collision.harvest_mask) is judged by its neighbours alone."""
         frame = self.frames[region]
         x, y = int(tile[0]), int(tile[1])
         problems = []
@@ -432,6 +435,8 @@ class Checker:
             blocked, unreached = [], []
             for dx, dy in offsets:
                 nx, ny = x + dx, y + dy
+                if body and not (dx or dy):
+                    continue
                 if post and not (dx or dy):
                     if not self.ground[region][ny, nx]:
                         blocked.append([nx, ny])
@@ -562,6 +567,8 @@ def compose(ctx, *, log=say):
             nodes.append({"map": region, "id": object_id, "marker": identity, "tile": rec["tile"],
                           "resource": plain_field(resource, identity)})
     nodes.sort(key=lambda n: (regions.index(n["map"]), n["id"]))
+    # A node is a body on its tile (export_collision.harvest_mask closes it): harvested from its ring, never stood on.
+    node_tiles = {(n["map"], tuple(n["tile"])): n["marker"] for n in nodes}
     # NPCs: the new people (npcs.txt) and the re-homed (home_npcs.txt).
     new_people, rehomed = [], []
     for region in regions:
@@ -661,11 +668,12 @@ def compose(ctx, *, log=say):
         raise PublishError(f"landing targets without a marker: {missing}")
     for key, entry in targets.items():
         tile = tuple(entry["tile"])
-        if (lmap, tile) in npc_posts or (lmap, *tile) in triggers:
+        if (lmap, tile) in npc_posts or (lmap, *tile) in triggers or (lmap, tile) in node_tiles:
             entry["approach"] = approach_for(lmap, tile, entry.get("radius", 3), walk, reached, npc_posts, triggers,
                                              ctx.frames)
             entry["why"] = (f"{npc_posts[(lmap, tile)]} stands on the target tile" if (lmap, tile) in npc_posts
-                            else "a walk-over trigger is on the target tile")
+                            else f"harvest node {node_tiles[(lmap, tile)]} is on the target tile"
+                            if (lmap, tile) in node_tiles else "a walk-over trigger is on the target tile")
     cast = [{"name": p["name"], "tile": p["tile"]} for p in rehomed if p["map"] == lmap]
     landing_arrival = marker(lmap, land["arrival"])["tile"]
     by_marker = {r["id"]: r for r in interactive_rows if r["map"] == lmap}
@@ -700,7 +708,7 @@ def compose(ctx, *, log=say):
             del check.failures[before:]
     for n in nodes:
         before = len(check.failures)
-        check.ring(n["map"], n["tile"], "node", n["id"])
+        check.ring(n["map"], n["tile"], "node", n["id"], body=True)
         if in_pocket("node", n["map"], n["id"]):
             pocket.extend(check.failures[before:])
             del check.failures[before:]
@@ -726,15 +734,16 @@ def compose(ctx, *, log=say):
             check.ring(region, tile, "home", role)
     check.ring(lmap, landing_arrival, "landing", "arrival")
     for key, entry in targets.items():
-        # a target on an NPC's post is judged as the post is (open ground; the walker stands on its approach)
+        # a target on an NPC's post is judged as the post is (open ground; the walker stands on its approach), one
+        # on a harvest node as the node is (its ring)
         check.ring(lmap, entry["tile"], "landing", key, ring=("approach" not in entry),
-                   post=(lmap, tuple(entry["tile"])) in npc_posts)
+                   post=(lmap, tuple(entry["tile"])) in npc_posts, body=(lmap, tuple(entry["tile"])) in node_tiles)
         if "approach" in entry:
             check.ring(lmap, entry["approach"], "landing", key + " approach")
     for post in cast:
         check.ring(lmap, post["tile"], "landing", "cast " + post["name"], post=True)
     for key, (region, tile) in stage_tiles.items():
-        check.ring(region, tile, "quest stage", key)
+        check.ring(region, tile, "quest stage", key, body=(region, tuple(tile)) in node_tiles)
     for source, x, y, destination, ax, ay in lanes:
         if not reached[source][y, x]:
             check.failures.append({"kind": "lane", "id": f"{source}->{destination}", "map": source, "tile": [x, y],

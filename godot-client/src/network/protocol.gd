@@ -253,6 +253,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"mix_window_v1",
 	"market_window_v1",
 	"merchant_window_v1",
+	"merchant_weights_v1",
 	"navigation_hud_v1",
 	"party_window_v1",
 	"perk_catalog_v3",
@@ -1793,6 +1794,16 @@ static func decode_merchant(payload: PackedByteArray) -> Dictionary:
 		entry["name"] = str(entry_name.value)
 		offset = int(entry_name.offset)
 		items.append(entry)
+	# Negotiated merchant_weights_v1 trailer, in the same order as the rows.
+	if offset < payload.size():
+		if offset + 2 > payload.size() or u16(payload, offset) != items.size():
+			return {"type": "invalid", "error": "merchant_weights_count"}
+		offset += 2
+		if offset + items.size() * 4 != payload.size():
+			return {"type": "invalid", "error": "merchant_weights_length"}
+		for entry: Dictionary in items:
+			entry["emu"] = u32(payload, offset)
+			offset += 4
 	if offset != payload.size():
 		return {"type": "invalid", "error": "merchant_trailing"}
 	return {"type": "merchant", "actor_id": actor_id, "npc_name": str(name_field.value),
@@ -2920,7 +2931,7 @@ static func decode_lantern(payload: PackedByteArray, logical_coordinates := fals
 		return {"type":"invalid", "error":"lantern_version"}
 	if value.has("ring_training") and not value.ring_training is bool:
 		return {"type":"invalid", "error":"ring_training"}
-	if value.has("tutorial") and value.tutorial not in ["second_bell", "borrowed_sky", "followup", "signed_ashore"]:
+	if value.has("tutorial") and value.tutorial not in ["second_bell", "borrowed_sky", "followup", "signed_ashore", "watchpost"]:
 		return {"type":"invalid", "error":"tutorial_kind"}
 	# Signed Ashore, the landing isle's chapter: its four countersigns
 	# (grove/temple/gate/light) stand in for the Lantern's flags below. The
@@ -2928,6 +2939,9 @@ static func decode_lantern(payload: PackedByteArray, logical_coordinates := fals
 	# dictionary or bool is a script error, not false.
 	if value.get("tutorial", "") == "signed_ashore" and bool(value.active) and not (value.get("chapter") is String and value.chapter == "SIGNED ASHORE"):
 		return {"type":"invalid", "error":"signed_ashore_chapter"}
+	if value.get("tutorial", "") == "watchpost" and bool(value.active):
+		if not (value.get("chapter") is String and value.chapter == "HELP FOR THE WATCHPOST") or not value.get("paused") is bool:
+			return {"type":"invalid", "error":"watchpost_state"}
 	if value.get("tutorial", "") == "followup" and bool(value.active):
 		for key in ["adventure", "guide"]:
 			if not value.get(key) is String:

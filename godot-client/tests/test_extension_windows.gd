@@ -51,6 +51,8 @@ func _run() -> void:
 		"clearing the waypoint hides the navigation HUD rather than freezing it")
 
 	# 227 combat HUD, including the defeat that ends the engagement.
+	# Saved player preferences must not suppress this fixture's combat window.
+	windows.call("set_combat_hud_enabled", true)
 	app_state.call("_on_packet", 227, _hex(
 		"016600120014001e002c00050052656564686f726e205374616700"))
 	await process_frame
@@ -253,6 +255,20 @@ func _run() -> void:
 	await process_frame
 	_expect(windows.merchant_list.get_item_text(0).contains("12"),
 		"switching to sell shows the sell price instead")
+	windows._on_merchant_mode("buy")
+	_expect(windows.merchant_quantity is LineEdit,
+		"merchant quantity is directly editable")
+	windows.merchant_quantity.text = "37"
+	_expect(windows._merchant_trade_command() == "#shop buy 91 0 37",
+		"buy sends an exact typed quantity outside the old preset ladder")
+	windows._on_merchant_mode("sell")
+	_expect(windows._merchant_trade_command() == "#shop sell 91 0 37",
+		"sell uses the same exact typed quantity")
+	for invalid: String in ["", "0", "-3", "2.5", "abc", "1000001"]:
+		windows.merchant_quantity.text = invalid
+		_expect(windows._merchant_trade_command().is_empty(),
+			"invalid merchant quantity cannot submit: " + invalid)
+	windows.merchant_quantity.text = "1"
 	windows._on_merchant_mode("buy")
 
 	# 222 marketplace.

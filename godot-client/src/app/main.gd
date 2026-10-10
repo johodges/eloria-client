@@ -72,6 +72,7 @@ const EmotesWindowScript := preload("res://src/ui/emotes_window.gd")
 const RangingWindowScript := preload("res://src/ui/ranging_window.gd")
 const GuildWindowScript := preload("res://src/ui/guild_window.gd")
 const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
+const LoginBackdropScript := preload("res://src/ui/login_backdrop.gd")
 const ReferenceWindowScript := preload("res://src/ui/reference_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 const VramTextures := preload("res://src/world/vram_textures.gd")
@@ -301,6 +302,7 @@ var _pending_purchase: Array[String] = []
 @onready var dialogue_text: RichTextLabel = %DialogueText
 @onready var dialogue_options: VBoxContainer = %DialogueOptions
 @onready var login_background: TextureRect = %LoginBackground
+var start_screen_backdrop: Control
 @onready var login_logo: TextureRect = %LoginLogo
 
 var actor_nodes: Dictionary = {}
@@ -452,6 +454,8 @@ var manufacturing_side: VBoxContainer
 var manufacturing_tool_rows: VBoxContainer
 var manufacturing_quantity: LineEdit
 var manufacturing_source: CheckButton
+var manufacturing_ready_only: CheckButton
+var manufacturing_ready_preference := true
 var manufacturing_queue_rows: VBoxContainer
 var manufacturing_queue_start: Button
 var manufacturing_skill := ""
@@ -1200,6 +1204,8 @@ func _ready() -> void:
 	_randomize_creation_appearance()
 	_update_preview_camera()
 	_apply_eloria_art()
+	start_screen_backdrop = LoginBackdropScript.new()
+	login_background.add_child(start_screen_backdrop)
 	_configure_banner_menu()
 	_apply_eloria_theme()
 	# The crest is deliberately outside the compact login card so the painted
@@ -1570,7 +1576,7 @@ func _on_creation_back_pressed() -> void:
 	creation_panel.hide()
 	_set_login_screen_visible(true)
 
-## The painted waygate and its shader belong only to the login screen. Hiding
+## The painted scenery and its animation belong only to the login screen. Hiding
 ## both together means the ambient pass has no draw cost during creation or in
 ## crowded gameplay scenes.
 func _set_login_screen_visible(value: bool) -> void:
@@ -1581,6 +1587,9 @@ func _set_login_screen_visible(value: bool) -> void:
 
 func _sync_login_logo_visibility() -> void:
 	login_logo.visible = login_panel.visible
+	login_background.visible = login_panel.visible
+	if is_instance_valid(start_screen_backdrop):
+		start_screen_backdrop.set_active(login_panel.visible)
 
 func _on_create_race_item_selected(_index: int) -> void:
 	_populate_creation_sexes()
@@ -4117,6 +4126,7 @@ func _on_state_changed(path: StringName) -> void:
 			# Which actor wears the overhead bar changes with the fight, not
 			# with the actor packets, so it is re-read here as well.
 			_sync_overhead_health()
+			_sync_manufacturing()
 		&"npc_dialogue":
 			_sync_dialogue()
 		&"popup":
@@ -5181,6 +5191,15 @@ func _sync_knowledge() -> void:
 func _build_manufacturing_window() -> void:
 	var content: Node = manufacturing_filter.get_parent()
 	manufacturing_filter.placeholder_text = "Search by name, ingredient or tool"
+	manufacturing_ready_only = CheckButton.new()
+	manufacturing_ready_only.name = "ManufacturingReadyOnly"
+	manufacturing_ready_only.text = "Ready to mix only"
+	manufacturing_ready_only.button_pressed = manufacturing_ready_preference
+	manufacturing_ready_only.toggled.connect(func(pressed: bool) -> void:
+		manufacturing_ready_preference = pressed
+		_sync_manufacturing())
+	content.add_child(manufacturing_ready_only)
+	content.move_child(manufacturing_ready_only, manufacturing_filter.get_index() + 1)
 
 	manufacturing_tabs = HBoxContainer.new()
 	manufacturing_tabs.name = "ManufacturingTabs"
@@ -5215,7 +5234,7 @@ func _build_manufacturing_window() -> void:
 	manufacturing_source.text = "From storage"
 	manufacturing_source.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	manufacturing_source.toggled.connect(func(_pressed: bool) -> void:
-		_sync_manufacturing_detail())
+		_sync_manufacturing())
 	actions.add_child(manufacturing_source)
 	for button: Button in [manufacturing_mix_one, manufacturing_mix_all]:
 		button.get_parent().remove_child(button)
@@ -5367,6 +5386,7 @@ func _manufacturing_tab(text: String, skill: String) -> Button:
 func _sync_manufacturing() -> void:
 	if not manufacturing_panel.visible:
 		return
+	_sync_manufacturing_source()
 	_sync_manufacturing_tabs()
 	manufacturing_list.clear()
 	var filter_text: String = manufacturing_filter.text.strip_edges().to_lower()
@@ -5378,10 +5398,10 @@ func _sync_manufacturing() -> void:
 		if not filter_text.is_empty() and not _manufacturing_searchable(
 				definition).contains(filter_text):
 			continue
-		var availability: Dictionary = manufacturing_catalog.availability(recipe_index,
-			AppState.inventory, AppState.known_knowledge, AppState.stats,
-			AppState.inventory_names)
+		var availability := _manufacturing_availability(recipe_index)
 		var reasons: Array = availability.get("reasons", []) as Array
+		if manufacturing_ready_only.button_pressed and not reasons.is_empty():
+			continue
 		var reason_lines: Array[String] = []
 		for reason_value: Variant in reasons:
 			reason_lines.append(str(reason_value))
@@ -5401,8 +5421,23 @@ func _sync_manufacturing() -> void:
 			manufacturing_list.set_item_icon(item_index, output_icon)
 		if recipe_index == selected_manufacturing_recipe:
 			manufacturing_list.select(item_index)
+	if manufacturing_list.get_selected_items().is_empty():
+		selected_manufacturing_recipe = -1
 	_sync_manufacturing_detail()
 	_sync_manufacturing_queue()
+
+func _manufacturing_availability(recipe_index: int) -> Dictionary:
+	var availability := manufacturing_catalog.availability(recipe_index,
+		AppState.inventory, AppState.known_knowledge, AppState.stats,
+		AppState.inventory_names)
+	var definition := manufacturing_catalog.recipe(recipe_index)
+	if definition.get("skill", "") == "summoning":
+		var nexus := int(definition.get("animalNexus", 0))
+		if int(AppState.stats.get("animal_nexus", 0)) < nexus:
+			availability.reasons.append("Needs Animal Nexus %d" % nexus)
+		if bool(AppState.combat_state.get("active", false)):
+			availability.reasons.append("You cannot summon while in combat")
+	return availability
 
 ## What the search box matches against: the result, the skill, and everything
 ## the recipe consumes or needs to hand. Searching for "hatchet" should find
@@ -5423,7 +5458,8 @@ func _sync_manufacturing_detail() -> void:
 	var definition: Dictionary = manufacturing_catalog.recipe(
 		selected_manufacturing_recipe)
 	if definition.is_empty():
-		manufacturing_detail.text = "Select a recipe to see what it takes."
+		manufacturing_detail.text = ("No recipes match these filters. Check your supplies, tools, food and learned books, or turn off Ready to mix only."
+			if manufacturing_list.item_count == 0 else "Select a recipe to see what it takes.")
 		manufacturing_status.text = manufacturing_server_status
 		_sync_manufacturing_tools([])
 		manufacturing_mix_one.disabled = true
@@ -5452,9 +5488,7 @@ func _sync_manufacturing_detail() -> void:
 	var knowledge: String = str(definition.get("knowledge", ""))
 	if not knowledge.is_empty():
 		lines.append("Knowledge: " + knowledge)
-	var availability: Dictionary = manufacturing_catalog.availability(
-		selected_manufacturing_recipe, AppState.inventory, AppState.known_knowledge,
-		AppState.stats, AppState.inventory_names)
+	var availability := _manufacturing_availability(selected_manufacturing_recipe)
 	var reasons: Array = availability.get("reasons", []) as Array
 	if from_storage:
 		# The client has never been sent the contents of the storage box, so
@@ -5510,6 +5544,14 @@ func _sync_manufacturing_source() -> void:
 		manufacturing_source.set_pressed_no_signal(false)
 	manufacturing_source.tooltip_text = ("Take the ingredients from your storage box"
 		if near else "Stand next to a storage keeper to mix from storage")
+	if manufacturing_ready_only != null:
+		var from_storage := _manufacturing_from_storage()
+		manufacturing_ready_only.disabled = from_storage
+		manufacturing_ready_only.set_pressed_no_signal(
+			manufacturing_ready_preference and not from_storage)
+		manufacturing_ready_only.tooltip_text = (
+			"Storage contents aren't shown here. Switch to your inventory to filter ready recipes."
+			if from_storage else "Show recipes you can mix with your carried supplies, tools and learned books")
 
 ## One row per tool, and a way to fix a missing one without leaving.
 ##
@@ -9535,14 +9577,13 @@ func _apply_graphics_quality() -> void:
 	_update_border_lighting()
 	print("look_quality stage=applied quality=", LookProfile.quality_name(LookProfile.quality()))
 
-## Keep the entry scene inside the same Low / Medium / High contract as actor
-## meshes. Low is a static painting, Medium retains a restrained breath, and
-## High enables the full (still single-sample) parallax and portal pulse.
+## Quality tunes the fallback painting's lightweight drift. Video playback is
+## controlled by the entry screen's saved Animate switch at every quality.
 func _apply_login_backdrop_quality() -> void:
+	var level := clampi(int(LookProfile.quality()), 0, 2)
 	var backdrop_material := login_background.material as ShaderMaterial
 	if backdrop_material == null:
 		return
-	var level := clampi(int(LookProfile.quality()), 0, 2)
 	var animation_strengths: Array[float] = [0.0, 0.55, 1.0]
 	var motion_amounts: Array[float] = [0.0, 0.0012, 0.0024]
 	backdrop_material.set_shader_parameter("animation_strength",
@@ -11227,6 +11268,7 @@ func _sync_dialogue() -> void:
 		else str(dialogue.get("name", "NPC")))
 	dialogue_text.text = str(dialogue.get("text", ""))
 	for child: Node in dialogue_options.get_children():
+		dialogue_options.remove_child(child)
 		child.queue_free()
 	var raw_options: Variant = dialogue.get("options", [])
 	var valid_options: Array[Dictionary] = []
@@ -11246,6 +11288,7 @@ func _sync_dialogue() -> void:
 		button.pressed.connect(_on_dialogue_option.bind(
 			int(option.get("actor_id", -1)), int(option.get("response_id", -1))))
 		dialogue_options.add_child(button)
+	OldcraftDialogueStyleScript.layout_content(self)
 
 func _on_dialogue_option(actor_id: int, response_id: int) -> void:
 	if actor_id < 0 or response_id < 0:
@@ -11703,7 +11746,7 @@ func _cursor_context_at(viewport_position: Vector2) -> Dictionary:
 
 func _apply_eloria_art() -> void:
 	login_background.texture = _external_texture(
-		"res://assets/ui/eloria_login_waygate_background.jpg")
+		"res://assets/ui/eloria_login_landfall_background.png")
 	%CreationBackdrop.texture = _external_texture(
 		"res://assets/ui/eloria_character_creation_background.jpg")
 	var logo_texture: Texture2D = _external_texture("res://assets/ui/eloria_logo_master.png")
@@ -11867,9 +11910,8 @@ func _apply_eloria_theme() -> void:
 	# Login and creation keep their own heavier fantasy frame and moonlit
 	# preview stage rather than inheriting the compact in-game HUD chrome.
 	OldcraftEntryStyleScript.apply(self)
-	# NPC communication uses the same forged Eloria materials, but its inset
-	# parchment and speaker plaque follow the reference game's readable quest
-	# hierarchy. The helper only applies static styles; no actor update pays it.
+	# NPC communication uses a shared parchment surface and compact choices.
+	# The helper applies static styles; no actor update pays for this treatment.
 	OldcraftDialogueStyleScript.apply(self)
 
 ## The right rail used to be six separate boxes with gaps between them, so its
@@ -11979,7 +12021,7 @@ static func _style_meter(bar: ProgressBar, color: Color) -> void:
 	bar.add_theme_stylebox_override("fill", fill)
 
 static func _external_texture(path: String) -> Texture2D:
-	if path.begins_with("res://assets/"):
+	if path.begins_with("res://assets/") and ResourceLoader.exists(path):
 		var imported: Resource = ResourceLoader.load(path)
 		if imported is Texture2D:
 			return imported as Texture2D

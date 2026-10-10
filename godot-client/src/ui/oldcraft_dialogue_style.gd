@@ -2,10 +2,9 @@ class_name OldcraftDialogueStyle
 extends RefCounted
 ## Event-driven fantasy styling for the one NPC dialogue window.
 ##
-## Oldcraft's quest and gossip pages establish a clear visual grammar: a dark
-## carved surround, brass edge, named speaker plaque and warm parchment reading
-## surface. Eloria keeps that hierarchy while using its own oxblood accent and
-## diamond sigil. StyleBoxes are retained by their controls after scene setup
+## One parchment surface carries the speaker, copy and compact response rows.
+## A fine brass edge and oxblood quest accent retain Eloria's visual identity
+## without a wide decorative surround. Styles are retained after scene setup
 ## or a dialogue packet; the treatment adds no per-frame or per-actor work.
 
 const GOLD := Color(0.957, 0.773, 0.259, 1.0)
@@ -13,16 +12,12 @@ const GOLD_DARK := Color(0.722, 0.541, 0.231, 1.0)
 const GOLD_BRIGHT := Color(1.0, 0.86, 0.48, 1.0)
 const INK := Color(0.16, 0.095, 0.045, 1.0)
 const WARM_TEXT := Color(0.961, 0.941, 0.878, 1.0)
-const STONE := Color(0.075, 0.071, 0.075, 0.985)
-const STONE_RAISED := Color(0.135, 0.125, 0.12, 1.0)
 const BURGUNDY := Color(0.42, 0.072, 0.045, 1.0)
 const BURGUNDY_HOVER := Color(0.62, 0.12, 0.065, 1.0)
-const QUEST_YELLOW := Color(1.0, 0.82, 0.25, 1.0)
-const TALK_GOLD := Color(0.79, 0.68, 0.47, 1.0)
+const QUEST_YELLOW := BURGUNDY
+const TALK_GOLD := Color(0.40, 0.29, 0.17, 1.0)
 const STYLE_META := &"eloria_oldcraft_dialogue_style"
 const DECORATION_SIGNAL_META := &"eloria_dialogue_decoration_signal"
-const FRAME_TEXTURE := preload(
-	"res://assets/ui/oldcraft_inspired/eloria_carved_frame.png")
 const PARCHMENT_TEXTURE := preload(
 	"res://assets/ui/oldcraft_inspired/eloria_parchment.png")
 
@@ -49,15 +44,15 @@ static func _parchment_box() -> StyleBoxTexture:
 	box.region_rect = Rect2(0.0, (texture_size.y - crop_height) * 0.5,
 		texture_size.x, crop_height)
 	box.modulate_color = Color(0.985, 0.94, 0.84, 1.0)
-	box.set_content_margin_all(20.0)
+	box.set_content_margin_all(0.0)
 	return box
 
 
 static func _sync_decoration_rects(panel: PanelContainer, backdrop: Panel,
 		frame_art: TextureRect) -> void:
 	if backdrop != null:
-		backdrop.position = panel.position + Vector2(50.0, 50.0)
-		backdrop.size = (panel.size - Vector2(100.0, 100.0)).max(Vector2.ONE)
+		backdrop.position = panel.position
+		backdrop.size = panel.size
 	if frame_art != null:
 		frame_art.position = panel.position
 		frame_art.size = panel.size
@@ -78,43 +73,34 @@ static func apply(main: Control) -> void:
 	if panel == null or speaker == null or body == null:
 		return
 
-	# The content host is transparent so it can sit above the relief without a
-	# rectangular fill hiding the carved texture. A separate inset is retained
-	# behind both, supplying the dark interior and one shared drop shadow.
-	var frame := _flat_box(Color.TRANSPARENT, Color.TRANSPARENT, 0, 20, 68.0)
+	# Paper fills the entire window; the content host supplies just a fine edge
+	# and a small inset. The old wide carved art no longer consumes reading room.
+	var frame := _flat_box(Color.TRANSPARENT, GOLD_DARK, 2, 2, 16.0)
+	frame.shadow_color = Color(0.0, 0.0, 0.0, 0.45)
+	frame.shadow_size = 6
 	panel.add_theme_stylebox_override("panel", frame)
 	if backdrop != null:
-		var interior := _flat_box(STONE, Color(0.12, 0.09, 0.055, 1.0), 2,
-			14, 0.0)
-		interior.shadow_color = Color(0.0, 0.0, 0.0, 0.82)
-		interior.shadow_size = 14
-		interior.shadow_offset = Vector2(0.0, 6.0)
-		backdrop.add_theme_stylebox_override("panel", interior)
+		backdrop.add_theme_stylebox_override("panel", _parchment_box())
 	if frame_art != null:
-		frame_art.texture = FRAME_TEXTURE
-		frame_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		frame_art.stretch_mode = TextureRect.STRETCH_SCALE
-		frame_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		frame_art.hide()
 	if not panel.has_meta(DECORATION_SIGNAL_META):
 		# The window drag contract moves only DialoguePanel. Mirror that rect from
 		# its existing change signal so the decorative siblings follow without a
 		# polling process or any work while the window is idle.
 		panel.item_rect_changed.connect(func() -> void:
 			_sync_decoration_rects(panel, backdrop, frame_art))
+		var options := main.get_node_or_null("%DialogueOptions") as VBoxContainer
+		if options != null:
+			options.minimum_size_changed.connect(func() -> void:
+				layout_content(main))
 		panel.set_meta(DECORATION_SIGNAL_META, true)
 
-	var plaque := _flat_box(BURGUNDY, GOLD_DARK, 2, 10, 7.0)
-	plaque.shadow_color = Color(0.0, 0.0, 0.0, 0.55)
-	plaque.shadow_size = 5
-	plaque.shadow_offset = Vector2(0.0, 2.0)
-	speaker.add_theme_stylebox_override("normal", plaque)
-	speaker.add_theme_color_override("font_color", WARM_TEXT)
-	speaker.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.92))
-	speaker.add_theme_constant_override("outline_size", 2)
+	speaker.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	speaker.add_theme_color_override("font_color", INK)
+	speaker.add_theme_constant_override("outline_size", 0)
 	if kicker != null:
 		kicker.add_theme_color_override("font_color", TALK_GOLD)
-		kicker.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.92))
-		kicker.add_theme_constant_override("outline_size", 2)
+		kicker.add_theme_constant_override("outline_size", 0)
 	if divider != null:
 		var rule := StyleBoxFlat.new()
 		rule.bg_color = GOLD_DARK
@@ -122,20 +108,20 @@ static func apply(main: Control) -> void:
 		rule.content_margin_bottom = 1.0
 		divider.add_theme_stylebox_override("separator", rule)
 
-	var page := _parchment_box()
+	var page := StyleBoxEmpty.new()
+	page.set_content_margin_all(2.0)
 	body.add_theme_stylebox_override("normal", page)
 	body.add_theme_stylebox_override("focus", page)
 	body.add_theme_color_override("default_color", INK)
 	body.add_theme_color_override("font_selected_color", Color(0.08, 0.045, 0.02, 1.0))
 	body.add_theme_color_override("selection_color", Color(0.78, 0.58, 0.24, 0.45))
 	body.add_theme_font_size_override("normal_font_size", 16)
-	body.add_theme_constant_override("line_separation", 3)
+	body.add_theme_constant_override("line_separation", 1)
 	if instruction != null:
-		instruction.add_theme_color_override("font_color", GOLD)
-		instruction.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.9))
-		instruction.add_theme_constant_override("outline_size", 2)
+		instruction.add_theme_color_override("font_color", TALK_GOLD)
+		instruction.add_theme_constant_override("outline_size", 0)
 	if footer != null:
-		footer.add_theme_color_override("font_color", Color(0.66, 0.59, 0.47, 1.0))
+		footer.add_theme_color_override("font_color", TALK_GOLD)
 	layout(main)
 	main.set_meta(STYLE_META, true)
 
@@ -160,22 +146,39 @@ static func layout(main: Control) -> void:
 	var left := minf(32.0, maxf(16.0, available.x - width - 16.0))
 	var top := minf(128.0, maxf(16.0, available.y - height - 24.0))
 	panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	# Clear the old content minimum before shrinking for a shorter viewport.
+	if body != null:
+		body.custom_minimum_size.y = 0.0
+	if options_scroll != null:
+		options_scroll.custom_minimum_size.y = 0.0
 	panel.position = Vector2(left, top)
 	panel.size = Vector2(width, height)
-	# Keep one fixed window-layer triplet: dark inset, carved art, interactive
-	# content. This is recalculated only when the app already performs layout.
+	# The paper sibling follows the established draggable content panel.
 	if backdrop != null:
 		backdrop.z_index = 19
 	if frame_art != null:
 		frame_art.z_index = 20
 	panel.z_index = 21
 	_sync_decoration_rects(panel, backdrop, frame_art)
+	layout_content(main)
+
+
+static func layout_content(main: Control) -> void:
+	var panel := main.get_node_or_null("%DialoguePanel") as PanelContainer
+	var body := main.get_node_or_null("%DialogueText") as RichTextLabel
+	var options_scroll := main.get_node_or_null("%DialogueOptionsScroll") as ScrollContainer
+	var options := main.get_node_or_null("%DialogueOptions") as VBoxContainer
+	if panel == null:
+		return
+	var room := maxf(1.0, panel.size.y - 132.0)
 	if body != null:
-		body.custom_minimum_size.y = maxf(80.0, height - 420.0)
-	if options_scroll != null:
-		# A bounded response region keeps unusually branchy conversations inside
-		# the dialogue frame. Scrolling is idle until the authored choices need it.
-		options_scroll.custom_minimum_size.y = clampf(height * 0.2, 64.0, 112.0)
+		body.custom_minimum_size.y = minf(80.0, room * 0.3)
+	if options_scroll != null and options != null:
+		# Short choice lists use only their actual height. Longer lists can use
+		# almost half the available space; the text receives the remaining room.
+		options_scroll.size_flags_vertical = Control.SIZE_FILL
+		options_scroll.custom_minimum_size.y = minf(
+			options.get_combined_minimum_size().y, room * 0.45)
 
 
 static func update_state(main: Control, quest: bool, quest_id: int,
@@ -209,7 +212,7 @@ static func sync_visibility(main: Control, visible: bool) -> void:
 		if panel != null:
 			panel.z_index = 21
 			frame_art.z_index = 20
-		frame_art.visible = visible
+		frame_art.hide()
 	if backdrop != null:
 		backdrop.z_index = 19
 		backdrop.visible = visible
@@ -223,27 +226,26 @@ static func style_option(button: Button, quest: bool, index: int) -> void:
 	if button == null:
 		return
 	var primary := quest and index == 0
-	var normal := _flat_box(BURGUNDY if primary else STONE_RAISED,
-		GOLD if primary else GOLD_DARK, 3 if primary else 2, 12, 9.0)
-	var hover := _flat_box(BURGUNDY_HOVER, GOLD_BRIGHT, 3, 12, 9.0)
+	var normal := _flat_box(BURGUNDY if primary else Color(0.94, 0.86, 0.69, 0.4),
+		GOLD_DARK, 2 if primary else 1, 4, 5.0)
+	var hover := _flat_box(BURGUNDY_HOVER, GOLD_DARK, 2, 4, 5.0)
 	var pressed := _flat_box(Color(0.25, 0.035, 0.022, 1.0),
-		Color(0.72, 0.48, 0.16, 1.0), 3, 12, 9.0)
+		Color(0.72, 0.48, 0.16, 1.0), 2, 4, 5.0)
 	for box: StyleBoxFlat in [normal, hover, pressed]:
-		box.shadow_color = Color(0.0, 0.0, 0.0, 0.58)
-		box.shadow_size = 4
-		box.shadow_offset = Vector2(0.0, 2.0)
 		box.border_blend = true
 	button.add_theme_stylebox_override("normal", normal)
 	button.add_theme_stylebox_override("hover", hover)
 	button.add_theme_stylebox_override("pressed", pressed)
 	button.add_theme_stylebox_override("hover_pressed", pressed)
-	button.add_theme_stylebox_override("focus", hover)
-	button.add_theme_color_override("font_color", WARM_TEXT)
+	button.add_theme_stylebox_override("focus",
+		_flat_box(Color.TRANSPARENT, BURGUNDY_HOVER, 2, 4, 5.0))
+	button.add_theme_color_override("font_color", WARM_TEXT if primary else INK)
 	button.add_theme_color_override("font_hover_color", GOLD_BRIGHT)
 	button.add_theme_color_override("font_pressed_color", GOLD)
 	button.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.88))
-	button.add_theme_constant_override("outline_size", 2)
+	button.add_theme_constant_override("outline_size", 0)
 	button.add_theme_font_size_override("font_size", 15)
-	button.custom_minimum_size.y = 44.0
+	button.custom_minimum_size.y = 32.0
+	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT

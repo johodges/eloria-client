@@ -215,7 +215,7 @@ func _validate_actor(actor: ReplicatedActor3D, label: String, hair_style := 0) -
 	# model, and the map dot alone is 15 units across -- measuring them here
 	# failed the placeholder check on every body, shipped ones included.
 	var furniture: Array[String] = ["SelectionRing", "HealthBarBackground",
-		"HealthBarFill", "MapDot", "MapDotOutline"]
+		"HealthBarFill", "OverheadBackground", "MapDot", "MapDotOutline"]
 	for node_value: Node in actor.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
 		mesh_names.append(mesh_node.name)

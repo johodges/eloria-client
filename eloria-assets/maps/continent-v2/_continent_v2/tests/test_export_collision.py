@@ -3,7 +3,8 @@
 Two square maps, "west" and "east", meet along continent x 100 on one shared terrain function (as the isles' bakes
 are crops of one base): flat ground at 10 m carrying a 0.65 ramp along the diagonal, a 0.66 ramp, a sea inlet and a
 wadeable shelf, a walk deck 3 m over its bed and a lake on the west; a solid box, a box on the border, a box whose
-body reaches 1.4 m over the border onto the west's own ground, a deep and a shallow river and a plateau at 104.8 m
+body reaches 1.4 m over the border onto the west's own ground, three open (not watertight) wall rings - a house, a
+house with a doorway and a parapet round its own deck - a deep and a shallow river and a plateau at 104.8 m
 (code 4096) on the east. A third, one-map group stands at -96.8 m and -93.6 m
 (codes 64 and 128) under a sea level below them.
 
@@ -42,6 +43,10 @@ BORDER_BOX = (100.2, 101.8, 54.0, 56.0)
 STRADDLE_BOX = (98.6, 101.4, 48.0, 50.0)   # an east placement 1.4 m over the border onto west's own ground
 DEEP_RIVER = ((110.0, 46.0), (150.0, 46.0), 4.0, 11.0)        # from, to, width, surface: 1 m deep
 SHALLOW_RIVER = ((110.0, 30.0), (150.0, 30.0), 3.0, 10.2)     # 0.2 m deep: wadeable
+HOUSE = (104.0, 110.0, 4.0, 10.0)          # four walls, no roof or floor: a Meshy shell
+DOORWAY_HOUSE = (104.0, 110.0, 14.0, 20.0)  # the same with a 2.8 m doorway in its south wall
+PARAPET = (113.0, 119.0, 4.0, 10.0)        # a 1 m wall round the placement's own deck
+HARVEST = (126.5, 20.5)                    # a harvest node on open flat ground, continent metres
 
 
 def ground(x, z):
@@ -89,6 +94,17 @@ def box(x0, x1, z0, z1, y0, y1):
     return v[np.array(faces)]
 
 
+def walls(x0, x1, z0, z1, y0, y1, gap=None):
+    """Four vertical walls round a rectangle, open top and bottom (so not a closed mesh); gap (xa, xb) leaves a
+    doorway in the south (z0) wall."""
+    def wall(a, b):
+        (ax, az), (bx, bz) = a, b
+        return [[[ax, y0, az], [bx, y0, bz], [bx, y1, bz]], [[ax, y0, az], [bx, y1, bz], [ax, y1, az]]]
+    south = [((x0, z0), (gap[0], z0)), ((gap[1], z0), (x1, z0))] if gap else [((x0, z0), (x1, z0))]
+    sides = south + [((x1, z0), (x1, z1)), ((x1, z1), (x0, z1)), ((x0, z1), (x0, z0))]
+    return np.array([t for a, b in sides for t in wall(a, b)], float)
+
+
 def local(frame, triangles):
     return np.asarray(triangles, float) - np.asarray(frame.translation)
 
@@ -112,13 +128,21 @@ def fixture_territories():
         WEST, [[40.0, 0.0], [100.0, 0.0], [100.0, 60.0], [40.0, 60.0]],
         lakes=[{"id": "lake", "center": [lx - 70.0, lz - 30.0], "radii": [rx, rz], "level": level}],
         walk=local(WEST, rectangle(*DECK)), spawn=(60.0 - 70.0, 30.0 - 30.0))
+    nothing = np.zeros((0, 3, 3))
+    parapet_deck = local(EAST, rectangle(*PARAPET, 10.0))
     east = territory(
         EAST, [[100.0, 0.0], [160.0, 0.0], [160.0, 60.0], [100.0, 60.0]],
         rivers=[river(EAST, *DEEP_RIVER), river(EAST, *SHALLOW_RIVER)],
-        solids=[("box", [(local(EAST, box(*BOX, 10.0, 13.0)), True)]),
-                ("border-box", [(local(EAST, box(*BORDER_BOX, 10.0, 13.0)), True)]),
-                ("straddle-box", [(local(EAST, box(*STRADDLE_BOX, 10.0, 13.0)), True)])],
-        spawn=(130.0 - 130.0, 22.0 - 30.0))
+        walk=parapet_deck,
+        solids=[("box", [(local(EAST, box(*BOX, 10.0, 13.0)), True)], nothing),
+                ("border-box", [(local(EAST, box(*BORDER_BOX, 10.0, 13.0)), True)], nothing),
+                ("straddle-box", [(local(EAST, box(*STRADDLE_BOX, 10.0, 13.0)), True)], nothing),
+                ("house", [(local(EAST, walls(*HOUSE, 10.0, 13.0)), False)], nothing),
+                ("doorway-house", [(local(EAST, walls(*DOORWAY_HOUSE, 10.0, 13.0, gap=(105.6, 108.4))), False)],
+                 nothing),
+                ("parapet", [(local(EAST, walls(*PARAPET, 10.0, 11.0)), False)], parapet_deck)],
+        spawn=(130.0 - 130.0, 22.0 - 30.0),
+        harvest_tiles=[EAST.tile_of_continent(*HARVEST)])
     return [west, east]
 
 
@@ -226,6 +250,56 @@ def test_a_solid_blocks(exported, codec):
     assert all(code_at(codes, EAST, x, z) == 0 for x in np.arange(x0 + .5, x1) for z in np.arange(z0 + .5, z1))
     assert code_at(codes, EAST, x0 - 1.5, z0 + 1.5) and code_at(codes, EAST, x1 + 1.5, z0 + 1.5)
     assert exported["report"]["maps"]["east"]["exportStatistics"]["structuralCells"] >= 64
+
+
+def test_an_open_shell_blocks_the_ground_it_walls_in(exported, codec):
+    """A Meshy house is a shell of walls with no floor or roof (not a closed mesh): its walls alone would leave a
+    walkable room inside a ring, so the ground the ring encloses is blocked too."""
+    _grid, codes = served(exported, "east", codec)
+    x0, x1, z0, z1 = HOUSE
+    assert all(code_at(codes, EAST, x, z) == 0 for x in np.arange(x0 + .5, x1) for z in np.arange(z0 + .5, z1))
+    assert code_at(codes, EAST, x1 + 1.5, z0 + 2.5) and code_at(codes, EAST, x0 + 2.5, z1 + 1.5)
+
+
+def test_a_shell_with_a_way_out_or_its_own_deck_inside_stays_open(exported, codec):
+    """Ground a doorway lets out of is not walled in, and a placement's own walk surface inside its parapet (a pier or
+    causeway deck) stays a walk surface."""
+    _grid, codes = served(exported, "east", codec)
+    x0, x1, z0, z1 = DOORWAY_HOUSE
+    assert all(code_at(codes, EAST, x, z) for x in (106.5, 107.5) for z in (z0 - .5, z0 + .5, z0 + 2.5, z1 - 2.5))
+    x0, x1, z0, z1 = PARAPET
+    assert all(code_at(codes, EAST, x, z) for x in np.arange(x0 + 1.5, x1 - 1) for z in np.arange(z0 + 1.5, z1 - 1))
+    assert code_at(codes, EAST, x0 + .5, z0 + 2.5) == 0                 # the parapet itself still blocks
+
+
+def test_a_harvest_node_blocks_its_own_tile_and_is_harvested_from_its_ring(exported, codec):
+    _grid, codes = served(exported, "east", codec)
+    x, z = HARVEST
+    assert code_at(codes, EAST, x, z) == 0
+    assert all(code_at(codes, EAST, x + dx, z + dz) for dx in (-1, 0, 1) for dz in (-1, 0, 1) if dx or dz)
+    assert exported["report"]["maps"]["east"]["exportStatistics"]["harvestNodeTiles"] == 1
+
+
+def test_a_solid_tree_blocks_its_trunk_not_its_crown():
+    """A leaning palm: a 0.3 m trunk standing 2 m off the model's origin, under a frond crown that droops to 1 m over
+    a 3 m radius. Made solid, it blocks the trunk's tile and walks under the fronds."""
+    angles = np.linspace(0, 2 * math.pi, 13)[:-1]
+    stem = [[[2 + .3 * math.cos(a), y, .3 * math.sin(a)] for a in angles[k:k + 3]] for k in range(0, 10, 3)
+            for y in (0.0, 1.0, 2.0, 3.0, 4.0)]
+    fronds = [[[2 + r * math.cos(a), 5 - 4 * r / 3, r * math.sin(a)], [2, 5, 0], [2 + r * math.cos(a + .3), 5 - 4 * r / 3,
+               r * math.sin(a + .3)]] for a in angles for r in (1.5, 2.5, 3.0)]
+    group = X.trunk(np.asarray(stem + fronds, float))
+    assert group is not None and len(group) == 1 and group[0][1] is True
+    prism = group[0][0]
+    assert X.CE.closed_mesh(prism)
+    centre = prism.reshape(-1, 3)[:, [0, 2]].mean(axis=0)
+    assert abs(centre[0] - 2) < .05 and abs(centre[1]) < .05
+    floor = np.zeros((24, 24))                                  # 12 m square, cells centred on -6 + (c + .5) / 2
+    blocked = X.CE.structural_mask(group, floor, -6.0, 6.0)
+    rows, cols = np.nonzero(blocked)
+    xs, zs = -6 + (cols + .5) * X.CELL, 6 - (rows + .5) * X.CELL
+    assert len(rows) and np.hypot(xs - 2, zs).max() <= .3 + X.CELL
+    assert X.trunk(np.zeros((0, 3, 3))) is None
 
 
 def test_a_river_ribbon_blocks_and_a_shallow_one_is_waded(exported, codec):

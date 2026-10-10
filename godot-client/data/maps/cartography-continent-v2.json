@@ -11,9 +11,9 @@
     "metresPerPixel": 2.0
   },
   "sources": {
-    "sw_isle": "53c1492adb82d9382113f375d04dbf38c53c1f4afe178cead291244b8bf657ee",
+    "sw_isle": "df941e96e40580b187ef90a4437c7179e776788752198b0ee1c11b77318b1fc0",
     "tollholms": "33ab1dd0ac9570fddb87b72e49319b5b1bc94145e130d1b3e994a1143ed19afb",
-    "gull_skerries": "0a83f8cf69476f85498e6d947b74786db4f4b15d1e308607065b8d07b6ead5ed"
+    "gull_skerries": "0aa0561e13830697fe382c85e54fec24919d174eb3c579e5512ff0e2778ee62b"
   },
   "regions": [
     {

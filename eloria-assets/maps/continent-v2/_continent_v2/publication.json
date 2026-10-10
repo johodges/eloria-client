@@ -20,12 +20,12 @@
     ]
    },
    "bake": {
-    "snapshotSha256": "285b5d14cec512e92953c12926377fd9da84f1aaafa4209b746faa177f84fe81",
-    "sceneSha256": "2b868e8bc6cafe767078466ee462e6a133add51c307123005c905aff8653e38f"
+    "snapshotSha256": "b82544a0d3504458916bb10fe4cdebfd18256edaf609ecb52832004eb63b92c7",
+    "sceneSha256": "4e61457d63f7effb4f74d4ad53ce8bf13c90c06c14409bfddb7812706307eb08"
    },
    "package": {
-    "collisionSha256": "37ee05cdfed6933861ba2a6797d0d564231a758caa44572d97b7578f6964caaf",
-    "servedGridSha256": "77d2ccda4bf21263eb4c09be6adba3683a3206ad9dc9a309fe5bf8cfab70ddd0"
+    "collisionSha256": "8e610f0ab472e8cab16885de39172e1faf8db9121d3f363b9c4f54e352916397",
+    "servedGridSha256": "17cc0fccb7d4b05199e6facc4ff8d55ccbd04b60e7aa0efa3cdb2038a8e61f54"
    },
    "arrival": [
     580,
@@ -37,10 +37,10 @@
     "npcs": 5,
     "homeNpcs": 5,
     "interactives": 2,
-    "laneDepartures": 555
+    "laneDepartures": 546
    },
    "npcPosts": 10,
-   "servedReachTiles": 1479565
+   "servedReachTiles": 1458303
   },
   "tollholms": {
    "frame": {
@@ -59,12 +59,12 @@
     ]
    },
    "bake": {
-    "snapshotSha256": "870f6a36b8e252b9570f6b795d8c8cb831f266be4b73dee30e24538ef2f2ecd0",
-    "sceneSha256": "5a6538eb7c201182676f5aecde6282c11683681696b32eba35f1afab2cbd27ba"
+    "snapshotSha256": "fdb530269590516a59599e93e65d9d334dd39c3ca9f5f977578cb8ac0a59a407",
+    "sceneSha256": "96341027aee45d5c3a0298bae966c1e62a668237eebd2e07eab092c2652720e2"
    },
    "package": {
-    "collisionSha256": "cc8cb3f752147e683d51955d42dede4906cd0c6b336444424528a5c10a301b2a",
-    "servedGridSha256": "3b98a123030a6df8d772c5a0fe5e37fae78234993de276edcf246a0b7a6584be"
+    "collisionSha256": "c6bf567b5d805e9a8a51a7fc9d3c8ac43303d14b19310f628e7d3028e27c4c34",
+    "servedGridSha256": "f9fd894ce8d8ca81a40349755f1381094031edfb4b87d14c3aa5a115b625ea96"
    },
    "arrival": [
     382,
@@ -79,7 +79,7 @@
     "laneDepartures": 313
    },
    "npcPosts": 0,
-   "servedReachTiles": 207516
+   "servedReachTiles": 203309
   },
   "gull_skerries": {
    "frame": {
@@ -98,12 +98,12 @@
     ]
    },
    "bake": {
-    "snapshotSha256": "1b50c3bd7674af83f3a409072afa8cae85bb82ed0d59d49febe0a5d73c74541d",
-    "sceneSha256": "ecf94e4fb4a174449748395680892a923cb62410091306e80474638d4133272f"
+    "snapshotSha256": "05114f6bdde034ccb3e158e2641c43a5765928d1e8351ae9ec278c22e2a50321",
+    "sceneSha256": "0ad21f70113aee75ff95e03ce882947457b75265b5f447e87865a689057d046a"
    },
    "package": {
-    "collisionSha256": "d74477b8dbbd44bf7ac742ee51fcd37ccdce03d4bf6734763aca32daa40cebab",
-    "servedGridSha256": "64e7e986253fd3daee4d790a1f5d3cdd30cf282a7951ac4e368e9dae69e75e6b"
+    "collisionSha256": "487e0f78833c02f7beb26dc12d7d93c682b2bb69731400251b055cbb149a5398",
+    "servedGridSha256": "cf058ae63eae1b6e10a029cf89925a2aec2185515854aea970db93acc0df218e"
    },
    "arrival": [
     858,
@@ -115,21 +115,21 @@
     "npcs": 0,
     "homeNpcs": 0,
     "interactives": 0,
-    "laneDepartures": 242
+    "laneDepartures": 233
    },
    "npcPosts": 0,
-   "servedReachTiles": 18606
+   "servedReachTiles": 18105
   }
  },
  "inputs": {
-  "crossingsSha256": "c2678c5c3970465d17e9ea351032a0c710e9db0452d3263733ee5fcc797986e5",
+  "crossingsSha256": "2bc1973a819e79a778d3899079b1b657e94fbde634bce728446ccdb48cc5de10",
   "contentTables": {
    "eloria-assets/maps/continent-v2/_continent_v2/content/server-rows.json": "affd619e5625276293594cc7a3153ed4f7bb4c91c39c38637e9d432ef1c5568f",
    "eloria-assets/maps/continent-v2/_continent_v2/content/server-tables.json": "0dfb5c3d5b8414124845047a51b2f4efa23f6f8392dcd6405cc9927601fb015e",
    "eloria-assets/maps/continent-v2/_continent_v2/content/questlines.txt": "e56083b720cca73939cd985489e4183e38c5c11de46b2e02909c97176e18e975",
-   "eloria-assets/maps/continent-v2/sw_isle/content/spawns.json": "642f95fdce17da8a40cad1619693f685ea1d9b02b13ed05575f52d34116b69c7",
-   "eloria-assets/maps/continent-v2/gull_skerries/content/spawns.json": "2f38b96c00f60fc81f2cee56b7dca7cf7a663617761b73ef4058665904bf996e",
-   "eloria-assets/maps/continent-v2/tollholms/content/spawns.json": "431c6e3985f332996aae67d256cc92a723333149d23409179749f5ca2c98dd45"
+   "eloria-assets/maps/continent-v2/sw_isle/content/spawns.json": "a2422502744c755e327739d7cb7702327cd2c118c2e38568b00b3d6ee684e331",
+   "eloria-assets/maps/continent-v2/gull_skerries/content/spawns.json": "138f692b15b16f3095bfe7bc0c9f623a72b09df0fd205afeaff017e36fd2cb45",
+   "eloria-assets/maps/continent-v2/tollholms/content/spawns.json": "5a4fdb3402a154ae305905960b24a2ed5b2be62345286b0c0aa55fd01b5ecf38"
   }
  },
  "ferries": [
@@ -151,14 +151,14 @@
  "server": {
   "overlay": {
    "README": "0a3b8522e76f606964bda3f2d4585d805d7242c5024acf773686c43c3c523f1a",
-   "maps.txt": "c4299c352c17b9759454b932214e221d55d20556afff8ee75b012c5f663e9f5f",
-   "spawns.txt": "e4dd923c1d8e77f94c4f9626e194c562a3463a4479bcb178f58b7aa070603e79",
+   "maps.txt": "a04107be0e4ac53a745c16c0d881c25038f7a93614d94eeb501ef8a572f53031",
+   "spawns.txt": "f810f2f5c962b558bce5b708dd6936c6a6b7130cf9b184286a120ff45c78b04a",
    "harvesting.txt": "ab35deaf87b226cfa4b5eeabf8f086742d6e76fb81df18ecda6d59df9cf07537",
    "npcs.txt": "e15ee40cf54f840b54a1c2d895a94369637f89d551a1f9e67c7a997b989db471",
    "interactives.txt": "5d3096710a2b27adcace194e1a10910263037b321c491c2e363cab645e8f691f",
-   "exterior_connections.json": "53dddade0356087f2d3082061faafe01472156b94f76d10f76e54405565fd1a3",
-   "questlines.txt": "6a20b9d774c5d6b5b14eae7dc901a33ebf941e81850ef005a0012b335a5d3cc8",
-   "landing.json": "393f80524a13358069c30f0442806ed77b8ae8625455e67b486e1e9c86ed0d25",
+   "exterior_connections.json": "d7adcb20d76db5880a6198276cf8f9a2569c1faf7bc8ecaa4a6796968a98077e",
+   "questlines.txt": "50c45722f58f11ffa38209f8561999db31eac89ea925f6b14f45d2a19d585ac3",
+   "landing.json": "9756d4b4974006b526eaeaa57e8f462fa6212eca44cb73ca75db11b251be9abb",
    "homes.json": "b15d1eec2a9b9ee153e8c5774708873dc85f51560b2eb73064de9c93cb53cde7",
    "home_npcs.txt": "6bd9148e779f154132a21a807f67146ea0218491740b489f5a2d500f6db2a4a4"
   },
@@ -176,7 +176,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "66e9e0a39205662c9d0a8c55daa8eab907dd873d0f419e63b06b366872999218"
+    "manifestBlockSha256": "2f72f1248edd56a7f94e7a27ea77b9d1bd91ee5e9b61b2d740bf22def962f0ea"
    },
    "m2": {
     "files": [
@@ -192,7 +192,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "0aa75052e4849e13847e116439028a63ffba7c2e47614de917ef9397fb0550f5"
+    "manifestBlockSha256": "981071e88d9c3a07f31754a38671a5b65ea0d2400b73057f411b8031fd11bb9d"
    },
    "m3": {
     "files": [
@@ -208,7 +208,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "e24918297cfa5ef449426f182f70a55398e2729f01201bd5038b29ad17892f24"
+    "manifestBlockSha256": "3a262732dda83f8021a4ed7b8eb416892501d12d7762d7bc7222ae81a4edcdfe"
    },
    "m4": {
     "files": [
@@ -224,14 +224,14 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "8b502218c70566a0d8cc0b8b7915d679f7661b8d9a88f83ac5cf1a8527114387"
+    "manifestBlockSha256": "959014c851327ee48cfe15ff2951b3ad6affb51c3a1bab303eba5dfd3708c1f3"
    }
   },
-  "manifestEntriesSha256": "283bf964779df060a9668cf3bfd692a353a52f8f138691d7459253389e328f4e",
+  "manifestEntriesSha256": "5ab2638094643a0cf67e1d166b65802150ed556a633fdc7e920f7b5058e08aaf",
   "vendored": {
-   "sw_isle": "77d2ccda4bf21263eb4c09be6adba3683a3206ad9dc9a309fe5bf8cfab70ddd0",
-   "tollholms": "3b98a123030a6df8d772c5a0fe5e37fae78234993de276edcf246a0b7a6584be",
-   "gull_skerries": "64e7e986253fd3daee4d790a1f5d3cdd30cf282a7951ac4e368e9dae69e75e6b"
+   "sw_isle": "17cc0fccb7d4b05199e6facc4ff8d55ccbd04b60e7aa0efa3cdb2038a8e61f54",
+   "tollholms": "f9fd894ce8d8ca81a40349755f1381094031edfb4b87d14c3aa5a115b625ea96",
+   "gull_skerries": "cf058ae63eae1b6e10a029cf89925a2aec2185515854aea970db93acc0df218e"
   }
  }
 }

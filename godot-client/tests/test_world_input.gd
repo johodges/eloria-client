@@ -1030,9 +1030,12 @@ func _run() -> void:
 		"GameView/ManufacturingPanel/Content/Columns/ManufacturingSide/ManufacturingDetail") as RichTextLabel
 	var manufacturing_mix_one: Button = main.get_node(
 		"GameView/ManufacturingPanel/Content/Columns/ManufacturingSide/ManufacturingActions/ManufacturingMixOne") as Button
-	# 540 recipes: the 42 hand-authored ones and the 498 the crafting ladder
-	# generates for every wearable, the potion shelf and the base materials.
-	_expect(manufacturing_panel.visible and manufacturing_list.item_count == 540
+	var ready_only: CheckButton = main.get("manufacturing_ready_only") as CheckButton
+	_expect(ready_only.button_pressed and manufacturing_list.item_count > 0
+		and manufacturing_list.item_count < (main.get("manufacturing_catalog") as ManufacturingCatalog).count(),
+		"mixing starts with only currently available recipes")
+	ready_only.button_pressed = false
+	_expect(manufacturing_panel.visible and manufacturing_list.item_count == (main.get("manufacturing_catalog") as ManufacturingCatalog).count()
 		and root.get_visible_rect().encloses(manufacturing_panel.get_global_rect()),
 		"the served recipe catalog opens within the reference viewport: %d"
 			% manufacturing_list.item_count)
@@ -1086,6 +1089,7 @@ func _run() -> void:
 			% manufacturing_list.item_count)
 	manufacturing_filter.text = ""
 	main.call("_sync_manufacturing")
+	main.call("_on_manufacturing_selected", 0)
 
 	# The quantity box is typed into as well as stepped, so it holds digits
 	# and nothing else, and never leaves the range the server would refuse.

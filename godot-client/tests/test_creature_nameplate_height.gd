@@ -59,14 +59,19 @@ func _run() -> void:
 	fox.set_title("Orchard scout")
 	fox.show_speech_bubble("Here!", 1000)
 	var bubble := fox.get_node("SpeechBubble") as Label3D
-	_expect(bubble.font_size == ReplicatedActor3D.SPEECH_BUBBLE_FONT_SIZE
-		and is_equal_approx(bubble.width, ReplicatedActor3D.SPEECH_BUBBLE_WIDTH),
+	_expect(is_equal_approx(bubble.font_size * bubble.pixel_size,
+		ReplicatedActor3D.SPEECH_BUBBLE_FONT_SIZE * ReplicatedActor3D.OVERHEAD_PIXEL)
+		and is_equal_approx(bubble.width * bubble.pixel_size,
+		ReplicatedActor3D.SPEECH_BUBBLE_WIDTH * ReplicatedActor3D.OVERHEAD_PIXEL),
 		"speech uses the wider, readable NPC bubble scale")
 	_expect(bubble.modulate.is_equal_approx(
 			ReplicatedActor3D.SPEECH_BUBBLE_TEXT)
 		and bubble.outline_modulate.is_equal_approx(
 			ReplicatedActor3D.SPEECH_BUBBLE_SURROUND)
-		and bubble.outline_size >= 6,
+		and (bubble.outline_size * bubble.pixel_size
+			>= 6 * ReplicatedActor3D.OVERHEAD_PIXEL
+			or is_equal_approx(bubble.outline_size * bubble.pixel_size,
+				6 * ReplicatedActor3D.OVERHEAD_PIXEL)),
 		"NPC words use cream ink over a low-cost dark surround")
 	_check_block(fox)
 	fox.set_server_scale(3.0)
