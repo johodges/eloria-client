@@ -14,6 +14,7 @@ extends RefCounted
 ## territory-local bounds and metres per pixel, so a pixel maps straight back to
 ## authoring metres and server tiles.
 
+const GEOMETRY := preload("res://addons/map_authoring_workspace/ownership_geometry.gd")
 const Probe := preload("res://addons/map_authoring_usability/terrain_probe.gd")
 const REFERENCE_SCRIPT := preload("res://addons/map_authoring_workspace/reference_preview.gd")
 const MAX_SIDE := 8192
@@ -27,15 +28,14 @@ const MAP_MINIMUM_AMBIENT := 0.9
 ## Frames the territory: returns bounds (territory-local X/Z), image size, the
 ## effective pixels per metre after the MAX_SIDE clamp, and the camera setup.
 static func plan(root: Node3D, pixels_per_metre: float,
-		clip_polygon := PackedVector2Array()) -> Dictionary:
+		clip_polygon: Variant = PackedVector2Array()) -> Dictionary:
 	var bounds := _local_bounds(root)
 	if bounds.is_empty():
 		return {"error": "No authored terrain to frame in this scene."}
 	var rect: Rect2 = bounds.rect
-	if clip_polygon.size() >= 3:
-		var owned := Rect2(clip_polygon[0], Vector2.ZERO)
-		for point in clip_polygon:
-			owned = owned.expand(point)
+	var polygons := GEOMETRY.polygons(clip_polygon)
+	if not polygons.is_empty():
+		var owned := GEOMETRY.bounds(polygons)
 		if rect.intersects(owned):
 			rect = rect.intersection(owned)
 	var ppm := maxf(pixels_per_metre, 0.01)
@@ -72,7 +72,7 @@ static func capture(root: Node3D, path: String, pixels_per_metre: float,
 		return rendered
 	var image: Image = rendered.image
 	var framing: Dictionary = rendered.framing
-	var polygon: PackedVector2Array = rendered.polygon
+	var polygons: Array[PackedVector2Array] = rendered.polygons
 	var absolute := ProjectSettings.globalize_path(path)
 	DirAccess.make_dir_recursive_absolute(absolute.get_base_dir())
 	var save_error := image.save_png(absolute)
@@ -92,7 +92,7 @@ static func capture(root: Node3D, path: String, pixels_per_metre: float,
 			"maxX": rect.end.x, "maxZ": rect.end.y},
 		"heightRange": [framing.min_height, framing.max_height],
 		"includesReferences": include_references,
-		"clippedToOwnership": polygon.size() >= 3,
+		"clippedToOwnership": not polygons.is_empty(),
 		"lighting": time_label,
 		"capturedAt": Time.get_datetime_string_from_system(true) + "Z",
 	}
@@ -109,8 +109,8 @@ static func capture(root: Node3D, path: String, pixels_per_metre: float,
 ## polygon are transparent when `clip_to_ownership` is set.
 static func render(root: Node3D, pixels_per_metre: float, include_references: bool,
 		clip_to_ownership: bool = true) -> Dictionary:
-	var polygon := ownership_polygon_local(root) if clip_to_ownership else PackedVector2Array()
-	var framing := plan(root, pixels_per_metre, polygon)
+	var polygons := ownership_polygons_local(root) if clip_to_ownership else GEOMETRY.polygons([])
+	var framing := plan(root, pixels_per_metre, polygons)
 	if framing.has("error"):
 		return framing
 	if DisplayServer.get_name() == "headless":
@@ -150,13 +150,14 @@ static func render(root: Node3D, pixels_per_metre: float, include_references: bo
 	if image == null or image.is_empty():
 		return {"error": "The renderer returned no image."}
 	image.convert(Image.FORMAT_RGBA8)
-	if polygon.size() >= 3:
+	if not polygons.is_empty():
 		var clipped := Image.create_empty(image.get_width(), image.get_height(), false,
 			Image.FORMAT_RGBA8)
-		clipped.blend_rect_mask(image, ownership_mask(framing, polygon),
+		clipped.blend_rect_mask(image, ownership_mask(framing, polygons),
 			Rect2i(Vector2i.ZERO, image.get_size()), Vector2i.ZERO)
 		image = clipped
-	return {"image": image, "framing": framing, "polygon": polygon}
+	return {"image": image, "framing": framing,
+		"polygon": polygons[0] if not polygons.is_empty() else PackedVector2Array(), "polygons": polygons}
 
 
 ## The pixel a territory-local point lands on in a capture described by `framing`.
@@ -171,50 +172,50 @@ static func pixel_for(framing: Dictionary, local: Vector3) -> Vector2:
 ## territory's continent translation, as the sculpt border uses). Empty when the
 ## scene is not a catalogued territory.
 static func ownership_polygon_local(root: Node3D) -> PackedVector2Array:
-	var result := PackedVector2Array()
+	var polygons := ownership_polygons_local(root)
+	return polygons[0] if not polygons.is_empty() else PackedVector2Array()
+
+
+static func ownership_polygons_local(root: Node3D) -> Array[PackedVector2Array]:
 	for child in root.get_children(true):
 		if not child.has_meta(&"map_authoring_reference_host"):
 			continue
 		var entry: Variant = child.get("active_entry")
 		if not entry is Dictionary:
 			continue
-		var polygon: Variant = (entry as Dictionary).get("ownership_polygon")
-		var translation: Variant = (entry as Dictionary).get("translation")
-		if not polygon is PackedVector2Array or not translation is Vector3:
-			continue
-		var offset := Vector2((translation as Vector3).x, (translation as Vector3).z)
-		for point: Vector2 in polygon as PackedVector2Array:
-			result.append(point - offset)
-		return result
-	return result
+		var translation: Variant = entry.get("translation")
+		if translation is Vector3:
+			return GEOMETRY.local(GEOMETRY.from_entry(entry), translation)
+	return []
 
 
 ## An RGBA mask the size of the capture: opaque inside `polygon` (territory-local
 ## X/Z), transparent outside. Filled one pixel row at a time from the polygon's
 ## edge crossings, so it stays fast for large images.
-static func ownership_mask(framing: Dictionary, polygon: PackedVector2Array) -> Image:
+static func ownership_mask(framing: Dictionary, polygon: Variant) -> Image:
 	var size: Vector2i = framing.size
 	var rect: Rect2 = framing.rect
 	var ppm := float(framing.pixels_per_metre)
 	var mask := Image.create_empty(size.x, size.y, false, Image.FORMAT_RGBA8)
 	mask.fill(Color(0, 0, 0, 0))
-	for row in size.y:
-		var z := rect.position.y + (float(row) + 0.5) / ppm
-		var crossings: Array[float] = []
-		for index in polygon.size():
-			var first := polygon[index]
-			var second := polygon[(index + 1) % polygon.size()]
-			if (first.y <= z and second.y > z) or (second.y <= z and first.y > z):
-				crossings.append(first.x + (z - first.y) * (second.x - first.x) /
-					(second.y - first.y))
-		crossings.sort()
-		for pair in range(0, crossings.size() - 1, 2):
-			var start := ceili((crossings[pair] - rect.position.x) * ppm - 0.5)
-			var finish := floori((crossings[pair + 1] - rect.position.x) * ppm - 0.5)
-			start = clampi(start, 0, size.x)
-			finish = clampi(finish, -1, size.x - 1)
-			if finish >= start:
-				mask.fill_rect(Rect2i(start, row, finish - start + 1, 1), Color(1, 1, 1, 1))
+	for ring in GEOMETRY.polygons(polygon):
+		for row in size.y:
+			var z := rect.position.y + (float(row) + 0.5) / ppm
+			var crossings: Array[float] = []
+			for index in ring.size():
+				var first := ring[index]
+				var second := ring[(index + 1) % ring.size()]
+				if (first.y <= z and second.y > z) or (second.y <= z and first.y > z):
+					crossings.append(first.x + (z - first.y) * (second.x - first.x) /
+						(second.y - first.y))
+			crossings.sort()
+			for pair in range(0, crossings.size() - 1, 2):
+				var start := ceili((crossings[pair] - rect.position.x) * ppm - 0.5)
+				var finish := floori((crossings[pair + 1] - rect.position.x) * ppm - 0.5)
+				start = clampi(start, 0, size.x)
+				finish = clampi(finish, -1, size.x - 1)
+				if finish >= start:
+					mask.fill_rect(Rect2i(start, row, finish - start + 1, 1), Color(1, 1, 1, 1))
 	return mask
 
 

@@ -525,9 +525,9 @@ static func compute_live(root: Node3D, cache: Variant = null, defer := false) ->
 	data.published_solids = (published.get("solids", []) as Array).size()
 	var framing := {"size": Vector2i(width, rows), "rect": Rect2(terrain_origin.x,
 		terrain_origin.z, float(width) * tile, float(rows) * tile), "pixels_per_metre": 1.0 / tile}
-	var polygon := TopDown.ownership_polygon_local(root)
+	var polygon := TopDown.ownership_polygons_local(root)
 	var owned: Image
-	if polygon.size() >= 3:
+	if not polygon.is_empty():
 		owned = TopDown.ownership_mask(framing, polygon)
 	else:
 		owned = Image.create_empty(width, rows, false, Image.FORMAT_RGBA8)

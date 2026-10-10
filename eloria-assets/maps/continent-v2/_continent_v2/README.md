@@ -1,5 +1,13 @@
-# Continent v2 plan
+# Continent v2 section partition
 
-`continent-v2-plan.json` is the macro plan of continent v2, rebuilt from the Meshy model at 8,000 m east-west. It holds the frame, the vertical curve, the source digests, the territories (the island group's three maps so far: `sw_isle`, `tollholms` and `gull_skerries`), their seams, the owner-approved routes and decks (with the territory each stretch lies in), the island water, the landmarks and the owner's decisions.
+Active map IDs, exact polygons and ownership priority come from `partition-inputs/sections_spec.json`; the recorded
+check report has 33 ordinary shared borders. Ravenhead retains both disjoint ownership rings. All editor bases are
+byte crops of the hash-pinned `group-terrain` frozen terrain. Its grid is a data parent outside the active catalog.
+The original plan and catalog are pinned under `partition-inputs` with their source commit and file hashes.
 
-Nothing in the twelve-territory pipeline reads it: `landscape.py`, `ownership_contract.py` and the editor hard-code `nymara-regions/_continent/diagonal-plan.json`. It is written by `godot-client/tools/bootstrap_continent_v2_territory.py`.
+Run `python godot-client/tools/bootstrap_continent_v2_territory.py --check` to replay immutable crop/frame/plan checks.
+The bootstrap does not reset existing authored scenes and preserves gameplay/authority spec fields. Edit those
+scenes normally, then run `python godot-client/tools/continent_v2_territories.py` to validate seams and ownership.
+Do not re-run the original Meshy conditioning. Source kit libraries are shared by catalog metadata; placements
+remain authored content. Original three source editors/packages are staged historical inputs until migration
+removes their physical directories; they have no active catalog references.

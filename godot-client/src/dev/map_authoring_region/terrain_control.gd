@@ -34,6 +34,8 @@ const BIOME_CATALOG_PATH := "res://assets/world/biome_blend/catalog.json"
 ## heights, the bake, the sculpt or any other tool: a viewer wrapper uses them so that maps sharing one grid (the
 ## continent-v2 isle group, whose crops share sw_isle's vertices) each draw their own ground once.
 @export var preview_clip_inside := PackedVector2Array()
+## Authoritative ordered inside components when provided; gaps are not drawn.
+@export var preview_clip_polygons: Array[PackedVector2Array] = []
 @export var preview_clip_outside: Array[PackedVector2Array] = []
 
 var _base_heights := PackedFloat32Array()
@@ -864,7 +866,10 @@ func _build_ground_region_previews() -> void:
 ## row's cell-centre line), so a whole-group grid is masked in a few milliseconds.
 func preview_clip_mask() -> PackedByteArray:
 	var mask := PackedByteArray()
-	var inside_used := preview_clip_inside.size() >= 3
+	var inside_polygons: Array[PackedVector2Array] = preview_clip_polygons
+	if inside_polygons.is_empty() and preview_clip_inside.size() >= 3:
+		inside_polygons = [preview_clip_inside]
+	var inside_used := not inside_polygons.is_empty()
 	var outside_used := false
 	for polygon in preview_clip_outside:
 		outside_used = outside_used or polygon.size() >= 3
@@ -878,7 +883,9 @@ func preview_clip_mask() -> PackedByteArray:
 	var x0 := origin.x + translation.x + 0.5 * cell_metres
 	var z0 := origin.y + translation.z + 0.5 * cell_metres
 	if inside_used:
-		_mark_polygon(mask, preview_clip_inside, x0, z0, columns, rows, 1)
+		for polygon in inside_polygons:
+			if polygon.size() >= 3:
+				_mark_polygon(mask, polygon, x0, z0, columns, rows, 1)
 	for polygon in preview_clip_outside:
 		if polygon.size() >= 3:
 			_mark_polygon(mask, polygon, x0, z0, columns, rows, 0)
@@ -998,7 +1005,7 @@ func _current_signature() -> Array:
 			if FileAccess.file_exists(ProjectSettings.globalize_path(
 				BIOME_CATALOG_PATH)) else "",
 		preview_enabled,
-		preview_uv_metres_inverse, patches, paths, grounds, preview_clip_inside, preview_clip_outside]
+		preview_uv_metres_inverse, patches, paths, grounds, preview_clip_inside, preview_clip_outside, preview_clip_polygons]
 
 
 func _region_paths() -> Array:

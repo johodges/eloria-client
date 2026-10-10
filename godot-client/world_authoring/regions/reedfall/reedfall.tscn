@@ -1,0 +1,95 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_sculpt_layer.gd" id="sculpt"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_pilot/style/map_authoring_surface.gd" id="surface"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_patch.gd" id="patch"]
+[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/terrain-detail-luma.png" id="detail"]
+[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/terrain-detail-normal.png" id="normal"]
+
+[sub_resource type="StandardMaterial3D" id="material"]
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("detail")
+normal_enabled = true
+normal_scale = 0.8
+normal_texture = ExtResource("normal")
+texture_filter = 5
+
+[sub_resource type="Resource" id="surface"]
+resource_local_to_scene = true
+script = ExtResource("surface")
+source_material = SubResource("material")
+
+[sub_resource type="Resource" id="sculpt"]
+resource_local_to_scene = true
+script = ExtResource("sculpt")
+base_sha256 = "5de97269416e2dd0658fbaab79014a6946c0427f28db071836d67cf93df4f224"
+origin = Vector2(-403.0, -323.0)
+grid_size = Vector2i(404, 324)
+cell_metres = 2.0
+indices = PackedInt32Array()
+deltas = PackedFloat32Array()
+
+[node name="reedfall" type="Node3D" groups=["map_authoring_region"]]
+script = ExtResource("region")
+region_id = "reedfall"
+continent_translation = Vector3(1606.0, 0, 7404.0)
+server_origin = Vector2i(347, 267)
+server_cells = Vector2i(696, 696)
+collision_origin_metres = Vector2(-347.0, 267.0)
+ownership_polygon_sha256 = "134660c0e90c9b5430bf2f408ba6d52ae4b440025f55d521cb3f48beca83b409"
+export_directory = "res://../eloria-assets/maps/continent-v2/reedfall/authoring"
+
+[node name="Terrain" type="Node3D" parent="."]
+script = ExtResource("terrain")
+origin = Vector2(-403.0, -323.0)
+grid_size = Vector2i(404, 324)
+cell_metres = 2.0
+base_heights_path = "res://world_authoring/regions/reedfall/base-heights.f32le"
+base_colors_path = "res://world_authoring/regions/reedfall/base-colors.rgba8"
+base_surface = SubResource("surface")
+sculpt_layer = SubResource("sculpt")
+preview_uv_metres_inverse = 0.17
+preview_clip_inside = PackedVector2Array(1307, 7421, 1263, 7601, 1341, 7621, 1379, 7651, 1499, 7667, 1575, 7655, 1575, 7601, 1699, 7581, 1849, 7371, 1949, 7221, 1729, 7201, 1689, 7151, 1609, 7151, 1479, 7141, 1365, 7171, 1405, 7271, 1311, 7323)
+
+[node name="Patches" type="Node3D" parent="Terrain"]
+
+[node name="Ground" type="Node3D" parent="."]
+
+[node name="Regions" type="Node3D" parent="Ground"]
+
+[node name="Roads" type="Node3D" parent="."]
+
+[node name="Rivers" type="Node3D" parent="."]
+
+[node name="WaterRegions" type="Node3D" parent="."]
+
+[node name="Bridges" type="Node3D" parent="."]
+
+[node name="AuthoredAssets" type="Node3D" parent="."]
+
+[node name="Gameplay" type="Node3D" parent="."]
+
+[node name="Spawns" type="Node3D" parent="Gameplay"]
+
+[node name="Portals" type="Node3D" parent="Gameplay"]
+
+[node name="Interactives" type="Node3D" parent="Gameplay"]
+
+[node name="Landmarks" type="Node3D" parent="Gameplay"]
+
+[node name="Harvestables" type="Node3D" parent="Gameplay"]
+
+[node name="NpcMarkers" type="Node3D" parent="Gameplay"]
+
+[node name="AmbientPopulation" type="Node3D" parent="Gameplay"]
+
+[node name="RuntimePoints" type="Node3D" parent="."]
+
+[node name="TerritoryPoints" type="Node3D" parent="RuntimePoints"]
+
+[node name="TutorialTargets" type="Node3D" parent="RuntimePoints"]
+
+[node name="GeneratedPreview" type="Node3D" parent="."]

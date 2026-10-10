@@ -1,0 +1,95 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_sculpt_layer.gd" id="sculpt"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_pilot/style/map_authoring_surface.gd" id="surface"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_patch.gd" id="patch"]
+[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/terrain-detail-luma.png" id="detail"]
+[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/terrain-detail-normal.png" id="normal"]
+
+[sub_resource type="StandardMaterial3D" id="material"]
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("detail")
+normal_enabled = true
+normal_scale = 0.8
+normal_texture = ExtResource("normal")
+texture_filter = 5
+
+[sub_resource type="Resource" id="surface"]
+resource_local_to_scene = true
+script = ExtResource("surface")
+source_material = SubResource("material")
+
+[sub_resource type="Resource" id="sculpt"]
+resource_local_to_scene = true
+script = ExtResource("sculpt")
+base_sha256 = "d1bbdd811b23524d7805f80c349522d0fde60f8882845ef073e71770f6dd8cab"
+origin = Vector2(-660.0, -358.0)
+grid_size = Vector2i(661, 360)
+cell_metres = 2.0
+indices = PackedInt32Array()
+deltas = PackedFloat32Array()
+
+[node name="saltsound" type="Node3D" groups=["map_authoring_region"]]
+script = ExtResource("region")
+region_id = "saltsound"
+continent_translation = Vector3(2059.0, 0, 6521.0)
+server_origin = Vector2i(604, 304)
+server_cells = Vector2i(1212, 1212)
+collision_origin_metres = Vector2(-604.0, 304.0)
+ownership_polygon_sha256 = "2e890f1dbc643a95db3ae3c4e41d9f84a17ff76b66637b45689628a25cdc3b84"
+export_directory = "res://../eloria-assets/maps/continent-v2/saltsound/authoring"
+
+[node name="Terrain" type="Node3D" parent="."]
+script = ExtResource("terrain")
+origin = Vector2(-660.0, -358.0)
+grid_size = Vector2i(661, 360)
+cell_metres = 2.0
+base_heights_path = "res://world_authoring/regions/saltsound/base-heights.f32le"
+base_colors_path = "res://world_authoring/regions/saltsound/base-colors.rgba8"
+base_surface = SubResource("surface")
+sculpt_layer = SubResource("sculpt")
+preview_uv_metres_inverse = 0.17
+preview_clip_inside = PackedVector2Array(1919, 6781, 2259, 6521, 2659, 6521, 2637, 6511, 2517, 6499, 2437, 6453, 2437, 6221, 1459, 6221, 1459, 6761, 1459, 6811, 1479, 6821, 1639, 6821)
+
+[node name="Patches" type="Node3D" parent="Terrain"]
+
+[node name="Ground" type="Node3D" parent="."]
+
+[node name="Regions" type="Node3D" parent="Ground"]
+
+[node name="Roads" type="Node3D" parent="."]
+
+[node name="Rivers" type="Node3D" parent="."]
+
+[node name="WaterRegions" type="Node3D" parent="."]
+
+[node name="Bridges" type="Node3D" parent="."]
+
+[node name="AuthoredAssets" type="Node3D" parent="."]
+
+[node name="Gameplay" type="Node3D" parent="."]
+
+[node name="Spawns" type="Node3D" parent="Gameplay"]
+
+[node name="Portals" type="Node3D" parent="Gameplay"]
+
+[node name="Interactives" type="Node3D" parent="Gameplay"]
+
+[node name="Landmarks" type="Node3D" parent="Gameplay"]
+
+[node name="Harvestables" type="Node3D" parent="Gameplay"]
+
+[node name="NpcMarkers" type="Node3D" parent="Gameplay"]
+
+[node name="AmbientPopulation" type="Node3D" parent="Gameplay"]
+
+[node name="RuntimePoints" type="Node3D" parent="."]
+
+[node name="TerritoryPoints" type="Node3D" parent="RuntimePoints"]
+
+[node name="TutorialTargets" type="Node3D" parent="RuntimePoints"]
+
+[node name="GeneratedPreview" type="Node3D" parent="."]

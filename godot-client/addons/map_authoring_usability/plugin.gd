@@ -1018,8 +1018,8 @@ func _update_capture_estimate() -> void:
 	var root := _authoring_root()
 	if root == null or _capture_estimate == null:
 		return
-	var polygon := TopDown.ownership_polygon_local(root) if _capture_clip.button_pressed \
-		else PackedVector2Array()
+	var polygon := TopDown.ownership_polygons_local(root) if _capture_clip.button_pressed \
+		else []
 	var framing := TopDown.plan(root, _capture_ppm.value, polygon)
 	if framing.has("error"):
 		_capture_estimate.text = String(framing.error)
@@ -1692,12 +1692,12 @@ func area_panel() -> Window:
 
 ## The owned land in territory-local X/Z: from the Territories reference host,
 ## else from the bound sculpt tool.
-func _ownership_polygon(root: Node3D) -> PackedVector2Array:
-	var polygon := TopDown.ownership_polygon_local(root) if root != null else PackedVector2Array()
-	if polygon.size() >= 3:
+func _ownership_polygon(root: Node3D) -> Variant:
+	var polygon := TopDown.ownership_polygons_local(root) if root != null else []
+	if not polygon.is_empty():
 		return polygon
 	var fields := _protection()
-	return fields.get("polygon", PackedVector2Array())
+	return fields.get("polygons", fields.get("polygon", PackedVector2Array()))
 
 
 ## The bound sculpt tool's border protection (see terrain_sculpt_tool.gd).
@@ -1762,7 +1762,7 @@ func refresh_minimap() -> Dictionary:
 	if _minimap == null or root != _authoring_root():
 		return rendered
 	if rendered.has("error"):
-		var framing := TopDown.plan(root, ppm, TopDown.ownership_polygon_local(root))
+		var framing := TopDown.plan(root, ppm, TopDown.ownership_polygons_local(root))
 		_minimap.set_image(null, framing if not framing.has("error") else {})
 		_minimap.set_status(String(rendered.error))
 	else:

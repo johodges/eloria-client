@@ -1,0 +1,105 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_sculpt_layer.gd" id="sculpt"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_pilot/style/map_authoring_surface.gd" id="surface"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_patch.gd" id="patch"]
+[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/terrain-detail-luma.png" id="detail"]
+[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/terrain-detail-normal.png" id="normal"]
+
+[sub_resource type="StandardMaterial3D" id="material"]
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("detail")
+normal_enabled = true
+normal_scale = 0.8
+normal_texture = ExtResource("normal")
+texture_filter = 5
+
+[sub_resource type="Resource" id="surface"]
+resource_local_to_scene = true
+script = ExtResource("surface")
+source_material = SubResource("material")
+
+[sub_resource type="Resource" id="sculpt"]
+resource_local_to_scene = true
+script = ExtResource("sculpt")
+base_sha256 = "3b0025832178925ec71ac0e31858868741e15098a9ac3d8f5d03f3b81b1ecca3"
+origin = Vector2(-491.0, -504.0)
+grid_size = Vector2i(492, 505)
+cell_metres = 2.0
+indices = PackedInt32Array()
+deltas = PackedFloat32Array()
+
+[node name="greenlight" type="Node3D" groups=["map_authoring_region"]]
+script = ExtResource("region")
+region_id = "greenlight"
+continent_translation = Vector3(2006.0, 0, 7815.0)
+server_origin = Vector2i(435, 448)
+server_cells = Vector2i(900, 900)
+collision_origin_metres = Vector2(-435.0, 448.0)
+ownership_polygon_sha256 = "71f7e0ca85cb937a0962f35740d0b13a878ff3df777cee03c624f210841142aa"
+export_directory = "res://../eloria-assets/maps/continent-v2/greenlight/authoring"
+
+[node name="Terrain" type="Node3D" parent="."]
+script = ExtResource("terrain")
+origin = Vector2(-491.0, -504.0)
+grid_size = Vector2i(492, 505)
+cell_metres = 2.0
+base_heights_path = "res://world_authoring/regions/greenlight/base-heights.f32le"
+base_colors_path = "res://world_authoring/regions/greenlight/base-colors.rgba8"
+base_surface = SubResource("surface")
+sculpt_layer = SubResource("sculpt")
+preview_uv_metres_inverse = 0.17
+preview_clip_inside = PackedVector2Array(1675, 7941, 1685, 8259, 2437, 8259, 2437, 7671, 1899, 7671, 1849, 7371, 1699, 7581, 1575, 7601, 1575, 7655, 1629, 7701)
+
+[node name="Patches" type="Node3D" parent="Terrain"]
+
+[node name="seam_mole_knob" type="Marker3D" parent="Terrain/Patches"]
+script = ExtResource("patch")
+patch_id = "seam-mole-knob"
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 425.0, 2.5, 117.0)
+shape = 1
+operation = 1
+size = Vector2(42.0, 12.0)
+feather = 0.0
+enabled = true
+
+[node name="Ground" type="Node3D" parent="."]
+
+[node name="Regions" type="Node3D" parent="Ground"]
+
+[node name="Roads" type="Node3D" parent="."]
+
+[node name="Rivers" type="Node3D" parent="."]
+
+[node name="WaterRegions" type="Node3D" parent="."]
+
+[node name="Bridges" type="Node3D" parent="."]
+
+[node name="AuthoredAssets" type="Node3D" parent="."]
+
+[node name="Gameplay" type="Node3D" parent="."]
+
+[node name="Spawns" type="Node3D" parent="Gameplay"]
+
+[node name="Portals" type="Node3D" parent="Gameplay"]
+
+[node name="Interactives" type="Node3D" parent="Gameplay"]
+
+[node name="Landmarks" type="Node3D" parent="Gameplay"]
+
+[node name="Harvestables" type="Node3D" parent="Gameplay"]
+
+[node name="NpcMarkers" type="Node3D" parent="Gameplay"]
+
+[node name="AmbientPopulation" type="Node3D" parent="Gameplay"]
+
+[node name="RuntimePoints" type="Node3D" parent="."]
+
+[node name="TerritoryPoints" type="Node3D" parent="RuntimePoints"]
+
+[node name="TutorialTargets" type="Node3D" parent="RuntimePoints"]
+
+[node name="GeneratedPreview" type="Node3D" parent="."]

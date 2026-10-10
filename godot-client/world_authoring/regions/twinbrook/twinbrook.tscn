@@ -1,0 +1,95 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/region_control.gd" id="region"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_control.gd" id="terrain"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_sculpt_layer.gd" id="sculpt"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_pilot/style/map_authoring_surface.gd" id="surface"]
+[ext_resource type="Script" path="res://src/dev/map_authoring_region/terrain_patch.gd" id="patch"]
+[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/terrain-detail-luma.png" id="detail"]
+[ext_resource type="Texture2D" path="res://src/dev/map_authoring_pilot/style/textures/terrain-detail-normal.png" id="normal"]
+
+[sub_resource type="StandardMaterial3D" id="material"]
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("detail")
+normal_enabled = true
+normal_scale = 0.8
+normal_texture = ExtResource("normal")
+texture_filter = 5
+
+[sub_resource type="Resource" id="surface"]
+resource_local_to_scene = true
+script = ExtResource("surface")
+source_material = SubResource("material")
+
+[sub_resource type="Resource" id="sculpt"]
+resource_local_to_scene = true
+script = ExtResource("sculpt")
+base_sha256 = "f006fe2181ff2589002b8390718bb4385442c98f66e53ec94e290ea8508b3b3a"
+origin = Vector2(-515.0, -275.0)
+grid_size = Vector2i(516, 276)
+cell_metres = 2.0
+indices = PackedInt32Array()
+deltas = PackedFloat32Array()
+
+[node name="twinbrook" type="Node3D" groups=["map_authoring_region"]]
+script = ExtResource("region")
+region_id = "twinbrook"
+continent_translation = Vector3(1154.0, 0, 6956.0)
+server_origin = Vector2i(459, 219)
+server_cells = Vector2i(918, 918)
+collision_origin_metres = Vector2(-459.0, 219.0)
+ownership_polygon_sha256 = "d914cfb0cdfbb6f915dfbd2561d7a214767ebb1c4158af0a4db8334713ea33d1"
+export_directory = "res://../eloria-assets/maps/continent-v2/twinbrook/authoring"
+
+[node name="Terrain" type="Node3D" parent="."]
+script = ExtResource("terrain")
+origin = Vector2(-515.0, -275.0)
+grid_size = Vector2i(516, 276)
+cell_metres = 2.0
+base_heights_path = "res://world_authoring/regions/twinbrook/base-heights.f32le"
+base_colors_path = "res://world_authoring/regions/twinbrook/base-colors.rgba8"
+base_surface = SubResource("surface")
+sculpt_layer = SubResource("sculpt")
+preview_uv_metres_inverse = 0.17
+preview_clip_inside = PackedVector2Array(729, 7121, 869, 7171, 959, 7113, 1299, 7113, 1365, 7171, 1479, 7141, 1609, 7151, 1599, 7041, 1519, 6961, 1489, 6911, 1479, 6821, 1459, 6811, 1459, 6761, 1159, 6761, 959, 6741, 699, 6781, 791, 6961, 781, 7031)
+
+[node name="Patches" type="Node3D" parent="Terrain"]
+
+[node name="Ground" type="Node3D" parent="."]
+
+[node name="Regions" type="Node3D" parent="Ground"]
+
+[node name="Roads" type="Node3D" parent="."]
+
+[node name="Rivers" type="Node3D" parent="."]
+
+[node name="WaterRegions" type="Node3D" parent="."]
+
+[node name="Bridges" type="Node3D" parent="."]
+
+[node name="AuthoredAssets" type="Node3D" parent="."]
+
+[node name="Gameplay" type="Node3D" parent="."]
+
+[node name="Spawns" type="Node3D" parent="Gameplay"]
+
+[node name="Portals" type="Node3D" parent="Gameplay"]
+
+[node name="Interactives" type="Node3D" parent="Gameplay"]
+
+[node name="Landmarks" type="Node3D" parent="Gameplay"]
+
+[node name="Harvestables" type="Node3D" parent="Gameplay"]
+
+[node name="NpcMarkers" type="Node3D" parent="Gameplay"]
+
+[node name="AmbientPopulation" type="Node3D" parent="Gameplay"]
+
+[node name="RuntimePoints" type="Node3D" parent="."]
+
+[node name="TerritoryPoints" type="Node3D" parent="RuntimePoints"]
+
+[node name="TutorialTargets" type="Node3D" parent="RuntimePoints"]
+
+[node name="GeneratedPreview" type="Node3D" parent="."]
