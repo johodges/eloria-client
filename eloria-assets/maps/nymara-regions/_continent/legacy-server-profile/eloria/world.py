@@ -71,7 +71,7 @@ from .interactives import load_interactives
 from .stats import max_level_for, next_level_experience, post_cap_points
 from . import walkthrough as wt
 from . import lantern, bell
-from . import landing, landing_runtime
+from . import landing, landing_runtime, watchpost, v2_gate
 from . import home
 from .territory_raids import Territory, TerritoryRaidService, load_territories
 from .recipes import load_recipes, roll_mix_outcome
@@ -5100,6 +5100,7 @@ class World(MagicRuntime):
             await bell.event(self, session, "state")
             await bell.sync(self, session)
         await landing_runtime.login(self, session)
+        await watchpost.login(self, session)
 
     async def resync_actors(self, session: Session) -> None:
         """Rebuild the actor list after the stock client requests a resync."""
@@ -5636,8 +5637,10 @@ class World(MagicRuntime):
                 await bell.event(self, session, "reach")
             if session and lantern.on_island(c):
                 await lantern.event(self, session, "reach")
-            if session and landing.on_map(c):
+            if session and landing.on_map(c, v2_gate.isle_maps(self)):
                 await landing_runtime.event(self, session, "reach")
+            if session and watchpost.on_map(c, self):
+                await watchpost.event(self, session, "reach")
             if session and c.map_id == wt.HOME_MAP:
                 panel = wt.panel_for(c) if wt.is_active(c) else None
                 if panel and panel.marker and max(
@@ -6009,6 +6012,8 @@ class World(MagicRuntime):
 
     def require_coordinate_login(self, session, character):
         from .coordinate_admission import require_private_support
+        if character.map_id in v2_gate.RETIRED_MAPS:
+            character.map_id, character.x, character.y = home.point(self, "beam")
         if session.coordinate_state is not None:
             if character.map_id not in self.maps:
                 raise ValueError("Saved coordinate map is not loaded.")
@@ -6150,6 +6155,7 @@ class World(MagicRuntime):
         if lantern.active(c):
             await lantern.sync(self, session)
         await landing_runtime.arrived(self, session, old_map)
+        await watchpost.sync(self, session)
 
     def resolve_map(self, value: str) -> str | None:
         normalized = value.casefold().replace(" ", "").replace("_", "")
@@ -8733,6 +8739,10 @@ class World(MagicRuntime):
                     stolen = min(life_steal(c), c.max_health - c.health)
                     if stolen > 0:
                         c.health += stolen
+                        # Actor health is tracked separately from statistics;
+                        # the next damage delta must start from the healed HP.
+                        await self.broadcast_actor(
+                            c, p.actor_heal(c.actor_id, stolen))
                         await self.send_stats(session, force=True)
                     # Something reached it in melee. For a creature that fights
                     # at a distance that is the signal to break off and open the
@@ -9802,6 +9812,7 @@ class World(MagicRuntime):
         await lantern.event(self, session, "equipment")
         await bell.event(self, session, "equipment")
         await landing_runtime.event(self, session, "equipment")
+        await watchpost.event(self, session, "equipment")
 
     async def _move_inventory_item(self, session: Session, source: int, destination: int):
         """Equip/unequip using the client's eight generic wear positions (36-43)."""
@@ -10564,6 +10575,7 @@ class World(MagicRuntime):
                         await session.send(quest_progress_popup(
                             "Well made - five Torches. "
                             "Return to the Tutorial NPC for your reward."))
+                await watchpost.dressing_mixed(self, session, recipe, mixed_output)
                 await self.walkthrough_event(session, "mix", mixed_output)
                 if session.mix_from_storage: roads.emit(self,session,"storage_mix",mixed_output)
                 await self.questline_event(session, "mix", mixed_output)
@@ -10809,6 +10821,7 @@ class World(MagicRuntime):
                 ("Completed with assistance." if bell.flag(c, "assisted") else "Completed the independent departure encounter."),
                 "Four Gates", len(bell.STEPS), len(bell.STEPS), True))
         entries.extend(landing_runtime.journal_entries(self, c))
+        entries.extend(watchpost.journal(c))
         if lantern.active(c):
             step = lantern.current(c)
             entries.append(("The Last Lantern", step.title + ": " + step.hint,
@@ -10892,6 +10905,7 @@ class World(MagicRuntime):
         if "Keeper of the First Light" in c.achievements:
             entries.append(("The Last Lantern", "Lantern Reach", "You restored the beacon and guided the boat home."))
         entries.extend(landing_runtime.archive_entries(c))
+        entries.extend(watchpost.archive(c))
         if "Beginner Tutorial" in c.achievements:
             entries.append(("Beginner Tutorial", "Four Gates",
                             "You learned to move, fight, gather and mix."))
@@ -11562,6 +11576,7 @@ class World(MagicRuntime):
         roads.emit(self, session, event, detail, amount)
         await sky.event(self, session, event, detail, amount)
         await landing_runtime.event(self, session, event, detail, amount)
+        await watchpost.event(self, session, event, detail, amount)
         c = session.character
         chapter = self.walkthrough_chapter(c) if c else None
         if not chapter or not chapter.is_active(c):
@@ -11652,7 +11667,8 @@ class World(MagicRuntime):
             entries = [(index, entry, c.inventory.get(entry.name, 0))
                        for index, entry in enumerate(shop.items)]
             await session.send(p.merchant_state(
-                actor_id, shop.npc_name, gold, load, capacity, entries, ITEMS))
+                actor_id, shop.npc_name, gold, load, capacity, entries, ITEMS,
+                include_weights="merchant_weights_v1" in session.client_capabilities))
             if text:
                 await session.send(p.raw_text(text))
             return
@@ -12762,6 +12778,8 @@ class World(MagicRuntime):
         if not record or record[1] != c.map_id:
             return
         npc, _, price, sold = record
+        if await watchpost.touch(self, session, actor_id):
+            return
         if await lantern.touch(self, session, actor_id):
             return
         if await landing_runtime.touch(self, session, actor_id):
@@ -13098,6 +13116,8 @@ class World(MagicRuntime):
             return
         if record[1] != c.map_id \
                 or max(abs(c.x-record[0].x), abs(c.y-record[0].y)) > 4:
+            return
+        if await watchpost.respond(self, session, actor_id, response_id):
             return
         if await roads.respond(self, session, actor_id, response_id):
             return
