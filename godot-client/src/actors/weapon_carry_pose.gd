@@ -76,6 +76,20 @@ const SET_DOWN_AFTER := 0.1
 ## or seven centimetres and a reel drops the hand a fifth of a metre; farther
 ## than this, it was set down somewhere the hand has since left.
 const SET_DOWN_STRAY := 0.35
+## A one-handed piece the idle socket hangs ("hang") is held at ease the way
+## it is in a fight, in the closed fist, and lowered from the wrist instead:
+## the standing idle is the one clip that opens the hand, and a blade laid
+## along the leg from that open hand read as a sword floating beside the
+## fingers rather than held. The fingers of a hand holding one take the fist
+## the combat idle closes round the grip, and the wrist tips the piece this
+## far below level, ahead the way the hand points.
+const LOWERED_DEGREES := 45.0
+## Less for a piece long enough to reach the floor that low: its far end is
+## kept this far above the floor.
+const LOWERED_CLEARANCE := 0.08
+## The action whose clip holds the fist a held weapon is closed in.
+const FIST_ACTION := &"combat_idle"
+const FINGERS: Array[String] = ["thumb", "index", "middle", "ring", "pinky"]
 
 var actor: ReplicatedActor3D
 var _hands: Array[Dictionary] = []
@@ -137,6 +151,22 @@ func _hand_entry(skeleton: Skeleton3D, hand: int, side: String, prop: Node3D) ->
 	var fighting: Transform3D = prop.get_meta(&"fighting_grip", prop.transform)
 	var entry := {"hand": hand, "prop": prop,
 		"grip": fighting.basis.orthonormalized()}
+	if StringName(prop.get_meta(&"idle_style", &"")) == &"hang":
+		# Held in the fist at ease too, and lowered from the wrist: no second
+		# grip to ease into, so the piece is put back in the fist it may have
+		# been eased out of before the equipment changed.
+		prop.transform = fighting
+		entry["lowered"] = true
+		entry["fist"] = fighting.origin
+		var bounds := _bounds(prop)
+		var length := 0.0
+		for end: Vector3 in [Vector3(0.0, bounds.position.y, 0.0), Vector3(0.0, bounds.end.y, 0.0)]:
+			length = maxf(length, fighting.origin.distance_to(fighting * end))
+		entry["length"] = length
+		# Read from the combat idle on the first frame it is needed: the
+		# equipment can be attached before the clips are installed.
+		entry["side"] = side
+		return entry
 	if prop.has_meta(&"idle_grip"):
 		var idle: Transform3D = prop.get_meta(&"idle_grip")
 		# The blend turns the piece about the fist and slides it through the
@@ -161,6 +191,29 @@ func _hand_entry(skeleton: Skeleton3D, hand: int, side: String, prop: Node3D) ->
 		# tip a hand's width off the haft - or, without one, the lower end.
 		entry["floor_point"] = prop.get_meta(&"idle_floor_point", Vector3.INF)
 	return entry
+
+## The fist the combat idle closes the hand on `side` into: each finger bone's
+## rotation in that clip, as it stands at its first frame. The clip's finger
+## rotations are relative to the hand, so they close any hand the same way.
+func _fist(skeleton: Skeleton3D, side: String) -> Array:
+	var fist: Array = []
+	if actor.resolver == null or actor.animation_player == null:
+		return fist
+	var clip := actor.resolver.clip_for_action(FIST_ACTION)
+	if clip == &"" or not actor.animation_player.has_animation(clip):
+		return fist
+	var animation := actor.animation_player.get_animation(clip)
+	var tracks := {}
+	for track: int in animation.get_track_count():
+		if animation.track_get_type(track) == Animation.TYPE_ROTATION_3D:
+			tracks[str(animation.track_get_path(track).get_concatenated_subnames())] = track
+	for finger: String in FINGERS:
+		for joint: int in range(1, 4):
+			var bone_name := "%s_%02d_%s" % [finger, joint, side]
+			var bone := skeleton.find_bone(bone_name)
+			if bone >= 0 and tracks.has(bone_name):
+				fist.append([bone, animation.rotation_track_interpolate(tracks[bone_name], 0.0)])
+	return fist
 
 ## The box the piece's meshes fill, in the piece's own space, where its length
 ## runs along Y.
@@ -252,6 +305,8 @@ func _process_modification_with_delta(delta: float) -> void:
 	var moving := actor.current_action in TRAVEL_ACTIONS
 	_weight = _eased(_weight, 1.0 if moving else 0.0, delta, crossfade)
 	var skeleton := get_skeleton()
+	if _idle_weight > 0.0:
+		_hold_lowered(skeleton)
 	if easing:
 		_ease(skeleton)
 	if _weight <= 0.0:
@@ -269,6 +324,41 @@ func _process_modification_with_delta(delta: float) -> void:
 		var hand := skeleton.get_bone_global_pose(carry.hand).basis.orthonormalized()
 		var length := (hand * (carry.grip as Basis) * Vector3.UP).normalized()
 		_set_basis(skeleton, carry.hand, Basis(Quaternion(length, point)) * hand, _weight)
+
+## Closes each hand holding a lowered piece into the combat idle's fist and
+## tips the piece below level from the wrist, by as much of either as the
+## grip is at ease. The tilt keeps the way the hand points the piece across
+## the ground - the turn is about the level line across it - and tips it only
+## down: a hand the pose already holds lower is left as it is.
+func _hold_lowered(skeleton: Skeleton3D) -> void:
+	var to_skeleton := skeleton.global_basis.orthonormalized().inverse() * actor.global_basis.orthonormalized()
+	var down := (to_skeleton * Vector3.DOWN).normalized()
+	var to_actor := actor.global_transform.affine_inverse() * skeleton.global_transform
+	for carry: Dictionary in _hands:
+		if not carry.has("lowered"):
+			continue
+		if not carry.has("fingers"):
+			var fist := _fist(skeleton, carry.side)
+			if not fist.is_empty():
+				carry["fingers"] = fist
+		for finger: Array in carry.get("fingers", []):
+			var bone: int = finger[0]
+			skeleton.set_bone_pose_rotation(bone, skeleton.get_bone_pose_rotation(bone).slerp(
+				finger[1] as Quaternion, _idle_weight))
+		var hand := skeleton.get_bone_global_pose(carry.hand)
+		var basis := hand.basis.orthonormalized()
+		var length := (basis * (carry.grip as Basis) * Vector3.UP).normalized()
+		var level := length - down * length.dot(down)
+		if level.length_squared() < 1e-6:
+			continue
+		# As low as LOWERED_DEGREES, or as keeps the far end off the floor.
+		var fist_height := (to_actor * (hand * (carry.fist as Vector3))).y
+		var drop := clampf((fist_height - LOWERED_CLEARANCE) / maxf(float(carry.length), 0.01), 0.0, 1.0)
+		var angle := minf(deg_to_rad(LOWERED_DEGREES), asin(drop))
+		if length.dot(down) >= sin(angle):
+			continue
+		var wanted := level.normalized() * cos(angle) + down * sin(angle)
+		_set_basis(skeleton, carry.hand, Basis(Quaternion(length, wanted)) * basis, _idle_weight)
 
 ## Places every weapon with an idle grip for this frame's pose: the arms held
 ## out first, since that moves the hands the pieces are placed from.
