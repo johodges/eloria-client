@@ -16,6 +16,7 @@ func _init() -> void:
 	call_deferred("run")
 
 func run() -> void:
+	check_medicine_catalog()
 	var host := GuideHost.new()
 	root.add_child(host)
 	var panel := PanelContainer.new()
@@ -62,3 +63,31 @@ func run() -> void:
 	host.queue_free()
 	print("Watchpost guide: %d failures" % failures)
 	quit(failures)
+
+func check_medicine_catalog() -> void:
+	var catalog := ManufacturingCatalog.new()
+	catalog.configure(JSON.parse_string(FileAccess.get_file_as_string(
+		"res://data/manufacturing/recipes.json")))
+	var medicine_index := -1
+	for index: int in range(catalog.count()):
+		var recipe := catalog.recipe(index)
+		if recipe.get("skill") == "potion" and recipe.get("output") == "Bandage":
+			medicine_index = index
+			break
+	expect(medicine_index >= 0, "Potion tab contains the watchpost Bandage recipe")
+	if medicine_index < 0:
+		return
+	var definition := catalog.recipe(medicine_index)
+	expect(int(definition.get("id", -1)) == medicine_index, "medicine uses its server recipe index")
+	expect(int(definition.get("level", -1)) == 0 and int(definition.get("knowledgeIndex", 0)) == -1,
+		"new players can mix medicine without research")
+	var ingredients := {}
+	for ingredient: Dictionary in definition.get("ingredients", []):
+		ingredients[ingredient.name] = int(ingredient.quantity)
+	expect(ingredients == {"Sage":2, "Cloth Roll":1}, "medicine lists the quest's ingredients")
+	var available := catalog.availability(medicine_index,
+		{0:{"quantity":2}, 1:{"quantity":1}, 2:{"quantity":1}}, [],
+		{"food":10, "ether":0}, {0:"Sage", 1:"Cloth Roll", 2:"Mortar and Pestle"})
+	expect(available.reasons.is_empty(), "quest supplies make the real recipe ready")
+	expect(available.selection == [{"slot":0, "quantity":2}, {"slot":1, "quantity":1}],
+		"mixing spends Sage and cloth while keeping the mortar")
