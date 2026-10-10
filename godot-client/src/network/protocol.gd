@@ -2920,7 +2920,7 @@ static func decode_lantern(payload: PackedByteArray, logical_coordinates := fals
 		return {"type":"invalid", "error":"lantern_version"}
 	if value.has("ring_training") and not value.ring_training is bool:
 		return {"type":"invalid", "error":"ring_training"}
-	if value.has("tutorial") and value.tutorial not in ["second_bell", "borrowed_sky", "followup", "signed_ashore"]:
+	if value.has("tutorial") and value.tutorial not in ["second_bell", "borrowed_sky", "followup", "signed_ashore", "watchpost"]:
 		return {"type":"invalid", "error":"tutorial_kind"}
 	# Signed Ashore, the landing isle's chapter: its four countersigns
 	# (grove/temple/gate/light) stand in for the Lantern's flags below. The
@@ -2928,6 +2928,9 @@ static func decode_lantern(payload: PackedByteArray, logical_coordinates := fals
 	# dictionary or bool is a script error, not false.
 	if value.get("tutorial", "") == "signed_ashore" and bool(value.active) and not (value.get("chapter") is String and value.chapter == "SIGNED ASHORE"):
 		return {"type":"invalid", "error":"signed_ashore_chapter"}
+	if value.get("tutorial", "") == "watchpost" and bool(value.active):
+		if not (value.get("chapter") is String and value.chapter == "HELP FOR THE WATCHPOST") or not value.get("paused") is bool:
+			return {"type":"invalid", "error":"watchpost_state"}
 	if value.get("tutorial", "") == "followup" and bool(value.active):
 		for key in ["adventure", "guide"]:
 			if not value.get(key) is String:

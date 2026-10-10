@@ -117,5 +117,17 @@ func _init() -> void:
 	ashore.flags.grove=true
 	expect(decode(ashore).get("type")=="lantern_tutorial","a signed countersign decodes")
 	expect(decode({"version":1,"active":false,"tutorial":"signed_ashore"}).get("type")=="lantern_tutorial","leaving removes the Signed Ashore guide")
+	var watchpost: Dictionary=valid.duplicate(true)
+	watchpost.tutorial="watchpost";watchpost.chapter="HELP FOR THE WATCHPOST";watchpost.paused=false
+	watchpost.stage=4;watchpost.total=6;watchpost.key="sage";watchpost.item="Sage"
+	expect(decode(watchpost).get("type")=="lantern_tutorial","medicine quest guide decodes")
+	watchpost.chapter="THE LAST LANTERN"
+	expect(decode(watchpost).get("type")=="invalid","medicine quest chapter must match")
+	watchpost.chapter="HELP FOR THE WATCHPOST";watchpost.paused="false"
+	expect(decode(watchpost).get("type")=="invalid","medicine quest pause flag is boolean")
+	watchpost.paused=false
+	for chapter: Variant in ["", null, 1, 1.5, [], {}, true]:
+		watchpost.chapter=chapter
+		expect(decode(watchpost).get("type")=="invalid","medicine quest rejects nonmatching chapter "+str(chapter))
 	print("Lantern protocol: %d checks, %d failures" % [checks,failures])
 	quit(failures)
