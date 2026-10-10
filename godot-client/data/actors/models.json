@@ -98,7 +98,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+        "sourceSHA256": "3a8ff81e9f152102ee1e57d892759c0a8e69ab49064ab8e473f5cb9ed3e8fc94",
         "references": {
           "body": [
             [
@@ -228,7 +228,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+        "sourceSHA256": "1cc5bd8cd2761e71f711dc33aabd500ea88cb918c0806223991cb5bd87bb2d75",
         "references": {
           "body": [
             [
@@ -316,7 +316,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "c27b499318c3cc229a8ad045f2e5b7b4b9c8c0317d751ca71f19c0db8200a68e",
+        "sourceSHA256": "b18678b68ab758eda25e6df6856ac9389a4a1eb1a3614e6f3fdef341ecb46ee2",
         "references": {
           "body": [
             [
@@ -457,7 +457,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "6053585c0d3efbbc61cab57f4ccc0fd6b8a459fe7045c0d9e47467df74daf50a",
+        "sourceSHA256": "bc8887155f180338fed836d6a249b14826423be985edd1499f68797e514cf497",
         "references": {
           "body": [
             [
@@ -598,7 +598,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "9a48f8fb2935a78ee42451faa1255250ddcc86ebcb47935be85cce04e9ff0b90",
+        "sourceSHA256": "75dd22e93defb16470686ab0f51c711a5b6a06c79362bdf33be965da111bc365",
         "references": {
           "body": [
             [
@@ -739,7 +739,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "2dfcebc9ca766619bedfc820b973362c269361da590a76340d113e0d2b7fa19f",
+        "sourceSHA256": "0238325cf20a8b34d84f53b72d9ccd94ed9ee6c3cbe3ee386d9f181e01cbaa25",
         "references": {
           "body": [
             [
@@ -880,7 +880,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "a462d5a9c276da387e925535abe3caf9528df9855fe55e407d1c77b4bcd76749",
+        "sourceSHA256": "ff64d832b1e16427026f9b8dbdcb13e65d3f74ec633ed9bb96e20ee3baaed98f",
         "references": {
           "body": [
             [
@@ -1020,7 +1020,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "6ebf58de76e9dda8f038cef3c7398e23c0980baa2a853193a4cb71a5ee86db6c",
+        "sourceSHA256": "6967fbd556040496807a7fd29a89f7940b3957cbf4a4015589033eeb1829581d",
         "references": {
           "body": [
             [
@@ -1160,7 +1160,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "d11ad20911b0f674a838527b9c4c2bd08e478e7c1fa86018a010dfa170693be2",
+        "sourceSHA256": "46680d3b613d4738f57d950cf423e218898b51a934af74892d35e20580a41b83",
         "references": {
           "body": [
             [
@@ -1301,7 +1301,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "fc7ede3435b6780d119d7e657a28f6bd10c0f6aec6133e5ff6389fbe4057f4cb",
+        "sourceSHA256": "9b7815846f2a04c7888cdca991818c5a61728136255813849e4cfbdf78015ee1",
         "references": {
           "body": [
             [
@@ -1441,7 +1441,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "2d88de9d81fab6c85c6dfba49e0f72531016937e58fc237417d5b77337fb92da",
+        "sourceSHA256": "d85705efc549b52c7eb7e2d18220d61dc82dcb1d4e6052efd8b77db84d88ec5b",
         "references": {
           "body": [
             [
@@ -1593,7 +1593,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "431b84ad642ef10aeedc9ee4ba5ffb3293d1e093663c32244f5c585ed51d0ff9",
+        "sourceSHA256": "610576dee80412d7b102de26dbec5a76fd4f0913f9fbb07414a2e3c5b5fa1d49",
         "references": {
           "body": [
             [
@@ -1745,7 +1745,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "4cdb4368861d86ed857f7af846486ea65ef71a5e8cec2eedaca8b6c99a902813",
+        "sourceSHA256": "de84d7200a5a184d68ef2fc96c247fe364bb83953ad6c293e73a73ea18aab22e",
         "references": {
           "body": [
             [
@@ -1886,7 +1886,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "9c22f5c569bb6536d82fd2544158ee5843fcc38dbd4542a16d88d4d3c49db89e",
+        "sourceSHA256": "4f5337290c5cee7865756c6a0f760e8b191b44cc1961e7fe24955130eda708ee",
         "references": {
           "body": [
             [
@@ -2027,7 +2027,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "d182f1c29ce191c75f1663cef689e98e827ed1bc8a4070870ded447ed0568a6f",
+        "sourceSHA256": "665f6211131e62e5a0f950e783d5c9a62e80b68e4d97d3826d0e8324dc41fcaa",
         "references": {
           "body": [
             [
@@ -2160,7 +2160,7 @@
       },
       "skinPalette": {
         "version": 1,
-        "sourceSHA256": "4c6b683898da54b0fd8950b3b3e4e3b1515586a7712d865d14cf6cd2effb3268",
+        "sourceSHA256": "4bcc4445ef8f3dfa6d79334e15de901076294daff6b832c4c2c664299d16bf3c",
         "references": {
           "body": [
             [

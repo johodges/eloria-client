@@ -340,11 +340,8 @@ func _check_hand_socket(actor: ReplicatedActor3D, label: String,
 		var attachment := piece as BoneAttachment3D
 		var prop := piece.get_child(0) as Node3D
 		var hand_world := skeleton.global_transform * skeleton.get_bone_global_pose(hand).origin
-		# A held weapon has two grips (import_generated_weapons.held_grips):
-		# its socket, the fist every swing closes, and an idle socket the
-		# standing idle lays it down or stands it up in. The fighting grip is
-		# kept on the prop because the node itself moves to the idle grip
-		# while the actor stands, which it does here.
+		# At rest the socket stays inside the fighting fist. Only the wrist
+		# lowers the weapon; the shoulder and elbow retain the idle clip.
 		var fighting: Transform3D = prop.get_meta(&"fighting_grip", prop.transform)
 		# Where the registry's fighting grip closes on the piece: its origin,
 		# or for the quarterstaff the hold that far up the staff from it.
@@ -367,28 +364,24 @@ func _check_hand_socket(actor: ReplicatedActor3D, label: String,
 				label + " leaves its idle to the ranged presentation")
 			continue
 		expect(prop.has_meta(&"idle_grip"), label + " has an idle grip to stand in")
-		var idle: Transform3D = prop.get_meta(&"idle_grip", Transform3D())
-		# A planted piece keeps its butt where it was set down and turns about
-		# it to follow the fist, so it stands near its idle grip rather than
-		# exactly in it; anything else is in it.
-		var planted := StringName(prop.get_meta(&"idle_style", &"")) in [&"plant", &"lean"]
-		var turned := rad_to_deg(prop.transform.basis.get_rotation_quaternion().angle_to(
-			idle.basis.get_rotation_quaternion()))
-		expect(prop.transform.is_equal_approx(idle) or (planted and turned < 6.0),
-			label + " holds its weapon in the idle grip while standing (%.1f degrees off)" % turned)
-		# The open hand still holds the piece: the point of it at the fist lies
+		expect(prop.transform.is_equal_approx(fighting),
+			label + " holds its weapon inside the fist while standing")
+		# The closed hand holds the piece: the point of it at the fist lies
 		# on its own long axis and between its ends.
 		var held := prop.transform.affine_inverse() * fist
 		var bounds := _prop_bounds(prop)
 		expect(Vector2(held.x, held.z).length() < 0.03 and held.y > bounds.position.y
 				and held.y < bounds.end.y,
-			label + " holds the weapon in the open hand, on its haft or hilt")
-		# Clear of the floor through the idle on every body, and the
-		# quarterstaff planted on it: its butt a few centimetres off at most.
+			label + " holds the weapon in the fist, on its haft or hilt")
+		# The wrist lowers the staff ahead while keeping its entire mesh
+		# above the floor. It no longer slides through an open idle hand.
 		var lowest := _prop_lowest(prop) - actor.global_position.y
 		expect(lowest > 0.0, label + " idles with its weapon clear of the floor")
 		if class_label == "Warden":
-			expect(lowest < 0.05, label + " stands the quarterstaff on its butt")
+			expect(lowest >= 0.075, label + " keeps the closed-fist staff above the floor")
+			var shaft := prop.global_basis.y.normalized()
+			expect(shaft.y < -0.25 and shaft.dot(-actor.global_basis.z.normalized()) > 0.5,
+				label + " lowers the staff down and ahead from the fist")
 	expect(attachments == 1, label + " has exactly one right-hand attachment")
 
 

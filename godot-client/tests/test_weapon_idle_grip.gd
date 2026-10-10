@@ -1,10 +1,7 @@
 extends SceneTree
-## A held weapon has two grips: the registry socket, the fist every swing and
-## the combat idle close round it, and an idle socket the standing idle lays it
-## down along the leg in (or stands it upright beside it). WeaponCarryPose
-## blends between them by action, over the crossfade the clip itself was given;
-## walking and running keep pointing it ahead, turning the wrist no further
-## than that needs.
+## Held weapons stay in their fighting socket. At ease, the fingers take
+## the combat fist and the wrist lowers the piece with floor clearance.
+## Travel still aims ahead without changing the shoulder/elbow arm swing.
 
 var failures := 0
 var checks := 0
@@ -42,20 +39,21 @@ func run() -> void:
 		var props := _props(actor)
 		check(props.size() == 2, name + ": both hands hold a weapon")
 
-		# Standing: both weapons already in their idle grip, with no swing in.
+		# Standing: both weapons are in the fist from the first frame.
 		check(is_equal_approx(float(carry.get("_idle_weight")), 1.0), name + ": an actor arrives at ease")
 		for prop: Node3D in props:
 			check(prop.has_meta(&"idle_grip") and prop.has_meta(&"fighting_grip"),
 				name + ": a sword carries both grips")
-			check(prop.transform.is_equal_approx(prop.get_meta(&"idle_grip")),
-				name + ": idle holds the sword in its idle grip")
+			check(prop.transform.is_equal_approx(prop.get_meta(&"fighting_grip")),
+				name + ": idle keeps the sword in its fighting grip")
 		# Every weapon closes the same fist; a sword is held there by its
 		# origin, so its fighting grip names the fist of each hand.
 		var fists: Array[Vector3] = []
 		for prop: Node3D in props:
 			fists.append((prop.get_meta(&"fighting_grip") as Transform3D).origin)
 		await _settle(actor)
-		# The open hand of the idle hangs palm to the thigh -- which is also
+		_check_fingers(actor, carry, name, ["r", "l"])
+		# The closed hand of the idle hangs palm to the thigh -- which is also
 		# what tells _palm which way each hand bone's X runs.
 		for part: int in [0, 1]:
 			var palm := _palm(actor, part)
@@ -70,7 +68,7 @@ func run() -> void:
 			var flat := _actor_direction(actor, props[part].global_basis.z)
 			var outward := blade.x if part == 0 else -blade.x
 			blades.append(blade)
-			check(blade.y < -0.9, "%s: hand %d hangs its blade down (%s)" % [name, part, blade])
+			check(blade.y < -0.25 and blade.y > -0.76, "%s: hand %d hangs its blade down (%s)" % [name, part, blade])
 			check(blade.z < 0.0 and outward > -0.05,
 				"%s: hand %d leans its tip ahead and out from the leg, not across it (%s)" % [name, part, blade])
 			check(absf(flat.x) > 0.8, "%s: hand %d lays the flat to the leg (%s)" % [name, part, flat])
@@ -78,10 +76,10 @@ func run() -> void:
 		check(rad_to_deg(blades[1].angle_to(mirrored)) < 8.0,
 			"%s: the off-hand sword hangs the mirror image of the other (%.1f degrees apart)"
 				% [name, rad_to_deg(blades[1].angle_to(mirrored))])
-		_check_arm_held_out(actor, carry, equipment, name)
+		_check_wrist_pivot(actor, carry, equipment, name)
 
-		# Squaring up blends to the fighting grip over the clip's own
-		# crossfade, turning about the fist so the hilt never leaves the hand.
+		# Squaring up fades the wrist correction with the clip while the
+		# socket stays on the fist throughout the transition.
 		actor.play_action(&"combat_idle")
 		check(is_equal_approx(actor.action_crossfade_seconds, actor.action_blend_seconds),
 			name + ": the combat idle fades in over the action blend")
@@ -103,8 +101,8 @@ func run() -> void:
 			actor.play_action(action, true)
 			_step(actor, carry, 1.0 / 120.0)
 			for prop: Node3D in props:
-				check(prop.transform.is_equal_approx(prop.get_meta(&"idle_grip")),
-					"%s: %s lays the sword back in the idle grip" % [name, action])
+				check(prop.transform.is_equal_approx(prop.get_meta(&"fighting_grip")),
+					"%s: %s keeps the sword inside the fist" % [name, action])
 
 		await _check_first_swing(actor, carry, name)
 		await _check_emotes(actor, carry, name)
@@ -115,22 +113,22 @@ func run() -> void:
 		# half way along the slide between the two holds, still on the staff.
 		actor.apply_equipment_visuals({0: 163})
 		var staff: Node3D = _props(actor)[0]
-		check(staff.transform.is_equal_approx(staff.get_meta(&"idle_grip")),
-			name + ": a staff taken up at ease is planted")
+		check(staff.transform.is_equal_approx(staff.get_meta(&"fighting_grip")),
+			name + ": a staff taken up at ease stays in the fist")
 		actor.play_action(&"combat_idle")
 		actor.animation_player.advance(0.01)
 		carry.call("_process_modification_with_delta", actor.action_crossfade_seconds * 0.5)
-		_check_half_way(staff, fists[0], name + ": quarterstaff", 0.05)
+		_check_half_way(staff, fists[0], name + ": quarterstaff")
 		actor.play_action(&"idle", true)
 		_step(actor, carry, 0.2)
-		await _check_planted(actor, staff, fists[0], name + ": quarterstaff")
-		# Back from a swing, it is set down once the idle has the hand back
+		await _check_lowered_staff(actor, staff, fists[0], name + ": quarterstaff")
+		# Back from a swing, the staff returns to its lowered fist
 		# where it holds it, not while the recovery is still bringing it there.
 		actor.play_action(&"attack_primary", true)
 		_step(actor, carry, actor.animation_player.current_animation_length + 0.05)
 		check(actor.current_action == &"idle", name + ": the swing hands back to the idle")
 		_step(actor, carry, 0.3)
-		await _check_planted(actor, staff, fists[0], name + ": quarterstaff after a swing")
+		await _check_lowered_staff(actor, staff, fists[0], name + ": quarterstaff after a swing")
 		await _check_drawn_at_spawn(model, animations, equipment, adapter, name)
 
 		# A weapon taken up while another is held joins the blend where it
@@ -145,7 +143,7 @@ func run() -> void:
 		check(is_equal_approx(float(carry.get("_idle_weight")), 0.5),
 			name + ": changing weapons keeps the blend where it was")
 		var swapped := _props(actor)
-		_check_half_way(swapped[0], fists[0], name + ": spear taken up mid-stride", 0.05)
+		_check_half_way(swapped[0], fists[0], name + ": spear taken up mid-stride")
 		_check_half_way(swapped[1], fists[1], name + ": off-hand sword kept mid-stride")
 		_step(actor, carry, actor.action_crossfade_seconds)
 		check(swapped[0].transform.is_equal_approx(swapped[0].get_meta(&"fighting_grip")),
@@ -162,7 +160,7 @@ func run() -> void:
 		actor.apply_equipment_visuals({})
 		actor.apply_equipment_visuals({0: 115})
 		drawn = _props(actor)[0]
-		check(drawn.transform.is_equal_approx(drawn.get_meta(&"idle_grip")),
+		check(drawn.transform.is_equal_approx(drawn.get_meta(&"fighting_grip")),
 			name + ": a weapon drawn while standing is drawn at ease")
 
 		# Walking and running still aim the weapon ahead through the fighting
@@ -195,6 +193,9 @@ func run() -> void:
 		actor.apply_equipment_visuals({0: 164})
 		var bow: Node3D = (actor._equipment_nodes[0][0] as Node).get_child(0)
 		check(not bow.has_meta(&"idle_grip"), name + ": the ranged bow leaves its idle to the bow")
+		actor.play_action(&"idle", true)
+		_step(actor, carry, 0.2)
+		_check_fingers(actor, carry, name + ": bow", ["l"])
 		if first:
 			first = false
 			await _check_every_idle_socket(actor, equipment, name)
@@ -232,27 +233,17 @@ func _check_registry(equipment: Dictionary) -> void:
 		checked += 1
 	check(checked > 100, "every held weapon was checked (%d)" % checked)
 
-## Holding a weapon in the off hand, the idle's arm is held out from the
-## thigh the clip rests that hand on, by the spread its idle socket names:
-## turned at the shoulder, the hand carried out with it.
-func _check_arm_held_out(actor: ReplicatedActor3D, carry: SkeletonModifier3D,
+## Closing an off-hand fist changes the wrist rotation without displacing
+## its origin or borrowing shoulder motion from the animation.
+func _check_wrist_pivot(actor: ReplicatedActor3D, carry: SkeletonModifier3D,
 		equipment: Dictionary, name: String) -> void:
-	var spread := float((equipment.models["1:160"].get("idleSocket", {}) as Dictionary).get("armSpread", 0.0))
 	var skeleton := actor.get_skeleton()
-	var shoulder := skeleton.find_bone("upperarm_l")
-	var hand := skeleton.find_bone("hand_l")
 	actor.animation_player.advance(0.0)
-	var at := skeleton.get_bone_global_pose(shoulder).origin
-	var hung := skeleton.get_bone_global_pose(hand).origin - at
-	var right := skeleton.get_bone_global_pose(skeleton.find_bone("upperarm_r")).origin
+	var bone := skeleton.find_bone("hand_l")
+	var before := skeleton.get_bone_global_pose(bone).origin
 	carry.call("_process_modification_with_delta", 0.0)
-	var held := skeleton.get_bone_global_pose(hand).origin - at
-	check(absf(rad_to_deg(hung.angle_to(held)) - spread) < 0.5,
-		"%s: the off hand's arm is held %.1f degrees out at ease (%.1f)" % [name, spread, rad_to_deg(hung.angle_to(held))])
-	var out := at - right
-	out.y = 0.0
-	check(spread == 0.0 or held.dot(out.normalized()) > hung.dot(out.normalized()) + 0.01,
-		name + ": held out away from the body, not across it")
+	check(skeleton.get_bone_global_pose(bone).origin.distance_to(before) < 0.001,
+		name + ": closing the grip leaves the arm in its animated position")
 
 ## A swing restarted from idle - every fresh strike - has no crossfade, and the
 ## weapon is in the fist from its first frame; a swing that does fade in takes
@@ -312,43 +303,24 @@ func _check_emotes(actor: ReplicatedActor3D, carry: SkeletonModifier3D, name: St
 	actor.play_action(&"idle", true)
 	_step(actor, carry, 0.2)
 
-## A planted piece keeps its butt where it was set down through the whole
-## idle loop, the haft turning about it to follow the fist and sliding through
-## the hand: the wrist's few degrees of sway are no longer levered down the
-## length of the haft into a butt that skates across the floor.
-func _check_planted(actor: ReplicatedActor3D, prop: Node3D, fist_in_hand: Vector3,
+## The staff remains on the closed fist and above the floor throughout
+## the idle loop, without sliding the haft through the hand.
+func _check_lowered_staff(actor: ReplicatedActor3D, prop: Node3D, fist_in_hand: Vector3,
 		label: String) -> void:
-	await _settle(actor)
-	var bounds := _bounds(prop)
-	var butts: Array[Vector3] = []
-	var fists: Array[Vector3] = []
 	var length := actor.animation_player.current_animation_length
 	for phase: float in [0.0, 0.2, 0.4, 0.6, 0.8]:
 		actor.animation_player.seek(length * phase, true)
 		await _settle(actor)
-		var to_actor := actor.global_transform.affine_inverse() * prop.global_transform
-		var low := to_actor * Vector3(0.0, bounds.position.y, 0.0)
-		var high := to_actor * Vector3(0.0, bounds.end.y, 0.0)
-		butts.append(low if low.y < high.y else high)
-		var hand := actor.global_transform.affine_inverse() * (prop.get_parent() as Node3D).global_transform
-		var fist := hand * fist_in_hand
-		fists.append(fist)
-		var axis := (high - low).normalized()
-		var off := (fist - low) - axis * axis.dot(fist - low)
-		check(off.length() < 0.012, "%s %.1f: the fist stays on the haft (%.4f m off)" % [label, phase, off.length()])
-	var slid := 0.0
-	var swayed := 0.0
-	for index: int in butts.size():
-		slid = maxf(slid, butts[index].distance_to(butts[0]))
-		swayed = maxf(swayed, fists[index].distance_to(fists[0]))
-	check(slid < 0.003, "%s: the butt stays where it was set down (%.4f m)" % [label, slid])
-	check(swayed > slid, "%s: while the fist moves with the idle (%.4f m)" % [label, swayed])
-	check(butts[0].y > -0.003 and butts[0].y < 0.04, "%s: stood on the floor (%.3f)" % [label, butts[0].y])
+		check(prop.transform.is_equal_approx(prop.get_meta(&"fighting_grip")),
+			label + ": the staff stays in its closed grip through the idle")
+		check(_lowest(actor, prop) > -0.003,
+			label + ": lowering the staff keeps it clear of the floor")
+		var held := prop.transform.affine_inverse() * fist_in_hand
+		check(Vector2(held.x, held.z).length() < 0.012,
+			label + ": the fist stays on the haft")
 
-## A planted or leant piece an actor is built holding is set down where the
-## idle puts it, not where the first frames find the hand: a new actor can be
-## blended before its clip has posed it, and a staff set down then stood on a
-## point at shoulder height.
+## A newly spawned long weapon settles into the lowered fist, with its
+## full mesh clear of the floor even during the initial pose blend.
 func _check_drawn_at_spawn(model: Dictionary, animations: Dictionary, equipment: Dictionary,
 		adapter: CoordinateAdapter, name: String) -> void:
 	for visual: int in [163, 144]:
@@ -367,10 +339,10 @@ func _check_drawn_at_spawn(model: Dictionary, animations: Dictionary, equipment:
 		var other_end := high if low.y < high.y else low
 		var rise := (other_end - floor_end).normalized().y
 		var lowest := _lowest(actor, prop)
-		check(lowest > -0.003 and lowest < 0.04,
-			"%s 0:%d: built holding it, it rests its end on the floor (%.3f)" % [name, visual, lowest])
-		check(rise > (0.9 if visual == 163 else 0.3) and rise < (1.01 if visual == 163 else 0.95),
-			"%s 0:%d: stood (or leant) the way the idle holds it (%.2f)" % [name, visual, rise])
+		check(lowest > 0.02,
+			"%s 0:%d: built holding it, its entire mesh clears the floor (%.3f)" % [name, visual, lowest])
+		check(rise > 0.05 and rise < 0.8,
+			"%s 0:%d: lowered at a safe angle (%.2f)" % [name, visual, rise])
 		actor.queue_free()
 		await process_frame
 
@@ -400,7 +372,7 @@ func _check_paused(actor: ReplicatedActor3D, carry: SkeletonModifier3D, name: St
 	_step(actor, carry, 0.2)
 
 ## Every idle socket in the registry, on one body, at three points of the idle:
-## nothing at ease goes into the floor, and a planted piece stands on it.
+## every carried mesh stays clear of the floor.
 func _check_every_idle_socket(actor: ReplicatedActor3D, equipment: Dictionary, name: String) -> void:
 	var checked := 0
 	for key: String in equipment.models:
@@ -423,35 +395,18 @@ func _check_every_idle_socket(actor: ReplicatedActor3D, equipment: Dictionary, n
 			await _settle(actor)
 			var lowest := _lowest(actor, prop)
 			check(lowest > -0.003, "%s %s %s %.2f: at ease clear of the floor (%.3f)" % [name, key, style, phase, lowest])
-			if style == "plant":
-				check(lowest < 0.05, "%s %s %.2f: planted on the floor (%.3f)" % [name, key, phase, lowest])
 		checked += 1
-	check(checked > 100, "%s: every idle socket was stood in (%d)" % [name, checked])
+	check(checked > 100, "%s: every idle socket was checked (%d)" % [name, checked])
 	actor.apply_equipment_visuals({0: 114, 1: 160})
 
-## Half way between its grips a piece is turned half way from one to the
-## other, and the fist still closes on its length, at a point between where
-## each grip holds it. `slide` is the least the two holds must differ by, in
-## metres, for a piece whose blend has to slide it through the hand.
-func _check_half_way(prop: Node3D, fist: Vector3, label: String, slide := 0.0) -> void:
+## Through the action crossfade the socket stays inside the fist.
+func _check_half_way(prop: Node3D, fist: Vector3, label: String) -> void:
 	var fighting: Transform3D = prop.get_meta(&"fighting_grip")
-	var idle: Transform3D = prop.get_meta(&"idle_grip")
-	var size := fighting.basis.get_scale().x
-	var turned := prop.transform.basis.get_rotation_quaternion()
-	var from := fighting.basis.get_rotation_quaternion()
-	var to := idle.basis.get_rotation_quaternion()
-	var whole := from.angle_to(to)
-	check(absf(turned.angle_to(from) - whole * 0.5) < 0.01 and absf(turned.angle_to(to) - whole * 0.5) < 0.01,
-		"%s: half way, it is turned half way between its grips" % label)
+	check(prop.transform.is_equal_approx(fighting),
+		label + ": the socket stays inside the fist during the transition")
 	var held := prop.transform.affine_inverse() * fist
-	var off := Vector2(held.x, held.z).length() * size
-	check(off < 0.005, "%s: half way, the fist still closes on its length (%.4f m off)" % [label, off])
-	var fighting_hold := (fighting.affine_inverse() * fist).y
-	var idle_hold := (idle.affine_inverse() * fist).y
-	check(held.y >= minf(fighting_hold, idle_hold) - 0.001 and held.y <= maxf(fighting_hold, idle_hold) + 0.001,
-		"%s: half way, the fist is between its two holds (%.3f in %.3f..%.3f)" % [label, held.y, fighting_hold, idle_hold])
-	check(absf(idle_hold - fighting_hold) * size >= slide,
-		"%s: the two grips hold it %.3f m apart" % [label, absf(idle_hold - fighting_hold) * size])
+	check(Vector2(held.x, held.z).length() * fighting.basis.get_scale().x < 0.005,
+		label + ": the hilt remains centred through the fist")
 
 ## A hand carrying its weapon through a stride: the piece points ahead in its
 ## fighting grip, the wrist has turned only as far as that takes -- no twist
@@ -506,6 +461,17 @@ func _props(actor: ReplicatedActor3D) -> Array[Node3D]:
 
 ## Runs the clip and the grip blend forward together, a frame at a time, the
 ## way the skeleton steps them: the clip's pose first, then the modifier.
+func _check_fingers(actor: ReplicatedActor3D, carry: SkeletonModifier3D, label: String, sides: Array) -> void:
+	actor.animation_player.advance(0.0)
+	carry.call("_process_modification_with_delta", 0.0)
+	var skeleton := actor.get_skeleton()
+	for side: String in sides:
+		var fist: Array = carry.call("_fist", skeleton, side)
+		check(fist.size() == 15, label + ": the grip includes all finger joints on " + side)
+		for finger: Array in fist:
+			check(skeleton.get_bone_pose_rotation(finger[0]).angle_to(finger[1]) < 0.01,
+				label + ": the held hand closes at rest: " + skeleton.get_bone_name(finger[0]))
+
 func _step(actor: ReplicatedActor3D, carry: SkeletonModifier3D, seconds: float) -> void:
 	var frames := maxi(1, ceili(seconds * 120.0 - 0.001))
 	for frame: int in frames:

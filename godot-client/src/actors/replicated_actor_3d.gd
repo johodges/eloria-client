@@ -2302,21 +2302,10 @@ func _attach_socketed_equipment(socket: Dictionary, scene_path: String,
 	# it readable while still riding the bone once the clip plays.
 	native_model.transform = rest.affine_inverse() * _socket_placement(
 		socket, rest, fit, scale)
-	# A weapon is held two ways. The socket is the fighting grip: the combat
-	# idle and every swing close the fingers into a fist, and the blade has to
-	# leave that fist the way the clip was animated around. Standing at ease
-	# the hand hangs open by the thigh, and the same grip there points the
-	# blade forward like a lance, so a weapon that names an idle socket is laid
-	# down along the leg or stood upright beside it instead. Both are resolved
-	# here, once, against this body's rest; WeaponCarryPose blends between them
-	# as the action changes, and reads the fighting grip back from the meta
-	# because the node itself is moved while it does.
-	# The idle socket also says how the piece rests ("style": a staff planted
-	# on its butt or a blade leant on its tip keeps that end where it was set
-	# down), which of its points the idle brings nearest the floor
-	# ("floorPoint", in the piece's own space) and, for a weapon in the off
-	# hand the idle rests on the thigh, how many degrees that arm is held out
-	# to give it room ("armSpread").
+	# The fighting socket seats the hilt inside the closed fist. Retain the
+	# reviewed idle socket and its authoring metadata for geometry checks.
+	# WeaponCarryPose reads the stable fighting grip and turns the wrist
+	# while closing the fingers, so the prop remains inside that grip.
 	var idle_socket: Dictionary = model_config.get("idleSocket", {}) as Dictionary
 	if not idle_socket.is_empty() and str(idle_socket.get("bone", bone)) == bone:
 		native_model.set_meta(&"fighting_grip", native_model.transform)

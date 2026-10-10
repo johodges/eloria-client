@@ -66,6 +66,16 @@ func hand_position(index: int) -> Vector3:
 	var skeleton := actor.get_skeleton()
 	return (skeleton.global_transform * skeleton.get_bone_global_pose(index)) * Vector3(0, 0.035, 0)
 
+## The fist bore uses the same mirrored fit as a sword in the left hand.
+## Its frame follows the wrist while relaxed; aiming still uses both hands.
+func carried_bow_grip() -> Transform3D:
+	var skeleton := actor.get_skeleton()
+	var rest := skeleton.get_bone_global_rest(_hand_l)
+	var fit := actor.rig_fit_scale("legacy")
+	var socket := Transform3D(Basis.from_euler(Vector3(deg_to_rad(80.0), 0, 0)),
+		rest.origin + Vector3(0.0757, -0.05, 0) * fit)
+	return skeleton.global_transform * skeleton.get_bone_global_pose(_hand_l) * rest.affine_inverse() * socket
+
 func update_pose() -> void:
 	if not is_instance_valid(actor) or _hand_l < 0 or _hand_r < 0:
 		return
@@ -105,13 +115,17 @@ func update_pose() -> void:
 	if bow != null:
 		bow.visible = ranging or _equipped_bow
 	if bow != null and bow.visible:
-		# The visible ranged-animation bow replaces the registry socket prop.
-		# Keep its relaxed grip fit on the cached visual roots only; active
-		# draw/release poses retain their authored aiming transform.
-		bow.set_idle_fit(not ranging)
+		# Relaxed carrying follows the closed fist; active draw/release keeps
+		# the authored aiming frame and nock positions from both hands.
+		bow.set_idle_fit(false)
 		var skeleton_size := actor.get_skeleton().global_basis.get_scale().y
-		bow.pose(left, right, actor.global_basis.y.normalized(), -actor.global_basis.z.normalized(),
-			drawing, time if action == &"ranged_attack" else -1.0, actor.rig_fit_scale()*skeleton_size, skeleton_size)
+		var size := actor.rig_fit_scale() * skeleton_size
+		var grip := carried_bow_grip()
+		bow.pose(left if ranging else grip.origin, right,
+			actor.global_basis.y.normalized(), -actor.global_basis.z.normalized(),
+			drawing, time if action == &"ranged_attack" else -1.0, size, skeleton_size)
+		if not ranging:
+			bow.global_basis = grip.basis.orthonormalized().scaled(Vector3.ONE * size)
 	actor.set_hand_props_visible(not ranging)
 	_mesh.clear_surfaces()
 	if not effects_enabled or not actor.is_visible_in_tree():

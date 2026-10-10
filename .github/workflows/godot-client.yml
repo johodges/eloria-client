@@ -72,6 +72,8 @@ jobs:
           godot --headless --path godot-client --script res://tests/integration/race_feature_visibility.gd
       - name: Validate held prop registry
         run: python3 godot-client/tests/test_held_props.py -v
+      - name: Validate player finger skinning and unchanged geometry
+        run: python3 godot-client/tests/test_hand_skinning.py -v
       - name: Validate world object models
         run: python3 godot-client/tests/test_world_object_models.py -v
       - name: Validate map surface materials

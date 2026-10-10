@@ -31,35 +31,27 @@ func run() -> void:
 		var idle_string := idle_bow.get("_string_node") as MeshInstance3D
 		check(idle_bow.visible and idle_visual != null and idle_string != null,
 			"Ranger class bow replaces the hidden registry prop: " + str(option.model))
-		check(RangerBow3D.IDLE_PALM_OFFSET.is_equal_approx(Vector3(0.003, 0.0, 0.0)),
-			"Ranger relaxed bow keeps its reviewed left-palm offset: " + str(option.model))
-		check(idle_visual.global_transform.is_equal_approx(idle_string.global_transform),
-			"idle Ranger bow and live string share one fitted transform: " + str(option.model))
-		var left_hand := actor.get_skeleton().find_bone("hand_l")
-		var left_palm := actor.combat_presentation.hand_position(left_hand)
-		var bow_right := idle_bow.global_basis.x.normalized()
-		var grip_delta := idle_visual.global_position - left_palm
-		var grip_along := grip_delta.dot(bow_right)
-		var grip_orthogonal := grip_delta - bow_right * grip_along
-		var expected_grip_offset := RangerBow3D.IDLE_PALM_OFFSET.x * \
-			idle_bow.global_basis.x.length()
-		check(absf(grip_along - expected_grip_offset) < 0.002 and
-			grip_orthogonal.length() < 0.002,
-			"idle Ranger bow grip is centred through the left palm: " + str(option.model))
-		var root_up := idle_bow.global_basis.y.normalized()
-		var visual_up := idle_visual.global_basis.y.normalized()
-		var cant_degrees := rad_to_deg(acos(clampf(root_up.dot(visual_up), -1.0, 1.0)))
-		var root_forward := -idle_bow.global_basis.z.normalized()
-		var visual_forward := -idle_visual.global_basis.z.normalized()
-		check(absf(cant_degrees - 12.0) < 0.25 and
-			root_forward.dot(visual_forward) > 0.999,
-			"idle Ranger bow has a 12-degree cant without changing aim: " + str(option.model))
-		for relaxed_action: StringName in [&"idle", &"combat_idle"]:
-			actor.play_action(relaxed_action, true)
-			actor.animation_player.advance(0.05)
+		for carry_action: StringName in [&"idle", &"combat_idle", &"walk"]:
+			actor.play_action(carry_action, true)
+			actor.animation_player.advance(0.5)
 			actor.combat_presentation.update_pose()
-			check(idle_visual.transform.is_equal_approx(RangerBow3D.IDLE_FIT_TRANSFORM),
-				"Ranger bow retains its palm fit in %s: %s" % [relaxed_action, option.model])
+			# The reviewed off-hand sword socket independently defines the
+			# canonical left-fist bore; do not derive the expectation from
+			# the bow presentation's own helper.
+			var skeleton := actor.get_skeleton()
+			var hand := skeleton.find_bone("hand_l")
+			var rest := skeleton.get_bone_global_rest(hand)
+			var fit := actor.rig_fit_scale("legacy")
+			var socket: Dictionary = equipment.models["1:160"].socket
+			var grip := (skeleton.global_transform * skeleton.get_bone_global_pose(hand) *
+				rest.affine_inverse() * actor._socket_placement(socket, rest, fit, fit))
+			check(idle_bow.global_position.distance_to(grip.origin) < 0.002,
+				"carried Ranger handle stays in the left fist in %s: %s" % [carry_action, option.model])
+			check(idle_bow.global_basis.orthonormalized().is_equal_approx(grip.basis.orthonormalized()),
+				"carried Ranger haft follows the fist bore in %s: %s" % [carry_action, option.model])
+			check(idle_visual.transform.is_equal_approx(Transform3D.IDENTITY) and
+				idle_visual.global_transform.is_equal_approx(idle_string.global_transform),
+				"carried Ranger mesh and live string share the grip frame: " + str(option.model))
 		for effect_id: int in [2, 84, 83, 85, 0, 86, 10, 79, 19, 18, 75]:
 			actor.set_spell_variant(effect_id)
 			var action := SpellPresentation.action_for_effect(effect_id)

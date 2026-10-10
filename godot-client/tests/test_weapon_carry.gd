@@ -94,22 +94,47 @@ func run() -> void:
 			actor.play_action(action, true)
 			actor.animation_player.advance(0.15)
 			var before: Array[Transform3D] = []
+			var before_local: Array[Transform3D] = []
+			var expected_fingers := {}
+			for side: String in ["r", "l"]:
+				for finger: Array in carry.call("_fist", skeleton, side):
+					expected_fingers[finger[0]] = finger[1]
 			for bone: int in skeleton.get_bone_count():
 				before.append(skeleton.get_bone_global_pose(bone))
+				before_local.append(skeleton.get_bone_pose(bone))
 			carry.call("_process_modification_with_delta", 1.0)
 			for bone: int in skeleton.get_bone_count():
-				if action == &"idle" and held_out.has(bone):
+				if action == &"idle" and expected_fingers.has(bone):
+					check(skeleton.get_bone_pose_rotation(bone).angle_to(expected_fingers[bone]) < 0.01,
+						"%s idle closes %s into the combat fist" % [option.model, skeleton.get_bone_name(bone)])
+					continue
+				var bone_name := skeleton.get_bone_name(bone)
+				if action == &"idle" and bone_name in ["hand_r", "hand_l"]:
+					check(before[bone].origin.distance_to(skeleton.get_bone_global_pose(bone).origin) < 0.0001,
+						"%s idle wrist keeps its animated position" % option.model)
+					var part := 0 if bone_name == "hand_r" else 1
+					var prop := actor._equipment_nodes[part][0].get_child(0) as Node3D
+					check(prop.transform.is_equal_approx(prop.get_meta(&"fighting_grip")),
+						"%s idle socket stays inside the fist" % option.model)
+					continue
+				var ancestor := skeleton.get_bone_parent(bone)
+				var finger_leaf := false
+				while ancestor >= 0:
+					if skeleton.get_bone_name(ancestor) in ["hand_r", "hand_l"]:
+						finger_leaf = true
+						break
+					ancestor = skeleton.get_bone_parent(ancestor)
+				if action == &"idle" and finger_leaf:
+					check(before_local[bone].is_equal_approx(skeleton.get_bone_pose(bone)),
+						"%s idle retains the local pose of the fingertip leaf" % option.model)
 					continue
 				check(before[bone].is_equal_approx(skeleton.get_bone_global_pose(bone)),
 					"non-travel pose is unchanged: %s %s" % [option.model, action])
-			if action == &"idle" and spread > 0.0:
-				var shoulder := skeleton.find_bone("upperarm_l")
-				var hand := skeleton.find_bone("hand_l")
-				var hung := before[hand].origin - before[shoulder].origin
-				var held := skeleton.get_bone_global_pose(hand).origin - skeleton.get_bone_global_pose(shoulder).origin
-				check(skeleton.get_bone_global_pose(shoulder).origin.is_equal_approx(before[shoulder].origin)
-						and absf(rad_to_deg(hung.angle_to(held)) - spread) < 0.5,
-					"%s idle holds only the off hand's arm out, by its spread" % option.model)
+			if action == &"idle":
+				for arm: String in ["upperarm_r", "lowerarm_r", "upperarm_l", "lowerarm_l"]:
+					var bone := skeleton.find_bone(arm)
+					check(before[bone].is_equal_approx(skeleton.get_bone_global_pose(bone)),
+						"%s closing the idle fist retains %s" % [option.model, arm])
 		actor.current_action = &"idle"
 		actor.play_action(&"run", true)
 		actor.animation_player.advance(0.01)
@@ -119,7 +144,10 @@ func run() -> void:
 		actor.set_animation_tier(AnimationGate.Tier.FULL, gate)
 		check(carry.active, "visible carry resumes")
 		actor.apply_equipment_visuals({0: 64})
-		check(not carry.active, "bow keeps its existing two-hand presentation")
+		check(carry.active, "the bow closes its holding hand")
+		var bow_hands: Array = carry.get("_hands")
+		check(bow_hands.size() == 1 and bow_hands[0].side == "l" and bow_hands[0].get("finger_only", false),
+			"the bow keeps its own pose and only closes the holding left hand")
 		actor.apply_equipment_visuals({0: 114})
 		check(carry.active and (carry.get("_hands") as Array).size() == 1, "swapping back enables main hand only")
 		actor.apply_equipment_visuals({})

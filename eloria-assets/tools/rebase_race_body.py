@@ -3005,6 +3005,83 @@ def profile_dips(parts, origin_t, axis_t, origin_h, axis_h, upper_cut):
             'over1mm': int((dip > .001).sum()), 'limit': GROOVE_LIMIT}
 
 
+def reweight(root, slug, out, previous_template):
+    """Rebuild a verified v3 body with a weights-only Human template change.
+
+    Reusing its already baked head, bridge, tail and atlases avoids another
+    lossy texture bake. Every changed row must be an exact old-template copy;
+    every template accessor except JOINTS_0/WEIGHTS_0 must be unchanged. The
+    normal verify/install/post-import gates still apply to this candidate.
+    """
+    import reskin_human_hands as hs
+    root, out = Path(root).resolve(), Path(out).resolve()
+    if 'godot-client' in out.parts:
+        raise ValueError('Use scratch output outside godot-client')
+    source = root/'godot-client/assets/actors/native/races'/f'{slug}.glb'
+    template = source.with_name('luminous_'+slug.rsplit('_', 1)[1]+'.glb')
+    od, ob = ea.read_glb(Path(previous_template)); td, tb = ea.read_glb(template)
+    d, b = ea.read_glb(source); spec = d['asset']['extras']['sharedBodyShape']
+    if spec['version'] != 3 or spec['templateSHA256'] != digest(previous_template):
+        raise ValueError('Source is not a v3 body of the previous template')
+    if od != td:
+        raise ValueError('Weights-only update requires identical template JSON')
+    changed = {}; allowed = np.zeros(len(ob), bool)
+    seen = set()
+    for mesh in td['meshes']:
+        for prim in mesh['primitives']:
+            a = prim['attributes']; key = tuple(sorted(a.items()))
+            if key in seen: continue
+            seen.add(key)
+            for name, index in a.items():
+                old = ea.accessor_array(od, ob, index); new = ea.accessor_array(td, tb, index)
+                if name not in ('JOINTS_0', 'WEIGHTS_0') and old.tobytes() != new.tobytes():
+                    raise ValueError(f'Template changed {name}')
+            p = ea.accessor_array(td, tb, a['POSITION'])
+            oj = ea.accessor_array(od, ob, a['JOINTS_0']); ow = ea.accessor_array(od, ob, a['WEIGHTS_0'])
+            nj = ea.accessor_array(td, tb, a['JOINTS_0']); nw = ea.accessor_array(td, tb, a['WEIGHTS_0'])
+            rows = np.flatnonzero((oj != nj).any(1) | (ow != nw).any(1))
+            for row in rows:
+                signature = p[row].tobytes()+oj[row].tobytes()+ow[row].tobytes()
+                replacement = (nj[row].copy(), nw[row].copy())
+                if signature in changed and any(x.tobytes() != y.tobytes() for x, y in zip(changed[signature], replacement)):
+                    raise ValueError('Duplicate template rows disagree')
+                changed[signature] = replacement
+            for name in ('JOINTS_0', 'WEIGHTS_0'):
+                acc = td['accessors'][a[name]]; view = td['bufferViews'][acc['bufferView']]
+                width = ea.accessor_array(td, tb, a[name]).dtype.itemsize*4
+                start = view.get('byteOffset', 0)+acc.get('byteOffset', 0)
+                for row in range(acc['count']):
+                    offset = start+row*view.get('byteStride', width); allowed[offset:offset+width] = True
+    if len(ob) != len(tb) or np.any((np.frombuffer(ob, 'u1') != np.frombuffer(tb, 'u1')) & ~allowed):
+        raise ValueError('Template changed outside its skin accessors')
+    edited = bytearray(b); matched = set(); count = 0; seen = set()
+    for mesh in d['meshes']:
+        for prim in mesh['primitives']:
+            a = prim['attributes']; key = tuple(a[k] for k in ('POSITION', 'JOINTS_0', 'WEIGHTS_0'))
+            if key in seen: continue
+            seen.add(key)
+            p = ea.accessor_array(d, b, a['POSITION']); j = ea.accessor_array(d, b, a['JOINTS_0']).copy(); w = ea.accessor_array(d, b, a['WEIGHTS_0']).copy()
+            for row in range(len(p)):
+                signature = p[row].tobytes()+j[row].tobytes()+w[row].tobytes()
+                if signature in changed:
+                    j[row], w[row] = changed[signature]; matched.add(signature); count += 1
+            hs.patch_accessor(d, edited, a['JOINTS_0'], j); hs.patch_accessor(d, edited, a['WEIGHTS_0'], w)
+    if matched != set(changed):
+        raise ValueError(f'Missing {len(set(changed)-matched)} changed template rows')
+    spec['handSkinning'] = {'sourceSHA256': digest(source), 'previousTemplateSHA256': digest(previous_template),
+                            'previousToolSHA256': spec['toolSHA256'], 'toolSHA256': source_digest(hs.__file__),
+                            'changedVertices': count, 'rule': 'exact template skin rows; all other buffers retained'}
+    spec['templateSHA256'] = digest(template)
+    spec['toolSHA256'] = source_digest(__file__)
+    spec['inputsSHA256'] = inputs_digest(root, slug, tuple(spec.get('hooksWithout', ())))
+    out.mkdir(parents=True, exist_ok=True); target = out/f'{slug}.glb'
+    if target.exists(): raise FileExistsError(target)
+    g.write(target, d, bytes(edited))
+    report = {'source': str(source), 'output': str(target), 'outputSHA256': digest(target), 'changedVertices': count}
+    target.with_suffix('.json').write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
+    return report
+
+
 def verify(root, slug, candidate, out, head=None, candidates=None, reports=True):
     root, candidate = Path(root).resolve(), Path(candidate).resolve()
     sex = slug.rsplit('_', 1)[1]
@@ -3638,6 +3715,11 @@ def main():
                    help='turn a present P4 hook module off (diagnostic builds; recorded in sharedBodyShape.hooks)')
     b.add_argument('--tail-shape', help='Ssarathi tail drape (a race_tail TAIL_SHAPES name; default its TAIL_SHAPE, '
                                         'the only one V18 passes): candidate builds')
+    r = sub.add_parser('reweight')
+    r.add_argument('--root', type=Path, required=True)
+    r.add_argument('--slug', required=True)
+    r.add_argument('--out', type=Path, required=True)
+    r.add_argument('--previous-template', type=Path, required=True)
     v = sub.add_parser('verify')
     v.add_argument('--root', type=Path, required=True)
     v.add_argument('--slug', required=True)
@@ -3659,6 +3741,8 @@ def main():
                        args.head_atlas, args.head_density_max, args.neck_profile, args.detail_mix, args.skin_target,
                        tuple(args.without), args.tail_shape)
         print(json.dumps({k: report[k] for k in ('outputSHA256', 'trianglesByRole', 'sharedNeck', 'headAtlas')}, indent=2))
+    elif args.command == 'reweight':
+        print(json.dumps(reweight(args.root, args.slug, args.out, args.previous_template), indent=2))
     elif args.command == 'verify':
         result = verify(args.root, args.slug, args.candidate, args.out, args.head, reports=not args.no_reports)
         print(json.dumps({k: v['pass'] for k, v in result['gates'].items()}, indent=2))

@@ -19,7 +19,7 @@
       "path": "godot-client/assets/actors/native/races/luminous_female.glb",
       "source": "luminous_female.glb",
       "sourceSHA256": "6316da8288c310bcfa79c24249e1b804c3e076766c56419db397743d47466f1a",
-      "sha256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+      "sha256": "3a8ff81e9f152102ee1e57d892759c0a8e69ab49064ab8e473f5cb9ed3e8fc94",
       "surfaces": [
         "body",
         "eyes",
@@ -48,6 +48,14 @@
           ],
           "torsoAnchor": "physical hip centres"
         }
+      },
+      "handSkinning": {
+        "version": 1,
+        "sourceSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+        "tool": "eloria-assets/tools/reskin_human_hands.py",
+        "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+        "candidateSHA256": "3a8ff81e9f152102ee1e57d892759c0a8e69ab49064ab8e473f5cb9ed3e8fc94",
+        "rule": "geometry-segmented finger weights, twelve welded smoothing passes; only source hand skin rows change"
       }
     },
     "luminous_male": {
@@ -66,7 +74,7 @@
       "path": "godot-client/assets/actors/native/races/luminous_male.glb",
       "source": "luminous_male.glb",
       "sourceSHA256": "0cb1a7f78c15712872e3e9f6a1a458273a179b8d8cd8461d792ca5b915559c86",
-      "sha256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+      "sha256": "1cc5bd8cd2761e71f711dc33aabd500ea88cb918c0806223991cb5bd87bb2d75",
       "surfaces": [
         "body",
         "eyes",
@@ -95,6 +103,14 @@
           ],
           "torsoAnchor": "physical hip centres"
         }
+      },
+      "handSkinning": {
+        "version": 1,
+        "sourceSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+        "tool": "eloria-assets/tools/reskin_human_hands.py",
+        "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+        "candidateSHA256": "1cc5bd8cd2761e71f711dc33aabd500ea88cb918c0806223991cb5bd87bb2d75",
+        "rule": "geometry-segmented finger weights, twelve welded smoothing passes; only source hand skin rows change"
       }
     },
     "votary_female": {
@@ -113,7 +129,7 @@
       "path": "godot-client/assets/actors/native/races/votary_female.glb",
       "source": "whitehorn_votary_female_tpose.glb",
       "sourceSHA256": "a0601f6b651b363f793c997c1821fd483f6a017a836b07c58cffa3ee6214d154",
-      "sha256": "c27b499318c3cc229a8ad045f2e5b7b4b9c8c0317d751ca71f19c0db8200a68e",
+      "sha256": "b18678b68ab758eda25e6df6856ac9389a4a1eb1a3614e6f3fdef341ecb46ee2",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -144,7 +160,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_female",
-        "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+        "templateSHA256": "3a8ff81e9f152102ee1e57d892759c0a8e69ab49064ab8e473f5cb9ed3e8fc94",
         "headSource": "votary_female.v2.glb",
         "headSourceSHA256": "322433361f0fc879a69148f85ef3333218e4ab72fd99c348809d28686c0bfd01",
         "headTextureSHA256": "d378e56f678e033fda9751106e7c9545f682611e71e3833d7216fb80f608c917",
@@ -220,7 +236,7 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 15,
           "maxDipBeforeM": 0.0008376328801653343,
@@ -262,7 +278,7 @@
           }
         },
         "inputsSHA256": {
-          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
           "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
           "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
           "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
@@ -277,6 +293,14 @@
           "tail": null,
           "hands": null,
           "growths": null
+        },
+        "handSkinning": {
+          "sourceSHA256": "c27b499318c3cc229a8ad045f2e5b7b4b9c8c0317d751ca71f19c0db8200a68e",
+          "previousTemplateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+          "previousToolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1998,
+          "rule": "exact template skin rows; all other buffers retained"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -297,7 +321,7 @@
       "path": "godot-client/assets/actors/native/races/votary_male.glb",
       "source": "whitehorn_votary_male_tpose.glb",
       "sourceSHA256": "43cd45aca3c697956b98cfffa966a8ca612d28d341e7e9d29d3fadf696aaadb7",
-      "sha256": "6053585c0d3efbbc61cab57f4ccc0fd6b8a459fe7045c0d9e47467df74daf50a",
+      "sha256": "bc8887155f180338fed836d6a249b14826423be985edd1499f68797e514cf497",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -328,7 +352,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_male",
-        "templateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+        "templateSHA256": "1cc5bd8cd2761e71f711dc33aabd500ea88cb918c0806223991cb5bd87bb2d75",
         "headSource": "votary_male.v2.glb",
         "headSourceSHA256": "babe8d4e0398eca84fb5a53e0bf283ea167feffe7097b2ef3aa0bcf50f95b9b9",
         "headTextureSHA256": "e563a96f7f57ccbe6ac3d6cd46ec0ed10c55c4fd95f6f654351fa2744562e87c",
@@ -404,7 +428,7 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 41,
           "maxDipBeforeM": 0.0019367518471509332,
@@ -446,7 +470,7 @@
           }
         },
         "inputsSHA256": {
-          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
           "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
           "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
           "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
@@ -461,6 +485,14 @@
           "tail": null,
           "hands": null,
           "growths": null
+        },
+        "handSkinning": {
+          "sourceSHA256": "6053585c0d3efbbc61cab57f4ccc0fd6b8a459fe7045c0d9e47467df74daf50a",
+          "previousTemplateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+          "previousToolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1506,
+          "rule": "exact template skin rows; all other buffers retained"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -481,7 +513,7 @@
       "path": "godot-client/assets/actors/native/races/glasswarden_female.glb",
       "source": "glasswarden_female_tpose.glb",
       "sourceSHA256": "b9ed0125b47bb8a5737250d79bb59aa09260d0d45aa386fd07419ec4a9880643",
-      "sha256": "9a48f8fb2935a78ee42451faa1255250ddcc86ebcb47935be85cce04e9ff0b90",
+      "sha256": "75dd22e93defb16470686ab0f51c711a5b6a06c79362bdf33be965da111bc365",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -550,7 +582,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_female",
-        "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+        "templateSHA256": "3a8ff81e9f152102ee1e57d892759c0a8e69ab49064ab8e473f5cb9ed3e8fc94",
         "headSource": "glasswarden_female.crowned-v2.glb",
         "headSourceSHA256": "77bbae1f9e2a9eb108d6fe73b384d7d923425634250ff7f540865479a0f72241",
         "headTextureSHA256": "ce3aaecb55d1b9aecf3c5a2112fde00aee0fe64cb9888fd7ab3eeba95c9c2007",
@@ -644,7 +676,7 @@
           "hiddenHeadFraction60": 0.03150433184562877,
           "hiddenRule": "hidden: no ray escapes from the centroid along 60 directions, nor from 4 points (centroid and 3 interior) along 26 lattice + 120 Fibonacci directions"
         },
-        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 40,
           "maxDipBeforeM": 0.0018419686116880607,
@@ -726,7 +758,7 @@
           }
         },
         "inputsSHA256": {
-          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
           "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
           "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
           "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
@@ -741,6 +773,14 @@
           "tail": null,
           "hands": null,
           "growths": null
+        },
+        "handSkinning": {
+          "sourceSHA256": "9a48f8fb2935a78ee42451faa1255250ddcc86ebcb47935be85cce04e9ff0b90",
+          "previousTemplateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+          "previousToolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1998,
+          "rule": "exact template skin rows; all other buffers retained"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -761,7 +801,7 @@
       "path": "godot-client/assets/actors/native/races/glasswarden_male.glb",
       "source": "glasswarden_male_tpose.glb",
       "sourceSHA256": "efcec232675bfb5f233ea33cadb168d716658aa6569dd0b1a6c67fb0c0c85636",
-      "sha256": "2dfcebc9ca766619bedfc820b973362c269361da590a76340d113e0d2b7fa19f",
+      "sha256": "0238325cf20a8b34d84f53b72d9ccd94ed9ee6c3cbe3ee386d9f181e01cbaa25",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -792,7 +832,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_male",
-        "templateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+        "templateSHA256": "1cc5bd8cd2761e71f711dc33aabd500ea88cb918c0806223991cb5bd87bb2d75",
         "headSource": "glasswarden_male.glb",
         "headSourceSHA256": "b9e0ad4cf0211560d043b33836dc754a9e7ad4ebdd9c89658433a978c87b5eea",
         "headTextureSHA256": "81fb235001a6f6ddf08614d4be1351d839678dff9d160b69f97f76de03a41b67",
@@ -870,7 +910,7 @@
           "hiddenHeadFraction60": 0.0002013693113169553,
           "hiddenRule": "hidden: no ray escapes from the centroid along 60 directions, nor from 4 points (centroid and 3 interior) along 26 lattice + 120 Fibonacci directions"
         },
-        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 62,
           "maxDipBeforeM": 0.003782133734252749,
@@ -950,7 +990,7 @@
           }
         },
         "inputsSHA256": {
-          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
           "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
           "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
           "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
@@ -965,6 +1005,14 @@
           "tail": null,
           "hands": null,
           "growths": null
+        },
+        "handSkinning": {
+          "sourceSHA256": "2dfcebc9ca766619bedfc820b973362c269361da590a76340d113e0d2b7fa19f",
+          "previousTemplateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+          "previousToolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1506,
+          "rule": "exact template skin rows; all other buffers retained"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -985,7 +1033,7 @@
       "path": "godot-client/assets/actors/native/races/orun_female.glb",
       "source": "orun_female_tpose.glb",
       "sourceSHA256": "f7152380fa5ff5bfd7330e7548631d68b114acebecc753af1e2fde87c4833cc9",
-      "sha256": "a462d5a9c276da387e925535abe3caf9528df9855fe55e407d1c77b4bcd76749",
+      "sha256": "ff64d832b1e16427026f9b8dbdcb13e65d3f74ec633ed9bb96e20ee3baaed98f",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1015,7 +1063,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_female",
-        "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+        "templateSHA256": "3a8ff81e9f152102ee1e57d892759c0a8e69ab49064ab8e473f5cb9ed3e8fc94",
         "headSource": "orun_female.v2.glb",
         "headSourceSHA256": "72c2b6c328818fbe4fedbbe13db63975ac5e31c30737c834649c82f80b39fea2",
         "headTextureSHA256": "2e9d70c1ca254eca794383724a9c420017ed5a87cbf5413821b2c98ebb036536",
@@ -1091,14 +1139,14 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 21,
           "maxDipBeforeM": 0.0009756966300824843,
           "maxDipAfterM": 0.0005960002736666928
         },
         "inputsSHA256": {
-          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
           "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
           "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
           "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
@@ -1113,6 +1161,14 @@
           "tail": null,
           "hands": null,
           "growths": null
+        },
+        "handSkinning": {
+          "sourceSHA256": "a462d5a9c276da387e925535abe3caf9528df9855fe55e407d1c77b4bcd76749",
+          "previousTemplateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+          "previousToolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1998,
+          "rule": "exact template skin rows; all other buffers retained"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -1133,7 +1189,7 @@
       "path": "godot-client/assets/actors/native/races/orun_male.glb",
       "source": "orun_male_tpose.glb",
       "sourceSHA256": "0e128103b3ffe815cfb0d49550b93d8297d85dfaaab3e3528e5559a131bcc328",
-      "sha256": "6ebf58de76e9dda8f038cef3c7398e23c0980baa2a853193a4cb71a5ee86db6c",
+      "sha256": "6967fbd556040496807a7fd29a89f7940b3957cbf4a4015589033eeb1829581d",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1163,7 +1219,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_male",
-        "templateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+        "templateSHA256": "1cc5bd8cd2761e71f711dc33aabd500ea88cb918c0806223991cb5bd87bb2d75",
         "headSource": "orun_male.glb",
         "headSourceSHA256": "9044aebf2ea13cf82a9bdb40641481115e25521ec02e8a78df760a9b01299fd8",
         "headTextureSHA256": "79fa06953e9169c776eb194f743e493cc01f41dddac76c9f5b2ff395086f959e",
@@ -1239,11 +1295,31 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 41,
           "maxDipBeforeM": 0.003188921372430681,
           "maxDipAfterM": 0.0005065238183309048
+        },
+        "handSkinning": {
+          "sourceSHA256": "6ebf58de76e9dda8f038cef3c7398e23c0980baa2a853193a4cb71a5ee86db6c",
+          "previousTemplateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+          "previousToolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1506,
+          "rule": "exact template skin rows; all other buffers retained"
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -1264,7 +1340,7 @@
       "path": "godot-client/assets/actors/native/races/greyhaven_female.glb",
       "source": "greyhaven_female_tpose.glb",
       "sourceSHA256": "1a3b9be948faa6427c0bac616bc2b85aa1094605f11a15fd3fb1b118847187f5",
-      "sha256": "d11ad20911b0f674a838527b9c4c2bd08e478e7c1fa86018a010dfa170693be2",
+      "sha256": "46680d3b613d4738f57d950cf423e218898b51a934af74892d35e20580a41b83",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1294,7 +1370,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_female",
-        "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+        "templateSHA256": "3a8ff81e9f152102ee1e57d892759c0a8e69ab49064ab8e473f5cb9ed3e8fc94",
         "headSource": "greyhaven_female.glb",
         "headSourceSHA256": "583c48a20a1e437fdc6038a248b396d635273e61af0f7ecd4830b4b06954853c",
         "headTextureSHA256": "04b03c7e5c72b8a453e7deddcd3a8c9d3f250b4d3bf765dad05a09417c4e9479",
@@ -1370,7 +1446,27 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa"
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
+        "handSkinning": {
+          "sourceSHA256": "d11ad20911b0f674a838527b9c4c2bd08e478e7c1fa86018a010dfa170693be2",
+          "previousTemplateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+          "previousToolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1998,
+          "rule": "exact template skin rows; all other buffers retained"
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2"
+        }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
     },
@@ -1390,7 +1486,7 @@
       "path": "godot-client/assets/actors/native/races/greyhaven_male.glb",
       "source": "greyhaven_male_tpose.glb",
       "sourceSHA256": "0091fb6ffb2e277105967a7c25bd392008ffb799c2de4e8f50f3c212830d412c",
-      "sha256": "fc7ede3435b6780d119d7e657a28f6bd10c0f6aec6133e5ff6389fbe4057f4cb",
+      "sha256": "9b7815846f2a04c7888cdca991818c5a61728136255813849e4cfbdf78015ee1",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1420,7 +1516,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_male",
-        "templateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+        "templateSHA256": "1cc5bd8cd2761e71f711dc33aabd500ea88cb918c0806223991cb5bd87bb2d75",
         "headSource": "greyhaven_male.glb",
         "headSourceSHA256": "ca3b23bd7916e41833570a941dbfb02446d441a0955cf35c5c07582ac7e52a7f",
         "headTextureSHA256": "21d938a84e58ac54443fedbf7047d30ed5fc617befcbe78db982761c5cb2e512",
@@ -1496,11 +1592,31 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 44,
           "maxDipBeforeM": 0.0032743530675835714,
           "maxDipAfterM": 0.00031917082102241034
+        },
+        "handSkinning": {
+          "sourceSHA256": "fc7ede3435b6780d119d7e657a28f6bd10c0f6aec6133e5ff6389fbe4057f4cb",
+          "previousTemplateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+          "previousToolSHA256": "02695599c63ca94b65b7661b2db5633be281dc2647e190ae4c6280fd7558e5fa",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1506,
+          "rule": "exact template skin rows; all other buffers retained"
+        },
+        "inputsSHA256": {
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
+          "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
+          "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
+          "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
+          "verify_shared_player_bodies.py": "3b77d0983acaf01b3d5134759086f615447eaa2c09fd3ac6d1f58629709cf332",
+          "build_face_masks.py": "b82eff20f90f269de27ba68bb3939efb908635f1adad3a284db2cb6c0e10b8aa",
+          "calibrate_skin_palettes.py": "d5310fd389a54585892da3c97705b536c775178eab474666d3d5bea0c4387476",
+          "tpose_bodies/vendor/glbkit.py": "abc32d2401db15262dbd0a88c1fc14c781b13b33dd041976118fecec693fd9ec",
+          "face_regions.json": "964d0e9df858c4c9c7ae97b136a03a6f6bf47555f774e44b3456dc81a12beb7d",
+          "headwear_race_policy.json": "dd67227bdf24a649f02389a8df00e2b9a6e3a94b218d5557a5268b552200c3b2"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -1521,7 +1637,7 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_female.glb",
       "source": "ssarathi_female_tpose.glb",
       "sourceSHA256": "c87560e8fe71372682314da2c4ec960e489a7fa50fccb90cb92f2a9459e4c3d6",
-      "sha256": "2d88de9d81fab6c85c6dfba49e0f72531016937e58fc237417d5b77337fb92da",
+      "sha256": "d85705efc549b52c7eb7e2d18220d61dc82dcb1d4e6052efd8b77db84d88ec5b",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1551,7 +1667,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_female",
-        "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+        "templateSHA256": "3a8ff81e9f152102ee1e57d892759c0a8e69ab49064ab8e473f5cb9ed3e8fc94",
         "headSource": "ssarathi_female.v2.glb",
         "headSourceSHA256": "48df40f8c10c87be35350ca60728ff869b333cd64bf1e49d3471ef71f6478186",
         "headTextureSHA256": "268bf46ba703bbc649c8baa3d26d0501facecdea662d5102e9f7d55d6398e897",
@@ -1627,7 +1743,7 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 25,
           "maxDipBeforeM": 0.001355364030089054,
@@ -1698,7 +1814,7 @@
           }
         },
         "inputsSHA256": {
-          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
           "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
           "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
           "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
@@ -1731,6 +1847,14 @@
               "gatePassed": true
             }
           }
+        },
+        "handSkinning": {
+          "sourceSHA256": "2d88de9d81fab6c85c6dfba49e0f72531016937e58fc237417d5b77337fb92da",
+          "previousTemplateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+          "previousToolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1998,
+          "rule": "exact template skin rows; all other buffers retained"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -1751,7 +1875,7 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_male.glb",
       "source": "ssarathi_male_tpose.glb",
       "sourceSHA256": "0aaf3f18262bfc71b3e60044afbb9770b7d1f5551854ac62c07ccd627bceaf75",
-      "sha256": "431b84ad642ef10aeedc9ee4ba5ffb3293d1e093663c32244f5c585ed51d0ff9",
+      "sha256": "610576dee80412d7b102de26dbec5a76fd4f0913f9fbb07414a2e3c5b5fa1d49",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -1781,7 +1905,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_male",
-        "templateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+        "templateSHA256": "1cc5bd8cd2761e71f711dc33aabd500ea88cb918c0806223991cb5bd87bb2d75",
         "headSource": "ssarathi_male.glb",
         "headSourceSHA256": "43451e600b853d75a40c5485c0d3619e216eef30933b939e8db5976856616d9a",
         "headTextureSHA256": "91e19a9fb7ad203386f633a92db6dfb402f3f3333363869a4564327f801d4fa1",
@@ -1857,7 +1981,7 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 64,
           "maxDipBeforeM": 0.0039044903617858062,
@@ -1919,7 +2043,7 @@
           }
         },
         "inputsSHA256": {
-          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
           "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
           "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
           "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
@@ -1952,6 +2076,14 @@
               "gatePassed": true
             }
           }
+        },
+        "handSkinning": {
+          "sourceSHA256": "431b84ad642ef10aeedc9ee4ba5ffb3293d1e093663c32244f5c585ed51d0ff9",
+          "previousTemplateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+          "previousToolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1506,
+          "rule": "exact template skin rows; all other buffers retained"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -1972,7 +2104,7 @@
       "path": "godot-client/assets/actors/native/races/stoneborn_female.glb",
       "source": "stoneborn_female_tpose.glb",
       "sourceSHA256": "4e7ba138db2251d33144b60ee710f95a8f2cacd0ae9852461af429954e6fc529",
-      "sha256": "4cdb4368861d86ed857f7af846486ea65ef71a5e8cec2eedaca8b6c99a902813",
+      "sha256": "de84d7200a5a184d68ef2fc96c247fe364bb83953ad6c293e73a73ea18aab22e",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -2003,7 +2135,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_female",
-        "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+        "templateSHA256": "3a8ff81e9f152102ee1e57d892759c0a8e69ab49064ab8e473f5cb9ed3e8fc94",
         "headSource": "stoneborn_female.glb",
         "headSourceSHA256": "6840b6df0b690dfdcee777a02c41b35f6126319453300a56245c286400e44e89",
         "headTextureSHA256": "81511656345cd6fdc4be154c9cabe690285743390d82335df83c8077391a7566",
@@ -2079,7 +2211,7 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 14,
           "maxDipBeforeM": 0.0007814682069552416,
@@ -2128,7 +2260,7 @@
           }
         },
         "inputsSHA256": {
-          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
           "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
           "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
           "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
@@ -2160,6 +2292,14 @@
               "gatePassed": true
             }
           }
+        },
+        "handSkinning": {
+          "sourceSHA256": "4cdb4368861d86ed857f7af846486ea65ef71a5e8cec2eedaca8b6c99a902813",
+          "previousTemplateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+          "previousToolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1998,
+          "rule": "exact template skin rows; all other buffers retained"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -2180,7 +2320,7 @@
       "path": "godot-client/assets/actors/native/races/stoneborn_male.glb",
       "source": "stoneborn_male_tpose.glb",
       "sourceSHA256": "f742ff4ade8777366b193e35ba6dd59716920c573ce2c381e3e1ac0d861a5fbb",
-      "sha256": "9c22f5c569bb6536d82fd2544158ee5843fcc38dbd4542a16d88d4d3c49db89e",
+      "sha256": "4f5337290c5cee7865756c6a0f760e8b191b44cc1961e7fe24955130eda708ee",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -2211,7 +2351,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_male",
-        "templateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+        "templateSHA256": "1cc5bd8cd2761e71f711dc33aabd500ea88cb918c0806223991cb5bd87bb2d75",
         "headSource": "stoneborn_male.glb",
         "headSourceSHA256": "b2016fbc3e43f31811858442618574e1b188dbf48daa11abb80cb7f7ba66337a",
         "headTextureSHA256": "27528fb16fdbcacd4afbbc4855024e1a0c5220b8ed830339f21ba5d462229ec8",
@@ -2305,7 +2445,7 @@
           "hiddenHeadFraction60": 0.036322176072970114,
           "hiddenRule": "hidden: no ray escapes from the centroid along 60 directions, nor from 4 points (centroid and 3 interior) along 26 lattice + 120 Fibonacci directions"
         },
-        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 37,
           "maxDipBeforeM": 0.001544075385728011,
@@ -2371,7 +2511,7 @@
           }
         },
         "inputsSHA256": {
-          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
           "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
           "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
           "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
@@ -2403,6 +2543,14 @@
               "gatePassed": true
             }
           }
+        },
+        "handSkinning": {
+          "sourceSHA256": "9c22f5c569bb6536d82fd2544158ee5843fcc38dbd4542a16d88d4d3c49db89e",
+          "previousTemplateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+          "previousToolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1506,
+          "rule": "exact template skin rows; all other buffers retained"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -2423,7 +2571,7 @@
       "path": "godot-client/assets/actors/native/races/mycelari_female.glb",
       "source": "mycelari_female_tpose.glb",
       "sourceSHA256": "36a041b00f9bb18f23312a2c3c58334c01e8bc3f0509003717d0ce28139a4991",
-      "sha256": "d182f1c29ce191c75f1663cef689e98e827ed1bc8a4070870ded447ed0568a6f",
+      "sha256": "665f6211131e62e5a0f950e783d5c9a62e80b68e4d97d3826d0e8324dc41fcaa",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -2453,7 +2601,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_female",
-        "templateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+        "templateSHA256": "3a8ff81e9f152102ee1e57d892759c0a8e69ab49064ab8e473f5cb9ed3e8fc94",
         "headSource": "mycelari_female.glb",
         "headSourceSHA256": "86a0b972971c9f7bf6ee1992c089a28a5aba2aef5c6e177b4cbb69ccf77a1c37",
         "headTextureSHA256": "f084d8e79a07a06c7c08dc2a617215ce479616c98e52cdac4c5aff66f7f7dc44",
@@ -2529,14 +2677,14 @@
           "hiddenHeadFraction": 0.0,
           "visibilityDirections": 60
         },
-        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "neckProfileRepair": {
           "columns": 24,
           "maxDipBeforeM": 0.0011294291145091673,
           "maxDipAfterM": 0.0005879137152554198
         },
         "inputsSHA256": {
-          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
           "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
           "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
           "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
@@ -2560,6 +2708,14 @@
           "growth": "mycelari_female.glb",
           "growthSHA256": "f340ddf156a71f12257367ee28537d6611591300983e1bc7365c737edc045649",
           "triangles": 2599
+        },
+        "handSkinning": {
+          "sourceSHA256": "d182f1c29ce191c75f1663cef689e98e827ed1bc8a4070870ded447ed0568a6f",
+          "previousTemplateSHA256": "bca46fee98ccee854d247c31a66ece5a9de7368226715db62ddb2b3bcb03a416",
+          "previousToolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1998,
+          "rule": "exact template skin rows; all other buffers retained"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
@@ -2580,7 +2736,7 @@
       "path": "godot-client/assets/actors/native/races/mycelari_male.glb",
       "source": "mycelari_male_tpose.glb",
       "sourceSHA256": "2aca1144b085584e298793940e17bc2b8f8afd969fcf3620d3b2604132f56157",
-      "sha256": "4c6b683898da54b0fd8950b3b3e4e3b1515586a7712d865d14cf6cd2effb3268",
+      "sha256": "4bcc4445ef8f3dfa6d79334e15de901076294daff6b832c4c2c664299d16bf3c",
       "surfaces": [
         "body",
         "wardrobe_shirt",
@@ -2610,7 +2766,7 @@
       "sharedBodyShape": {
         "version": 3,
         "template": "luminous_male",
-        "templateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+        "templateSHA256": "1cc5bd8cd2761e71f711dc33aabd500ea88cb918c0806223991cb5bd87bb2d75",
         "headSource": "mycelari_male.glb",
         "headSourceSHA256": "db41829eaeddad1b42817e5a07ed6b0548801342cce42461cfdd5cd2318ec671",
         "headTextureSHA256": "d018dad0eec7cd01bdeb04a4f2e1d8c4b8c470833b13c38ae270676f16116aff",
@@ -2704,7 +2860,7 @@
           "hiddenHeadFraction60": 0.03596403596403597,
           "hiddenRule": "hidden: no ray escapes from the centroid along 60 directions, nor from 4 points (centroid and 3 interior) along 26 lattice + 120 Fibonacci directions"
         },
-        "toolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+        "toolSHA256": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
         "headAlbedo": {
           "space": "linear",
           "gain": 0.6964477471213144,
@@ -2729,7 +2885,7 @@
           "chart": "own planar chart at the median density; texels interpolate the colours of their corners on intact faces"
         },
         "inputsSHA256": {
-          "rebase_race_body.py": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "rebase_race_body.py": "c01a514051f71f668546cb51214040e440f5e774beb12a079d22ee687c8abfbc",
           "race_features.py": "aedca9cca8853cfc3a1f7b663f32df3a624227bbaa2dac9ae295ca85a32a6e10",
           "equipment_authoring.py": "d15471e9f98d6d864d2fee70b191251b0940cc29290ffc335a3927d6beb32b6c",
           "shared_player_bodies.py": "ddbc070f2c173291371cf7e6431fda5de733e930a75e476441ab2e06ea6fa82a",
@@ -2753,6 +2909,14 @@
           "growth": "mycelari_male.glb",
           "growthSHA256": "4dc97a7422f32d3cc51d9332553cdfccbc51ab90f6bdce8653d25f47c9ae40e7",
           "triangles": 2599
+        },
+        "handSkinning": {
+          "sourceSHA256": "4c6b683898da54b0fd8950b3b3e4e3b1515586a7712d865d14cf6cd2effb3268",
+          "previousTemplateSHA256": "aba5fe6cc00627f8101c43fad9bd135e9c13c694b931c384759c23e73765436c",
+          "previousToolSHA256": "36b2c9200421e96a452bb7b7e482d551bda2775feecae5ab3da22a93c5d1eadf",
+          "toolSHA256": "7a6fe86f006eae1f8e0ae2b3a43ce0e5a71b3fb27d5454bce839283001caf1f0",
+          "changedVertices": 1506,
+          "rule": "exact template skin rows; all other buffers retained"
         }
       },
       "pipeline": "eloria-assets/tools/rebase_race_body.py"
