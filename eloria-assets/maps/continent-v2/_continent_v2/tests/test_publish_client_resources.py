@@ -6,7 +6,7 @@ publisher wrote {} there, so the budget never read an index and counted every co
 territory_resources rebuilds the list from the chunk manifests, with URIs relative to the territory's GLB directory.
 
 The synthetic cases need nothing but the publisher module. The package cases check the committed isle packages
-when they are in the checkout: the territory list is exactly the union of the chunks' lists, every URI resolves to
+for every active catalog map: the territory list is exactly the union of the chunks' lists, every URI resolves to
 the chunk's own file, and build_vram_textures.inventory plans the territory's entries into the chunks' directory.
 
     python -m pytest eloria-assets/maps/continent-v2/_continent_v2/tests/test_publish_client_resources.py -q
@@ -28,7 +28,8 @@ sys.path.insert(0, str(V2))
 sys.path.insert(0, str(CHECKOUT / "godot-client" / "tools"))
 import publish_client as PC  # noqa: E402
 
-REGIONS = ("sw_isle", "tollholms", "gull_skerries")
+REGIONS = tuple(entry["id"] for entry in json.loads(
+    (CHECKOUT / "godot-client/world_authoring/continent-v2/territories.json").read_text(encoding="utf-8"))["entries"])
 CHUNK_URI = "../../../../_continent_v2/shared-assets/{}.{}"
 TERRITORY_URI = "../../_continent_v2/shared-assets/{}.{}"
 
@@ -82,12 +83,9 @@ def test_one_uri_two_digests_is_refused(tmp_path):
 
 
 def packages():
-    found = []
-    for region in REGIONS:
-        manifest = CHECKOUT / "eloria-assets/maps/continent-v2" / region / "client" / "world.json"
-        if manifest.is_file():
-            found.append(pytest.param(manifest, id=region))
-    return found or [pytest.param(None, marks=pytest.mark.skip(reason="no isle package in this checkout"))]
+    # Every active map must publish; a missing package must not silently remove coverage.
+    return [pytest.param(CHECKOUT / "eloria-assets/maps/continent-v2" / region / "client" / "world.json",
+                         id=region) for region in REGIONS]
 
 
 @pytest.mark.parametrize("manifest_path", packages())

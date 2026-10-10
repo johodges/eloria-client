@@ -5,6 +5,7 @@ extends Node3D
 signal status_changed(message: String)
 
 const HOST_NAME := "__TerritoryReferenceHost"
+const GEOMETRY := preload("res://addons/map_authoring_workspace/ownership_geometry.gd")
 const OWNERSHIP := preload("res://src/dev/map_authoring_region/ownership_source.gd")
 const ACTIVE_CLIP_NAME := "ActiveOwnedTerrain"
 const BOUNDARY_SAMPLE_METRES := 2.0
@@ -337,7 +338,7 @@ func _add_owned_terrain(region: Node3D, entry: Dictionary, display_name: String,
 	var source := region.get_node_or_null("Terrain/__TerrainPreview") as MeshInstance3D
 	if source == null or source.mesh == null:
 		return false
-	var mesh := clipped_mesh(source, active_root, entry.ownership_polygon,
+	var mesh := clipped_mesh(source, active_root, GEOMETRY.from_entry(entry),
 		active_entry.translation)
 	if mesh == null or mesh.get_surface_count() == 0:
 		return false
@@ -372,7 +373,7 @@ func _add_published_owned_surfaces(region: Node3D, entry: Dictionary) -> bool:
 		if not source_name.begins_with("Terrain_") and \
 				not source_name.begins_with("Water_"):
 			continue
-		var mesh := clipped_mesh(source, active_root, entry.ownership_polygon,
+		var mesh := clipped_mesh(source, active_root, GEOMETRY.from_entry(entry),
 			active_entry.translation, claimed_water_exclusions \
 				if source_name.begins_with("Water_") else [])
 		_hide_source(source)
@@ -511,7 +512,6 @@ func _strip_reference_scripts(root: Node) -> void:
 
 
 func _add_boundary(region: Node3D, entry: Dictionary) -> Dictionary:
-	var polygon: PackedVector2Array = entry.ownership_polygon
 	var entry_translation: Vector3 = entry.translation
 	var active_translation_value: Vector3 = active_entry.translation
 	var vertices := PackedVector3Array()
@@ -520,34 +520,35 @@ func _add_boundary(region: Node3D, entry: Dictionary) -> Dictionary:
 	var sample_count := 0
 	var matched_count := 0
 	var missing_count := 0
-	for index in polygon.size():
-		var first: Vector2 = polygon[index]
-		var second: Vector2 = polygon[(index + 1) % polygon.size()]
-		var steps := maxi(1, ceili(first.distance_to(second) / BOUNDARY_SAMPLE_METRES))
-		var previous := Vector3.ZERO
-		var previous_valid := false
-		for step in steps + 1:
-			var point := first.lerp(second, float(step) / float(steps))
-			var local: Vector2 = point - Vector2(entry_translation.x,
-				entry_translation.z)
-			var sampled_height := NAN
-			if terrain != null and terrain.has_method("height_at_local"):
-				sampled_height = terrain.call("height_at_local", local.x, local.y)
-			elif not published_sampler.is_empty():
-				sampled_height = _sample_published_height(point, published_sampler)
-			sample_count += 1
-			if is_nan(sampled_height):
-				missing_count += 1
-				previous_valid = false
-				continue
-			matched_count += 1
-			var current := Vector3(point.x - active_translation_value.x,
-				sampled_height + 0.15, point.y - active_translation_value.z)
-			if previous_valid:
-				vertices.append(previous)
-				vertices.append(current)
-			previous = current
-			previous_valid = true
+	for polygon in GEOMETRY.from_entry(entry):
+		for index in polygon.size():
+			var first: Vector2 = polygon[index]
+			var second: Vector2 = polygon[(index + 1) % polygon.size()]
+			var steps := maxi(1, ceili(first.distance_to(second) / BOUNDARY_SAMPLE_METRES))
+			var previous := Vector3.ZERO
+			var previous_valid := false
+			for step in steps + 1:
+				var point := first.lerp(second, float(step) / float(steps))
+				var local: Vector2 = point - Vector2(entry_translation.x,
+					entry_translation.z)
+				var sampled_height := NAN
+				if terrain != null and terrain.has_method("height_at_local"):
+					sampled_height = terrain.call("height_at_local", local.x, local.y)
+				elif not published_sampler.is_empty():
+					sampled_height = _sample_published_height(point, published_sampler)
+				sample_count += 1
+				if is_nan(sampled_height):
+					missing_count += 1
+					previous_valid = false
+					continue
+				matched_count += 1
+				var current := Vector3(point.x - active_translation_value.x,
+					sampled_height + 0.15, point.y - active_translation_value.z)
+				if previous_valid:
+					vertices.append(previous)
+					vertices.append(current)
+				previous = current
+				previous_valid = true
 	var coverage := {
 		"samples": sample_count,
 		"matched": matched_count,
@@ -687,13 +688,16 @@ static func _height_key(point: Vector2) -> Vector2i:
 
 
 static func clipped_mesh(source: MeshInstance3D, active: Node3D,
-		polygon_global: PackedVector2Array, active_translation: Vector3,
+		polygon_global: Variant, active_translation: Vector3,
 		exclusions: Array = []) -> ArrayMesh:
-	if source == null or source.mesh == null or active == null or polygon_global.size() < 3:
+	var polygons := GEOMETRY.polygons(polygon_global)
+	if source == null or source.mesh == null or active == null or polygons.is_empty():
 		return null
 	var result := ArrayMesh.new()
 	var source_to_active := active.global_transform.affine_inverse() * source.global_transform
-	var edge_bins := _polygon_edge_bins(polygon_global)
+	var edge_bins: Array[Dictionary] = []
+	for polygon in polygons:
+		edge_bins.append(_polygon_edge_bins(polygon))
 	for surface_index in source.mesh.get_surface_count():
 		var arrays: Array = source.mesh.surface_get_arrays(surface_index)
 		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
@@ -712,8 +716,7 @@ static func clipped_mesh(source: MeshInstance3D, active: Node3D,
 			var active_point := source_to_active * vertices[index]
 			projected[index] = Vector2(active_point.x + active_translation.x,
 				active_point.z + active_translation.z)
-			inside[index] = 1 if Geometry2D.is_point_in_polygon(
-				projected[index], polygon_global) else 0
+			inside[index] = 1 if GEOMETRY.contains(projected[index], polygons) else 0
 		var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL] \
 			if arrays[Mesh.ARRAY_NORMAL] is PackedVector3Array else PackedVector3Array()
 		var tangents: PackedFloat32Array = arrays[Mesh.ARRAY_TANGENT] \
@@ -747,13 +750,28 @@ static func clipped_mesh(source: MeshInstance3D, active: Node3D,
 				var exclusion_bounds: Rect2 = exclusion.get("bounds", Rect2())
 				if triangle_bounds.intersects(exclusion_bounds, true):
 					relevant_exclusions.append(exclusion)
-			if inside_count == 3 and relevant_exclusions.is_empty():
+			var whole_inside := inside_count == 3 and polygons.size() == 1
+			if inside_count == 3 and polygons.size() > 1:
+				for component in polygons.size():
+					var polygon := polygons[component]
+					if (not _triangle_near_boundary(triangle, edge_bins[component])
+							and Geometry2D.is_point_in_polygon(triangle[0], polygon)
+							and Geometry2D.is_point_in_polygon(triangle[1], polygon)
+							and Geometry2D.is_point_in_polygon(triangle[2], polygon)):
+						whole_inside = true
+						break
+			if whole_inside and relevant_exclusions.is_empty():
 				kept.append_array(triangle_indices)
 				continue
-			if inside_count == 0 and not _triangle_near_boundary(triangle, edge_bins):
-				continue
-			var pieces: Array[PackedVector2Array] = Geometry2D.intersect_polygons(
-				triangle, polygon_global)
+			if inside_count == 0:
+				var near_boundary := false
+				for bins in edge_bins:
+					near_boundary = near_boundary or _triangle_near_boundary(triangle, bins)
+				if not near_boundary:
+					continue
+			var pieces: Array[PackedVector2Array] = []
+			for polygon in polygons:
+				pieces.append_array(Geometry2D.intersect_polygons(triangle, polygon))
 			for exclusion: Dictionary in relevant_exclusions:
 				var remaining: Array[PackedVector2Array] = []
 				var exclusion_polygon: PackedVector2Array = exclusion.polygon

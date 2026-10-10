@@ -3,141 +3,622 @@
  "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_server.py",
  "about": "what publish_server.py served from what, by SHA-256: rerun it with --check to compare a server tree. servedReachTiles is the union reach with every NPC post standing (closed).",
  "maps": {
-  "sw_isle": {
+  "boarsend": {
    "frame": {
     "origin": [
-     1023,
-     993
+     682,
+     429
     ],
     "cells": [
-     2046,
-     2046
+     1368,
+     1368
     ],
     "translation": [
-     1418.0,
+     1007.0,
      0.0,
-     7270.0
+     8226.0
     ]
    },
    "bake": {
-    "snapshotSha256": "b82544a0d3504458916bb10fe4cdebfd18256edaf609ecb52832004eb63b92c7",
-    "sceneSha256": "4e61457d63f7effb4f74d4ad53ce8bf13c90c06c14409bfddb7812706307eb08"
+    "snapshotSha256": "9eea84a74ea8f51efd161a7704f82f8730dc228dcd3d5834f3d7c6b9b3639a45",
+    "sceneSha256": "26d01c37031238cdf28e74106046e212e7fb22487deac458ab68138e5d67528a"
    },
    "package": {
-    "collisionSha256": "8e610f0ab472e8cab16885de39172e1faf8db9121d3f363b9c4f54e352916397",
-    "servedGridSha256": "17cc0fccb7d4b05199e6facc4ff8d55ccbd04b60e7aa0efa3cdb2038a8e61f54"
-   },
-   "arrival": [
-    580,
-    872
-   ],
-   "rows": {
-    "spawns": 883,
-    "nodes": 196,
-    "npcs": 5,
-    "homeNpcs": 5,
-    "interactives": 2,
-    "laneDepartures": 546
-   },
-   "npcPosts": 10,
-   "servedReachTiles": 1458303
-  },
-  "tollholms": {
-   "frame": {
-    "origin": [
-     367,
-     949
-    ],
-    "cells": [
-     1902,
-     1902
-    ],
-    "translation": [
-     2800.0,
-     0.0,
-     7398.0
-    ]
-   },
-   "bake": {
-    "snapshotSha256": "fdb530269590516a59599e93e65d9d334dd39c3ca9f5f977578cb8ac0a59a407",
-    "sceneSha256": "96341027aee45d5c3a0298bae966c1e62a668237eebd2e07eab092c2652720e2"
-   },
-   "package": {
-    "collisionSha256": "c6bf567b5d805e9a8a51a7fc9d3c8ac43303d14b19310f628e7d3028e27c4c34",
-    "servedGridSha256": "f9fd894ce8d8ca81a40349755f1381094031edfb4b87d14c3aa5a115b625ea96"
-   },
-   "arrival": [
-    382,
-    334
-   ],
-   "rows": {
-    "spawns": 133,
-    "nodes": 0,
-    "npcs": 0,
-    "homeNpcs": 0,
-    "interactives": 0,
-    "laneDepartures": 313
-   },
-   "npcPosts": 0,
-   "servedReachTiles": 203309
-  },
-  "gull_skerries": {
-   "frame": {
-    "origin": [
-     571,
-     779
-    ],
-    "cells": [
-     1560,
-     1560
-    ],
-    "translation": [
-     896.0,
-     0.0,
-     7876.0
-    ]
-   },
-   "bake": {
-    "snapshotSha256": "05114f6bdde034ccb3e158e2641c43a5765928d1e8351ae9ec278c22e2a50321",
-    "sceneSha256": "0ad21f70113aee75ff95e03ce882947457b75265b5f447e87865a689057d046a"
-   },
-   "package": {
-    "collisionSha256": "487e0f78833c02f7beb26dc12d7d93c682b2bb69731400251b055cbb149a5398",
-    "servedGridSha256": "cf058ae63eae1b6e10a029cf89925a2aec2185515854aea970db93acc0df218e"
+    "collisionSha256": "77cd197a6935f5ad5a0fd5563265b3255731fd8ddec5c7c94f538474a5837eec",
+    "servedGridSha256": "66f1fdad5bad1fa7bf654a8f8a6a950b818c464d749c8bb7e3016c9a04a6bab0"
    },
    "arrival": [
     858,
     382
    ],
    "rows": {
-    "spawns": 11,
+    "spawns": 74,
+    "nodes": 24,
+    "npcs": 0,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 510
+   },
+   "npcPosts": 0,
+   "servedReachTiles": 124619
+  },
+  "brambleshaw": {
+   "frame": {
+    "origin": [
+     277,
+     177
+    ],
+    "cells": [
+     558,
+     558
+    ],
+    "translation": [
+     1402.0,
+     0.0,
+     7768.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "bd8f9a77b1e097dc28cdd7a515a54dbc26bb490607b02ba3d3483f48e542f6f2",
+    "sceneSha256": "b984a84618936ab868c8f95a192029d9ffcd73d8c10f0b9b42bab05f9d3752fd"
+   },
+   "package": {
+    "collisionSha256": "2220c5fb8a1fccb43ea592269bc7504a60d7290a8bc409d9beef3a6aee92a130",
+    "servedGridSha256": "faa2db0608a13e914b3014e7c0ae1d1c901c65ccbd798cf42348ee196715bdfc"
+   },
+   "arrival": [
+    263,
+    174
+   ],
+   "rows": {
+    "spawns": 92,
     "nodes": 0,
     "npcs": 0,
     "homeNpcs": 0,
     "interactives": 0,
-    "laneDepartures": 233
+    "laneDepartures": 832
    },
    "npcPosts": 0,
-   "servedReachTiles": 18105
+   "servedReachTiles": 103359
+  },
+  "greenlight": {
+   "frame": {
+    "origin": [
+     435,
+     448
+    ],
+    "cells": [
+     900,
+     900
+    ],
+    "translation": [
+     2006.0,
+     0.0,
+     7815.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "163ffe7b29f92096c9f2bf774f4f4005396795250c41ae223bcaa95d30c56468",
+    "sceneSha256": "8c1131509101e9036f410cf3568b3f6d8560f91c6bea7371df1da110f2bea71f"
+   },
+   "package": {
+    "collisionSha256": "327ce7fa48704eb7281b098f6700ce07f0c2c8f2bdc95d3f758b00bfb672c203",
+    "servedGridSha256": "2f46a36acd0c6431cc9974abb0aeced568055e6f9340e5e932336174eaf22f1f"
+   },
+   "arrival": [
+    473,
+    360
+   ],
+   "rows": {
+    "spawns": 11,
+    "nodes": 15,
+    "npcs": 0,
+    "homeNpcs": 1,
+    "interactives": 1,
+    "laneDepartures": 114
+   },
+   "npcPosts": 1,
+   "servedReachTiles": 45806
+  },
+  "hearthcroft": {
+   "frame": {
+    "origin": [
+     425,
+     269
+    ],
+    "cells": [
+     852,
+     852
+    ],
+    "translation": [
+     1900.0,
+     0.0,
+     6956.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "fa267ef758098f3fa5efe9d01450c64dc39b5ac621b34484610816a70fc9ef59",
+    "sceneSha256": "6fb9a293fdb01cbb3c1c34edf520ce7264ae1d98389db1cc67c0f516d6b32426"
+   },
+   "package": {
+    "collisionSha256": "0641347814b16d52534dae489daa6b5ad72fb10e58f17dd32421ba76bb91a6a3",
+    "servedGridSha256": "170e37e73df8ec72126bbff20d1dada8ffafc1de05ae559d1c25d08d9809e197"
+   },
+   "arrival": [
+    259,
+    280
+   ],
+   "rows": {
+    "spawns": 45,
+    "nodes": 22,
+    "npcs": 0,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 843
+   },
+   "npcPosts": 0,
+   "servedReachTiles": 113398
+  },
+  "landfall": {
+   "frame": {
+    "origin": [
+     282,
+     248
+    ],
+    "cells": [
+     564,
+     564
+    ],
+    "translation": [
+     1127.0,
+     0.0,
+     7357.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "e5e2c1ed1f8c1416eded8430e81ddedab2f489cb2096332c97c4000b4a9209f2",
+    "sceneSha256": "18b0792aca6113bf9f8b91d243c3df7818c380491f399c18c13ca7191a7e0a80"
+   },
+   "package": {
+    "collisionSha256": "ca7d4ad3d4ee98025018134aa621d972e2df3bd3549204bbb1b27213b1fc2619",
+    "servedGridSha256": "c07a66af326843540adfcf6bee122b645179af868414611c4a11ed78c2abdf92"
+   },
+   "arrival": [
+    130,
+    214
+   ],
+   "rows": {
+    "spawns": 50,
+    "nodes": 34,
+    "npcs": 2,
+    "homeNpcs": 4,
+    "interactives": 1,
+    "laneDepartures": 1170
+   },
+   "npcPosts": 6,
+   "servedReachTiles": 172248
+  },
+  "pinebrow": {
+   "frame": {
+    "origin": [
+     409,
+     394
+    ],
+    "cells": [
+     822,
+     822
+    ],
+    "translation": [
+     734.0,
+     0.0,
+     7931.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "5d94d327f3afd12c39f2b2f34985f553eebfd619936be502376fd0ca793f4ce2",
+    "sceneSha256": "02a39595f6a7b0e507833c3269395a45f2ed2baed8070b23f006a7fbf9347d1f"
+   },
+   "package": {
+    "collisionSha256": "52857361473ff33f4189f490c5d540709224bc71b8f7559a9038423d18de5cc6",
+    "servedGridSha256": "fd34023e86d441c60cfb93ca78356187cc8869a2a66e3a19a92f343c2dd55042"
+   },
+   "arrival": [
+    385,
+    267
+   ],
+   "rows": {
+    "spawns": 122,
+    "nodes": 1,
+    "npcs": 0,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 855
+   },
+   "npcPosts": 0,
+   "servedReachTiles": 134326
+  },
+  "ravenhead": {
+   "frame": {
+    "origin": [
+     660,
+     579
+    ],
+    "cells": [
+     1320,
+     1320
+    ],
+    "translation": [
+     2505.0,
+     0.0,
+     7096.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "2a393b242aba782f0b0a269121589f6b866ace96827ddb9cf5f26259a4e1d2e8",
+    "sceneSha256": "f5f0419851f4f3df7d36d446bd769b70944d0243262829c23e8cd72f456105bd"
+   },
+   "package": {
+    "collisionSha256": "3519c3c72451a1c5950624ec34dad994082f242ac2a8326369e43aa96da35107",
+    "servedGridSha256": "89fdea9ac1ab4dc88ddd79d90ecd921abdfd472e58869d5284072796819658a1"
+   },
+   "arrival": [
+    684,
+    346
+   ],
+   "rows": {
+    "spawns": 32,
+    "nodes": 26,
+    "npcs": 0,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 163
+   },
+   "npcPosts": 0,
+   "servedReachTiles": 84713
+  },
+  "reedfall": {
+   "frame": {
+    "origin": [
+     347,
+     267
+    ],
+    "cells": [
+     696,
+     696
+    ],
+    "translation": [
+     1606.0,
+     0.0,
+     7404.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "e23aefb742db23b325b0b9a976a4d6d19d5d4d107873985e72a9e0e41527cf21",
+    "sceneSha256": "c06843094ea1be8d43dd818a975fd9ee0cddf798c050ae8b4862db30d55eb45f"
+   },
+   "package": {
+    "collisionSha256": "c72b3d349df2d83810d09c7f3a8af4e1196f0c93aab490540e4e54e67f826081",
+    "servedGridSha256": "900fe1401d5cb7d95a44a2aa9ba327107be249a7d600f99fe28b6b5299558550"
+   },
+   "arrival": [
+    313,
+    274
+   ],
+   "rows": {
+    "spawns": 74,
+    "nodes": 17,
+    "npcs": 0,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 1068
+   },
+   "npcPosts": 0,
+   "servedReachTiles": 107554
+  },
+  "ringholm": {
+   "frame": {
+    "origin": [
+     455,
+     334
+    ],
+    "cells": [
+     912,
+     912
+    ],
+    "translation": [
+     2710.0,
+     0.0,
+     6841.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "a39ef0d1967a6a588da933df8d0f2949efeb0297685e06b89f3e0888a626eecd",
+    "sceneSha256": "6551eb418974092be53eddbf4c90a0a0fa915a18f6af3105d989b9c73c4b744b"
+   },
+   "package": {
+    "collisionSha256": "945ca1d329791abb8ad29625ac1d19ceb0e866467334098c8770cc73d83ed28b",
+    "servedGridSha256": "ca7760beeb6094f3adb956272114fc850c8ce2d020ddd266c97c77a6046d2599"
+   },
+   "arrival": [
+    372,
+    345
+   ],
+   "rows": {
+    "spawns": 64,
+    "nodes": 0,
+    "npcs": 0,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 18
+   },
+   "npcPosts": 0,
+   "servedReachTiles": 130199
+  },
+  "saltsound": {
+   "frame": {
+    "origin": [
+     604,
+     304
+    ],
+    "cells": [
+     1212,
+     1212
+    ],
+    "translation": [
+     2059.0,
+     0.0,
+     6521.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "7a7704c51e5d1f2a8bf678810d4b3d10f15056ce4e5be2cb29a77b1e92440406",
+    "sceneSha256": "d16d91840a88174c43c52ee2effa1fd243b78e1790a3004b86f0c22e91cbcdd0"
+   },
+   "package": {
+    "collisionSha256": "6c0bdfaaf6f4c00b7c8d16805ea084acaab98621b3c583272f4d64f8dd16c3d5",
+    "servedGridSha256": "6b1e515ee1f8ad942bfd43082c01cdf75f3c477f36fc0247c4a6bccdfaae04ed"
+   },
+   "arrival": [
+    212,
+    203
+   ],
+   "rows": {
+    "spawns": 31,
+    "nodes": 8,
+    "npcs": 0,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 470
+   },
+   "npcPosts": 0,
+   "servedReachTiles": 76274
+  },
+  "spindle_hill": {
+   "frame": {
+    "origin": [
+     150,
+     340
+    ],
+    "cells": [
+     684,
+     684
+    ],
+    "translation": [
+     2583.0,
+     0.0,
+     8007.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "7c0bab380a0357058f93d14794ae2268d23aa7a9180ec0b52a0c21dbc472f96f",
+    "sceneSha256": "6dc5edeabf893a23a87af8601dbad0add42ba2e8fee296a2de09b2b53bebbaf9"
+   },
+   "package": {
+    "collisionSha256": "677712e19637177f88f6d4f3adf933185c02f42e526371672323548792dba641",
+    "servedGridSha256": "004a2039ffc18a6a575d7ee7ffbc3702da27c42703cc670676d8cffc232d11ee"
+   },
+   "arrival": [
+    138,
+    367
+   ],
+   "rows": {
+    "spawns": 39,
+    "nodes": 0,
+    "npcs": 0,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 230
+   },
+   "npcPosts": 0,
+   "servedReachTiles": 51506
+  },
+  "stagheath": {
+   "frame": {
+    "origin": [
+     534,
+     300
+    ],
+    "cells": [
+     1068,
+     1068
+    ],
+    "translation": [
+     929.0,
+     0.0,
+     6517.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "e7653ec0c7d2d0d7bf122004313ed834efd080c280ef10f45c9a8c1d799de0c9",
+    "sceneSha256": "bc61c67da3c3b7c161862c402919e4826fe77eac031ec0686d69964d665901f6"
+   },
+   "package": {
+    "collisionSha256": "50f91067467a367c4f4f5b16410bfd6cd4d6608c3f945ada537ba792ab8d78dc",
+    "servedGridSha256": "3f3d2544582c04689774f851ebfcccdc496adf6ef6b3c159b74e39eea4d1048b"
+   },
+   "arrival": [
+    535,
+    314
+   ],
+   "rows": {
+    "spawns": 115,
+    "nodes": 15,
+    "npcs": 2,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 656
+   },
+   "npcPosts": 2,
+   "servedReachTiles": 207390
+  },
+  "tollholm": {
+   "frame": {
+    "origin": [
+     235,
+     340
+    ],
+    "cells": [
+     684,
+     684
+    ],
+    "translation": [
+     2930.0,
+     0.0,
+     8007.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "933fa89a5976fa31feb6c719b5a60ab073dcec7ec29f62f80d3c7a56dfa1fb69",
+    "sceneSha256": "6e50e6e7f2bf72b8076139fc7a8e85b12bfea38f3f2baf1e910f22ed241632ce"
+   },
+   "package": {
+    "collisionSha256": "4a417e07ca48779a41710434209d3cf4cb11f2122ab9bd36d9217f7b88a018da",
+    "servedGridSha256": "631b98dc619f396960f37162b7afb03f678113680d4b323179390e2572b9c804"
+   },
+   "arrival": [
+    120,
+    334
+   ],
+   "rows": {
+    "spawns": 33,
+    "nodes": 0,
+    "npcs": 0,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 222
+   },
+   "npcPosts": 0,
+   "servedReachTiles": 41107
+  },
+  "twinbrook": {
+   "frame": {
+    "origin": [
+     459,
+     219
+    ],
+    "cells": [
+     918,
+     918
+    ],
+    "translation": [
+     1154.0,
+     0.0,
+     6956.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "b5af40b17c3e86dba808f8726998fb60864f41997a69d1280c38fe15d7279536",
+    "sceneSha256": "7f4ba02e8a73d31697de829fb78c49141b81ffc62965f151c98362614a7eed3a"
+   },
+   "package": {
+    "collisionSha256": "67196bde5487f67962898912b9b914904a9e8be0dc5dd75ee485e060c1a032fa",
+    "servedGridSha256": "047121e2c606a37142ec9fece64cad2f808d5af95ea5c2cee67b75aae8c8a183"
+   },
+   "arrival": [
+    446,
+    239
+   ],
+   "rows": {
+    "spawns": 155,
+    "nodes": 28,
+    "npcs": 1,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 1342
+   },
+   "npcPosts": 1,
+   "servedReachTiles": 204876
+  },
+  "warrenmead": {
+   "frame": {
+    "origin": [
+     289,
+     394
+    ],
+    "cells": [
+     792,
+     792
+    ],
+    "translation": [
+     614.0,
+     0.0,
+     7171.0
+    ]
+   },
+   "bake": {
+    "snapshotSha256": "1cc93a593fc3ae1d26263e777fca1bf157b2d15ce75bc37c4cdc3e0959e72152",
+    "sceneSha256": "29b55b499ea0bca766359af6bcf8ccfe2d0eb2407404daf9a9f1e0ed64f79cdf"
+   },
+   "package": {
+    "collisionSha256": "2d9a74ddac6e4cab7415fdeaab3a7bc32cab2ebd2c51533ea78dd80b8aac4e02",
+    "servedGridSha256": "625811e6d4cacd55b9dfd566082eda7e02c4b4720dbe472a33bb01f1cd62ac2e"
+   },
+   "arrival": [
+    268,
+    329
+   ],
+   "rows": {
+    "spawns": 90,
+    "nodes": 6,
+    "npcs": 0,
+    "homeNpcs": 0,
+    "interactives": 0,
+    "laneDepartures": 433
+   },
+   "npcPosts": 0,
+   "servedReachTiles": 90279
   }
  },
  "inputs": {
-  "crossingsSha256": "2bc1973a819e79a778d3899079b1b657e94fbde634bce728446ccdb48cc5de10",
+  "crossingsSha256": "89943530e5d3c4631370560c00a1857ca1827a00058c027f2be6b14004b33c9d",
   "contentTables": {
-   "eloria-assets/maps/continent-v2/_continent_v2/content/server-rows.json": "affd619e5625276293594cc7a3153ed4f7bb4c91c39c38637e9d432ef1c5568f",
-   "eloria-assets/maps/continent-v2/_continent_v2/content/server-tables.json": "0dfb5c3d5b8414124845047a51b2f4efa23f6f8392dcd6405cc9927601fb015e",
-   "eloria-assets/maps/continent-v2/_continent_v2/content/questlines.txt": "e56083b720cca73939cd985489e4183e38c5c11de46b2e02909c97176e18e975",
-   "eloria-assets/maps/continent-v2/sw_isle/content/spawns.json": "a2422502744c755e327739d7cb7702327cd2c118c2e38568b00b3d6ee684e331",
-   "eloria-assets/maps/continent-v2/gull_skerries/content/spawns.json": "138f692b15b16f3095bfe7bc0c9f623a72b09df0fd205afeaff017e36fd2cb45",
-   "eloria-assets/maps/continent-v2/tollholms/content/spawns.json": "5a4fdb3402a154ae305905960b24a2ed5b2be62345286b0c0aa55fd01b5ecf38"
+   "eloria-assets/maps/continent-v2/_continent_v2/content/server-rows.json": "39375a5ecb1598a8fff8ec3cd26274ef2a9c44f7f1c41d5b3f7557124e84b92a",
+   "eloria-assets/maps/continent-v2/_continent_v2/content/server-tables.json": "ff195bc347042e7092dbd1329ede8cf997a7c501c39b913e3f3fa2222ec559f6",
+   "eloria-assets/maps/continent-v2/_continent_v2/content/questlines.txt": "c8b00186e0f99231e0f0d2a17296a9e322308c9061eb001d42ac623f3aaf93b3",
+   "eloria-assets/maps/continent-v2/boarsend/content/spawns.json": "e540aa04345a1f69084cbfd492ee6db57e054712ad060356b5ff1025dddbfdad",
+   "eloria-assets/maps/continent-v2/brambleshaw/content/spawns.json": "609479344928a1b2a27782b854841d48c171495ddfdd8b70e3d2e976cbbc4522",
+   "eloria-assets/maps/continent-v2/greenlight/content/spawns.json": "e57f0adb4fdf7af3946f2c7f326d0bc3355b511e153384f72cb24b539391011a",
+   "eloria-assets/maps/continent-v2/hearthcroft/content/spawns.json": "63db002c28383a81c43ee25130cd9679da3563bd432093f0f5d32da107c3ec4e",
+   "eloria-assets/maps/continent-v2/landfall/content/spawns.json": "7a59e022779c060fd9a7a2779154a52acf9b515ff5736ef3857d7499c6726593",
+   "eloria-assets/maps/continent-v2/pinebrow/content/spawns.json": "5e08566ab2e6f80ee74362dfb210b7a7f3306065ac32b13d98b447c2fd63b6eb",
+   "eloria-assets/maps/continent-v2/ravenhead/content/spawns.json": "9d96d3e181d2639c4fbce34dc9a30e56bdecb1e9fa53cc9d879f1df585dd449a",
+   "eloria-assets/maps/continent-v2/reedfall/content/spawns.json": "3b06881fc1c891b5497b36c1f73a6d6e913661c7df286a760c9f1125eaa865ec",
+   "eloria-assets/maps/continent-v2/ringholm/content/spawns.json": "b4d37ba19cb898cee3dbc58c082c932ae59d1cd6bf8742b16a5a80bd6e88c5bd",
+   "eloria-assets/maps/continent-v2/saltsound/content/spawns.json": "19eeffd2d6bcc3eb182f8d285db29dc015b515d78472277463af8ac825883ad6",
+   "eloria-assets/maps/continent-v2/spindle_hill/content/spawns.json": "e92eb650de6deed376ef232d599326b28e0fd61656f571939615887453f265d8",
+   "eloria-assets/maps/continent-v2/stagheath/content/spawns.json": "095bca3678d6971d88f886ed59b0518c92a8b70a97801567af42f93dd1eb0ed2",
+   "eloria-assets/maps/continent-v2/tollholm/content/spawns.json": "95bed23c1fdb3553003521a8905356eda6c383df0c31b88e4abb355cc76a5d48",
+   "eloria-assets/maps/continent-v2/twinbrook/content/spawns.json": "40bf9dcd6d86e211da3372b16c2f9c4782532a313d25175b7aab72fe63280b84",
+   "eloria-assets/maps/continent-v2/warrenmead/content/spawns.json": "974b84bc0f16ad672835274a8f175f04251808cb67aec38d307bc97168806479",
+   "eloria-assets/maps/continent-v2/_continent_v2/marker-renames.json": "6fa8a3942b1462adb5494b50a9d0bfa554a13ed0f4d05267dd2b2ae438aeb0d5"
   }
  },
  "ferries": [
   {
-   "map": "sw_isle",
+   "map": "greenlight",
    "object": 21,
    "trigger": [
-    1615,
+    439,
     304
    ],
    "destination": "crownwater",
@@ -151,16 +632,16 @@
  "server": {
   "overlay": {
    "README": "0a3b8522e76f606964bda3f2d4585d805d7242c5024acf773686c43c3c523f1a",
-   "maps.txt": "a04107be0e4ac53a745c16c0d881c25038f7a93614d94eeb501ef8a572f53031",
-   "spawns.txt": "f810f2f5c962b558bce5b708dd6936c6a6b7130cf9b184286a120ff45c78b04a",
-   "harvesting.txt": "ab35deaf87b226cfa4b5eeabf8f086742d6e76fb81df18ecda6d59df9cf07537",
-   "npcs.txt": "e15ee40cf54f840b54a1c2d895a94369637f89d551a1f9e67c7a997b989db471",
-   "interactives.txt": "5d3096710a2b27adcace194e1a10910263037b321c491c2e363cab645e8f691f",
-   "exterior_connections.json": "d7adcb20d76db5880a6198276cf8f9a2569c1faf7bc8ecaa4a6796968a98077e",
-   "questlines.txt": "50c45722f58f11ffa38209f8561999db31eac89ea925f6b14f45d2a19d585ac3",
-   "landing.json": "9756d4b4974006b526eaeaa57e8f462fa6212eca44cb73ca75db11b251be9abb",
-   "homes.json": "b15d1eec2a9b9ee153e8c5774708873dc85f51560b2eb73064de9c93cb53cde7",
-   "home_npcs.txt": "6bd9148e779f154132a21a807f67146ea0218491740b489f5a2d500f6db2a4a4"
+   "maps.txt": "cec412cc7e1730d2ac7ea7d4ebab709e4c538ef9530148747a88fb3367f4f1ae",
+   "spawns.txt": "534d24becb9c5af2730487903969ce64f0e272ed1b40c999f3df2d1f40faa9b0",
+   "harvesting.txt": "f9d780d5c39b8a135cd3f7a58b7469d9a00c106ac31612a33a521227ad5c63ae",
+   "npcs.txt": "af2dcbfd7e62d518f9af7f3d3c7790f0eb51eb8cf93a125675b69b27e4182f58",
+   "interactives.txt": "7d3b0bf332c16ea41c4204f70eb913ded2d72f6d3b20cd08929bff81189e1ced",
+   "exterior_connections.json": "c1efa59e44b5e7d905d42aaf89975fd3f115c960c330f5a424354e8917c81fd3",
+   "questlines.txt": "6d08b2a67ee1f779cf46c35864baead34213586f7dea5d50003e69fc4d92e0d4",
+   "landing.json": "44fbfdba8ce03ab87f3faae8086d081ccf653e34938c9bdbfdb7ac208cd8b629",
+   "homes.json": "b08e90c9ceadd0332326c77d664c2d311ae3455b17a7b8a79f632d1dd36fcb24",
+   "home_npcs.txt": "4aea68c0a6614c84f17dbc81146a7c0c486f72a040484121591299ba48d9bc41"
   },
   "stages": {
    "m1": {
@@ -176,7 +657,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "2f72f1248edd56a7f94e7a27ea77b9d1bd91ee5e9b61b2d740bf22def962f0ea"
+    "manifestBlockSha256": "7f0c66c5afce5c9748c9ff1dd2c9678b2881161afc23b239a17ba6cd69ac2da7"
    },
    "m2": {
     "files": [
@@ -192,7 +673,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "981071e88d9c3a07f31754a38671a5b65ea0d2400b73057f411b8031fd11bb9d"
+    "manifestBlockSha256": "a1d94f24ce50ed36de7b7b2e5ad3931f79dc2d160ccf7f5002eb7f491ec676c1"
    },
    "m3": {
     "files": [
@@ -208,7 +689,7 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "3a262732dda83f8021a4ed7b8eb416892501d12d7762d7bc7222ae81a4edcdfe"
+    "manifestBlockSha256": "91f862b855bae58ff4b9238c2036dbecb50a544a812bf583b8794e73ecf28b58"
    },
    "m4": {
     "files": [
@@ -224,14 +705,26 @@
      "homes.json",
      "home_npcs.txt"
     ],
-    "manifestBlockSha256": "959014c851327ee48cfe15ff2951b3ad6affb51c3a1bab303eba5dfd3708c1f3"
+    "manifestBlockSha256": "afe68b4301dee98d9556519c7576c9a5c713a902a5b99dc0e6380e45a5d61316"
    }
   },
-  "manifestEntriesSha256": "5ab2638094643a0cf67e1d166b65802150ed556a633fdc7e920f7b5058e08aaf",
+  "manifestEntriesSha256": "b3858101a4bca8e54db8e2cf6238ecbaacd74e306e21335c5ea30a3506fb5889",
   "vendored": {
-   "sw_isle": "17cc0fccb7d4b05199e6facc4ff8d55ccbd04b60e7aa0efa3cdb2038a8e61f54",
-   "tollholms": "f9fd894ce8d8ca81a40349755f1381094031edfb4b87d14c3aa5a115b625ea96",
-   "gull_skerries": "cf058ae63eae1b6e10a029cf89925a2aec2185515854aea970db93acc0df218e"
+   "boarsend": "66f1fdad5bad1fa7bf654a8f8a6a950b818c464d749c8bb7e3016c9a04a6bab0",
+   "brambleshaw": "faa2db0608a13e914b3014e7c0ae1d1c901c65ccbd798cf42348ee196715bdfc",
+   "greenlight": "2f46a36acd0c6431cc9974abb0aeced568055e6f9340e5e932336174eaf22f1f",
+   "hearthcroft": "170e37e73df8ec72126bbff20d1dada8ffafc1de05ae559d1c25d08d9809e197",
+   "landfall": "c07a66af326843540adfcf6bee122b645179af868414611c4a11ed78c2abdf92",
+   "pinebrow": "fd34023e86d441c60cfb93ca78356187cc8869a2a66e3a19a92f343c2dd55042",
+   "ravenhead": "89fdea9ac1ab4dc88ddd79d90ecd921abdfd472e58869d5284072796819658a1",
+   "reedfall": "900fe1401d5cb7d95a44a2aa9ba327107be249a7d600f99fe28b6b5299558550",
+   "ringholm": "ca7760beeb6094f3adb956272114fc850c8ce2d020ddd266c97c77a6046d2599",
+   "saltsound": "6b1e515ee1f8ad942bfd43082c01cdf75f3c477f36fc0247c4a6bccdfaae04ed",
+   "spindle_hill": "004a2039ffc18a6a575d7ee7ffbc3702da27c42703cc670676d8cffc232d11ee",
+   "stagheath": "3f3d2544582c04689774f851ebfcccdc496adf6ef6b3c159b74e39eea4d1048b",
+   "tollholm": "631b98dc619f396960f37162b7afb03f678113680d4b323179390e2572b9c804",
+   "twinbrook": "047121e2c606a37142ec9fece64cad2f808d5af95ea5c2cee67b75aae8c8a183",
+   "warrenmead": "625811e6d4cacd55b9dfd566082eda7e02c4b4720dbe472a33bb01f1cd62ac2e"
   }
  }
 }

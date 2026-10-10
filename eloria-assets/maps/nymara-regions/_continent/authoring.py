@@ -308,6 +308,24 @@ def _validate_ground_regions(document: dict[str, Any], source_sha256: dict[str, 
             raise AuthoringError(f"{where}.size must be positive")
         for field in ("blendWidth", "opacity", "priority"):
             _number(region.get(field), f"{where}.{field}")
+        if "clipPolygon" in region:
+            from shapely.geometry import Polygon
+            ring = _array(region["clipPolygon"], f"{where}.clipPolygon")
+            if not 3 <= len(ring) <= 64:
+                raise AuthoringError(f"{where}.clipPolygon needs 3 through 64 points")
+            points = [_vector(p, 2, f"{where}.clipPolygon[{i}]") for i,p in enumerate(ring)]
+            polygon = Polygon(points)
+            if not polygon.is_valid or polygon.area <= 0 or len(set(map(tuple,points))) != len(points):
+                raise AuthoringError(f"{where}.clipPolygon must be a finite simple nonzero-area ring")
+            matrix = np.asarray(region['matrix']).reshape(4,4,order='F')
+            if np.abs(matrix[[0,1,1,2],[1,0,2,1]]).max() > 1e-6 or abs(np.linalg.det(matrix[np.ix_([0,2],[0,2])])) <= 1e-6:
+                raise AuthoringError(f"{where}: clipped ground requires a nonsingular horizontal transform")
+        if "uvAnchorContinent" in region:
+            _vector(region["uvAnchorContinent"], 2, f"{where}.uvAnchorContinent")
+        if "sourceLayerOrdinal" in region:
+            ordinal=region["sourceLayerOrdinal"]
+            if type(ordinal) is not int or not 0 <= ordinal <= 126:
+                raise AuthoringError(f"{where}.sourceLayerOrdinal must be an integer from 0 through 126")
         _validate_surface(region.get("surface"), source_sha256, f"{where}.surface")
 
 
@@ -597,6 +615,51 @@ def _validate_objects(document: dict[str, Any], source_sha256: dict[str, str],
             _validate_surface(material.get("surface"), source_sha256, f"{material_where}.surface")
 
 
+def _validate_v2_arrival(document, contract):
+    """Optional v2 default metadata is validated lazily; legacy adapters keep their authored marker requirements."""
+    if contract is None or contract.adapter != 'continent-v2-meshy-v1':
+        if document.get('generatedArrival') is not None or document.get('sources',{}).get('generatedArrival') is not None:
+            raise AuthoringError('generated arrival requires a registered continent-v2 authoring contract')
+        return False
+    import importlib.util
+    import sys
+    from types import SimpleNamespace
+    checkout=contract.spec_path.resolve().parents[4]
+    sources=document.get('sources',{})
+    expected_spec={'path':contract.spec_path.relative_to(checkout).as_posix(),'sha256':sha256(contract.spec_path)}
+    if sources.get('authoringSpec') != expected_spec or (contract.spec_sha256 is not None and contract.spec_sha256 != expected_spec['sha256']):
+        raise AuthoringError('generated arrival authoring spec source changed; rebake')
+    spec=json.loads(contract.spec_path.read_text(encoding='utf-8'))
+    reference=spec.get('gameplay',{}).get('generatedArrival')
+    if any(r.get('default') for r in document.get('gameplay',{}).get('spawnPoints',[])) and sources.get('generatedArrival') is not None:
+        raise AuthoringError('authored and generated source bindings cannot mix')
+    if reference is not None and reference not in sources.get('dependencies',[]):
+        raise AuthoringError('generated arrival must be a hash-bound normal dependency')
+    directory=checkout/'eloria-assets/maps/continent-v2/_continent_v2'
+    # Explicit local imports avoid changing the legacy module's global import graph.
+    def module(name,path):
+        description=importlib.util.spec_from_file_location(name,path)
+        result=importlib.util.module_from_spec(description);description.loader.exec_module(result)
+        return result
+    previous=sys.modules.get('ownership')
+    try:
+        sys.modules['ownership']=module('_eloria_v2_arrival_ownership',directory/'ownership.py')
+        resolver=module('_eloria_v2_arrival_resolver',directory/'arrivals.py')
+    finally:
+        if previous is None:sys.modules.pop('ownership',None)
+        else:sys.modules['ownership']=previous
+    origin=tuple(contract.server_origin);cells=tuple(contract.server_cells);translation=tuple(contract.continent_translation)
+    def tile(x,z):
+        value=tuple(server_tile([x,0.,z],SimpleNamespace(contract=SimpleNamespace(server_origin=origin))))
+        if not (0<=value[0]<cells[0] and 0<=value[1]<cells[1]):raise ValueError('arrival is outside storage')
+        return value
+    frame=SimpleNamespace(region=contract.id,origin=origin,cells=cells,translation=translation,tile=tile,
+                          to_continent=lambda x,z:(x+translation[0],z+translation[2]))
+    try:resolver.resolve(document,frame,checkout)
+    except (ValueError,KeyError,OSError,TypeError) as error:raise AuthoringError(f'invalid continent-v2 arrival: {error}') from error
+    return True
+
+
 def _validate_gameplay(document: dict[str, Any], production: bool,
                        contract: RegionContract | None = None) -> None:
     gameplay = _object(document.get("gameplay"), "gameplay")
@@ -639,11 +702,14 @@ def _validate_gameplay(document: dict[str, Any], production: bool,
                 node = record.get("node")
                 if node is not None and node != assets[asset_id]:
                     raise AuthoringError(f"{where}.node disagrees with its authored assetId")
-    if not gameplay["spawnPoints"]:
+    v2_arrival_valid = _validate_v2_arrival(document, contract)
+    if not gameplay["spawnPoints"] and not v2_arrival_valid:
         raise AuthoringError("gameplay.spawnPoints must retain an authored spawn")
-    if not gameplay["portals"]:
+    if not gameplay["portals"] and not v2_arrival_valid:
         raise AuthoringError("gameplay.portals must retain authored links")
     if not production and "runtimeBindings" not in gameplay:
+        if v2_arrival_valid:
+            raise AuthoringError("registered v2 gameplay must explicitly record runtimeBindings")
         return
     bindings = [_object(value, f"gameplay.runtimeBindings[{index}]")
                 for index, value in enumerate(_array(
@@ -689,7 +755,11 @@ def _validate_gameplay(document: dict[str, Any], production: bool,
             digest = _string(provenance.get(field), f"{where}.provenance.{field}")
             if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
                 raise AuthoringError(f"{where}.provenance.{field} must be a lowercase SHA-256 digest")
-    if production and contract is not None:
+    unbound_v2_controls = v2_arrival_valid and not bindings and all(
+        getattr(contract, field, None) == 0 for field in (
+            "runtime_binding_count", "existing_marker_binding_count")) and (
+        len(gameplay.get("runtimePoints", [])) == getattr(contract, "runtime_point_count", None))
+    if (production or v2_arrival_valid) and contract is not None:
         if len(bindings) != contract.runtime_binding_count:
             raise AuthoringError(
                 f"{contract.id}: gameplay.runtimeBindings must cover all "
@@ -698,13 +768,19 @@ def _validate_gameplay(document: dict[str, Any], production: bool,
             raise AuthoringError(
                 f"{contract.id}: gameplay.runtimePoints must retain all "
                 f"{contract.runtime_point_count} dedicated runtime controls")
-        if referenced_runtime_points != marker_ids.get("runtimePoints", set()):
+        if referenced_runtime_points != marker_ids.get("runtimePoints", set()) and not unbound_v2_controls:
             raise AuthoringError(
                 f"{contract.id}: every dedicated runtime point must be referenced by a binding")
         if existing_marker_bindings != contract.existing_marker_binding_count:
             raise AuthoringError(
                 f"{contract.id}: runtime binding offsets disagree with the region contract")
-    seed_source = document["sources"]["runtimeBindingSeed"]
+    seed_source = document["sources"].get("runtimeBindingSeed")
+    if seed_source is None:
+        # New v2 maps retain dedicated scene controls without inheriting server
+        # profile bindings; their exact saved count remains contract-checked.
+        if unbound_v2_controls:
+            return
+        raise AuthoringError("sources.runtimeBindingSeed is required for authored runtime bindings")
     seed_path = _source_path(seed_source["path"], "sources.runtimeBindingSeed.path")
     seed = _object(json.loads(seed_path.read_text(encoding="utf-8")), "runtime binding seed")
     region_id = _string(document.get("regionId"), "regionId")

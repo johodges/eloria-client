@@ -1,0 +1,112 @@
+{
+ "region": "hearthcroft",
+ "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
+ "snapshot": {
+  "sha256": "fa267ef758098f3fa5efe9d01450c64dc39b5ac621b34484610816a70fc9ef59",
+  "sceneSha256": "6fb9a293fdb01cbb3c1c34edf520ce7264ae1d98389db1cc67c0f516d6b32426",
+  "recipe": "region_bake_cli.gd --scene godot-client/world_authoring/regions/hearthcroft/hearthcroft.tscn --output <bake>/continent-authoring.json"
+ },
+ "collision": {
+  "sidecarSha256": "812afe4f410e7d1eb0c21bd224c7a1dc91fff2bdcf3a4b5030f0dca3b342da90",
+  "collisionSha256": "0641347814b16d52534dae489daa6b5ad72fb10e58f17dd32421ba76bb91a6a3",
+  "servedGridSha256": "170e37e73df8ec72126bbff20d1dada8ffafc1de05ae559d1c25d08d9809e197",
+  "walkableCells": 469999,
+  "openTiles": 115093,
+  "sourceSnapshotSha256": "fa267ef758098f3fa5efe9d01450c64dc39b5ac621b34484610816a70fc9ef59"
+ },
+ "chunks": 34,
+ "kitPlacementsOutsideWindow": 0,
+ "lightingMarkers": 0,
+ "chunkGlbBytes": {
+  "total": 101183108,
+  "max": 7686584,
+  "over100MiB": []
+ },
+ "estimatedResidentMiB": {
+  "05_08": 22.2,
+  "05_09": 49.2,
+  "06_08": 75.0,
+  "06_09": 110.2,
+  "06_10": 86.0,
+  "07_08": 67.7,
+  "07_09": 83.8,
+  "07_10": 279.4,
+  "07_11": 210.8,
+  "07_12": 43.3,
+  "08_08": 73.6,
+  "08_09": 210.9,
+  "08_10": 206.9,
+  "08_11": 216.7,
+  "08_12": 126.4,
+  "09_08": 154.6,
+  "09_09": 218.9,
+  "09_10": 195.4,
+  "09_11": 139.0,
+  "09_12": 51.8,
+  "10_08": 88.0,
+  "10_09": 207.5,
+  "10_10": 168.3,
+  "10_11": 68.1,
+  "10_12": 19.2,
+  "11_08": 34.7,
+  "11_09": 81.7,
+  "12_07": 10.8,
+  "12_08": 37.5,
+  "12_09": 10.9,
+  "13_07": 34.6,
+  "13_08": 35.2,
+  "14_07": 70.9,
+  "14_08": 10.9
+ },
+ "timings": {
+  "snapshot_s": 0.6,
+  "terrain_s": 0.1,
+  "water_s": 0.0,
+  "overlays_s": 0.6,
+  "bridges_s": 0.1,
+  "surface_glb_bytes": 89505672,
+  "walk_kit_nodes": 48,
+  "library_s": 0.3,
+  "chunks_s": 1.5
+ },
+ "seconds": 12.0,
+ "imagePolicy": {
+  "surface": {
+   "imagesResampled": 7,
+   "resampledImages": [
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
+   ]
+  },
+  "library": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  }
+ },
+ "generatedArrival": {
+  "path": "eloria-assets/maps/continent-v2/hearthcroft/content/arrival.json",
+  "sha256": "32fd745d0b5712f5a599397e693d8e2751f1c6a14d2209a9f608db817e9c5916"
+ },
+ "geometryResidentFactor": 1.0,
+ "chunkBudget": {
+  "algorithm": "whole-metre-budget-phase-v1",
+  "phaseMetres": [
+   47,
+   57
+  ],
+  "originMetres": [
+   -976,
+   -966
+  ],
+  "maximumPlacements": 98,
+  "maximumTriangles": 184778,
+  "placementLimit": 240,
+  "triangleLimit": 450000,
+  "cellMetres": 96
+ }
+}

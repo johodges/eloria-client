@@ -1,7 +1,7 @@
 """export_collision.py: the served walk collision of the continent-v2 island group, every map in one run.
 
   python -B eloria-assets/maps/continent-v2/_continent_v2/export_collision.py --server <server checkout> \
-         --bake sw_isle=<bake> --bake tollholms=<bake> --bake gull_skerries=<bake> --out <work dir> \
+         --bake <catalog-id>=<bake> [--bake <catalog-id>=<bake> ...] --out <work dir> \
          [--packages <dir holding <region>/client/>] [--checkout <worktree>] [--partial]
 
 <bake> is the region bake of each committed scene (the editor-pass check bake: the directory holding
@@ -286,7 +286,7 @@ def load_bake(region, bake, checkout=DEFAULT_CHECKOUT, *, sea_level=0.0, log=say
     checkout = Path(checkout).resolve()
     bake = Path(bake)
     snapshot_path = bake / "continent-authoring.json" if bake.is_dir() else bake
-    frame = frames.load(region, checkout)
+    frame = frames.load_source(region, checkout)
     t0 = time.time()
     territory = PC.open_territory(snapshot_path, region, checkout)
     doc, world, snapshot = territory.doc, territory.world, territory.snapshot
@@ -364,25 +364,35 @@ def load_bake(region, bake, checkout=DEFAULT_CHECKOUT, *, sea_level=0.0, log=say
                       "walkInlayPlacements": stem_walk, "solidPlacements": len(solids),
                       "solidTriangles": int(sum(len(t_) for _, groups, _deck in solids for t_, _c in groups)),
                       "prototypes": len(Prototype.cache), "seconds": round(time.time() - t, 1)}
-    spawn = default_spawn(doc, region)["position"]
+    spawn = default_spawn(doc, region, frame=frame, checkout=checkout)["position"]
     harvest_tiles = sorted({tuple(frame.tile(float(h["position"][0]), float(h["position"][2])))
                             for h in doc.get("gameplay", {}).get("harvestables", [])})
     log(f"{region}: bake read in {time.time() - t0:.1f} s ({json.dumps(sources)})")
     return Territory(
-        region=region, frame=frame, polygon=[[float(v) for v in p] for p in territory.polygon],
+        region=region, frame=frame, polygon=territory.polygon,
         heights=np.asarray(territory.height, float), terrain_origin=tuple(float(v) for v in doc["terrain"]["origin"]),
         terrain_cell=float(doc["terrain"]["cellMetres"]), sea_level=float(sea_level), lakes=lakes, rivers=rivers,
         walk=np.concatenate(walk) if walk else np.zeros((0, 3, 3)), solids=solids,
         spawn=(float(spawn[0]), float(spawn[2])), harvest_tiles=harvest_tiles,
         sources={"bake": snapshot_path.parent.name, "snapshotSha256": sha256_file(snapshot_path),
                  "sceneSha256": doc["sources"]["scene"]["sha256"],
-                 "resolvedHeightsSha256": sha256_file(territory.snapshot.resolved_heights_path)},
+                 "resolvedHeightsSha256": sha256_file(territory.snapshot.resolved_heights_path),
+                 **({"generatedArrival": doc["sources"]["generatedArrival"]}
+                    if doc.get("sources", {}).get("generatedArrival") else {})},
         walk_sources=sources)
 
 
-def default_spawn(doc, region):
+def default_spawn(doc, region, *, frame=None, checkout=DEFAULT_CHECKOUT):
     """The bake's one spawn point marked default: the arrival the packages, crossings_v2.py and publish_server.py
     seed their reach from (a bake's first spawn point is not necessarily that one)."""
+    if frame is not None:
+        import arrivals
+        try:
+            return arrivals.resolve(doc, frame, checkout)
+        except arrivals.ArrivalError as error:
+            raise ExportError(str(error)) from error
+    if doc.get("generatedArrival") is not None:
+        raise ExportError(f"{region}: generated arrival resolution requires its checked source frame")
     spawns = [s for s in doc.get("gameplay", {}).get("spawnPoints", []) if s.get("default")]
     if len(spawns) != 1:
         raise ExportError(f"{region}: the bake has {len(spawns)} spawn points marked default; the reach is seeded "
@@ -397,15 +407,9 @@ def sha256_file(path):
 # --- sampling --------------------------------------------------------------------------------------------------------
 
 def point_in_polygon(x, z, polygon):
-    """Crossing-number test (publish_client.point_in_polygon's rule), vectorised."""
-    x = np.asarray(x, float)
-    z = np.asarray(z, float)
-    inside = np.zeros(np.broadcast(x, z).shape, bool)
-    p = np.asarray(polygon, float)
-    for (x1, z1), (x2, z2) in zip(p, np.roll(p, -1, axis=0)):
-        crosses = ((z1 > z) != (z2 > z)) & (x < (x2 - x1) * (z - z1) / np.where(z2 != z1, z2 - z1, 1e-12) + x1)
-        inside ^= crosses
-    return inside
+    """Exact ownership union using the same crossing-number rule as client publication."""
+    import ownership
+    return ownership.contains(x, z, polygon)
 
 
 class Ground:
@@ -586,7 +590,9 @@ def structure_mask(solids, floor, x0, z1, *, workers=None):
             triangles += size
             tasks.append((size, (len(tasks), keep, np.asarray(deck, float).reshape(-1, 3, 3), sub.copy(),
                                  x0 + c0 * CELL, z1 - r0 * CELL), (r0, r1, c0, c1)))
-    workers = min(16, os.cpu_count() or 1) if workers is None else workers
+    workers = min(4, os.cpu_count() or 1) if workers is None else workers
+    if not 1 <= workers <= 4:
+        raise ValueError("collision workers must be between one and four")
     windows = {task[1][0]: task[2] for task in tasks}
     if workers <= 1 or triangles < PARALLEL_TRIANGLES:
         results = _mask_batch([task[1] for task in tasks])
@@ -1152,7 +1158,7 @@ def main(argv=None):
     ap.add_argument("--checkout", type=Path, default=DEFAULT_CHECKOUT)
     ap.add_argument("--partial", action="store_true", help="allow fewer maps than the catalog holds (never publish)")
     ap.add_argument("--top-patches", type=int, default=40)
-    ap.add_argument("--workers", type=int, default=None, help="processes for the solids (default: cores, at most 16)")
+    ap.add_argument("--workers", type=int, default=None, help="processes for the solids (default: cores, at most 4)")
     a = ap.parse_args(argv)
     started = time.time()
     checkout = a.checkout.resolve()

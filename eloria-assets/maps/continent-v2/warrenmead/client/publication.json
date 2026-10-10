@@ -1,0 +1,135 @@
+{
+ "region": "warrenmead",
+ "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
+ "snapshot": {
+  "sha256": "1cc93a593fc3ae1d26263e777fca1bf157b2d15ce75bc37c4cdc3e0959e72152",
+  "sceneSha256": "29b55b499ea0bca766359af6bcf8ccfe2d0eb2407404daf9a9f1e0ed64f79cdf",
+  "recipe": "region_bake_cli.gd --scene godot-client/world_authoring/regions/warrenmead/warrenmead.tscn --output <bake>/continent-authoring.json"
+ },
+ "collision": {
+  "sidecarSha256": "ad1c7b152cbe8e42365d19a57bae42e5c4062303434e31e1f18f26ddc433a015",
+  "collisionSha256": "2d9a74ddac6e4cab7415fdeaab3a7bc32cab2ebd2c51533ea78dd80b8aac4e02",
+  "servedGridSha256": "625811e6d4cacd55b9dfd566082eda7e02c4b4720dbe472a33bb01f1cd62ac2e",
+  "walkableCells": 473140,
+  "openTiles": 115500,
+  "sourceSnapshotSha256": "1cc93a593fc3ae1d26263e777fca1bf157b2d15ce75bc37c4cdc3e0959e72152"
+ },
+ "chunks": 53,
+ "kitPlacementsOutsideWindow": 0,
+ "lightingMarkers": 0,
+ "chunkGlbBytes": {
+  "total": 84169104,
+  "max": 3543708,
+  "over100MiB": []
+ },
+ "estimatedResidentMiB": {
+  "07_06": 10.9,
+  "07_07": 10.9,
+  "07_08": 10.9,
+  "07_09": 11.1,
+  "07_10": 100.9,
+  "07_11": 76.0,
+  "07_12": 11.5,
+  "07_13": 11.5,
+  "07_14": 11.1,
+  "08_06": 11.1,
+  "08_07": 11.7,
+  "08_08": 76.2,
+  "08_09": 101.0,
+  "08_10": 90.6,
+  "08_11": 124.5,
+  "08_12": 27.8,
+  "08_13": 130.0,
+  "08_14": 27.3,
+  "09_06": 11.2,
+  "09_07": 92.3,
+  "09_08": 223.5,
+  "09_09": 99.2,
+  "09_10": 131.7,
+  "09_11": 31.2,
+  "09_12": 122.7,
+  "09_13": 60.7,
+  "09_14": 108.0,
+  "10_06": 11.3,
+  "10_07": 105.2,
+  "10_08": 139.3,
+  "10_09": 74.8,
+  "10_10": 120.0,
+  "10_11": 95.2,
+  "10_12": 107.7,
+  "10_13": 71.2,
+  "10_14": 36.0,
+  "11_06": 11.0,
+  "11_07": 156.8,
+  "11_08": 122.5,
+  "11_09": 77.8,
+  "11_10": 131.1,
+  "11_11": 135.5,
+  "11_12": 131.2,
+  "11_13": 127.6,
+  "11_14": 84.9,
+  "12_08": 10.8,
+  "12_10": 38.8,
+  "12_11": 91.9,
+  "12_12": 82.3,
+  "12_13": 123.0,
+  "12_14": 65.9,
+  "13_13": 10.8,
+  "13_14": 16.4
+ },
+ "timings": {
+  "snapshot_s": 0.7,
+  "terrain_s": 0.1,
+  "water_s": 0.0,
+  "overlays_s": 0.5,
+  "bridges_s": 0.0,
+  "surface_glb_bytes": 89506200,
+  "walk_kit_nodes": 0,
+  "library_s": 0.2,
+  "chunks_s": 1.4
+ },
+ "seconds": 6.8,
+ "imagePolicy": {
+  "surface": {
+   "imagesResampled": 11,
+   "resampledImages": [
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
+   ]
+  },
+  "library": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  }
+ },
+ "generatedArrival": {
+  "path": "eloria-assets/maps/continent-v2/warrenmead/content/arrival.json",
+  "sha256": "87f2846d5395f539caf7ecdbe43438a95929264f4e86de6d2bc5e59eb53e787b"
+ },
+ "geometryResidentFactor": 1.0,
+ "chunkBudget": {
+  "algorithm": "whole-metre-budget-phase-v1",
+  "phaseMetres": [
+   47,
+   22
+  ],
+  "originMetres": [
+   -976,
+   -1001
+  ],
+  "maximumPlacements": 79,
+  "maximumTriangles": 229825,
+  "placementLimit": 240,
+  "triangleLimit": 450000,
+  "cellMetres": 96
+ }
+}

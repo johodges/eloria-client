@@ -1,7 +1,7 @@
 """_continent_v2/publish_server.py end to end, on a fixture client checkout and a fixture server tree.
 
-The client fixture is two isles, "sw_isle" and "tollholms", on test_export_collision's shared terrain (flat ground at
-10 m, a blocked lake on sw_isle, and a plateau at 104.8 m on tollholms that no walker reaches), meeting along
+The client fixture is two isles, "landfall" and "tollholm", on test_export_collision's shared terrain (flat ground at
+10 m, a blocked lake on landfall, and a plateau at 104.8 m on tollholm that no walker reaches), meeting along
 continent x 100, which a road crosses. It has everything frames.py and the publisher read: the catalog, the stubs,
 the authoring specs, the registry rows, the bakes (with their markers: the arrival, two home points, the desk and
 the ferry, two harvest nodes, the five re-homed people and one new one, Signed Ashore's twelve targets and a quest
@@ -25,6 +25,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -41,11 +42,11 @@ SERVER = os.environ.get("ELORIA_SERVER_ROOT")
 pytestmark = pytest.mark.skipif(not SERVER, reason="set ELORIA_SERVER_ROOT to a server checkout with "
                                                    "eloria/served_grid.py and eloria/content_overlay.py")
 CELLS = 72
-SW = F.Frame("sw_isle", "Landfall", (34, 34), (CELLS, CELLS), (70.0, 0.0, 30.0))
-TH = F.Frame("tollholms", "The Tollholms", (34, 34), (CELLS, CELLS), (130.0, 0.0, 30.0))
-POLYGONS = {"sw_isle": [[40.0, 0.0], [100.0, 0.0], [100.0, 60.0], [40.0, 60.0]],
-            "tollholms": [[100.0, 0.0], [160.0, 0.0], [160.0, 60.0], [100.0, 60.0]]}
-FRAMES = {"sw_isle": SW, "tollholms": TH}
+SW = F.Frame("landfall", "Landfall", (34, 34), (CELLS, CELLS), (70.0, 0.0, 30.0))
+TH = F.Frame("tollholm", "The Tollholms", (34, 34), (CELLS, CELLS), (130.0, 0.0, 30.0))
+POLYGONS = {"landfall": [[40.0, 0.0], [100.0, 0.0], [100.0, 60.0], [40.0, 60.0]],
+            "tollholm": [[100.0, 0.0], [160.0, 0.0], [160.0, 60.0], [100.0, 60.0]]}
+FRAMES = {"landfall": SW, "tollholm": TH}
 V2 = "eloria-assets/maps/continent-v2"
 REHOMED = {"Gate Warden Ilyon": ("guide", 308), "Wayfinder Nesh": ("tutorial", 307),
            "Ferryman Caldus": ("dialogue", 310), "Register Clerk Hemmen": ("dialogue", 312),
@@ -87,8 +88,8 @@ PROFILE_FILES = ("maps.txt", "npcs.txt", "harvesting.txt", "interactives.txt", "
 REGISTER = """
 
 # test_publish_server.py: the fixture isles, as the server workflow registers the real ones before --apply
-REGIONS = REGIONS + ("sw_isle", "tollholms")
-MAP_TILES_WIDE_BY_NAME.update({"sw_isle": 12, "tollholms": 12})
+REGIONS = REGIONS + ("landfall", "tollholm")
+MAP_TILES_WIDE_BY_NAME.update({"landfall": 12, "tollholm": 12})
 ARRIVAL_TILES.update(%s)
 """
 # The code a later stage brings (publish_server.STAGE_CODE): the fixture server is copied without it.
@@ -142,7 +143,7 @@ def make_server(root, arrivals, register=True):
 # --- the client fixture ------------------------------------------------------------------------------------------------
 
 def sw_points():
-    """sw_isle's markers on flat 10 m ground, three metres apart so no tile's ring meets another's."""
+    """landfall's markers on flat 10 m ground, three metres apart so no tile's ring meets another's."""
     keepers = ["Fixture Keeper"] + list(REHOMED)
     npcs = []
     for name, gx in zip(keepers, (57.5, 82.5, 85.5, 88.5, 91.5, 94.5)):
@@ -184,9 +185,9 @@ def bake_doc(frame, gameplay, scene):
             "sources": {"scene": {"path": scene, "sha256": None}}, "gameplay": gameplay}
 
 
-SPAWNS = {"sw_isle": [("sw-1", "rabbit", 63.5, 45.5, 15), ("sw-2", "hedgehog", 66.5, 45.5, 25),
+SPAWNS = {"landfall": [("sw-1", "rabbit", 63.5, 45.5, 15), ("sw-2", "hedgehog", 66.5, 45.5, 25),
                       ("sw-3", "squirrel", 57.5, 48.5, 15)],
-          "tollholms": [("th-1", "rabbit", 130.5, 40.5, 40), ("th-pocket", "rabbit", *PLATEAU, 40)]}
+          "tollholm": [("th-1", "rabbit", 130.5, 40.5, 40), ("th-pocket", "rabbit", *PLATEAU, 40)]}
 QUESTLINES = """# fixture template
 
 [quest]
@@ -194,7 +195,7 @@ key: fixture_errand
 id: 26
 tier: 1
 title: A Fixture Errand
-region: sw_isle
+region: landfall
 start: Fixture Keeper
 summary: Walk to the post.
 offer: Walk to the post and come back.
@@ -206,7 +207,7 @@ reward_gold: 200
 [stage]
 kind: visit
 npc: Fixture Keeper
-map: sw_isle
+map: landfall
 x: <TX:opt-quest-post>
 y: <TY:opt-quest-post>
 objective: Walk to the post.
@@ -233,6 +234,7 @@ def make_client(root, codec, bakes_root, spawns=SPAWNS):
                     "continentGeography": {"translation": list(frame.translation),
                                            "ownershipPolygon": POLYGONS[region]}})
         entries.append({"id": region, "label": frame.label, "manifestPath": f"res://../{V2}/{region}/world.json",
+                        "publishedManifestPath": f"res://../{V2}/{region}/client/world.json",
                         "scenePath": "res://" + scene[len("godot-client/"):],
                         "authoringSpecPath": "res://" + spec[len("godot-client/"):]})
         rows = [{"id": i, "creature": c, "local": local(frame, gx, gz)[::2], "leash": leash, "zone": "z", "band": "A"}
@@ -245,13 +247,13 @@ def make_client(root, codec, bakes_root, spawns=SPAWNS):
                  "continentGeography": {"translation": list(frame.translation), "serverCells": list(frame.cells)}}
         for region, frame in FRAMES.items()}})
     write_json(root / X.PLAN, {"frame": {"seaLevel": 0.0}, "water": {"seaLevel": 0.0},
-                              "seams": {"openSeams": [{"between": ["sw_isle", "tollholms"]}], "moles": []},
+                              "seams": {"openSeams": [{"between": ["landfall", "tollholm"]}], "moles": []},
                               "approvedRoutes": [{"id": "R1", "type": "road",
                                                   "approvedPolyline": [[90.0, 27.5], [110.0, 27.5]],
-                                                  "byTerritory": [{"territory": "sw_isle"},
-                                                                  {"territory": "tollholms"}]}]})
-    gameplay = {"sw_isle": sw_points(),
-                "tollholms": {"spawnPoints": [record(TH, "th-arrival", 130.5, 21.5, default=True)]}}
+                                                  "byTerritory": [{"territory": "landfall"},
+                                                                  {"territory": "tollholm"}]}]})
+    gameplay = {"landfall": sw_points(),
+                "tollholm": {"spawnPoints": [record(TH, "th-arrival", 130.5, 21.5, default=True)]}}
     shas, spawn_local = {}, {}
     for region, frame in FRAMES.items():
         scene = f"godot-client/world_authoring/regions/{region}/{region}.tscn"
@@ -266,14 +268,14 @@ def make_client(root, codec, bakes_root, spawns=SPAWNS):
     for region, frame in FRAMES.items():
         heights, origin = TE.terrain(frame)
         extra = {}
-        if region == "sw_isle":
+        if region == "landfall":
             (lx, lz), (rx, rz), level = TE.LAKE
             extra["lakes"] = [{"id": "lake", "center": [lx - 70.0, lz - 30.0], "radii": [rx, rz], "level": level}]
         territories.append(X.Territory(region=region, frame=frame, polygon=POLYGONS[region], heights=heights,
                                        terrain_origin=origin, spawn=spawn_local[region],
                                        sources={"snapshotSha256": shas[region], "sceneSha256": "0" * 64}, **extra))
     work = root.parent / (root.name + "-export")
-    _report, sidecars = X.run(territories, [("sw_isle", "tollholms")], codec, work, root / V2, log=lambda *_: None)
+    _report, sidecars = X.run(territories, [("landfall", "tollholm")], codec, work, root / V2, log=lambda *_: None)
     for region, frame in FRAMES.items():
         spawn = gameplay[region]["spawnPoints"][0]
         write_json(root / V2 / region / "client" / "world.json", {
@@ -284,25 +286,25 @@ def make_client(root, codec, bakes_root, spawns=SPAWNS):
             "collision": sidecars[region]["collision"], "provenance": {"snapshotSha256": shas[region]}})
     content = root / V2 / "_continent_v2" / "content"
     rows = {"schema": "eloria-continent-v2-server-rows-v1", "maps": {
-        "sw_isle": {"npcs": {}, "interactives": {
+        "landfall": {"npcs": {}, "interactives": {
             "obj-desk": {"objectId": 20, "role": "information", "target": "register",
                          "text": "The fixture register lies open."},
             "obj-ferry": {"objectId": 21, "role": "portal", "target": "maps.txt", "text": "The fixture ferry.",
                           "portal": {"destinationMap": "crownwater", "oneWay": True}}}},
-        "tollholms": {"npcs": {}, "interactives": {}}}}
-    for npc in gameplay["sw_isle"]["npcMarkers"]:
+        "tollholm": {"npcs": {}, "interactives": {}}}}
+    for npc in gameplay["landfall"]["npcMarkers"]:
         name = npc["name"]
         role, body = REHOMED.get(name, ("dialogue", 376))
-        rows["maps"]["sw_isle"]["npcs"][npc["id"]] = {
+        rows["maps"]["landfall"]["npcs"][npc["id"]] = {
             "name": name, "group": "re-homed" if name in REHOMED else "new", "role": role, "actorType": body,
             "greeting": "Welcome to the fixture." if name not in REHOMED else f"{name} keeps the old greeting."}
     write_json(content / "server-rows.json", rows)
     tables = json.loads((Path(HERE) / "content" / "server-tables.json").read_text(encoding="utf-8"))
     tables["maps"] = [m for m in tables["maps"] if m["id"] in FRAMES]
-    tables["holdBack"] = {"why": "fixture pocket", "map": "tollholms", "spawns": ["th-pocket"], "nodes": []}
-    tables["homes"] = {"sw_isle": {"arrival": "sw-isle-arrival", "beam": "runtime-home-beam",
+    tables["holdBack"] = {"why": "fixture pocket", "map": "tollholm", "spawns": ["th-pocket"], "nodes": []}
+    tables["homes"] = {"landfall": {"arrival": "sw-isle-arrival", "beam": "runtime-home-beam",
                                    "respawn": "runtime-home-respawn", "underworld": "runtime-home-respawn"}}
-    tables["landing"].update(register="obj-desk", ferry="obj-ferry")
+    tables["landing"].update(map="landfall", arrival="runtime-home-beam", register="obj-desk", ferry="obj-ferry", ferryPoint="runtime-ferry-n10")
     write_json(content / "server-tables.json", tables)
     (content / "questlines.txt").write_text(QUESTLINES, encoding="utf-8", newline="\n")
     return root
@@ -397,15 +399,83 @@ def test_apply_check_and_a_byte_identical_rerun(tree):
     assert {k: v for k, v in after.items() if k not in ("maps", "continentV2")} == \
         {k: v for k, v in original.items() if k != "maps"}
     isles = {m["id"]: m for m in after["maps"] if m["id"] in FRAMES}
-    assert isles["sw_isle"]["server_cells"] == CELLS and isles["sw_isle"]["serverStorageVersion"] == 1
-    assert {"server_tile": [isles["sw_isle"]["portals"][-1]["server_tile"][0],
-                            isles["sw_isle"]["portals"][-1]["server_tile"][1]],
-            "destination": "crownwater"} == isles["sw_isle"]["portals"][-1]
+    assert isles["landfall"]["server_cells"] == CELLS and isles["landfall"]["serverStorageVersion"] == 1
+    assert {"server_tile": [isles["landfall"]["portals"][-1]["server_tile"][0],
+                            isles["landfall"]["portals"][-1]["server_tile"][1]],
+            "destination": "crownwater"} == isles["landfall"]["portals"][-1]
     assert after["continentV2"]["heldBack"] == ["th-pocket"]
     # The vendored grids are the packages' bytes.
     for region in FRAMES:
         assert (tree / "server/tools/collision" / f"{region}.escg.gz").read_bytes() == \
             (tree / "client" / V2 / region / "client" / "served-grid.escg.gz").read_bytes()
+
+
+def test_catalog_retirements_remove_only_stale_grids_and_check_orphan_blobs(tree):
+    retired = ["sw_isle", "tollholms", "gull_skerries"]  # Exact historical retirement inputs.
+    catalog_path = tree / "client" / F.CATALOG
+    catalog = json.loads(catalog_path.read_text())
+    catalog["retiredMapIds"] = retired
+    write_json(catalog_path, catalog)
+    collision = tree / "server/tools/collision"
+    manifest_path = collision / "manifest.json"
+    before = json.loads(manifest_path.read_text())
+    legacy_rows = before["maps"][:]
+    legacy_grid = (collision / "crownwater.escg.gz").read_bytes()
+    before["maps"] += [{"map": region, "historical": True} for region in retired]
+    write_json(manifest_path, before)
+    for region in retired:
+        (collision / f"{region}.escg.gz").write_bytes(b"retired historical fixture")
+
+    result = publish(tree, "--apply")
+    assert result.returncode == 0, result.stderr + result.stdout
+    after = json.loads(manifest_path.read_text())
+    assert [row for row in after["maps"] if row["map"] not in FRAMES] == legacy_rows
+    assert not set(retired).intersection(row["map"] for row in after["maps"])
+    assert all(not (collision / f"{region}.escg.gz").exists() for region in retired)
+    assert (collision / "crownwater.escg.gz").read_bytes() == legacy_grid
+    assert publish(tree, "--check").returncode == 0
+
+    # A leftover blob must be refused even if no manifest row names it.
+    orphan = collision / f"{retired[0]}.escg.gz"
+    orphan.write_bytes(b"orphan retired fixture")
+    check = publish(tree, "--check")
+    assert check.returncode == 1, check.stderr + check.stdout
+    assert f"tools/collision/{retired[0]}.escg.gz (retired)" in json.loads(check.stdout)["differences"]
+    assert orphan.exists(), "check must not mutate the served directory"
+
+
+@pytest.mark.parametrize("values", [["../outside"], ["landfall"]])
+def test_retirement_metadata_refuses_unsafe_or_active_ids(tmp_path, values):
+    write_json(tmp_path / F.CATALOG, {"retiredMapIds": values})
+    with pytest.raises(P.PublishError):
+        P.retired_maps(SimpleNamespace(checkout=tmp_path), ["landfall"])
+
+
+@pytest.mark.parametrize("failure", [None, "blocked", "unreached", "height_mismatch", "missing_grid", "in_owner_unreached"])
+def test_harvest_ring_uses_only_identical_reached_canonical_off_owner_cells(failure):
+    source = F.Frame("landfall", "Landfall", (0, 4), (5, 5), (0, 0, 0))
+    neighbour = F.Frame("tollholm", "Tollholm", (1, 4), (5, 5), (0, 0, 0))
+    codes = {region: np.full((5, 5), 222, dtype=np.uint16) for region in (source.region, neighbour.region)}
+    reached = {region: np.ones((5, 5), bool) for region in codes}
+    # Harvest body is closed; a seam-strip alias is not reachable on the
+    # source map, but its exact physical cell is reachable on its owner.
+    codes[source.region][2, 1] = 0
+    reached[source.region][2, 2] = False
+    if failure == "blocked":
+        codes[neighbour.region][2, 3] = 0
+    elif failure == "unreached":
+        reached[neighbour.region][2, 3] = False
+    elif failure == "height_mismatch":
+        codes[neighbour.region][2, 3] += 1
+    elif failure == "missing_grid":
+        del codes[neighbour.region]
+    elif failure == "in_owner_unreached":
+        reached[source.region][2, 0] = False
+    polygons = {source.region: [[0, -1], [2, -1], [2, 4], [0, 4]],
+                neighbour.region: [[2, -1], [4, -1], [4, 4], [2, 4]]}
+    checker = P.Checker(codes, reached, {source.region: source, neighbour.region: neighbour}, polygons)
+    assert checker.ring(source.region, [1, 2], "node", 247, body=True) is (failure is None)
+    assert bool(checker.failures) is (failure is not None)
 
 
 def test_the_rows_say_what_the_markers_and_tables_say(tree):
@@ -414,35 +484,35 @@ def test_the_rows_say_what_the_markers_and_tables_say(tree):
     assert result.returncode == 0, result.stderr + result.stdout
     text = {name: overlay(tree, name).decode("utf-8") for name in P.FILES}
     maps = text["maps.txt"]
-    assert "map | sw_isle | Landfall | maps/nymara/sw_isle.elm | SWI\r\n" in maps
+    assert "map | landfall | Landfall | maps/nymara/landfall.elm | LANDFALL\r\n" in maps
     desk = SW.tile(*local(SW, 60.5, 42.5)[::2])
     ferry = SW.tile(*local(SW, 63.5, 42.5)[::2])
-    assert f"portal | sw_isle | 21 | {ferry[0]} | {ferry[1]} | crownwater | 293 | 113\r\n" in maps
+    assert f"portal | landfall | 21 | {ferry[0]} | {ferry[1]} | crownwater | 293 | 113\r\n" in maps
     lanes = [line for line in maps.splitlines() if line.startswith("portal |") and "crownwater" not in line]
     assert len(lanes) == 2 * 60
-    assert f"sw_isle | 20 | {desk[0]} | {desk[1]} | information | register | The fixture register lies open." \
+    assert f"landfall | 20 | {desk[0]} | {desk[1]} | information | register | The fixture register lies open." \
         in text["interactives.txt"]
     spawns = [line for line in text["spawns.txt"].splitlines() if line.startswith("spawn |")]
     assert len(spawns) == 4 and all(line.split(" | ")[-1].startswith("leash:") for line in spawns)
     assert not any(" | 148 " in line or "th-pocket" in line for line in spawns)   # held back
     assert "resource | Olive | 1 | 6 | 3.5 | -" in text["harvesting.txt"]
-    assert "node | sw_isle | 101 |" in text["harvesting.txt"]
-    assert "npc | Fixture Keeper | sw_isle |" in text["npcs.txt"] and "Ilyon" not in text["npcs.txt"]
+    assert "node | landfall | 101 |" in text["harvesting.txt"]
+    assert "npc | Fixture Keeper | landfall |" in text["npcs.txt"] and "Ilyon" not in text["npcs.txt"]
     home = [line for line in text["home_npcs.txt"].splitlines() if line.startswith("npc |")]
-    assert len(home) == 5 and all(" | sw_isle | " in line for line in home)
+    assert len(home) == 5 and all(" | landfall | " in line for line in home)
     landing = json.loads(text["landing.json"])
     post = SW.tile(*local(SW, 82.5, 42.5)[::2])
     assert landing["targets"]["temple_door"]["tile"] == list(post)
     assert landing["targets"]["temple_door"]["approach"] != list(post)
     assert landing["targets"]["ferry_quay"]["radius"] == 6
-    assert landing["objects"] == {"register": 20, "ferry": 21}
+    assert landing["objects"] == {"register": {"map":"landfall","id":20}, "ferry": {"map":"landfall","id":21}}
     assert sorted(c["name"] for c in landing["cast"]) == sorted(REHOMED)
-    homes = json.loads(text["homes.json"])["homes"]["sw_isle"]
+    homes = json.loads(text["homes.json"])["homes"]["landfall"]
     assert homes["underworld"] == homes["respawn"]
     quest = SW.tile(*local(SW, 60.5, 45.5)[::2])
     assert f"x: {quest[0]}\r\ny: {quest[1]}\r\n" in text["questlines.txt"]
     links = json.loads(text["exterior_connections.json"])
-    assert [c["id"] for c in links["connections"]] == ["sw_isle--tollholms"]
+    assert [c["id"] for c in links["connections"]] == ["landfall--tollholm"]
 
 
 def edit_json(path, change):
@@ -470,8 +540,8 @@ def refused(result, words):
 def test_a_blocked_row_is_refused(tree):
     """A harvest node moved into the lake: the bake no longer matches the package, so re-export the fixture's
     package provenance by pointing it at the edited bake (the collision does not depend on the markers)."""
-    move_bake_record(tree, "sw_isle", "harvestables", "harvest-101-olive", *LAKE)
-    restamp(tree, "sw_isle")
+    move_bake_record(tree, "landfall", "harvestables", "harvest-101-olive", *LAKE)
+    restamp(tree, "landfall")
     refused(publish(tree, "--check"), "rows fail the checks")
 
 
@@ -489,7 +559,7 @@ def restamp(tree, region):
 
 
 def test_an_unreachable_row_is_refused_unless_it_is_held_back(tree):
-    edit_json(tree / "client" / V2 / "tollholms" / "content" / "spawns.json",
+    edit_json(tree / "client" / V2 / "tollholm" / "content" / "spawns.json",
               lambda doc: doc["spawns"][0].update(local=local(TH, *PLATEAU)[::2]))
     result = publish(tree, "--check")
     refused(result, "rows fail the checks")
@@ -498,7 +568,7 @@ def test_an_unreachable_row_is_refused_unless_it_is_held_back(tree):
 
 def test_an_inline_comment_is_refused(tree):
     path = tree / "client" / V2 / "_continent_v2" / "content" / "server-rows.json"
-    edit_json(path, lambda doc: doc["maps"]["sw_isle"]["npcs"]["npc-fixture-keeper"].update(
+    edit_json(path, lambda doc: doc["maps"]["landfall"]["npcs"]["npc-fixture-keeper"].update(
         greeting="Welcome. # not a comment to the loader"))
     refused(publish(tree, "--check"), "holds '|', '#' or a line break")
 
@@ -527,7 +597,7 @@ def test_an_unwalkable_ferry_landing_is_refused(tree):
 def test_a_hand_edit_shows_in_check(tree):
     assert publish(tree, "--apply").returncode == 0
     path = tree / "server/config/eloria/continent-v2/spawns.txt"
-    path.write_bytes(path.read_bytes() + b"spawn | sw_isle | rabbit | 40 | 40 | leash:5\r\n")
+    path.write_bytes(path.read_bytes() + b"spawn | landfall | rabbit | 40 | 40 | leash:5\r\n")
     result = publish(tree, "--check")
     assert result.returncode == 1
     assert json.loads(result.stdout)["differences"] == ["config/eloria/continent-v2/spawns.txt"]
@@ -535,20 +605,21 @@ def test_a_hand_edit_shows_in_check(tree):
 
 def test_a_stale_crossings_document_is_refused(tree):
     path = tree / "client" / P.V2 / "_continent_v2" / "crossings.json"
-    edit_json(path, lambda doc: doc["inputs"]["maps"]["tollholms"].update(servedGridSha256="1" * 64))
-    refused(publish(tree, "--check"), "crossings.json is stale for tollholms")
+    edit_json(path, lambda doc: doc["inputs"]["maps"]["tollholm"].update(servedGridSha256="1" * 64))
+    refused(publish(tree, "--check"), "crossings.json is stale for tollholm")
 
 
 def test_a_bake_from_another_scene_is_refused(tree):
-    scene = tree / "client" / "godot-client/world_authoring/regions/sw_isle/sw_isle.tscn"
+    scene = tree / "client" / "godot-client/world_authoring/regions/landfall/landfall.tscn"
     scene.write_text(scene.read_text(encoding="utf-8") + "; edited\n", encoding="utf-8", newline="\n")
     refused(publish(tree, "--check"), "re-bake it")
 
 
-def test_a_server_that_does_not_register_the_isles_is_refused(tree):
+def test_catalog_frames_register_the_isles_without_a_static_tool_list(tree):
     maps = tree / "server" / "tools" / "generate_nymara_maps.py"
     shutil.copy2(Path(SERVER) / "tools" / "generate_nymara_maps.py", maps)
-    refused(publish(tree, "--check"), "does not register the isles yet")
+    result = publish(tree, "--apply")
+    assert result.returncode == 0, result.stderr
 
 
 # --- the serve plan's stages -----------------------------------------------------------------------------------------
@@ -613,20 +684,20 @@ def test_npc_posts_are_closed_in_the_reach(tree, codec_):
         arrivals[region] = json.loads((package / "world.json").read_text())["spawnPoints"][0]["serverTile"]
     crossings = json.loads((tree / "client" / P.V2 / "_continent_v2" / "crossings.json").read_text(encoding="utf-8"))
     open_reach = P.union_reach(codes, arrivals, [tuple(r) for r in crossings["portals"]], 20)
-    assert record["maps"]["sw_isle"]["npcPosts"] == 6
-    assert record["maps"]["sw_isle"]["servedReachTiles"] == int(open_reach["sw_isle"].sum()) - 6
+    assert record["maps"]["landfall"]["npcPosts"] == 6
+    assert record["maps"]["landfall"]["servedReachTiles"] == int(open_reach["landfall"].sum()) - 6
     # and the checker judges a post by its open ground, its ring by the reach
-    frame_table = {"sw_isle": SW}
+    frame_table = {"landfall": SW}
     flat = np.full((CELLS, CELLS), 2200, np.uint16)
     walk = flat.copy()
     walk[40, 40] = 0
     reached = np.ones((CELLS, CELLS), bool)
     reached[40, 40] = False
     polygon = [[0.0, 0.0], [200.0, 0.0], [200.0, 100.0], [0.0, 100.0]]
-    checker = P.Checker({"sw_isle": walk}, {"sw_isle": reached}, frame_table, {"sw_isle": polygon},
-                        ground={"sw_isle": flat})
-    assert checker.ring("sw_isle", (40, 40), "npc", "post", post=True)
-    assert not checker.ring("sw_isle", (41, 40), "spawn", "beside the post")
+    checker = P.Checker({"landfall": walk}, {"landfall": reached}, frame_table, {"landfall": polygon},
+                        ground={"landfall": flat})
+    assert checker.ring("landfall", (40, 40), "npc", "post", post=True)
+    assert not checker.ring("landfall", (41, 40), "spawn", "beside the post")
     assert "blocked [[40, 40]]" in checker.failures[0]["problems"][0]
 
 
@@ -636,7 +707,7 @@ def codec_():
 
 
 def test_packages_from_two_export_runs_are_refused(tree):
-    path = tree / "client" / V2 / "tollholms" / "client" / "world.json"
-    edit_json(path, lambda doc: doc["collision"]["groupExport"]["maps"]["sw_isle"].update(
+    path = tree / "client" / V2 / "tollholm" / "client" / "world.json"
+    edit_json(path, lambda doc: doc["collision"]["groupExport"]["maps"]["landfall"].update(
         servedGridSha256="1" * 64))
     refused(publish(tree, "--check"), "exported in another run")

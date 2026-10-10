@@ -1,13 +1,12 @@
 """publish_client.py: publish a continent-v2 territory for the GAME CLIENT as a chunk-streamed package.
 
-  python -B eloria-assets/maps/continent-v2/_continent_v2/publish_client.py [--region tollholms] \
+  python -B eloria-assets/maps/continent-v2/_continent_v2/publish_client.py --region <catalog-id> \
          --snapshot <bake>/continent-authoring.json --out eloria-assets/maps/continent-v2/<region>/client \
          --shared eloria-assets/maps/continent-v2/_continent_v2/shared-assets \
          [--collision <export work dir>/<region>.collision.json] \
          [--work <scratch dir>] [--chunks 05_11,06_11] [--budget-mib 256] [--master] [--checkout <worktree>]
 
---region names the territory (default sw_isle; the island group's second map, tollholms, since task A3, and its
-third, gull_skerries, since task A3b). The bake comes from the region bake
+--region names an active catalog territory. The bake comes from the region bake
 (src/dev/map_authoring_region/region_bake_cli.gd, or the editor-pass check of that territory) of the committed scene;
 re-bake after every scene commit. The bootstrap owns <region>/world.json (the editor stub) and
 _continent_v2/README.md, so this package lives in <region>/client/ and its images in _continent_v2/shared-assets
@@ -16,7 +15,7 @@ cut to its ownership polygon: a rectangle's cell by cell as before, any other po
 to it and triangulating the piece (shapely's constrained Delaunay).
 
 What it writes (the shape build_continent.export_geometry gives the twelve-territory regions, so the client's loader,
-streamer and look pass treat sw_isle exactly as they treat Amberwood):
+streamer and look pass treat each isle exactly as they treat Amberwood):
   <out>/world.json                      continent-chunks-v1 territory manifest, streamingChunks, coordinateTransform
   <out>/chunks/<cx>_<cz>/world.json     one manifest per 96 m cell (territory-local lattice through -1023 m)
   <out>/chunks/<cx>_<cz>/world.glb      self-contained chunk GLB; images go to <shared> by sha256 (externalResources)
@@ -50,8 +49,8 @@ does not grow through them (game-look review D7: tufts on 19 % of the garden wal
 able to fade to glass under the player).
 
 Provenance: the manifests name this tool by its path in the repository, and publication.json records the bake by its
-SHA-256 and the committed scene's, not by the scratch path it was read from: re-bake the committed scene (the sw_isle
-editor-pass check, run_check.sh) and run this again to reproduce the package. --checkout defaults to the repository
+SHA-256 and the committed scene's, not by the scratch path it was read from: re-bake the committed scene with
+region_bake_cli.gd and run this again to reproduce the package. --checkout defaults to the repository
 that holds this script."""
 from __future__ import annotations
 
@@ -70,13 +69,12 @@ from types import SimpleNamespace
 
 import numpy as np
 
-REGION = "sw_isle"
+REGION = None
 CHUNK = 96.0
-# The chunk grid: 96 m cells on the territory-local lattice through (-1023, -1023), the corner of sw_isle's first
-# server frame. main() moves its origin back a whole number of cells until it covers the snapshot's server frame
-# (x from collisionOriginMetres x, z from collisionOriginMetres z - cells z), so every cell of the window has a
-# non-negative index and the cell boundaries (and so the per-chunk budgets) stay where they were when a frame
-# moves. sw_isle: origin (-1023, -1023) until D2b moved its frame 30 m north, (-1023, -1119) since.
+# The 96 m territory-local grid keeps its historical anchor as the phase seed.
+# Each publication selects a deterministic whole-metre phase that satisfies the
+# instance/triangle limits, then extends that grid to cover the served frame.
+# Saved geometry and server coordinates are unaffected.
 CHUNK_LATTICE = -1023.0
 CHUNK_ORIGIN = [CHUNK_LATTICE, CHUNK_LATTICE]
 CELL = 2.0
@@ -89,7 +87,6 @@ TOOL = "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py"
 WALK_KIT_STEMS = ("kit-sw-garden-paving-", "kit-sw-plaza-rosette", "kit-sw-trestle-pier-span",
                   "kit-sw-causeway-arch-span")
 # The editor-pass check that bakes each territory's committed scene (publication.json's recipe).
-CHECK_RECIPES = {"sw_isle": "run_check.sh", "tollholms": "a3/run_a3_check.sh", "gull_skerries": "a3b/run_a3b_check.sh"}
 SHIPPING_BUDGET = 268435456           # ContinentChunkStream.DEFAULT_RESIDENT_BYTES / every published region
 # export_collision.py's outputs and sidecar schema (tests/test_publish_client.py keeps them equal).
 COLLISION_BIN = "collision.bin"
@@ -152,14 +149,9 @@ def json_write(path, data):
 
 
 def point_in_polygon(x, z, polygon):
-    """Crossing-number test, vectorised over x/z arrays."""
-    x = np.asarray(x, float); z = np.asarray(z, float)
-    inside = np.zeros(np.broadcast(x, z).shape, bool)
-    p = np.asarray(polygon, float)
-    for (x1, z1), (x2, z2) in zip(p, np.roll(p, -1, axis=0)):
-        crosses = ((z1 > z) != (z2 > z)) & (x < (x2 - x1) * (z - z1) / np.where(z2 != z1, z2 - z1, 1e-12) + x1)
-        inside ^= crosses
-    return inside
+    """The exact union of the territory's ordered ownership components."""
+    import ownership
+    return ownership.contains(x, z, polygon)
 
 
 def trim_extensions(exporter):
@@ -307,8 +299,7 @@ def chunk_collision(block):
 
 
 def known_limitations(region, collision_record):
-    window = ("outside the ownership window (D2's second map) nothing is exported" if region == "sw_isle" else
-              "outside the ownership polygon nothing is exported (the neighbouring territory publishes it)")
+    window = "outside the ownership polygons nothing is exported (the neighbouring territory publishes it)"
     if collision_record is None:
         return ["no server map: collision.bin, served heights, contracts and the map digest wait for the server "
                 "stage", window]
@@ -359,10 +350,8 @@ def open_territory(snapshot_path, region, checkout):
     A, C = mods.A, mods.C
     checkout = Path(checkout).resolve()
     timings = {}
-    # 1. Snapshot. load_snapshot's production rules are the twelve-territory contract: every region keeps portals and a
-    # runtime binding seed. sw_isle has neither yet (server content waits), so gameplay validation is bypassed here
-    # and nothing below reads gameplay except the spawn and the landmark labels.
-    A._validate_gameplay = lambda *args, **kwargs: None
+    # 1. Snapshot. Registered v2 contracts validate their authored or hash-bound
+    # generated arrival while retaining every ordinary gameplay/source check.
     catalog = checkout / "godot-client/world_authoring/continent-v2/territories.json"
     contract = next(c for c in C.authored_contracts(catalog) if c.id == region)
     t = time.time()
@@ -372,7 +361,9 @@ def open_territory(snapshot_path, region, checkout):
     translation = snapshot.translation
     stub_path = checkout / "eloria-assets/maps/continent-v2" / region / "world.json"
     stub = json.loads(stub_path.read_text(encoding="utf-8"))
-    polygon = stub["continentGeography"]["ownershipPolygon"]
+    import ownership
+    rings = ownership.rings(stub["continentGeography"])
+    polygon = rings[0] if len(rings) == 1 else rings
     if list(stub["continentGeography"]["translation"]) != list(map(float, translation)):
         raise SystemExit("stub manifest translation differs from the snapshot")
 
@@ -410,7 +401,7 @@ def main():
     ap.add_argument("--budget-mib", type=float, default=None, help="streamingChunks.maximumResidentBytes (default 256)")
     ap.add_argument("--master", action="store_true", help="also write the region master (digest only for the client)")
     ap.add_argument("--checkout", type=Path, default=DEFAULT_CHECKOUT)
-    ap.add_argument("--region", default=REGION, help="the continent-v2 territory to publish (default sw_isle)")
+    ap.add_argument("--region", required=True, help="the active catalog territory to publish")
     ap.add_argument("--collision", type=Path, default=None,
                     help="export_collision.py's <region>.collision.json for this bake (stamps the served grid)")
     a = ap.parse_args()
@@ -461,6 +452,42 @@ def main():
                                                  .astype(np.uint8)))
     builder.add_material(G.Material("water_sea", base_color_texture="continental-water", roughness=.55,
                                     double_sided=True))
+    # Budget the saved instances and actual overlay faces before choosing the
+    # lattice phase. Four triangles per terrain cell reserve both land and sea.
+    import chunk_budget as CB
+    A.build_retained_library(snapshot, work / "library")
+    ldoc, lbody = S.GR.load(work / "library" / "library.glb")
+    library = json.loads((work / "library" / "library.json").read_text(encoding="utf-8"))
+    by_name = {ldoc["nodes"][i].get("name"): i for i in ldoc["scenes"][0]["nodes"]}
+    budget_points, budget_placements, budget_triangles = [], [], []
+    for placement in library["placements"]:
+        budget_points.append(np.asarray(placement["position"])[[0, 2]])
+        budget_placements.append(1)
+        budget_triangles.append(sum(CB.subtree_triangles(ldoc, by_name[n])
+                                    for n in placement["groupedNodes"]))
+    terrain_centres = np.stack([gx[:-1, :-1]+CELL/2-translation[0],
+                               gz[:-1, :-1]+CELL/2-translation[2]], axis=-1)[cell_inside[:-1, :-1]]
+    budget_points.extend(terrain_centres)
+    budget_placements.extend(np.zeros(len(terrain_centres)))
+    budget_triangles.extend(np.full(len(terrain_centres), 4))
+    overlays = T.authored_overlays(world, builder)
+    for item in overlays:
+        mesh = item["mesh"]
+        centres = np.asarray(mesh.positions, float)[np.asarray(mesh.indices).reshape(-1, 3)].mean(axis=1)
+        centres = centres[inside_window(centres[:, 0], centres[:, 2])]
+        budget_points.extend(centres[:, [0, 2]]-translation[[0, 2]])
+        budget_placements.extend(np.zeros(len(centres)))
+        budget_triangles.extend(np.ones(len(centres)))
+    parts, _walk, _records = BX._authored_bridge_geometry(world, builder)
+    for _region, _node, mesh, _walks, _identity in parts:
+        centre = np.asarray(mesh.positions, float).mean(axis=0)
+        if inside_window(centre[0], centre[2]):
+            budget_points.append(centre[[0, 2]]-translation[[0, 2]])
+            budget_placements.append(0)
+            budget_triangles.append(len(mesh.indices)//3)
+    CHUNK_ORIGIN[:], chunk_budget_record = CB.choose_origin(
+        budget_points, budget_placements, budget_triangles,
+        [float(frame_origin[0]), float(frame_origin[1])-float(frame_cells[1])], lattice=CHUNK_LATTICE)
     roots = {}          # chunk -> surface root node indices
     bounds = {}         # chunk -> [lo, hi] territory-local
 
@@ -525,18 +552,21 @@ def main():
             water_faces.setdefault(chunk_name(cx_[i], cz_[i]), []).append(faces[i])
 
     low = np.where(owned, height[:-1, :-1] < .5, False)
-    poly_xs = sorted({float(p[0]) for p in polygon}); poly_zs = sorted({float(p[1]) for p in polygon})
-    rectangle = len(polygon) == 4 and len(poly_xs) == 2 and len(poly_zs) == 2
+    import ownership
+    rings = ownership.rings(polygon)
+    flat = ownership.points(polygon)
+    poly_xs = sorted(set(flat[:, 0])); poly_zs = sorted(set(flat[:, 1]))
+    rectangle = len(rings) == 1 and len(rings[0]) == 4 and len(poly_xs) == 2 and len(poly_zs) == 2
     if not rectangle:
         import shapely
-        from shapely.geometry import Polygon as ShapelyPolygon, box
-        window_shape = ShapelyPolygon([(float(p[0]), float(p[1])) for p in polygon])
+        from shapely.geometry import box
+        window_shape = ownership.geometry(polygon)
     for key in np.unique(keys[(keys >= 0) & low]):
         cx_, cz_ = key // 1000, key % 1000
         x0 = CHUNK_ORIGIN[0] + cx_ * CHUNK + translation[0]; z0 = CHUNK_ORIGIN[1] + cz_ * CHUNK + translation[2]
         if rectangle:
-            px = np.clip([x0, x0 + CHUNK], polygon[0][0], polygon[2][0])
-            pz = np.clip([z0, z0 + CHUNK], polygon[0][1], polygon[2][1])
+            px = np.clip([x0, x0 + CHUNK], min(poly_xs), max(poly_xs))
+            pz = np.clip([z0, z0 + CHUNK], min(poly_zs), max(poly_zs))
             a0, b0, c0, d0 = (px[0], 0, pz[0]), (px[1], 0, pz[0]), (px[1], 0, pz[1]), (px[0], 0, pz[1])
             water_faces.setdefault(chunk_name(cx_, cz_), []).extend([np.array([a0, d0, b0]), np.array([b0, d0, c0])])
             continue
@@ -588,7 +618,6 @@ def main():
 
     # 5. The authored overlays, exactly as the twelve-territory exporter builds them, cut into the cells.
     t = time.time()
-    overlays = T.authored_overlays(world, builder)
     for item in overlays:
         mesh = item["mesh"]
         faces = np.asarray(mesh.indices).reshape(-1, 3)
@@ -614,7 +643,6 @@ def main():
 
     # 6. Saved bridges (deck strips are Walk_ surfaces; supports and edges are visual).
     t = time.time()
-    parts, _walk, _records = BX._authored_bridge_geometry(world, builder)
     for _region, node, mesh, _walks, _identity in parts:
         cent = np.asarray(mesh.positions, float).mean(axis=0)
         if not inside_window(cent[0], cent[2]):
@@ -639,8 +667,6 @@ def main():
     # 7. Kit placements: the retained library (wrappers at the saved local matrices), by the cell of their origin
     # (as g1_budget counts them).
     t = time.time()
-    A.build_retained_library(snapshot, work / "library")
-    ldoc, lbody = S.GR.load(work / "library" / "library.glb")
     ldoc, lbody, library_policy = IP.apply(ldoc, lbody, v2_dir / "shared-assets", policy)
     walk_kit = 0
     for node in ldoc["nodes"]:
@@ -649,8 +675,6 @@ def main():
             node["name"] = f"Walk_{REGION}_" + name_[len("kit-sw-"):].replace("-", "_")
             walk_kit += 1
     timings["walk_kit_nodes"] = walk_kit
-    library = json.loads((work / "library" / "library.json").read_text(encoding="utf-8"))
-    by_name = {ldoc["nodes"][i].get("name"): i for i in ldoc["scenes"][0]["nodes"]}
     matrices = S.GR.hierarchy(ldoc)[0]
     lib_roots = {}
     outside = 0
@@ -689,9 +713,11 @@ def main():
     timings["library_s"] = round(time.time() - t, 1)
 
     # 8. The territory manifest and one package per cell (build_continent.export_geometry's shape).
-    spawn = doc["gameplay"]["spawnPoints"][0]
+    import arrivals
+    import frames
+    spawn = arrivals.resolve(doc, frames.load_source(REGION, checkout), checkout)
     server = doc["server"]
-    win = np.asarray(polygon, float) - translation[[0, 2]]
+    win = ownership.points(polygon) - translation[[0, 2]]
     inside_heights = height[cell_inside]
     tops = [b[1][1] for b in bounds.values()] or [float(inside_heights.max())]
     asset_bounds = {"min": [float(win[:, 0].min()), float(inside_heights.min()), float(win[:, 1].min())],
@@ -707,6 +733,8 @@ def main():
                                                      int(server["origin"][1])]}}
     spawn_record = {"default": True, "id": spawn["id"], "position": spawn["position"],
                     "facing": spawn.get("facing", [0.0, 0.0, -1.0]), "serverTile": spawn.get("serverTile")}
+    if spawn.get("generated"):
+        spawn_record["generated"] = True
     landmarks = []
     for mark in doc["gameplay"].get("landmarks", []):
         p = mark["position"]
@@ -729,7 +757,8 @@ def main():
         "environment": stub["environment"],
         "lighting": {"markers": sorted(markers, key=lambda m: m["id"])},
         "continentGeography": {"revision": stub["continentGeography"]["revision"],
-                               "translation": list(map(float, translation)), "ownershipPolygon": polygon,
+                               "translation": list(map(float, translation)), "ownershipPolygon": rings[0],
+                               "ownershipPolygons": rings,
                                "geometryMode": "continent-chunks-v1"},
         "productionStatus": ("chunk-streamed for the game client, with the served walk grid export_collision.py "
                              "wrote (collision.bin, served-grid.escg.gz); the server rows are publish_server.py's"
@@ -756,6 +785,13 @@ def main():
         if lib_roots.get(name):
             exporter.add(ldoc, lbody, lib_roots[name])
         trim_extensions(exporter)
+        placements_count = sum(1 for p in library["placements"]
+                               if chunk_name(*chunk_key(p["position"][0], p["position"][2])) == name)
+        triangle_count = sum(CB.subtree_triangles(exporter.doc, r)
+                             for r in exporter.doc["scenes"][0]["nodes"])
+        if placements_count > CB.PLACEMENTS or triangle_count > CB.TRIANGLES:
+            raise ValueError(f"{REGION}/{name}: chunk budget exceeded: {placements_count} placements, "
+                             f"{triangle_count} triangles (limits {CB.PLACEMENTS}/{CB.TRIANGLES})")
         stats = exporter.write()
         lo, hi = bounds[name]
         cb = {"min": [float(v) for v in lo], "max": [float(v) for v in hi]}
@@ -765,6 +801,7 @@ def main():
             "id": name, "manifest": f"chunks/{name}/world.json", "bounds": cb,
             "estimatedResidentBytes": geometry + sum(stats["sharedResourceResidentBytes"].values()),
             "glbBytes": stats["glbBytes"], "geometryResidentBytes": geometry,
+            "placements": placements_count, "triangles": triangle_count,
             "sharedResourceResidentBytes": stats["sharedResourceResidentBytes"]})
     timings["chunks_s"] = round(time.time() - t, 1)
     picture = kept_minimap(out, manifest["streamingChunks"]["chunks"])
@@ -795,9 +832,8 @@ def main():
     sizes = [p.stat().st_size for p in glbs]
     record = {"region": REGION, "tool": TOOL,
               "snapshot": {"sha256": snapshot_sha, "sceneSha256": doc["sources"]["scene"]["sha256"],
-                           "recipe": "the %s editor-pass check bake (%s) of the committed scene: "
-                                     "<bake>/continent-authoring.json"
-                                     % (REGION, CHECK_RECIPES.get(REGION, "a3/run_a3_check.sh"))},
+                           "recipe": "region_bake_cli.gd --scene %s --output <bake>/continent-authoring.json"
+                                     % doc["sources"]["scene"]["path"]},
               "collision": collision_record,
               "chunks": len(names), "kitPlacementsOutsideWindow": outside,
               "lightingMarkers": len(manifest["lighting"]["markers"]),
@@ -807,7 +843,10 @@ def main():
                                        for c in manifest["streamingChunks"]["chunks"]},
               "timings": timings, "seconds": round(time.time() - t_start, 1)}
     record["imagePolicy"] = {"surface": surface_policy, "library": library_policy}
+    if doc.get("sources", {}).get("generatedArrival"):
+        record["generatedArrival"] = doc["sources"]["generatedArrival"]
     record["geometryResidentFactor"] = GEOMETRY_RESIDENT_FACTOR
+    record["chunkBudget"] = chunk_budget_record
     json_write(out / "publication.json", record)
     print(json.dumps({k: v for k, v in record.items() if k != "estimatedResidentMiB"}, indent=1))
 

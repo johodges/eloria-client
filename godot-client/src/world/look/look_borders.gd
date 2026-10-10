@@ -33,11 +33,13 @@ extends RefCounted
 ## first use, on whichever thread paints first, behind a lock.
 
 const REGISTRY_PATH := "res://data/maps/registry.json"
+const OWNERSHIP_GEOMETRY := preload("res://addons/map_authoring_workspace/ownership_geometry.gd")
 
 static var _mutex := Mutex.new()
 static var _loaded := false
 ## Region id -> PackedVector2Array: its ownership polygon, continent metres.
 static var _polygons: Dictionary = {}
+static var _components: Dictionary = {}
 ## Region id -> its registry geography's continent frame ("" for the
 ## twelve-territory continent): regions in different frames share continent
 ## coordinates but never a border.
@@ -159,9 +161,19 @@ static func neighbours_of(region: String) -> PackedStringArray:
 static func define(polygons: Dictionary, frames := {}) -> void:
 	_mutex.lock()
 	_polygons.clear()
+	_components.clear()
 	_frames.clear()
 	for id: Variant in polygons:
-		_polygons[String(id)] = _points(polygons[id])
+		var raw: Variant = polygons[id]
+		var rings: Array[PackedVector2Array] = []
+		if raw is PackedVector2Array:
+			rings = OWNERSHIP_GEOMETRY.polygons(raw)
+		elif raw is Array and not raw.is_empty() and raw[0] is Array and not raw[0].is_empty():
+			rings = OWNERSHIP_GEOMETRY.polygons([raw] if raw[0][0] is int or raw[0][0] is float else raw)
+		if rings.is_empty():
+			continue
+		_components[String(id)] = rings
+		_polygons[String(id)] = rings[0]
 		_frames[String(id)] = str(frames.get(id, ""))
 	_build()
 	_loaded = true
@@ -172,6 +184,7 @@ static func reload() -> void:
 	_mutex.lock()
 	_loaded = false
 	_polygons.clear()
+	_components.clear()
 	_frames.clear()
 	_borders.clear()
 	_mutex.unlock()
@@ -209,10 +222,11 @@ static func _load_polygons() -> void:
 		var asset: Variant = (manifest as Dictionary).get("asset")
 		if geography is not Dictionary or asset is not Dictionary:
 			continue
-		var polygon := _points((geography as Dictionary).get("ownershipPolygon"))
+		var rings := OWNERSHIP_GEOMETRY.from_geography(geography as Dictionary)
 		var id := str((asset as Dictionary).get("id", ""))
-		if polygon.size() >= 3 and not id.is_empty():
-			_polygons[id] = polygon
+		if not rings.is_empty() and not id.is_empty():
+			_polygons[id] = rings[0]
+			_components[id] = rings
 			_frames[id] = str(((entry as Dictionary).get("continentGeography") as Dictionary).get("frame", ""))
 
 static func _points(raw: Variant) -> PackedVector2Array:
@@ -233,6 +247,8 @@ static func _build() -> void:
 	var owners := {}
 	var steps := {}
 	for id: String in _polygons:
+		if str(_frames.get(id, "")) == "continent-v2" or (_components.get(id, []) as Array).size() > 1:
+			continue
 		var list: Array[Dictionary] = []
 		var polygon: PackedVector2Array = _polygons[id]
 		for index: int in polygon.size():
@@ -254,6 +270,8 @@ static func _build() -> void:
 	for id: String in _polygons:
 		_borders[id] = []
 	for id: String in _polygons:
+		if not steps.has(id):
+			continue
 		var list: Array = steps[id]
 		var count := list.size()
 		if count == 0:
@@ -300,6 +318,56 @@ static func _build() -> void:
 				theirs.append(Vector4(b.x, b.y, a.x, a.y))
 			(_borders[id] as Array).append({"neighbour": neighbour, "segments": own})
 			(_borders[neighbour] as Array).append({"neighbour": id, "segments": theirs})
+	_build_exact_components()
+
+## Exact edge intersections support angled borders and disconnected components.
+## The established staircase simplifier above remains the legacy single-ring path.
+static func _build_exact_components() -> void:
+	var ids: Array = _components.keys()
+	ids.sort()
+	for ia: int in ids.size():
+		var first := String(ids[ia])
+		var a_rings: Array = _components[first]
+		for ib: int in range(ia + 1, ids.size()):
+			var second := String(ids[ib])
+			var b_rings: Array = _components[second]
+			if str(_frames.get(first, "")) != str(_frames.get(second, "")):
+				continue
+			if str(_frames.get(first, "")) != "continent-v2" and a_rings.size() == 1 and b_rings.size() == 1:
+				continue
+			var own := PackedVector4Array()
+			var theirs := PackedVector4Array()
+			for a: PackedVector2Array in a_rings:
+				var area := _signed_area(a)
+				for ai: int in a.size():
+					var p := a[ai]
+					var d := a[(ai + 1) % a.size()] - p
+					var length_squared := d.length_squared()
+					if length_squared < 0.000001:
+						continue
+					for b: PackedVector2Array in b_rings:
+						for bi: int in b.size():
+							var q := b[bi]
+							var end := b[(bi + 1) % b.size()]
+							if absf(d.cross(q-p)) / sqrt(length_squared) > 0.0001 or absf(d.cross(end-p)) / sqrt(length_squared) > 0.0001:
+								continue
+							var t0 := (q-p).dot(d) / length_squared
+							var t1 := (end-p).dot(d) / length_squared
+							var lo := maxf(0.0,minf(t0,t1))
+							var hi := minf(1.0,maxf(t0,t1))
+							if (hi-lo) * sqrt(length_squared) < 0.0001:
+								continue
+							var start := p + d * lo
+							var finish := p + d * hi
+							if area < 0.0:
+								var swap := start
+								start = finish
+								finish = swap
+							own.append(Vector4(start.x,start.y,finish.x,finish.y))
+							theirs.append(Vector4(finish.x,finish.y,start.x,start.y))
+			if not own.is_empty():
+				(_borders[first] as Array).append({"neighbour":second,"segments":own})
+				(_borders[second] as Array).append({"neighbour":first,"segments":theirs})
 
 static func _key(point: Vector2) -> Vector2i:
 	return Vector2i(roundi(point.x * 2.0), roundi(point.y * 2.0))

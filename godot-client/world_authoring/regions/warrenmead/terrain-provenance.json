@@ -1,0 +1,47 @@
+{
+ "schema": "eloria-continent-v2-terrain-crop-v1",
+ "sourceCommit": "1d23effa0bfb1d7ad9671502fa5c61400f3d165e",
+ "crop": {
+  "parent": "isles-group-terrain",
+  "parentFiles": {
+   "heights": {
+    "path": "eloria-assets/maps/continent-v2/_continent_v2/group-terrain/base-heights.f32le",
+    "sha256": "176b536762632e57bc40a1298f9a6ccf304a2c27bd420ec9e0f7191314ed69ec"
+   },
+   "colors": {
+    "path": "eloria-assets/maps/continent-v2/_continent_v2/group-terrain/base-colors.rgba8",
+    "sha256": "35b67bacbf9c562375f5fa00a2cb57c895cebc95b0258901b00af6edad2974c4"
+   },
+   "provenance": {
+    "path": "eloria-assets/maps/continent-v2/_continent_v2/group-terrain/terrain-provenance.json",
+    "sha256": "15ccb98fec3314423b64f064e695b766f716645a3ea7bb3d1f7a81e0f423a8e1"
+   }
+  },
+  "parentGrid": {
+   "continentFirstVertex": [
+    299.0,
+    6163.0
+   ],
+   "gridSize": [
+    1446,
+    1259
+   ],
+   "cellMetres": 2.0
+  },
+  "sourceCommit": "1d23effa0bfb1d7ad9671502fa5c61400f3d165e",
+  "row0": 279,
+  "col0": 0,
+  "rows": 451,
+  "cols": 331
+ },
+ "outputs": {
+  "base-heights.f32le": {
+   "sha256": "9f2756dd9abcb7158e0ebca70b11c7166490bd3fc9bf517af05e089e2f2b5fad",
+   "bytes": 597124
+  },
+  "base-colors.rgba8": {
+   "sha256": "d6e191f9530051dfbb41fac94dd09a5366f6ef893790a33321ec8cf29102ba3e",
+   "bytes": 597124
+  }
+ }
+}

@@ -8,6 +8,7 @@ signal stroke_started
 signal stroke_ended
 
 const BRUSH := preload("res://src/dev/map_authoring_region/terrain_sculpt_brush.gd")
+const GEOMETRY := preload("res://addons/map_authoring_workspace/ownership_geometry.gd")
 const OWNERSHIP := preload("res://src/dev/map_authoring_region/ownership_source.gd")
 const PREVIEW_INTERVAL := 0.14
 const RING_SEGMENTS := 48
@@ -49,7 +50,7 @@ func bind(root: Node3D, terrain: MapAuthoringTerrainControl,
 		entry: Dictionary, undo_redo: Object) -> bool:
 	unbind()
 	if root == null or terrain == null or undo_redo == null or \
-			not entry.get("ownership_polygon") is PackedVector2Array:
+			GEOMETRY.from_entry(entry).is_empty():
 		return false
 	if not OWNERSHIP.entry_error(root, entry).is_empty():
 		return false
@@ -59,7 +60,7 @@ func bind(root: Node3D, terrain: MapAuthoringTerrainControl,
 	_undo_redo = undo_redo
 	_base = _terrain.base_heights()
 	_base_sha = _terrain.base_sha256()
-	var fields := boundary_fields(_entry.ownership_polygon,
+	var fields := boundary_fields(GEOMETRY.from_entry(_entry),
 		_entry.translation, _terrain.origin, _terrain.grid_size,
 		_terrain.cell_metres, _root.global_transform.affine_inverse() *
 		_terrain.global_transform)
@@ -305,11 +306,10 @@ func protection_fields() -> Dictionary:
 	if _terrain == null or not is_instance_valid(_terrain) or _locked.is_empty():
 		return {}
 	var translation: Vector3 = _entry.get("translation", Vector3.ZERO)
-	var polygon := PackedVector2Array()
-	for point: Vector2 in _entry.get("ownership_polygon", PackedVector2Array()):
-		polygon.append(point - Vector2(translation.x, translation.z))
+	var polygons := GEOMETRY.local(GEOMETRY.from_entry(_entry), translation)
+	var polygon := polygons[0] if not polygons.is_empty() else PackedVector2Array()
 	return {"locked": _locked, "weights": _boundary_weights, "origin": _terrain.origin,
-		"grid": _terrain.grid_size, "cell": _terrain.cell_metres, "polygon": polygon,
+		"grid": _terrain.grid_size, "cell": _terrain.cell_metres, "polygon": polygon, "polygons": polygons,
 		"terrain": _terrain}
 
 
@@ -510,12 +510,13 @@ func _draw_ring(local: Vector3, radius: float) -> void:
 	_ring.visible = true
 
 
-static func boundary_fields(polygon: PackedVector2Array,
+static func boundary_fields(polygon: Variant,
 		translation: Vector3, origin: Vector2, grid: Vector2i,
 		cell: float, terrain_to_root := Transform3D.IDENTITY) -> Dictionary:
 	var locked := PackedByteArray()
 	var weights := PackedFloat32Array()
-	if polygon.size() < 3 or grid.x < 2 or grid.y < 2 or cell <= 0.0:
+	var polygons := GEOMETRY.polygons(polygon)
+	if polygons.is_empty() or grid.x < 2 or grid.y < 2 or cell <= 0.0:
 		return {"locked": locked, "weights": weights}
 	locked.resize(grid.x * grid.y)
 	weights.resize(locked.size())
@@ -532,17 +533,10 @@ static func boundary_fields(polygon: PackedVector2Array,
 			var root_point: Vector3 = terrain_to_root * local
 			var point := Vector2(root_point.x + translation.x,
 				root_point.z + translation.z)
-			if not Geometry2D.is_point_in_polygon(point, polygon):
+			if not GEOMETRY.contains(point, polygons):
 				locked[index] = 1
 				continue
-			var distance := INF
-			for edge in polygon.size():
-				var first: Vector2 = polygon[edge]
-				var second: Vector2 = polygon[(edge + 1) % polygon.size()]
-				var segment := second - first
-				var t := clampf((point - first).dot(segment) /
-					maxf(segment.length_squared(), 0.000001), 0.0, 1.0)
-				distance = minf(distance, point.distance_to(first + segment * t))
+			var distance := GEOMETRY.edge_distance(point, polygons)
 			if distance <= hard:
 				locked[index] = 1
 				continue

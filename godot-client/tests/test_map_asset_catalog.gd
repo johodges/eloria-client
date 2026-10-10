@@ -29,6 +29,7 @@ func _run() -> void:
 	_test_metadata_and_stability(entries)
 	_test_filtering(entries)
 	_test_territory_kit()
+	_test_shared_territory_kits()
 	print("map asset catalog: ",
 		"PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)
@@ -213,13 +214,73 @@ func _test_territory_kit() -> void:
 		"a new ground-cover piece takes the scene's prefix and starts walk-through")
 	_expect(String(by_file.get("kit-grey-boulder-1.glb", {}).get("category", "")) ==
 		Catalog.TERRITORY_STRUCTURES, "a new boulder starts solid")
-	_expect(Catalog.territory_entries(Node3D.new()).is_empty(),
+	var unsaved := Node3D.new()
+	_expect(Catalog.territory_entries(unsaved).is_empty(),
 		"an unsaved scene has no territory kit")
+	unsaved.free()
 	root.free()
 	for file in DirAccess.get_files_at(folder):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(folder.path_join(file)))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(folder))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(KIT_FIXTURE.path_join("assets")))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(KIT_FIXTURE))
+
+
+func _test_shared_territory_kits() -> void:
+	var first := KIT_FIXTURE.path_join("first")
+	var second := KIT_FIXTURE.path_join("second")
+	for folder: String in [first, second]:
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
+	DirAccess.copy_absolute(ProjectSettings.globalize_path(KIT_SOURCE + "kit-cart.glb"),
+		ProjectSettings.globalize_path(first.path_join("kit-cart.glb")))
+	DirAccess.copy_absolute(ProjectSettings.globalize_path(KIT_SOURCE + "kit-grey-boulder-1.glb"),
+		ProjectSettings.globalize_path(second.path_join("kit-grey-boulder-1.glb")))
+	var scene_path := KIT_FIXTURE.path_join("new_scene.tscn")
+	var catalog_path := KIT_FIXTURE.path_join("catalog.json")
+	var binding_path := KIT_FIXTURE.path_join("bindings.json")
+	var catalog_file := FileAccess.open(catalog_path, FileAccess.WRITE)
+	catalog_file.store_string(JSON.stringify({"entries": [{"scenePath": scene_path}],
+		"sharedAssetLibraries": [{"directory": first, "catalogPrefix": "first"},
+			{"directory": second, "catalogPrefix": "second"}, {"directory": first}],
+		"sharedAssetCatalogPath": binding_path}))
+	catalog_file.close()
+	var binding_file := FileAccess.open(binding_path, FileAccess.WRITE)
+	binding_file.store_string(JSON.stringify({"schema": "eloria-shared-kit-catalog-v1",
+		"models": {second.path_join("kit-grey-boulder-1.glb"):
+			{"catalogAssetId": "shared:rock", "collisionRole": "none"}}}))
+	binding_file.close()
+	var setting := "map_authoring/territory_catalog_path"
+	var previous: Variant = ProjectSettings.get_setting(setting, "")
+	ProjectSettings.set_setting(setting, catalog_path)
+	var root := Node3D.new()
+	root.scene_file_path = scene_path
+	var container := Node3D.new()
+	container.name = "AuthoredAssets"
+	root.add_child(container)
+	var wrapper: Node3D = ASSET_SCRIPT.new()
+	wrapper.set("scene_path", first.path_join("kit-cart.glb"))
+	wrapper.set("catalog_asset_id", "saved:cart")
+	wrapper.set("collision_role", "none")
+	container.add_child(wrapper)
+	var listed := Catalog.territory_entries(root)
+	_expect(listed.size() == 2, "shared kits list both libraries once without a sibling kit")
+	var saved := _by_id(listed, "saved:cart")
+	_expect(saved.get("category") == Catalog.TERRITORY_SCENERY,
+		"a saved shared copy keeps its catalog identity and collision role")
+	var unplaced := _by_id(listed, "shared:rock")
+	_expect(unplaced.get("scene_path") == second.path_join("kit-grey-boulder-1.glb") and
+		unplaced.get("category") == Catalog.TERRITORY_SCENERY,
+		"an unplaced shared model keeps its pinned identity and role")
+	root.scene_file_path = KIT_FIXTURE.path_join("unregistered.tscn")
+	_expect(Catalog.territory_entries(root).is_empty(), "shared kits belong only to registered scenes")
+	ProjectSettings.set_setting(setting, previous)
+	root.free()
+	for folder: String in [first, second]:
+		for file: String in DirAccess.get_files_at(folder):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(folder.path_join(file)))
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(folder))
+	for path: String in [catalog_path, binding_path]:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(KIT_FIXTURE))
 
 

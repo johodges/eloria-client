@@ -24,9 +24,13 @@ called with the territory's origin:
   continent = local + translation
 
 so tile (tx, ty) covers local x in [tx - ox, tx - ox + 1) and z in (oy - ty - 1, oy - ty], and its centre is
-(tx - ox + 0.5, oy - ty - 0.5). Row 0 is the south edge of the window. The three isle frames put their tile edges on
+(tx - ox + 0.5, oy - ty - 0.5). Row 0 is the south edge of the window. The isle frames put their tile edges on
 whole continent metres (translation_x - origin_x and translation_z + origin_y are integers), so a border cell is the
 same ground in both neighbours' numbering.
+
+Before first publication, load_source() validates the stub/spec and every registry/package copy that already
+exists. A served map still needs all four copies. The ordinary load() remains strict; source loading cannot hide
+a disagreeing or missing served copy.
 """
 from __future__ import annotations
 
@@ -152,7 +156,7 @@ def regions(checkout: Path = DEFAULT_CHECKOUT) -> list[str]:
     return [entry["id"] for entry in catalog_entries(checkout)]
 
 
-def load(region: str, checkout: Path = DEFAULT_CHECKOUT) -> Frame:
+def load(region: str, checkout: Path = DEFAULT_CHECKOUT, *, require_published: bool = True) -> Frame:
     """The territory's frame, refused (FrameError) unless the stub, the authoring spec, the registry row and the
     published manifest agree on origin, cells, translation and the collision origin."""
     checkout = Path(checkout)
@@ -162,12 +166,22 @@ def load(region: str, checkout: Path = DEFAULT_CHECKOUT) -> Frame:
     stub_path = _res(entry["manifestPath"], checkout)
     spec_path = _res(entry["authoringSpecPath"], checkout)
     stub, spec = _read(stub_path), _read(spec_path)
-    registry = _read(checkout / REGISTRY)
+    registry_path = checkout / REGISTRY
+    registry = _read(registry_path) if require_published or registry_path.is_file() else {"maps": {}}
     row = registry.get("maps", {}).get(region)
-    if row is None:
+    if row is None and require_published:
         raise FrameError(f"{region} has no row in {REGISTRY}")
-    manifest_path = _res(row.get("manifest", ""), checkout)
-    manifest = _read(manifest_path)
+    resource = (row or {}).get("manifest") or entry.get("publishedManifestPath", "")
+    if not resource:
+        raise FrameError(f"{region} has no published manifest path")
+    manifest_path = _res(resource, checkout)
+    manifest = _read(manifest_path) if require_published or manifest_path.is_file() else None
+    served = (row or {}).get("status") == "continent-v2-served" or bool(
+        ((manifest or {}).get("collision") or {}).get("servedGrid"))
+    if served and (row is None or manifest is None):
+        raise FrameError(f"{region}: a served frame needs its registry row and published manifest")
+    if row is not None and row.get("manifest") != entry.get("publishedManifestPath"):
+        raise FrameError(f"{region}: registry manifest differs from the catalog's published manifest path")
 
     copies = {}   # name -> (origin, cells, translation, collision origin)
     stub_server = stub.get("server", {})
@@ -180,6 +194,8 @@ def load(region: str, checkout: Path = DEFAULT_CHECKOUT) -> Frame:
                                        _pair(spec_server.get("collisionOriginMetres")))
     problems = []
     for name, doc in (("registry row", row), ("published manifest", manifest)):
+        if doc is None:
+            continue
         ct = doc.get("coordinateTransform", {})
         origin = _pair(ct.get("serverOrigin"), int)
         copies[name] = (origin, _pair(ct.get("serverCells"), int), doc.get("continentGeography", {}).get("translation"),
@@ -218,11 +234,22 @@ def load(region: str, checkout: Path = DEFAULT_CHECKOUT) -> Frame:
         if cells[0] != cells[1] or cells[0] % CELL_MULTIPLE or not 0 < cells[0] <= MAX_CELLS:
             problems.append(f"stub: cells {list(cells)} (the server needs a square side, a multiple of "
                             f"{CELL_MULTIPLE}, at most {MAX_CELLS})")
+        if not all(math.isfinite(v) for v in translation):
+            problems.append("stub: continent translation must be finite")
+        else:
+            lattice = (translation[0] - origin[0], translation[2] + origin[1])
+            if any(v != math.floor(v) for v in lattice):
+                problems.append("stub: tile edges must fall on whole continent metres")
     if problems:
         raise FrameError(f"{region}: the frame's copies disagree: " + "; ".join(problems))
     sources = {"stub": _rel(stub_path, checkout), "region-authoring-spec": _rel(spec_path, checkout),
                "registry": REGISTRY, "published manifest": _rel(manifest_path, checkout)}
     return Frame(region, str(entry.get("label", region)), reference[0], reference[1], reference[2], sources)
+
+
+def load_source(region: str, checkout: Path = DEFAULT_CHECKOUT) -> Frame:
+    """Validate an unserved bootstrap frame before a package exists; served frames remain strict."""
+    return load(region, checkout, require_published=False)
 
 
 def load_all(checkout: Path = DEFAULT_CHECKOUT) -> dict[str, Frame]:

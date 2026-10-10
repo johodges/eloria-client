@@ -32,7 +32,8 @@ MAPS = CHECKOUT / "eloria-assets" / "maps"
 sys.path.insert(0, str(V2))
 import publish_client as PC  # noqa: E402
 
-REGIONS = ("sw_isle", "tollholms", "gull_skerries")
+REGIONS = tuple(entry["id"] for entry in json.loads(
+    (CHECKOUT / "godot-client/world_authoring/continent-v2/territories.json").read_text(encoding="utf-8"))["entries"])
 LEGACY_FACTOR = 5
 
 
@@ -89,9 +90,9 @@ def test_legacy_figures_keep_five_times_their_glb(manifest_path):
 
 
 def packages():
-    found = [pytest.param(MAPS / "continent-v2" / r / "client", id=r)
-             for r in REGIONS if (MAPS / "continent-v2" / r / "client" / "world.json").is_file()]
-    return found or [pytest.param(None, marks=pytest.mark.skip(reason="no isle package in this checkout"))]
+    # Every active map must publish; a missing package must not silently remove coverage.
+    return [pytest.param(MAPS / "continent-v2" / region / "client", id=region)
+            for region in REGIONS]
 
 
 @pytest.mark.parametrize("package", packages())

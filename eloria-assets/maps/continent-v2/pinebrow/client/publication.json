@@ -1,0 +1,151 @@
+{
+ "region": "pinebrow",
+ "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
+ "snapshot": {
+  "sha256": "5d94d327f3afd12c39f2b2f34985f553eebfd619936be502376fd0ca793f4ce2",
+  "sceneSha256": "02a39595f6a7b0e507833c3269395a45f2ed2baed8070b23f006a7fbf9347d1f",
+  "recipe": "region_bake_cli.gd --scene godot-client/world_authoring/regions/pinebrow/pinebrow.tscn --output <bake>/continent-authoring.json"
+ },
+ "collision": {
+  "sidecarSha256": "a2b706d37687ece0c0631c27892e216e17b6bfe06ba5cc83a3b00fd94ff2b9d2",
+  "collisionSha256": "52857361473ff33f4189f490c5d540709224bc71b8f7559a9038423d18de5cc6",
+  "servedGridSha256": "fd34023e86d441c60cfb93ca78356187cc8869a2a66e3a19a92f343c2dd55042",
+  "walkableCells": 582665,
+  "openTiles": 142413,
+  "sourceSnapshotSha256": "5d94d327f3afd12c39f2b2f34985f553eebfd619936be502376fd0ca793f4ce2"
+ },
+ "chunks": 70,
+ "kitPlacementsOutsideWindow": 0,
+ "lightingMarkers": 0,
+ "chunkGlbBytes": {
+  "total": 111880772,
+  "max": 4930256,
+  "over100MiB": []
+ },
+ "estimatedResidentMiB": {
+  "05_06": 10.9,
+  "05_07": 11.0,
+  "05_08": 11.0,
+  "05_09": 11.0,
+  "05_10": 11.0,
+  "05_11": 11.0,
+  "05_12": 11.0,
+  "05_13": 11.0,
+  "05_14": 10.8,
+  "06_06": 11.6,
+  "06_07": 11.7,
+  "06_08": 11.7,
+  "06_09": 11.7,
+  "06_10": 11.7,
+  "06_11": 11.7,
+  "06_12": 11.7,
+  "06_13": 11.6,
+  "06_14": 10.8,
+  "07_06": 11.6,
+  "07_07": 11.7,
+  "07_08": 11.7,
+  "07_09": 33.3,
+  "07_10": 76.2,
+  "07_11": 92.3,
+  "07_12": 11.7,
+  "07_13": 11.6,
+  "08_06": 60.0,
+  "08_07": 124.6,
+  "08_08": 92.3,
+  "08_09": 108.4,
+  "08_10": 11.6,
+  "08_11": 113.8,
+  "08_12": 76.2,
+  "08_13": 11.5,
+  "09_06": 160.9,
+  "09_07": 99.6,
+  "09_08": 71.4,
+  "09_09": 79.5,
+  "09_10": 151.8,
+  "09_11": 20.5,
+  "09_12": 186.0,
+  "09_13": 11.4,
+  "10_06": 168.4,
+  "10_07": 159.6,
+  "10_08": 119.4,
+  "10_09": 107.3,
+  "10_10": 103.7,
+  "10_11": 64.1,
+  "10_12": 96.4,
+  "10_13": 11.4,
+  "11_05": 16.5,
+  "11_06": 140.4,
+  "11_07": 126.7,
+  "11_08": 98.7,
+  "11_09": 66.6,
+  "11_10": 78.8,
+  "11_11": 156.7,
+  "11_12": 11.5,
+  "11_13": 11.2,
+  "12_06": 114.9,
+  "12_07": 181.4,
+  "12_08": 125.7,
+  "13_06": 96.9,
+  "13_07": 114.1,
+  "13_08": 107.9,
+  "13_09": 75.3,
+  "14_06": 87.3,
+  "14_07": 49.4,
+  "14_08": 73.5,
+  "14_09": 51.2
+ },
+ "timings": {
+  "snapshot_s": 0.6,
+  "terrain_s": 0.2,
+  "water_s": 0.0,
+  "overlays_s": 0.7,
+  "bridges_s": 0.0,
+  "surface_glb_bytes": 107405532,
+  "walk_kit_nodes": 0,
+  "library_s": 0.2,
+  "chunks_s": 2.2
+ },
+ "seconds": 9.3,
+ "imagePolicy": {
+  "surface": {
+   "imagesResampled": 10,
+   "resampledImages": [
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
+   ]
+  },
+  "library": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  }
+ },
+ "generatedArrival": {
+  "path": "eloria-assets/maps/continent-v2/pinebrow/content/arrival.json",
+  "sha256": "2404bb236aa042715d12f171fc39b18a8e7292a7e24a809b5d0ce86cfea93219"
+ },
+ "geometryResidentFactor": 1.0,
+ "chunkBudget": {
+  "algorithm": "whole-metre-budget-phase-v1",
+  "phaseMetres": [
+   55,
+   64
+  ],
+  "originMetres": [
+   -968,
+   -959
+  ],
+  "maximumPlacements": 72,
+  "maximumTriangles": 276853,
+  "placementLimit": 240,
+  "triangleLimit": 450000,
+  "cellMetres": 96
+ }
+}

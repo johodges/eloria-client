@@ -30,7 +30,8 @@ CHECKOUT = V2.parents[3]
 sys.path.insert(0, str(V2))
 import image_policy as IP  # noqa: E402
 
-REGIONS = ("sw_isle", "tollholms", "gull_skerries")
+REGIONS = tuple(entry["id"] for entry in json.loads(
+    (CHECKOUT / "godot-client/world_authoring/continent-v2/territories.json").read_text(encoding="utf-8"))["entries"])
 
 
 def png(array: np.ndarray) -> bytes:
@@ -146,9 +147,9 @@ def test_the_committed_policy_holds():
 
 
 def packages():
-    found = [pytest.param(CHECKOUT / "eloria-assets/maps/continent-v2" / r / "client" / "world.json", id=r)
-             for r in REGIONS if (CHECKOUT / "eloria-assets/maps/continent-v2" / r / "client" / "world.json").is_file()]
-    return found or [pytest.param(None, marks=pytest.mark.skip(reason="no isle package in this checkout"))]
+    # Every active map must publish; a missing package must not silently remove coverage.
+    return [pytest.param(CHECKOUT / "eloria-assets/maps/continent-v2" / region / "client" / "world.json",
+                         id=region) for region in REGIONS]
 
 
 @pytest.mark.parametrize("manifest_path", packages())
@@ -158,8 +159,14 @@ def test_no_cell_names_a_rule_source_any_more(manifest_path):
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     named = {s for entry in manifest["streamingChunks"]["chunks"] for s in entry["sharedResourceResidentBytes"]}
     assert named & retired == set()
-    derived = {rule["derived"] for rule in policy.get("resample", {}).values()}
-    assert derived & named, "the cells sample the derived grounds instead"
+    record = json.loads((manifest_path.parent / "publication.json").read_text(encoding="utf-8"))
+    # The partition can leave a map with none of these source grounds. Require the
+    # derived bytes for every rule source its publication actually processed.
+    applied = {digest for side in record["imagePolicy"].values()
+               for digest in side["resampledImages"]}
+    assert applied <= retired, "publication names an unknown image-policy source"
+    derived = {policy["resample"][digest]["derived"] for digest in applied}
+    assert derived <= named, "a processed rule source must sample its recorded derived bytes"
 
 
 PAVING = "e9adde18e1b92def62b1a8a83748d3ce0a32ff8c3d53753bbd363e6a9bcff951"

@@ -4,6 +4,8 @@
 # Authored map certificates hash source bytes. Keep map inputs and manifests
 # byte-exact across Windows and Unix checkouts, including mixed line endings.
 eloria-assets/maps/** -text
+eloria-assets/maps/**/*.f32le binary
+eloria-assets/maps/**/*.rgba8 binary
 godot-client/data/maps/** -text
 godot-client/world_authoring/** -text
 godot-client/world_authoring/**/*.f32le binary

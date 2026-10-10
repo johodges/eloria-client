@@ -8,6 +8,7 @@ const CATALOG_PATH := "res://world_authoring/territories.json"
 ## in world_authoring/continent-v2/territories.json) sets it in project.godot;
 ## without it the editor uses the shared catalog.
 const CATALOG_SETTING := "map_authoring/territory_catalog_path"
+const GEOMETRY := preload("res://addons/map_authoring_workspace/ownership_geometry.gd")
 const OWNERSHIP := preload("res://src/dev/map_authoring_region/ownership_source.gd")
 
 var errors: PackedStringArray = []
@@ -48,7 +49,8 @@ func entries(ownership_project_directory: String = "", catalog_path: String = CA
 		var geography: Dictionary = manifest.get("continentGeography", {})
 		var asset: Dictionary = manifest.get("asset", {})
 		var translation := _vec3(geography.get("translation"))
-		var polygon := _polygon(geography.get("ownershipPolygon"))
+		var polygons := GEOMETRY.from_geography(geography)
+		var polygon := polygons[0] if not polygons.is_empty() else PackedVector2Array()
 		var selected := OWNERSHIP.region_data(ownership, id)
 		if not String(selected.get("error", "")).is_empty():
 			errors.append(selected.error)
@@ -56,6 +58,7 @@ func entries(ownership_project_directory: String = "", catalog_path: String = CA
 		if selected.get("selected", false):
 			translation = _vec3(selected.frame.continentTranslation)
 			polygon = _polygon(selected.polygon_scalars)
+			polygons = GEOMETRY.polygons(polygon)
 		if translation == null or polygon.size() < 3:
 			errors.append("%s has no valid continent translation/ownership polygon." % id)
 			continue
@@ -116,8 +119,9 @@ func entries(ownership_project_directory: String = "", catalog_path: String = CA
 			"claim_source_dependencies": claim_source.dependencies,
 			"translation": translation,
 			"ownership_polygon": polygon,
+			"ownership_polygons": polygons,
 			"ownership_sha256": selected.source_sha256 if selected.get("selected", false) else \
-				JSON.stringify(_polygon_array(polygon)).sha256_text(),
+				GEOMETRY.hash(polygons),
 			"revision": String(geography.get("revision", "unversioned")),
 		})
 		var entry := result[-1]

@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Checks across the continent-v2 territories: ownership, shared seam vertices, mirrored seam patches.
 
-The island group of continent v2 is three maps (owner decisions D2a-D2c, 2026-10-02): sw_isle, tollholms and
-gull_skerries. sw_isle's terrain grid covers the whole group; the other two take byte crops of its base
-(bootstrap_continent_v2_territory.py), so the vertices two neighbours share are bit-identical by construction. These
+The active island group is derived from the recorded section partition. Each active map is a byte crop of the
+external, hash-pinned frozen group terrain (bootstrap_continent_v2_territory.py), so the vertices two neighbours share are bit-identical by construction. These
 checks keep that true while the maps are edited:
 
 - ownership: no two polygons overlap (no 2 m cell centre strictly inside two of them), and every vertex of every
@@ -34,6 +33,7 @@ from __future__ import annotations
 import functools
 import hashlib
 import json
+import math
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -64,6 +64,22 @@ def polygon_sha(polygon) -> str:
     """territory_catalog.gd: JSON.stringify of the float polygon, sha256 of the text."""
     text = "[" + ",".join("[%s,%s]" % (repr(float(x)), repr(float(z))) for x, z in polygon) + "]"
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def polygons_sha(polygons) -> str:
+    """Single-ring hashes retain the existing contract; multipart hashes include every ordered ring."""
+    if len(polygons) == 1:
+        return polygon_sha(polygons[0])
+    text = json.dumps([[[float(x), float(z)] for x, z in ring] for ring in polygons], separators=(",", ":"))
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def territory_classify(px, pz, territory):
+    rings = territory.polygons if territory.polygons is not None else [territory.polygon]
+    result = np.zeros(np.broadcast(np.asarray(px), np.asarray(pz)).shape, np.uint8)
+    for ring in rings:
+        result = np.maximum(result, classify(px, pz, ring))
+    return result
 
 
 def classify(px, pz, polygon) -> np.ndarray:
@@ -141,14 +157,69 @@ def _numbers(text: str, kind: str) -> list[float]:
 
 
 def transform(text: str | None) -> np.ndarray:
-    """A 4x4 matrix from Godot's Transform3D text (basis rows, then the origin)."""
+    """A 4x4 matrix from Godot's Transform3D text (basis columns, then the origin)."""
     matrix = np.eye(4)
     if text is None:
         return matrix
     values = _numbers(text, "Transform3D")
-    matrix[:3, :3] = np.asarray(values[:9]).reshape(3, 3)
+    matrix[:3, :3] = np.asarray(values[:9]).reshape(3, 3).T
     matrix[:3, 3] = values[9:12]
     return matrix
+
+
+def nums(s):
+    return [float(v) for v in re.findall(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?", s)]
+
+
+def _property(body, name, kind):
+    match = re.search(r"^" + re.escape(name) + r" = " + kind + r"\(([^)]*)\)", body, re.M)
+    return np.asarray(nums(match.group(1))) if match else None
+
+
+def transform_matrix(body):
+    """Godot Transform3D stores three basis columns, followed by the origin.
+
+    Otherwise compose Node3D's position, Euler rotation (Godot's intrinsic
+    rotation_order, default YXZ), or quaternion, and scale.
+    """
+    result = np.eye(4)
+    values = _property(body, "transform", "Transform3D")
+    if values is not None:
+        if len(values) != 12:
+            raise ValueError("Transform3D needs 12 values")
+        result[:3, :3] = values[:9].reshape(3, 3).T
+        result[:3, 3] = values[9:]
+        return result
+    position = _property(body, "position", "Vector3")
+    scale = _property(body, "scale", "Vector3")
+    quaternion = _property(body, "quaternion", "Quaternion")
+    if quaternion is not None:
+        quaternion = quaternion / np.linalg.norm(quaternion)
+        x, y, z, w = quaternion
+        result[:3, :3] = [[1 - 2 * (y*y + z*z), 2 * (x*y - z*w), 2 * (x*z + y*w)],
+                          [2 * (x*y + z*w), 1 - 2 * (x*x + z*z), 2 * (y*z - x*w)],
+                          [2 * (x*z - y*w), 2 * (y*z + x*w), 1 - 2 * (x*x + y*y)]]
+    else:
+        rotation = _property(body, "rotation", "Vector3")
+        degrees = _property(body, "rotation_degrees", "Vector3")
+        if rotation is None and degrees is not None:
+            rotation = np.radians(degrees)
+        if rotation is not None:
+            order_match = re.search(r"^rotation_order = (\d+)", body, re.M)
+            order = ("xyz", "xzy", "yxz", "yzx", "zxy", "zyx")[int(order_match.group(1)) if order_match else 2]
+            x, y, z = rotation
+            cx, sx, cy, sy, cz, sz = math.cos(x), math.sin(x), math.cos(y), math.sin(y), math.cos(z), math.sin(z)
+            axes = {"x": np.array([[1,0,0],[0,cx,-sx],[0,sx,cx]]),
+                    "y": np.array([[cy,0,sy],[0,1,0],[-sy,0,cy]]),
+                    "z": np.array([[cz,-sz,0],[sz,cz,0],[0,0,1]])}
+            for axis in order:
+                result[:3, :3] = result[:3, :3] @ axes[axis]
+    if scale is not None:
+        result[:3, :3] = result[:3, :3] @ np.diag(scale)
+    if position is not None:
+        result[:3, 3] = position
+    return result
+
 
 
 @dataclass
@@ -172,7 +243,7 @@ class Scene:
         parts = [] if path == "." else path.split("/")
         for depth in range(1, len(parts) + 1):
             section = self.nodes.get("/".join(parts[:depth]))
-            matrix = matrix @ transform(section.properties.get("transform") if section else None)
+            matrix = matrix @ transform_matrix("\n".join(f"{k} = {v}" for k,v in section.properties.items()) if section else "")
         return matrix
 
 
@@ -209,6 +280,7 @@ class Territory:
     heights: np.ndarray  # (height, width) float32
     colors_path: Path
     provenance: dict
+    polygons: list | None = None  # appended to preserve the frozen-source positional API
 
     def vertex_xz(self) -> tuple[np.ndarray, np.ndarray]:
         return (self.first_vertex[0] + CELL * np.arange(self.width),
@@ -246,7 +318,8 @@ def load_territories(catalog: Path = CATALOG) -> list[Territory]:
             manifest=manifest, spec=spec, scene=scene,
             first_vertex=np.array([origin[0] + translation[0], origin[1] + translation[2]]),
             width=width, height=height, heights=heights.reshape(height, width), colors_path=colors_path,
-            provenance=_json(provenance_path) if provenance_path.exists() else {}))
+            provenance=_json(provenance_path) if provenance_path.exists() else {},
+            polygons=geography.get("ownershipPolygons")))
     return result
 
 
@@ -281,7 +354,7 @@ def authority(t: Territory, lattice: Lattice) -> np.ndarray:
     from scipy.ndimage import binary_dilation
 
     x, z = lattice.xz()
-    owned_cells = classify((x[:-1] + CELL / 2)[None, :], (z[:-1] + CELL / 2)[:, None], t.polygon) > 0
+    owned_cells = territory_classify((x[:-1] + CELL / 2)[None, :], (z[:-1] + CELL / 2)[:, None], t) > 0
     vertices = np.zeros((lattice.height, lattice.width), bool)
     vertices[:-1, :-1] |= owned_cells
     vertices[1:, :-1] |= owned_cells
@@ -372,6 +445,9 @@ def sculpt_deltas(t: Territory) -> tuple[np.ndarray, list[str]]:
     if indices.size != values.size:
         problems.append(f"{t.id}: sculpt indices and deltas differ in length")
         return deltas.reshape(t.height, t.width), problems
+    if np.any(indices < 0) or np.any(indices >= deltas.size) or not np.isfinite(values).all():
+        problems.append(f"{t.id}: invalid sculpt index or nonfinite delta")
+        return deltas.reshape(t.height, t.width), problems
     deltas[indices] = values
     return deltas.reshape(t.height, t.width), problems
 
@@ -388,8 +464,7 @@ def shaping_paths(t: Territory) -> list[str]:
 
 
 def water_features(t: Territory) -> list[dict]:
-    """River paths (kind "river": continent polyline and half-width) and water regions (continent centre and outer
-    radius) of a territory's scene."""
+    """River centre lines and the actual transformed elliptical water footprints."""
     scene = t.scene
     found = []
     for path, section in scene.nodes.items():
@@ -411,10 +486,32 @@ def water_features(t: Territory) -> list[dict]:
             found.append({"kind": "river", "path": path, "xz": points[:, [0, 2]], "reach": width / 2.0})
         elif script == WATER_SCRIPT:
             radii = _vector(props["radii"], "Vector2") if "radii" in props else [1.0, 1.0]
-            scale = max(float(np.linalg.norm(matrix[:3, 0])), float(np.linalg.norm(matrix[:3, 2])))
             found.append({"kind": "water region", "path": path, "xz": matrix[[0, 2], 3].reshape(1, 2),
-                          "reach": max(radii) * scale})
+                          "ellipse": matrix[np.ix_([0, 2], [0, 2])] @ np.diag(radii)})
     return found
+
+
+def _distance_to_water(feature: dict, x: np.ndarray, z: np.ndarray) -> np.ndarray:
+    """Exact plan distance to an ellipse, including rotation and unequal scale; rivers retain their ribbon width."""
+    if "ellipse" not in feature:
+        return _distance_to_polyline(feature["xz"], x, z) - feature["reach"]
+    axes, radii, _ = np.linalg.svd(feature["ellipse"])
+    if np.any(radii <= 0):
+        raise ValueError(f"{feature['path']}: water footprint has a degenerate transform")
+    x, z = np.broadcast_arrays(x, z)
+    points = np.stack([x-feature["xz"][0, 0], z-feature["xz"][0, 1]], axis=-1) @ axes
+    squared = radii*radii
+    inside = np.sum(points*points/squared, axis=-1) <= 1
+    # The closest outside point is a^2*p/(lambda+a^2), with lambda >= 0.
+    lower = np.zeros(x.shape)
+    upper = np.linalg.norm(points*radii, axis=-1)
+    for _ in range(56):
+        middle = (lower+upper)/2
+        outside = np.sum(squared*points*points/(middle[..., None]+squared)**2, axis=-1) > 1
+        lower = np.where(outside, middle, lower)
+        upper = np.where(outside, upper, middle)
+    nearest = squared*points/(upper[..., None]+squared)
+    return np.where(inside, 0, np.linalg.norm(points-nearest, axis=-1))
 
 
 def _distance_to_polyline(points: np.ndarray, x: np.ndarray, z: np.ndarray) -> np.ndarray:
@@ -439,7 +536,7 @@ def check_frames(territories: list[Territory]) -> tuple[list[str], dict]:
     for t in territories:
         root = t.scene.node(".").properties
         spec = t.spec
-        sha = polygon_sha(t.polygon)
+        sha = polygons_sha(t.polygons if t.polygons is not None else [t.polygon])
         terrain_origin = _vector(t.scene.node("Terrain").properties["origin"], "Vector2")
         values = {
             "ownership sha": (json.loads(root["ownership_polygon_sha256"]), sha),
@@ -458,6 +555,10 @@ def check_frames(territories: list[Territory]) -> tuple[list[str], dict]:
         for name, (have, want) in values.items():
             if have != want:
                 problems.append(f"{t.id}: {name} {have} differs from {want}")
+        if any(type(v) is not int or v <= 0 or v % 6 for v in spec["server"]["cells"]):
+            problems.append(f"{t.id}: server cells must be positive integer multiples of six")
+        if any(not float(v).is_integer() for v in t.translation):
+            problems.append(f"{t.id}: translation must fall on whole continent metres")
         if max(spec["server"]["cells"]) > 2048:
             problems.append(f"{t.id}: the server map exceeds 2,048 tiles")
         report[t.id] = {"ownershipSha256": sha, "server": spec["server"], "terrainVertices": [t.width, t.height]}
@@ -470,7 +571,7 @@ def check_ownership(territories: list[Territory], lattice: Lattice) -> tuple[lis
     problems = []
     x, z = lattice.xz()
     cx, cz = (x[:-1] + CELL / 2)[None, :], (z[:-1] + CELL / 2)[:, None]
-    strictly = {t.id: classify(cx, cz, t.polygon) == 1 for t in territories}
+    strictly = {t.id: territory_classify(cx, cz, t) == 1 for t in territories}
     count = sum(mask.astype(np.int32) for mask in strictly.values())
     overlaps = {}
     for i, a in enumerate(territories):
@@ -489,7 +590,7 @@ def check_ownership(territories: list[Territory], lattice: Lattice) -> tuple[lis
     edge_labels = set(np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]]))) - {0}
     owned = np.zeros_like(land)
     for t in territories:
-        owned |= classify(x[None, :], z[:, None], t.polygon) > 0
+        owned |= territory_classify(x[None, :], z[:, None], t) > 0
     island = land & ~np.isin(labels, list(edge_labels))
     unowned = island & ~owned
     if unowned.any():
@@ -583,7 +684,7 @@ def check_seams(territories: list[Territory], lattice: Lattice) -> tuple[list[st
             near_water = []
             for t in (a, b):
                 for feature in water_features(t):
-                    distance = _distance_to_polyline(feature["xz"], sx, sz) - feature["reach"]
+                    distance = _distance_to_water(feature, sx, sz)
                     if distance.min() < SEAM_WATER_CLEARANCE:
                         near_water.append(feature["path"])
                         problems.append(f"{pair}: {t.id}'s {feature['kind']} {feature['path']} comes within "
@@ -594,31 +695,59 @@ def check_seams(territories: list[Territory], lattice: Lattice) -> tuple[list[st
 
 
 def check_crops(territories: list[Territory]) -> tuple[list[str], dict]:
+    """Validate exact crops, including an external frozen parent with hash-pinned files and grid."""
     problems, report = [], {}
     by_id = {t.id: t for t in territories}
+    parents = {}
     for t in territories:
         crop = t.provenance.get("crop")
         if not crop:
             continue
-        parent = by_id.get(crop["parent"])
-        if parent is None:
-            problems.append(f"{t.id}: its crop parent {crop['parent']} is not catalogued")
-            continue
-        rows = slice(crop["row0"], crop["row0"] + crop["rows"])
-        cols = slice(crop["col0"], crop["col0"] + crop["cols"])
-        if (crop["rows"], crop["cols"]) != (t.height, t.width):
-            problems.append(f"{t.id}: the crop size differs from the terrain grid")
-            continue
-        expected_first = parent.first_vertex + CELL * np.array([crop["col0"], crop["row0"]])
-        same_heights = parent.heights[rows, cols].tobytes() == t.heights.tobytes()
-        parent_colors = np.fromfile(parent.colors_path, np.uint8).reshape(parent.height, parent.width, 4)
-        colors = np.fromfile(t.colors_path, np.uint8).reshape(t.height, t.width, 4)
-        same_colors = parent_colors[rows, cols].tobytes() == colors.tobytes()
-        same_frame = bool(np.all(expected_first == t.first_vertex))
-        if not (same_heights and same_colors and same_frame):
-            problems.append(f"{t.id}: not a byte crop of {parent.id} (heights {same_heights}, colours "
-                            f"{same_colors}, frame {same_frame})")
-        report[t.id] = {"parent": parent.id, "heights": same_heights, "colors": same_colors, "frame": same_frame}
+        try:
+            if "parentFiles" in crop:
+                key = json.dumps(crop["parentFiles"], sort_keys=True)
+                if key not in parents:
+                    files = {}
+                    for kind, record in crop["parentFiles"].items():
+                        path = (CHECKOUT / record["path"]).resolve()
+                        if not path.is_relative_to(CHECKOUT.resolve()):
+                            raise ValueError("parent file escapes checkout")
+                        raw = path.read_bytes()
+                        if hashlib.sha256(raw).hexdigest() != record["sha256"]:
+                            raise ValueError(f"{kind} parent hash differs")
+                        files[kind] = raw
+                    meta = json.loads(files["provenance"])
+                    grid = crop["parentGrid"]
+                    if meta["schema"] != "eloria-continent-v2-frozen-group-terrain-v1" or meta["grid"] != grid or meta["sourceCommit"] != crop["sourceCommit"]:
+                        raise ValueError("parent provenance/grid/source differs")
+                    w, h = grid["gridSize"]
+                    if grid["cellMetres"] != CELL or len(files["heights"]) != w*h*4 or len(files["colors"]) != w*h*4:
+                        raise ValueError("parent dimensions/cell size differ")
+                    for kind, output in (("heights", "base-heights.f32le"), ("colors", "base-colors.rgba8")):
+                        if meta["outputs"][output]["sha256"] != crop["parentFiles"][kind]["sha256"]:
+                            raise ValueError("parent output binding differs")
+                    heights = np.frombuffer(files["heights"], "<f4").reshape(h,w)
+                    if not np.isfinite(heights).all():
+                        raise ValueError("nonfinite parent heights")
+                    parents[key] = (heights, np.frombuffer(files["colors"],np.uint8).reshape(h,w,4), np.asarray(grid["continentFirstVertex"]))
+                heights, colors, first = parents[key]
+            else:
+                parent = by_id.get(crop["parent"])
+                if parent is None:
+                    raise ValueError(f"crop parent {crop['parent']} is not catalogued")
+                heights, first = parent.heights, parent.first_vertex
+                colors = np.fromfile(parent.colors_path,np.uint8).reshape(parent.height,parent.width,4)
+            r,c,h,w = (crop[k] for k in ("row0","col0","rows","cols"))
+            if any(type(v) is not int for v in (r,c,h,w)) or r<0 or c<0 or (h,w)!=(t.height,t.width) or r+h>heights.shape[0] or c+w>heights.shape[1]:
+                raise ValueError("crop bounds/size differ")
+            same_heights = heights[r:r+h,c:c+w].tobytes() == t.heights.tobytes()
+            same_colors = colors[r:r+h,c:c+w].tobytes() == t.colors_path.read_bytes()
+            same_frame = bool(np.all(first + CELL*np.array([c,r]) == t.first_vertex))
+            if not (same_heights and same_colors and same_frame):
+                raise ValueError(f"not a byte crop (heights {same_heights}, colours {same_colors}, frame {same_frame})")
+            report[t.id] = {"parent":crop["parent"],"heights":same_heights,"colors":same_colors,"frame":same_frame}
+        except (KeyError, ValueError, OSError, TypeError) as error:
+            problems.append(f"{t.id}: invalid crop: {error}")
     return problems, report
 
 
@@ -633,7 +762,7 @@ def _catalog_checkout(catalog: Path) -> Path:
     return Path(catalog).resolve().parents[3]
 
 
-def served_frames(catalog: Path = CATALOG) -> dict[str, dict]:
+def served_frames(catalog: Path = CATALOG, entries: list | None = None) -> dict[str, dict]:
     """The catalog's territories that the server serves, or that are published to be, with the frame saved positions
     are kept in: {region: {"origin": [x, y], "cells": [w, h], "translation": [x, y, z], "why": str}}.
 
@@ -645,7 +774,7 @@ def served_frames(catalog: Path = CATALOG) -> dict[str, dict]:
     checkout = _catalog_checkout(catalog)
     rows = _json(checkout / "godot-client" / "data" / "maps" / "registry.json").get("maps", {})
     result = {}
-    for entry in _json(catalog)["entries"]:
+    for entry in (_json(catalog)["entries"] if entries is None else entries):
         region = entry["id"]
         row = rows.get(region, {})
         resource = entry.get("publishedManifestPath") or row.get("manifest", "")
@@ -667,13 +796,13 @@ def served_frames(catalog: Path = CATALOG) -> dict[str, dict]:
     return result
 
 
-def served_frame_problems(frames: dict[str, dict], catalog: Path = CATALOG) -> list[str]:
+def served_frame_problems(frames: dict[str, dict], catalog: Path = CATALOG, entries: list | None = None) -> list[str]:
     """Why `frames` ({region: {"origin", "cells", "translation"}}: what a bootstrap would write, or what the stubs say)
     would move a served territory, or []. Saved characters stand on a served map's tiles and the server's lanes,
     landings and home points are written in its frame, so its origin, its size and its continent translation stay as
     the package states them until a position migration on the server moves them; no client tool does that."""
     problems = []
-    for region, served in served_frames(catalog).items():
+    for region, served in served_frames(catalog, entries).items():
         frame = frames.get(region)
         if frame is None:
             problems.append(f"{region} is served ({served['why']}) but has no frame here")

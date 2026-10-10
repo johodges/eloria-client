@@ -122,27 +122,42 @@ static func _build_entries() -> Array[Dictionary]:
 	return result
 
 
-## Palette entries for the kit of the territory `root` belongs to: each .glb in
-## the `assets/prototypes` folder beside its scene. A piece the scene already
-## places keeps that copy's catalog id and its most common collision role, so
-## a new copy matches the old ones; a piece nobody has placed yet is named
-## "<prefix>:<file>" with the prefix the scene's kit copies use, and starts
-## walk-through or solid by its name (WALK_THROUGH_WORDS). Empty when `root`
-## is not a saved territory scene.
+## Own kit plus the active catalog's shared libraries. Saved copies keep their
+## identities and roles; pinned shared bindings also cover models absent from
+## this particular scene. Unsaved and non-catalog scenes retain the own-kit path.
 static func territory_entries(root: Node) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	if root == null or root.scene_file_path.is_empty():
 		return result
-	var folder := root.scene_file_path.get_base_dir().path_join(TERRITORY_KIT_FOLDER)
-	if not DirAccess.dir_exists_absolute(folder):
-		return result
+	var own_folder := root.scene_file_path.get_base_dir().path_join(TERRITORY_KIT_FOLDER)
+	var libraries: Array[Dictionary] = []
+	if DirAccess.dir_exists_absolute(own_folder):
+		libraries.append({"directory": own_folder, "catalogPrefix": ""})
+	var shared := _shared_kit_config(root)
+	var seen_folders := {own_folder: true}
+	for raw: Variant in shared.get("sharedAssetLibraries", []):
+		if not raw is Dictionary:
+			continue
+		var folder := String(raw.get("directory", "")).trim_suffix("/")
+		if not folder.begins_with("res://") or seen_folders.has(folder):
+			continue
+		seen_folders[folder] = true
+		if not DirAccess.dir_exists_absolute(folder):
+			push_warning("Shared territory kit is missing: %s" % folder)
+			continue
+		libraries.append({"directory": folder, "catalogPrefix": String(raw.get("catalogPrefix", ""))})
+	var bindings: Dictionary = {}
+	var binding_path := String(shared.get("sharedAssetCatalogPath", ""))
+	if not binding_path.is_empty():
+		var source := _read_dictionary(binding_path)
+		if source.get("schema") == "eloria-shared-kit-catalog-v1" and source.get("models") is Dictionary:
+			bindings = source.models
 	var used := {}
-	var prefixes := {}
 	var container := root.get_node_or_null("AuthoredAssets")
 	if container != null:
 		for child in container.get_children():
 			var scene_path := String(child.get("scene_path")) if "scene_path" in child else ""
-			if not scene_path.begins_with(folder + "/"):
+			if scene_path.is_empty():
 				continue
 			var record: Dictionary = used.get(scene_path, {"ids": {}, "roles": {}})
 			var catalog_id := String(child.get("catalog_asset_id"))
@@ -150,32 +165,58 @@ static func territory_entries(root: Node) -> Array[Dictionary]:
 			record.ids[catalog_id] = int(record.ids.get(catalog_id, 0)) + 1
 			record.roles[role] = int(record.roles.get(role, 0)) + 1
 			used[scene_path] = record
-			if ":" in catalog_id:
-				var prefix := catalog_id.get_slice(":", 0)
-				prefixes[prefix] = int(prefixes.get(prefix, 0)) + 1
-	var prefix := _most_common(prefixes)
-	if prefix.is_empty():
-		prefix = String(root.get("region_id")) if "region_id" in root else "territory"
-	var files := Array(DirAccess.get_files_at(folder))
-	files.sort()
-	for file: String in files:
-		if file.get_extension().to_lower() != "glb":
-			continue
-		var scene_path := folder.path_join(file)
-		var stem := file.get_basename()
-		var record: Dictionary = used.get(scene_path, {})
-		var identity := _most_common(record.get("ids", {}))
-		if identity.is_empty():
-			identity = "%s:%s" % [prefix, stem]
-		var role := _most_common(record.get("roles", {}))
-		if role.is_empty():
-			role = "none" if WALK_THROUGH_WORDS.any(func(word: String) -> bool:
-				return word in stem) else "solid"
-		var label := stem.trim_prefix("kit-").replace("-", " ").capitalize()
-		result.append(_entry(identity, label,
-			TERRITORY_STRUCTURES if role == "solid" else TERRITORY_SCENERY, scene_path, "", 0.0,
-			"%s territory kit %s" % [stem, "solid" if role == "solid" else "walk-through"]))
+	var seen_ids := {}
+	for library: Dictionary in libraries:
+		var folder := String(library.directory)
+		var prefixes := {}
+		for path: String in used:
+			if path.begins_with(folder + "/"):
+				for identity: String in used[path].ids:
+					if ":" in identity:
+						var prefix := identity.get_slice(":", 0)
+						prefixes[prefix] = int(prefixes.get(prefix, 0)) + int(used[path].ids[identity])
+		var prefix := String(library.catalogPrefix)
+		if prefix.is_empty():
+			prefix = _most_common(prefixes)
+		if prefix.is_empty():
+			prefix = String(root.get("region_id")) if "region_id" in root else "territory"
+		var files := Array(DirAccess.get_files_at(folder))
+		files.sort()
+		for file: String in files:
+			if file.get_extension().to_lower() != "glb":
+				continue
+			var scene_path := folder.path_join(file)
+			var stem := file.get_basename()
+			var record: Dictionary = used.get(scene_path, {})
+			var binding: Dictionary = bindings.get(scene_path, {})
+			var identity := _most_common(record.get("ids", {}))
+			if identity.is_empty():
+				identity = String(binding.get("catalogAssetId", "%s:%s" % [prefix, stem]))
+			var role := _most_common(record.get("roles", {}))
+			if role.is_empty():
+				role = String(binding.get("collisionRole", ""))
+			if role.is_empty():
+				role = "none" if WALK_THROUGH_WORDS.any(func(word: String) -> bool:
+					return word in stem) else "solid"
+			if seen_ids.has(identity):
+				push_warning("Shared territory kit has a duplicate catalog id: %s" % identity)
+				continue
+			seen_ids[identity] = true
+			var label := stem.trim_prefix("kit-").replace("-", " ").capitalize()
+			result.append(_entry(identity, label,
+				TERRITORY_STRUCTURES if role == "solid" else TERRITORY_SCENERY, scene_path, "", 0.0,
+				"%s territory kit %s" % [stem, "solid" if role == "solid" else "walk-through"]))
 	return result
+
+
+static func _shared_kit_config(root: Node) -> Dictionary:
+	var path := String(ProjectSettings.get_setting("map_authoring/territory_catalog_path",
+		"res://world_authoring/territories.json"))
+	var catalog := _read_dictionary(path)
+	for entry: Variant in catalog.get("entries", []):
+		if entry is Dictionary and entry.get("scenePath") == root.scene_file_path:
+			return catalog
+	return {}
 
 
 static func _most_common(counts: Dictionary) -> String:

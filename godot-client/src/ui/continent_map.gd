@@ -66,19 +66,29 @@ func hit_rect(index: int) -> Rect2:
 	var grown := Vector2(maxf(rect.size.x, MIN_HIT_SIZE), maxf(rect.size.y, MIN_HIT_SIZE))
 	return Rect2(rect.get_center() - grown * 0.5, grown)
 
+## Keep the original single-ring API for callers using legacy cartography.
 func region_polygon(index: int) -> PackedVector2Array:
-	var points := PackedVector2Array()
+	var rings := region_polygons(index)
+	return rings[0] if not rings.is_empty() else PackedVector2Array()
+
+func region_polygons(index: int) -> Array[PackedVector2Array]:
+	var result: Array[PackedVector2Array] = []
 	var display := display_rect()
 	if index < 0 or index >= _regions.size() or display.size.x <= 0.0:
-		return points
+		return result
 	var scale_factor: float = display.size.x / _image_size.x
-	for point: Array in _regions[index].get("polygon", []):
-		points.append(display.position + Vector2(float(point[0]), float(point[1])) * scale_factor)
-	if points.size() < 3:
+	var source: Array = _regions[index].get("polygons", [_regions[index].get("polygon", [])]) as Array
+	for ring: Array in source:
+		var points := PackedVector2Array()
+		for point: Array in ring:
+			points.append(display.position + Vector2(float(point[0]), float(point[1])) * scale_factor)
+		if points.size() >= 3:
+			result.append(points)
+	if result.is_empty():
 		var rect := region_rect(index)
-		points = PackedVector2Array([rect.position, Vector2(rect.end.x, rect.position.y),
-			rect.end, Vector2(rect.position.x, rect.end.y)])
-	return points
+		result.append(PackedVector2Array([rect.position, Vector2(rect.end.x, rect.position.y),
+			rect.end, Vector2(rect.position.x, rect.end.y)]))
+	return result
 
 func region_label_position(index: int) -> Vector2:
 	var label: Array = _regions[index].get("label", [])
@@ -95,9 +105,14 @@ func region_at(local_position: Vector2) -> int:
 	var best_area := INF
 	for index: int in range(_regions.size()):
 		var rect: Rect2 = hit_rect(index)
-		var polygon: Array = _regions[index].get("polygon", [])
-		var contains := (Geometry2D.is_point_in_polygon(local_position, region_polygon(index))
-			if polygon.size() >= 3 else rect.has_point(local_position))
+		var contains := false
+		if _regions[index].has("polygons") or (_regions[index].get("polygon", []) as Array).size() >= 3:
+			for polygon: PackedVector2Array in region_polygons(index):
+				if Geometry2D.is_point_in_polygon(local_position, polygon):
+					contains = true
+					break
+		else:
+			contains = rect.has_point(local_position)
 		if rect.size.x > 0.0 and contains and rect.get_area() < best_area:
 			best = index
 			best_area = rect.get_area()
@@ -136,14 +151,14 @@ func _draw() -> void:
 		var rect: Rect2 = region_rect(index)
 		if rect.size.x <= 0.0:
 			continue
-		var points := region_polygon(index)
-		if index == _hovered_index:
-			draw_colored_polygon(points, Color(HOVER_COLOUR, 0.09))
-			points.append(points[0])
-			draw_polyline(points, HOVER_COLOUR, HOVER_WIDTH, true)
-		elif index == _current_index:
-			points.append(points[0])
-			draw_polyline(points, CURRENT_COLOUR, CURRENT_WIDTH, true)
+		for points: PackedVector2Array in region_polygons(index):
+			if index == _hovered_index:
+				draw_colored_polygon(points, Color(HOVER_COLOUR, 0.09))
+				points.append(points[0])
+				draw_polyline(points, HOVER_COLOUR, HOVER_WIDTH, true)
+			elif index == _current_index:
+				points.append(points[0])
+				draw_polyline(points, CURRENT_COLOUR, CURRENT_WIDTH, true)
 	var font: Font = get_theme_default_font()
 	if font == null:
 		return
