@@ -48,7 +48,8 @@ def test_every_served_isle_has_a_row_of_its_own_frame_in_the_legacy_lattice():
     assert data["lattice"] == {"originMetres": continent["originMetres"],
                                "metresPerPixel": continent["metresPerPixel"]}
     served = [key for key, _ in tool.served({"maps": registry})]
-    assert served == ["sw_isle", "tollholms", "gull_skerries"]
+    active = {entry["id"] for entry in read("godot-client/world_authoring/continent-v2/territories.json")["entries"]}
+    assert len(served) == len(active) and set(served) == active
     assert [row["serverMap"] for row in data["regions"]] == served
     legacy = {row["serverMap"] for row in read(tool.CARTOGRAPHY)["regions"]}
     for row in data["regions"]:
@@ -65,11 +66,61 @@ def test_every_served_isle_has_a_row_of_its_own_frame_in_the_legacy_lattice():
         assert row["tabMap"]["worldMax"] == [bounds["max"][0], bounds["max"][2]]
         assert row["tabMap"]["region"] == [0, 0, *manifest["minimap"]["imageSize"]]
         scale, origin = continent["metresPerPixel"], continent["originMetres"]
-        polygon = manifest["continentGeography"]["ownershipPolygon"]
-        assert row["continentPolygon"] == [[(x - origin[0]) / scale, (z - origin[1]) / scale] for x, z in polygon]
+        geography = manifest["continentGeography"]
+        polygons = geography.get("ownershipPolygons", [geography["ownershipPolygon"]])
+        pixel_rings = [[[(x - origin[0]) / scale, (z - origin[1]) / scale] for x, z in ring]
+                       for ring in polygons]
+        assert row["continentPolygon"] == pixel_rings[0]
+        assert row["continentPolygons"] == pixel_rings
+        # The label uses the full union, including detached ownership components.
+        from shapely.geometry import Polygon
+        from shapely.ops import unary_union
+        centroid = unary_union([Polygon(ring) for ring in polygons]).centroid
+        assert row["continentLabel"] == [round((centroid.x - origin[0]) / scale, 3),
+                                         round((centroid.y - origin[1]) / scale, 3)]
 
 
 def test_the_label_point_is_the_area_centroid():
     assert tool.polygon_centroid([[0, 0], [4, 0], [4, 2], [0, 2]]) == [2.0, 1.0]
     centroid = tool.polygon_centroid([[0, 0], [4, 0], [4, 1], [1, 1], [1, 4], [0, 4]])
     assert [round(v, 4) for v in centroid] == [1.3571, 1.3571]   # (4 x (2, .5) + 3 x (.5, 2.5)) / 7
+
+
+def test_landfall_overview_places_all_components_in_its_own_image():
+    import hashlib
+    from PIL import Image
+    data = read(tool.OUTPUT)
+    overview = data["overview"]
+    assert overview["name"] == "Landfall" and overview["frame"] == "continent-v2"
+    assert [r["serverMap"] for r in overview["regions"]] == [r["serverMap"] for r in data["regions"]]
+    assert len(overview["regions"]) == 15
+    source_scale = data["lattice"]["metresPerPixel"]
+    source_origin = data["lattice"]["originMetres"]
+    for source, region in zip(data["regions"], overview["regions"]):
+        assert len(region["polygons"]) == len(source["continentPolygons"])
+        for old_ring, new_ring in zip(source["continentPolygons"], region["polygons"]):
+            for old, new in zip(old_ring, new_ring):
+                for i in (0, 1):
+                    assert abs((old[i] * source_scale + source_origin[i]) -
+                               (new[i] * overview["metresPerPixel"] + overview["originMetres"][i])) < .002
+                    assert 0 <= new[i] < overview["imageSize"][i]
+    assert len(next(r for r in overview["regions"] if r["serverMap"] == "ravenhead")["polygons"]) == 2
+    image_path = ROOT / tool.OVERVIEW
+    assert hashlib.sha256(image_path.read_bytes()).hexdigest() == overview["sha256"]
+    with Image.open(image_path) as image:
+        assert list(image.size) == overview["imageSize"]
+
+
+def test_overview_check_refuses_corrupt_picture(tmp_path, monkeypatch):
+    data = read(tool.OUTPUT)
+    monkeypatch.setattr(tool, "compose", lambda checkout: data)
+    metadata = tmp_path / tool.OUTPUT
+    metadata.parent.mkdir(parents=True)
+    assert any("missing" in problem for problem in tool.check(tmp_path))
+    metadata.write_bytes(tool.encode(data))
+    image = tmp_path / tool.OVERVIEW
+    image.parent.mkdir(parents=True)
+    image.write_bytes((ROOT / tool.OVERVIEW).read_bytes())
+    assert tool.check(tmp_path) == []
+    image.write_bytes(image.read_bytes()[:-10] + b"corrupt")
+    assert any(tool.OVERVIEW in problem for problem in tool.check(tmp_path))

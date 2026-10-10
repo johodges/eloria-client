@@ -19,6 +19,8 @@ uniform vec2 region_half_size = vec2(1.0);
 uniform float region_shape = 0.0;
 uniform float region_blend_width = 0.0;
 uniform float region_opacity = 1.0;
+uniform int region_clip_count = 0;
+uniform vec2 region_clip_polygon[64];
 varying vec2 region_world_xz;
 
 """
@@ -41,10 +43,32 @@ float region_rectangle_inside(vec2 point, vec2 half_size) {
 	return min(inward.x, inward.y);
 }
 
+bool region_clip_contains(vec2 point) {
+	if (region_clip_count == 0) { return true; }
+	bool inside = false;
+	for (int i = 0; i < 64; i++) {
+		if (i >= region_clip_count) { break; }
+		vec2 a = region_clip_polygon[i];
+		vec2 b = region_clip_polygon[(i + 1) % region_clip_count];
+		vec2 edge = b - a;
+		vec2 delta = point - a;
+		float cross_value = edge.x * delta.y - edge.y * delta.x;
+		float epsilon = 0.00001 * max(length(edge), 1.0);
+		if (abs(cross_value) <= epsilon && dot(delta, edge) >= -epsilon &&
+				dot(delta, edge) <= dot(edge, edge) + epsilon) { return true; }
+		if ((a.y > point.y) != (b.y > point.y)) {
+			float crossing_x = a.x + (point.y - a.y) * (b.x - a.x) / (b.y - a.y);
+			if (point.x < crossing_x) { inside = !inside; }
+		}
+	}
+	return inside;
+}
+
 void fragment() {
 	vec3 world_point = vec3(region_world_xz, 1.0);
 	vec2 region_local = vec2(dot(region_world_to_local_x, world_point),
 		dot(region_world_to_local_y, world_point));
+	if (!region_clip_contains(region_local)) { discard; }
 	float inside_distance = region_shape < 0.5 ?
 		region_ellipse_inside(region_local, region_half_size) :
 		region_rectangle_inside(region_local, region_half_size);
@@ -63,7 +87,7 @@ static var _warned_sources := {}
 static func create(surface: MapAuthoringSurface,
 		world_to_local: Transform2D, half_size: Vector2, shape: int,
 		blend_width: float, opacity: float,
-		render_priority: int) -> ShaderMaterial:
+		render_priority: int, clip_polygon: PackedVector2Array = PackedVector2Array()) -> ShaderMaterial:
 	if surface == null or not surface.source_material is BaseMaterial3D:
 		_warn_unsupported(surface, "a BaseMaterial3D source is required")
 		return null
@@ -77,6 +101,10 @@ static func create(surface: MapAuthoringSurface,
 		return null
 	if not is_finite(blend_width) or not is_finite(opacity):
 		_warn_unsupported(surface, "blend width and opacity must be finite")
+		return null
+	var mask_error := MapAuthoringGroundRegion.clip_error(clip_polygon)
+	if not mask_error.is_empty():
+		_warn_unsupported(surface, mask_error)
 		return null
 	var oriented := MapAuthoringTexturePresets.create_oriented_material(
 		surface.source_material, surface.rotation_degrees, true) as ShaderMaterial
@@ -105,6 +133,11 @@ static func create(surface: MapAuthoringSurface,
 		float(RECTANGLE if shape == RECTANGLE else ELLIPSE))
 	region.set_shader_parameter("region_blend_width", maxf(blend_width, 0.0))
 	region.set_shader_parameter("region_opacity", clampf(opacity, 0.0, 1.0))
+	var uniform_polygon := PackedVector2Array()
+	uniform_polygon.resize(64)
+	for i in clip_polygon.size(): uniform_polygon[i] = clip_polygon[i]
+	region.set_shader_parameter("region_clip_count", clip_polygon.size())
+	region.set_shader_parameter("region_clip_polygon", uniform_polygon)
 	region.render_priority = clampi(render_priority, -128, 127)
 	return region
 
@@ -113,7 +146,7 @@ static func _region_shader(base: Shader) -> Shader:
 	# Shader source can be presented with platform-specific line endings. Normalize
 	# before hook validation and cache lookup so equivalent owned code shares one
 	# stable variant across editor and runtime.
-	var base_code := base.code.replace("\r\n", "\n").replace("\r", "\n")
+	var base_code := base.code.replace("\r\r\n", "\n").replace("\r\n", "\n").replace("\r", "\n")
 	if _shader_variants.has(base_code):
 		return _shader_variants[base_code]
 	var code := _region_code(base_code)
@@ -126,7 +159,7 @@ static func _region_shader(base: Shader) -> Shader:
 
 
 static func _region_code(source_code: String) -> String:
-	var base_code := source_code.replace("\r\n", "\n").replace("\r", "\n")
+	var base_code := source_code.replace("\r\r\n", "\n").replace("\r\n", "\n").replace("\r", "\n")
 	if base_code.count(_UNIFORM_ANCHOR) != 1 or \
 			base_code.count(_VERTEX_ANCHOR) != 1 or \
 			base_code.count(_FRAGMENT_ANCHOR) != 1:

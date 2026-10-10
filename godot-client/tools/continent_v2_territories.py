@@ -464,8 +464,7 @@ def shaping_paths(t: Territory) -> list[str]:
 
 
 def water_features(t: Territory) -> list[dict]:
-    """River paths (kind "river": continent polyline and half-width) and water regions (continent centre and outer
-    radius) of a territory's scene."""
+    """River centre lines and the actual transformed elliptical water footprints."""
     scene = t.scene
     found = []
     for path, section in scene.nodes.items():
@@ -487,10 +486,32 @@ def water_features(t: Territory) -> list[dict]:
             found.append({"kind": "river", "path": path, "xz": points[:, [0, 2]], "reach": width / 2.0})
         elif script == WATER_SCRIPT:
             radii = _vector(props["radii"], "Vector2") if "radii" in props else [1.0, 1.0]
-            scale = max(float(np.linalg.norm(matrix[:3, 0])), float(np.linalg.norm(matrix[:3, 2])))
             found.append({"kind": "water region", "path": path, "xz": matrix[[0, 2], 3].reshape(1, 2),
-                          "reach": max(radii) * scale})
+                          "ellipse": matrix[np.ix_([0, 2], [0, 2])] @ np.diag(radii)})
     return found
+
+
+def _distance_to_water(feature: dict, x: np.ndarray, z: np.ndarray) -> np.ndarray:
+    """Exact plan distance to an ellipse, including rotation and unequal scale; rivers retain their ribbon width."""
+    if "ellipse" not in feature:
+        return _distance_to_polyline(feature["xz"], x, z) - feature["reach"]
+    axes, radii, _ = np.linalg.svd(feature["ellipse"])
+    if np.any(radii <= 0):
+        raise ValueError(f"{feature['path']}: water footprint has a degenerate transform")
+    x, z = np.broadcast_arrays(x, z)
+    points = np.stack([x-feature["xz"][0, 0], z-feature["xz"][0, 1]], axis=-1) @ axes
+    squared = radii*radii
+    inside = np.sum(points*points/squared, axis=-1) <= 1
+    # The closest outside point is a^2*p/(lambda+a^2), with lambda >= 0.
+    lower = np.zeros(x.shape)
+    upper = np.linalg.norm(points*radii, axis=-1)
+    for _ in range(56):
+        middle = (lower+upper)/2
+        outside = np.sum(squared*points*points/(middle[..., None]+squared)**2, axis=-1) > 1
+        lower = np.where(outside, middle, lower)
+        upper = np.where(outside, upper, middle)
+    nearest = squared*points/(upper[..., None]+squared)
+    return np.where(inside, 0, np.linalg.norm(points-nearest, axis=-1))
 
 
 def _distance_to_polyline(points: np.ndarray, x: np.ndarray, z: np.ndarray) -> np.ndarray:
@@ -663,7 +684,7 @@ def check_seams(territories: list[Territory], lattice: Lattice) -> tuple[list[st
             near_water = []
             for t in (a, b):
                 for feature in water_features(t):
-                    distance = _distance_to_polyline(feature["xz"], sx, sz) - feature["reach"]
+                    distance = _distance_to_water(feature, sx, sz)
                     if distance.min() < SEAM_WATER_CLEARANCE:
                         near_water.append(feature["path"])
                         problems.append(f"{pair}: {t.id}'s {feature['kind']} {feature['path']} comes within "

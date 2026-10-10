@@ -1,0 +1,109 @@
+{
+ "region": "landfall",
+ "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
+ "snapshot": {
+  "sha256": "e5e2c1ed1f8c1416eded8430e81ddedab2f489cb2096332c97c4000b4a9209f2",
+  "sceneSha256": "18b0792aca6113bf9f8b91d243c3df7818c380491f399c18c13ca7191a7e0a80",
+  "recipe": "region_bake_cli.gd --scene godot-client/world_authoring/regions/landfall/landfall.tscn --output <bake>/continent-authoring.json"
+ },
+ "collision": {
+  "sidecarSha256": "e87d94f86098aef610e857a91c3548668a197175a125baae8e25fef617c669f0",
+  "collisionSha256": "ca7d4ad3d4ee98025018134aa621d972e2df3bd3549204bbb1b27213b1fc2619",
+  "servedGridSha256": "c07a66af326843540adfcf6bee122b645179af868414611c4a11ed78c2abdf92",
+  "walkableCells": 717802,
+  "openTiles": 173920,
+  "sourceSnapshotSha256": "e5e2c1ed1f8c1416eded8430e81ddedab2f489cb2096332c97c4000b4a9209f2"
+ },
+ "chunks": 35,
+ "kitPlacementsOutsideWindow": 0,
+ "lightingMarkers": 1,
+ "chunkGlbBytes": {
+  "total": 138498500,
+  "max": 9448344,
+  "over100MiB": []
+ },
+ "estimatedResidentMiB": {
+  "07_08": 27.2,
+  "07_09": 117.9,
+  "07_10": 170.6,
+  "07_11": 85.8,
+  "07_12": 27.2,
+  "08_07": 30.9,
+  "08_08": 43.2,
+  "08_09": 362.3,
+  "08_10": 400.4,
+  "08_11": 271.0,
+  "08_12": 109.1,
+  "09_07": 35.0,
+  "09_08": 225.4,
+  "09_09": 333.7,
+  "09_10": 297.8,
+  "09_11": 332.0,
+  "09_12": 143.6,
+  "10_07": 35.0,
+  "10_08": 186.0,
+  "10_09": 321.9,
+  "10_10": 278.5,
+  "10_11": 366.2,
+  "10_12": 144.1,
+  "11_07": 69.3,
+  "11_08": 181.0,
+  "11_09": 290.0,
+  "11_10": 354.5,
+  "11_11": 223.7,
+  "11_12": 149.9,
+  "12_07": 27.0,
+  "12_08": 157.3,
+  "12_09": 272.6,
+  "12_10": 16.7,
+  "12_11": 21.5,
+  "13_09": 67.6
+ },
+ "timings": {
+  "snapshot_s": 1.2,
+  "terrain_s": 0.0,
+  "water_s": 0.0,
+  "overlays_s": 0.8,
+  "bridges_s": 0.0,
+  "surface_glb_bytes": 132066892,
+  "walk_kit_nodes": 11,
+  "library_s": 0.5,
+  "chunks_s": 2.8
+ },
+ "seconds": 16.4,
+ "imagePolicy": {
+  "surface": {
+   "imagesResampled": 7,
+   "resampledImages": [
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5"
+   ]
+  },
+  "library": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  }
+ },
+ "geometryResidentFactor": 1.0,
+ "chunkBudget": {
+  "algorithm": "whole-metre-budget-phase-v1",
+  "phaseMetres": [
+   35,
+   22
+  ],
+  "originMetres": [
+   -988,
+   -1001
+  ],
+  "maximumPlacements": 203,
+  "maximumTriangles": 396956,
+  "placementLimit": 240,
+  "triangleLimit": 450000,
+  "cellMetres": 96
+ }
+}

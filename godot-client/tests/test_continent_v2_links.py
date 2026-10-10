@@ -23,7 +23,7 @@ SPEC = importlib.util.spec_from_file_location("publish_links", SOURCE)
 links = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = links
 SPEC.loader.exec_module(links)
-ISLES = ("sw_isle", "tollholms", "gull_skerries")
+ISLES = tuple(entry["id"] for entry in json.loads((ROOT / links.CATALOG).read_text(encoding="utf-8"))["entries"])
 
 
 def test_the_committed_links_are_crossings_jsons():
@@ -42,7 +42,20 @@ def test_every_isle_link_joins_two_served_isles_in_their_registry_frames():
     rows = json.loads((ROOT / links.REGISTRY).read_text(encoding="utf-8"))["maps"]
     assert {key: graph[key] for key in ("preloadDistance", "retainDistance", "maximumNeighbours")} == \
         {key: legacy[key] for key in ("preloadDistance", "retainDistance", "maximumNeighbours")}
-    assert [link["id"] for link in graph["connections"]] == ["sw_isle--tollholms", "border--sw_isle--gull_skerries"]
+    crossings = json.loads((ROOT / links.CROSSINGS).read_text(encoding="utf-8"))
+    assert set(crossings["inputs"]["maps"]) == set(ISLES), "crossings cover every active served grid"
+    expected = crossings["exteriorConnections"]
+    assert expected, "the partition retains its traversable border links"
+    assert graph["connections"] == expected
+    assert len({link["id"] for link in graph["connections"]}) == len(expected)
+    walk_ids = {link["id"] for link in crossings["connections"]}
+    assert len(walk_ids) == len(crossings["connections"]) == 24
+    walk_links = [link for link in graph["connections"] if not link.get("visualOnly", False)]
+    view_links = [link for link in graph["connections"] if link.get("visualOnly", False)]
+    assert {link["id"] for link in walk_links} == walk_ids
+    withdrawn = set(crossings["report"]["withdrawnRoadless"])
+    assert len(withdrawn) == len(view_links) == 9
+    assert {link["id"] for link in view_links} == {"view--" + key.removeprefix("border--") for key in withdrawn}
     for link in graph["connections"]:
         assert link["seamless"] is True
         assert {end["map"] for end in link["ends"]} <= set(ISLES)
@@ -51,13 +64,49 @@ def test_every_isle_link_joins_two_served_isles_in_their_registry_frames():
             assert row["status"] == links.SERVED_STATUS
             assert end["frame"]["globalTranslation"] == row["continentGeography"]["translation"]
             assert end["frame"]["geometryMode"] == "continent-chunks-v1"
-            assert end["crossingRuns"] and end["preloadEdges"]
+            assert end["preloadEdges"]
+            if link.get("visualOnly", False):
+                assert "crossingRuns" not in end and not end["portal"]
+            else:
+                assert end["portal"] and end["crossingRuns"]["runs"]
+                assert end["crossingRuns"]["axis"] in {"x", "y"}
 
 
-def fixture_checkout(tmp_path: Path) -> Path:
+def fixture_checkout(tmp_path: Path, synthetic=False) -> Path:
     """A checkout holding copies of the real inputs: the catalog, the registry, both graphs, crossings.json and the
-    three territory manifests (each package's served-grid hash is what the tool compares)."""
+    active territory manifests (each package's served-grid hash is what the tool compares)."""
     root = tmp_path / "checkout"
+    if synthetic:
+        # Exercise refusals without depending on packages being republished in this checkout.
+        # The real-input parameter below still verifies the committed fifteen-map publication.
+        a, b = ISLES[:2]
+        translations = {a: [100.0, 0.0, 200.0], b: [300.0, 0.0, 400.0]}
+        settings = {"preloadDistance": 96, "retainDistance": 144, "maximumNeighbours": 4}
+        ends = [{"map": region, "frame": {"globalTranslation": translations[region],
+                 "geometryMode": "continent-chunks-v1"}, "crossingRuns": [[1, 2]],
+                 "preloadEdges": [[0, 1]]} for region in (a, b)]
+        graph = {**settings, "connections": [{"id": f"border--{a}--{b}", "seamless": True, "ends": ends}]}
+        documents = {
+            links.CATALOG: {"entries": [{"id": region} for region in (a, b)]},
+            links.REGISTRY: {"maps": {region: {"status": links.SERVED_STATUS,
+                "manifest": f"res://../packages/{region}/world.json",
+                "continentGeography": {"translation": translations[region]}} for region in (a, b)}},
+            links.LEGACY_LINKS: {**settings, "connections": [], "visualConnections": []},
+            links.CROSSINGS: {"inputs": {"maps": {region: {"servedGridSha256": "a" * 64}
+                                                       for region in (a, b)}},
+                             "exteriorSettings": settings, "exteriorConnections": graph["connections"]},
+            **{f"packages/{region}/world.json": {"collision": {"servedGrid": {"sha256": "a" * 64}}}
+               for region in (a, b)},
+        }
+        for relative, document in documents.items():
+            path = root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(document), encoding="utf-8")
+        helper = "eloria-assets/tools/publish_continent_geography.py"
+        (root / helper).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / helper, root / helper)
+        assert links.main(["--checkout", str(root)]) == 0
+        return root
     paths = [links.CATALOG, links.REGISTRY, links.LEGACY_LINKS, links.CLIENT_LINKS, links.CROSSINGS,
              "eloria-assets/tools/publish_continent_geography.py"]
     rows = json.loads((ROOT / links.REGISTRY).read_text(encoding="utf-8"))["maps"]
@@ -69,9 +118,11 @@ def fixture_checkout(tmp_path: Path) -> Path:
     return root
 
 
-def test_a_missing_or_edited_file_is_caught_and_written_again(tmp_path):
-    root = fixture_checkout(tmp_path)
+@pytest.mark.parametrize("synthetic", [False, True], ids=["committed", "isolated"])
+def test_a_missing_or_edited_file_is_caught_and_written_again(tmp_path, synthetic):
+    root = fixture_checkout(tmp_path, synthetic)
     committed = (root / links.CLIENT_LINKS).read_bytes()
+    legacy_before = (root / links.LEGACY_LINKS).read_bytes()
     (root / links.CLIENT_LINKS).unlink()
     assert links.check(root) == [f"{links.CLIENT_LINKS} is missing; run _continent_v2/publish_links.py"]
     assert links.main(["--checkout", str(root)]) == 0
@@ -80,7 +131,7 @@ def test_a_missing_or_edited_file_is_caught_and_written_again(tmp_path):
     assert "is not crossings.json's links" in links.check(root)[0]
     assert links.main(["--checkout", str(root)]) == 0 and links.check(root) == []
     # the legacy graph is never touched
-    assert (root / links.LEGACY_LINKS).read_bytes() == (ROOT / links.LEGACY_LINKS).read_bytes()
+    assert (root / links.LEGACY_LINKS).read_bytes() == legacy_before
 
 
 def edit_json(path: Path, change) -> None:
@@ -96,23 +147,29 @@ def edit_json(path: Path, change) -> None:
     ("moved frame", "is not its registry row's"),
     ("legacy link", "the stream would hold two links for one seam"),
 ])
-def test_refusals_write_nothing(tmp_path, case, expected):
-    root = fixture_checkout(tmp_path)
+@pytest.mark.parametrize("synthetic", [False, True], ids=["committed", "isolated"])
+def test_refusals_write_nothing(tmp_path, case, expected, synthetic):
+    root = fixture_checkout(tmp_path, synthetic)
+    crossings = json.loads((root / links.CROSSINGS).read_text(encoding="utf-8"))
+    linked_region = crossings["exteriorConnections"][0]["ends"][0]["map"]
+    assert linked_region in ISLES
     if case == "distances":
         edit_json(root / links.LEGACY_LINKS, lambda d: d.update(preloadDistance=240))
     elif case == "stale crossings":
         edit_json(root / links.CROSSINGS,
-                  lambda d: d["inputs"]["maps"]["tollholms"].update(servedGridSha256="0" * 64))
+                  lambda d: d["inputs"]["maps"][linked_region].update(servedGridSha256="0" * 64))
     elif case == "preview row":
-        edit_json(root / links.REGISTRY, lambda d: d["maps"]["gull_skerries"].update(
+        edit_json(root / links.REGISTRY, lambda d: d["maps"][linked_region].update(
             status="continent-v2-client-preview"))
     elif case == "moved frame":
-        edit_json(root / links.REGISTRY, lambda d: d["maps"]["tollholms"]["continentGeography"].update(
-            translation=[2800.0, 0.0, 7368.0]))
+        def move(d):
+            translation = d["maps"][linked_region]["continentGeography"]["translation"]
+            translation[0] += 1.0
+        edit_json(root / links.REGISTRY, move)
     elif case == "legacy link":
         def add(d):
-            d["connections"].append({"id": "sw_isle--westhaven", "seamless": True, "ends": [
-                {"map": "sw_isle"}, {"map": "westhaven"}]})
+            d["connections"].append({"id": f"{linked_region}--westhaven", "seamless": True, "ends": [
+                {"map": linked_region}, {"map": "westhaven"}]})
         edit_json(root / links.LEGACY_LINKS, add)
     before = (root / links.CLIENT_LINKS).read_bytes()
     problems = links.check(root)

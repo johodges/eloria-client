@@ -51,7 +51,12 @@
  "gameplay": {
   "runtimeBindingCount": 0,
   "runtimePointCount": 0,
-  "existingMarkerBindingCount": 0
+  "existingMarkerBindingCount": 0,
+  "generatedArrival": {
+   "path": "eloria-assets/maps/continent-v2/pinebrow/content/arrival.json",
+   "sha256": "2404bb236aa042715d12f171fc39b18a8e7292a7e24a809b5d0ce86cfea93219"
+  },
+  "authoredMarkerCount": 1
  },
  "continentV2": {
   "planPath": "eloria-assets/maps/continent-v2/_continent_v2/continent-v2-plan.json",

@@ -1,0 +1,104 @@
+{
+ "region": "brambleshaw",
+ "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
+ "snapshot": {
+  "sha256": "bd8f9a77b1e097dc28cdd7a515a54dbc26bb490607b02ba3d3483f48e542f6f2",
+  "sceneSha256": "b984a84618936ab868c8f95a192029d9ffcd73d8c10f0b9b42bab05f9d3752fd",
+  "recipe": "region_bake_cli.gd --scene godot-client/world_authoring/regions/brambleshaw/brambleshaw.tscn --output <bake>/continent-authoring.json"
+ },
+ "collision": {
+  "sidecarSha256": "3db474ecf3b24d36522fe13f295dd76389cc69ed3937e954d30e69151b7c1d7e",
+  "collisionSha256": "2220c5fb8a1fccb43ea592269bc7504a60d7290a8bc409d9beef3a6aee92a130",
+  "servedGridSha256": "faa2db0608a13e914b3014e7c0ae1d1c901c65ccbd798cf42348ee196715bdfc",
+  "walkableCells": 475088,
+  "openTiles": 116938,
+  "sourceSnapshotSha256": "bd8f9a77b1e097dc28cdd7a515a54dbc26bb490607b02ba3d3483f48e542f6f2"
+ },
+ "chunks": 26,
+ "kitPlacementsOutsideWindow": 0,
+ "lightingMarkers": 0,
+ "chunkGlbBytes": {
+  "total": 52548988,
+  "max": 3206960,
+  "over100MiB": []
+ },
+ "estimatedResidentMiB": {
+  "07_07": 27.3,
+  "07_08": 122.3,
+  "07_09": 107.9,
+  "07_10": 95.0,
+  "07_11": 53.4,
+  "08_07": 51.4,
+  "08_08": 90.6,
+  "08_09": 51.4,
+  "08_10": 142.9,
+  "08_11": 112.3,
+  "09_08": 138.7,
+  "09_09": 75.6,
+  "09_10": 164.4,
+  "09_11": 120.4,
+  "10_08": 38.9,
+  "10_09": 87.8,
+  "10_10": 123.0,
+  "10_11": 109.9,
+  "11_08": 79.5,
+  "11_09": 143.2,
+  "11_10": 110.9,
+  "11_11": 85.7,
+  "12_08": 16.5,
+  "12_09": 132.7,
+  "12_10": 120.6,
+  "12_11": 108.2
+ },
+ "timings": {
+  "snapshot_s": 0.8,
+  "terrain_s": 0.1,
+  "water_s": 0.0,
+  "overlays_s": 0.3,
+  "bridges_s": 0.0,
+  "surface_glb_bytes": 56149416,
+  "walk_kit_nodes": 0,
+  "library_s": 0.2,
+  "chunks_s": 1.4
+ },
+ "seconds": 7.3,
+ "imagePolicy": {
+  "surface": {
+   "imagesResampled": 7,
+   "resampledImages": [
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5"
+   ]
+  },
+  "library": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  }
+ },
+ "generatedArrival": {
+  "path": "eloria-assets/maps/continent-v2/brambleshaw/content/arrival.json",
+  "sha256": "a2b37abb0b10417fd90f83462fc00d66438eb490a926c5b598ed8c06c0fcfca4"
+ },
+ "geometryResidentFactor": 1.0,
+ "chunkBudget": {
+  "algorithm": "whole-metre-budget-phase-v1",
+  "phaseMetres": [
+   60,
+   93
+  ],
+  "originMetres": [
+   -963,
+   -930
+  ],
+  "maximumPlacements": 112,
+  "maximumTriangles": 211760,
+  "placementLimit": 240,
+  "triangleLimit": 450000,
+  "cellMetres": 96
+ }
+}

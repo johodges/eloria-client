@@ -87,10 +87,10 @@ func _init() -> void:
 	# Signed Ashore, the landing isle's chapter: the Lantern's frame with its
 	# own chapter name and four countersigns instead of the Lantern's flags.
 	var ashore: Dictionary=valid.duplicate(true)
-	ashore.tutorial="signed_ashore";ashore.chapter="SIGNED ASHORE";ashore.map="sw_isle"
+	ashore.tutorial="signed_ashore";ashore.chapter="SIGNED ASHORE";ashore.map="landfall"
 	ashore.stage=2;ashore.total=10;ashore.scene=2;ashore.key="grove";ashore.title="The Palace Grove"
 	ashore.hint="Click an olive bush once.";ashore.control="world";ashore.item="Olive"
-	ashore.target_id="olive_grove";ashore.target=[574,920];ashore.required=5;ashore.count=2
+	ashore.target_id="olive_grove";ashore.target=[124,262];ashore.required=5;ashore.count=2
 	ashore.flags={"grove":false,"temple":false,"gate":false,"light":false}
 	expect(decode(ashore).get("type")=="lantern_tutorial","Signed Ashore uses the native guide protocol")
 	expect(decode(ashore).get("state",{}).get("chapter")=="SIGNED ASHORE","Signed Ashore state keeps its chapter")

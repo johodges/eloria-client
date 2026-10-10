@@ -586,6 +586,10 @@ func _refresh_ground_region_cache() -> void:
 			"blend_width": float(candidate.get("blend_width")),
 			"opacity": float(candidate.get("opacity")),
 			"bounds": candidate.call("world_bounds"),
+			"clip_polygon": candidate.get("clip_polygon"),
+			"uv_anchor_continent_enabled": candidate.get("uv_anchor_continent_enabled"),
+			"uv_anchor_continent": candidate.get("uv_anchor_continent"),
+			"source_layer_ordinal": candidate.get("source_layer_ordinal"),
 		})
 		scene_order += 1
 	_ground_regions.sort_custom(_ground_region_less)
@@ -599,10 +603,10 @@ func _refresh_ground_region_cache() -> void:
 		var region := _ground_regions[index]
 		var instance_id: int = region.instance_id
 		active_ids[instance_id] = true
-		var render_priority := -128 + index
+		var render_priority := -128 + (int(region.source_layer_ordinal) if int(region.source_layer_ordinal) >= 0 else index)
 		var material_signature := [region.surface.signature(), region.world_to_local,
 			region.half_size, region.shape, region.blend_width, region.opacity,
-			render_priority]
+			render_priority, region.clip_polygon]
 		var cached: Dictionary = _ground_region_material_cache.get(instance_id, {})
 		var material := cached.get("material") as ShaderMaterial
 		if cached.get("signature", []) != material_signature:
@@ -610,7 +614,7 @@ func _refresh_ground_region_cache() -> void:
 		if material == null:
 			material = _GROUND_REGION_MATERIAL.create(region.surface,
 				region.world_to_local, region.half_size, region.shape,
-				region.blend_width, region.opacity, render_priority)
+				region.blend_width, region.opacity, render_priority, region.clip_polygon)
 			if material != null:
 				_ground_region_material_cache[instance_id] = {
 					"signature": material_signature,
@@ -1016,7 +1020,10 @@ func _build_ground_region_overlays(parent: Node3D) -> void:
 				var d := Vector3(x0, _decoded_height(_encode_height(
 					_terrain_height(x0, z1))) + 0.008, z1)
 				for vertex in [a, c, b, a, d, c]:
-					overlay.set_uv(Vector2(vertex.x, vertex.z) * GROUND_UV_SCALE)
+					var uv_point := Vector2(vertex.x, vertex.z)
+					if region.uv_anchor_continent_enabled:
+						uv_point += Vector2(global_position.x, global_position.z) - region.uv_anchor_continent
+					overlay.set_uv(uv_point * GROUND_UV_SCALE)
 					overlay.add_vertex(vertex)
 					has_vertices = true
 		if not has_vertices:

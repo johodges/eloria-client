@@ -6,6 +6,8 @@ extends SceneTree
 ## names server tiles over a preview as it does over the live map.
 
 var failures: int = 0
+var checks: int = 0
+var _landfall_checks_done := false
 
 func _init() -> void:
 	call_deferred("_run")
@@ -221,7 +223,91 @@ func _run() -> void:
 	main.call("_toggle_full_map")
 	_expect(full_map.visible and map_image.visible and not continent_view.visible,
 		"reopening the map window shows the current map")
+	await _test_landfall_group(main, app_state)
+	_expect(_landfall_checks_done, "Landfall UI checks completed without script errors")
 	_finish()
+
+## The real main scene selects a group overview independently of live-map framing.
+func _test_landfall_group(main: Control, app_state: Node) -> void:
+	var overlay: Control = main.get("continent_map") as Control
+	var registry: Dictionary = main.get("map_registry") as Dictionary
+	var rows: Array = main.get("cartography_regions") as Array
+	var overview: Dictionary = (main.get("_v2_cartography") as Dictionary)["overview"]
+	var camera: Camera3D = main.get("full_map_camera") as Camera3D
+	var viewport: SubViewport = main.get("full_map_viewport") as SubViewport
+	var previous: String = ""
+	for row: Dictionary in overview["regions"]:
+		var id := str(row["serverMap"])
+		app_state.set("current_map", id)
+		main.set("_current_map_display_name", row["name"])
+		var manifest := WorldManifest.load_file(ProjectSettings.globalize_path(
+			str((registry[id] as Dictionary)["manifest"])))
+		main.set("adapter", manifest.coordinate_adapter())
+		main.call("_configure_full_map", manifest)
+		main.call("_show_current_map_view")
+		_expect(is_equal_approx(float(main.get("_full_map_zoom")), 1.0), id + " starts at individual map zoom")
+		var bounds := preload("res://src/world/map_view.gd").bounds_for(manifest)
+		_expect(camera.global_position.x == bounds.get_center().x and camera.global_position.z == bounds.get_center().z,
+			id + " primary map centres its own bounds")
+		var span := (camera.unproject_position(bounds.end) - camera.unproject_position(bounds.position)).abs() / Vector2(viewport.size)
+		_expect(span.x > 0.50 and span.y > 0.50 and span.x < 1.0 and span.y < 1.0,
+			id + " own section fills primary view with existing neighbour collar")
+		_expect((main.get("continent_button") as TextureButton).tooltip_text == "Show the Landfall continent",
+			id + " sidebar selects the Landfall group")
+		main.call("_on_continent_button_pressed")
+		_expect((main.get("continent_view") as Control).visible and int(overlay.call("region_count")) == 15,
+			id + " overview contains all 15 areas")
+		_expect((main.get("map_title") as Label).text == "LANDFALL CONTINENT", id + " overview is named Landfall")
+		_expect((main.get("continent_image") as TextureRect).texture.get_size() == Vector2(overview["imageSize"][0], overview["imageSize"][1]),
+			id + " overview uses the generated group picture")
+		var local_index: int = (main.get("_continent_region_indices") as Array).find(_index_of(rows, id))
+		_expect(int(overlay.get("_current_index")) == local_index, id + " highlight maps its overlay index")
+		main.call("_preview_continent_region", local_index)
+		_expect((main.get("map_image") as Control).visible and not (main.get("continent_view") as Control).visible,
+			id + " clicking current group region restores its live map")
+		main.call("_zoom_full_map", false)
+		var zoom: float = main.get("_full_map_zoom")
+		main.call("_configure_full_map", manifest)
+		_expect(float(main.get("_full_map_zoom")) == zoom and zoom > 1.0, id + " redraw retains chosen zoom")
+		previous = id
+	_expect(not previous.is_empty(), "all published group rows were exercised")
+
+	# Real Ravenhead geometry has two components: both select it, its hull gap does not.
+	app_state.set("current_map", "landfall")
+	main.call("_show_continent_view")
+	var raven_index := -1
+	for i: int in range(overview["regions"].size()):
+		if str((overview["regions"][i] as Dictionary)["serverMap"]) == "ravenhead":
+			raven_index = i
+	var rings: Array = overlay.call("region_polygons", raven_index)
+	_expect(rings.size() == 2, "Ravenhead overview retains both components")
+	var all_points := PackedVector2Array()
+	for ring: PackedVector2Array in rings:
+		all_points.append_array(ring)
+		var triangles := Geometry2D.triangulate_polygon(ring)
+		_expect(triangles.size() >= 3, "Ravenhead component triangulates")
+		var interior := (ring[triangles[0]] + ring[triangles[1]] + ring[triangles[2]]) / 3.0
+		_expect(int(overlay.call("region_at", interior)) == raven_index, "each Ravenhead component is clickable")
+	var hull := Geometry2D.convex_hull(all_points)
+	var rect: Rect2 = overlay.call("region_rect", raven_index)
+	var gap_found := false
+	for x: int in range(1, 40):
+		for y: int in range(1, 40):
+			var point := rect.position + rect.size * Vector2(float(x) / 40.0, float(y) / 40.0)
+			if Geometry2D.is_point_in_polygon(point, hull) and int(overlay.call("region_at", point)) != raven_index:
+				gap_found = true
+	_expect(gap_found, "Ravenhead separating gap inside hull does not select Ravenhead")
+	main.call("_preview_continent_region", raven_index)
+	_expect(int(main.get("_preview_region_index")) == _index_of(rows, "ravenhead")
+		and (main.get("region_preview") as Control).visible and str(app_state.get("current_map")) == "landfall",
+		"overview click maps to Ravenhead's own preview without changing server map")
+
+	app_state.set("current_map", "four_gates")
+	main.call("_show_current_map_view")
+	main.call("_on_continent_button_pressed")
+	_expect(int(overlay.call("region_count")) == 12 and (main.get("map_title") as Label).text == "NYMARA CONTINENT",
+		"returning to Nymara restores its original 12-region overview")
+	_landfall_checks_done = true
 
 ## The pixels a region's published cartography frames, one a metre: the crop
 ## the tab map declares, or the whole picture where it declares none.
@@ -252,6 +338,7 @@ func _index_of(regions: Array, server_map: String) -> int:
 	return -1
 
 func _expect(value: bool, label: String) -> void:
+	checks += 1
 	if value:
 		return
 	failures += 1
@@ -259,7 +346,7 @@ func _expect(value: bool, label: String) -> void:
 
 func _finish() -> void:
 	if failures == 0:
-		print("continent map fixtures passed")
+		print("continent map fixtures passed: ", checks, " checks")
 	else:
 		print("continent map fixtures failed: ", failures)
 	quit(failures)

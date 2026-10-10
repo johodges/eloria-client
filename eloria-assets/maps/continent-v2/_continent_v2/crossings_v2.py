@@ -12,16 +12,15 @@ onto from a tile of this map's own ground, and that the neighbour's grid can sta
 opens the roadless borders that have a lane each way and keeps only the lanes a walker can get onto from some map's
 arrival and step off at the far end (prune_lanes, by step_bits and flood). The owner's rule is unchanged: ground
 walkable on both sides of a border is a way across. What is new here is the stand-in for the legacy world object
-(V2World): the three territories' frames (frames.py, the four copies agreeing), their ownership polygons (the
+(V2World): every catalog territory's frames (frames.py, the four copies agreeing), their ownership polygons (the
 bootstrap stubs), and their served grids, read from the published packages and decoded by the server's own codec.
 The server's own step rule (collision_sources.walk_step_ok) judges every step at the served grid's climb, 20 codes
 of 50 mm: a metre.
 
 Links. The plan's seams (continent-v2-plan.json `seams`: openSeams and moles) name the pairs that meet; each pair's
 border is the shared part of the two ownership polygons. A pair an approved route crosses is a road link, anchored
-where the lowest-numbered such route crosses the border (sw_isle--tollholms: R32 at x 2437, z 6815.6; the knob and
-pier moles lie on the same border and need no link of their own); the rest are roadless (border--sw_isle--
-gull_skerries, along z 8259 and the x 399 cliff strip), anchored at the border point nearest its middle, as
+where the lowest-numbered such route crosses the border; the rest are roadless,
+anchored at the border point nearest its middle, as
 crossings.open_borders anchors the legacy roadless borders. A roadless border left without a lane either way is
 withdrawn; a road link left without one is refused.
 
@@ -61,6 +60,7 @@ sys.dont_write_bytecode = True
 import frames  # noqa: E402  (also puts the composer's _continent on the path)
 import export_collision as X  # noqa: E402  (the server codec guard, the plan's seams, point_in_polygon)
 import crossings as C  # noqa: E402  (frozen: imported, never edited)
+import ownership as O
 from storage_bounds import StorageBounds  # noqa: E402
 
 DEFAULT_CHECKOUT = frames.DEFAULT_CHECKOUT
@@ -101,7 +101,9 @@ def json_text(value):
 
 def shared_segments(a, b):
     """The parts of polygon a's edges that lie on polygon b's edges, as [[x, z], [x, z]] segments (continent metres)."""
-    a, b = np.asarray(a, float), np.asarray(b, float)
+    if len(O.rings(a)) > 1 or len(O.rings(b)) > 1:
+        return sorted(segment for ar in O.rings(a) for br in O.rings(b) for segment in shared_segments(ar, br))
+    a, b = np.asarray(O.rings(a)[0], float), np.asarray(O.rings(b)[0], float)
     out = []
     for p1, p2 in zip(a, np.roll(a, -1, axis=0)):
         d = p2 - p1
@@ -132,7 +134,7 @@ class V2World:
     def __init__(self, frame_table, polygons, grids, unit_mm, datum_mm):
         self.ids = list(frame_table)
         self.frames = dict(frame_table)
-        self.polygons = {region: np.asarray(polygons[region], float) for region in self.ids}
+        self.polygons = {region: polygons[region] for region in self.ids}
         self.grids = {region: np.asarray(grids[region]) for region in self.ids}
         self.unit_mm, self.datum_mm = int(unit_mm), int(datum_mm)
         self.regions = {region: {"center": np.array([f.translation[0], f.translation[2]], float)}
@@ -274,8 +276,9 @@ def package_inputs(checkout, maps_root, codec, *, log=say):
         if not world_path.is_file():
             raise CrossingsError(f"{region}: no published package at {package}")
         manifest = json.loads(world_path.read_text(encoding="utf-8"))
-        polygon = stub.get("continentGeography", {}).get("ownershipPolygon")
-        if manifest.get("continentGeography", {}).get("ownershipPolygon") != polygon or not polygon:
+        rings = O.rings(stub.get("continentGeography", {}))
+        polygon = rings[0] if len(rings) == 1 else rings
+        if O.rings(manifest.get("continentGeography", {})) != rings:
             raise CrossingsError(f"{region}: the package's ownership polygon differs from the stub's")
         transform = manifest.get("coordinateTransform", {})
         if (list(transform.get("serverOrigin", [])) != list(frame.origin)
@@ -300,16 +303,17 @@ def package_inputs(checkout, maps_root, codec, *, log=say):
         codes = np.frombuffer(grid.codes, dtype=np.uint16).reshape(grid.height, grid.width).copy()
         if int(codes.max()) > 32767:
             raise CrossingsError(f"{region}: a served code over 32,767 would wrap in crossings.step_bits (int16)")
-        spawn = next((s for s in manifest.get("spawnPoints", []) if s.get("default")), None)
-        if spawn is None:
-            raise CrossingsError(f"{region}: the package has no default spawn point")
+        defaults = [s for s in manifest.get("spawnPoints", []) if s.get("default")]
+        if len(defaults) != 1:
+            raise CrossingsError(f"{region}: the package needs exactly one default spawn point")
+        spawn = defaults[0]
         arrival = list(frame.tile(spawn["position"][0], spawn["position"][2]))
         if list(spawn.get("serverTile", [])) != arrival:
             raise CrossingsError(f"{region}: the spawn point's serverTile {spawn.get('serverTile')} is not its "
                                  f"position's tile {arrival}")
         if not codes[arrival[1], arrival[0]]:
             raise CrossingsError(f"{region}: the arrival {arrival} is blocked on the served grid")
-        table[region] = {"frame": frame, "polygon": [[float(v) for v in p] for p in polygon], "codes": codes,
+        table[region] = {"frame": frame, "polygon": polygon, "codes": codes,
                          "arrival": arrival, "servedGridSha256": digest, "manifest": manifest,
                          "package": str(package)}
         log(f"{region}: served grid {grid.width}x{grid.height}, {int((codes != 0).sum())} open tiles, "
@@ -418,7 +422,7 @@ def lane_runs(world, end):
     return out
 
 
-def check_step_back(portals, codes, step, reach=STEP_BACK_STEPS):
+def _step_back_analysis(portals, codes, step, reach=STEP_BACK_STEPS):
     """Reciprocity, walked: a walker any lane lands on t at (ax, ay) can step onto the departure of some t->s lane
     within `reach` legal steps (the server's rule, `step(heights, y, x, dy, dx)`), never over another lane's tile on
     the way (stepping on one fires it), so every crossing can be crossed back where it was crossed. More than one
@@ -454,10 +458,44 @@ def check_step_back(portals, codes, step, reach=STEP_BACK_STEPS):
             needed[found] += 1
         else:
             stranded.append([source, x, y, destination, ax, ay])
+    return dict(sorted(needed.items())), stranded
+
+
+def check_step_back(portals, codes, step, reach=STEP_BACK_STEPS):
+    """Refuse any emitted lane without a legal return within the required step limit."""
+    needed, stranded = _step_back_analysis(portals, codes, step, reach)
     if stranded:
         raise CrossingsError(f"{len(stranded)} lanes land a walker who cannot step back onto a reverse lane within "
                              f"{reach} steps, e.g. {stranded[:4]}")
-    return dict(sorted(needed.items()))
+    return needed
+
+
+def prune_step_back(world, publication, specs, codes, step, served, hubs, climb):
+    """Withdraw unusable return lanes, then repeat reach pruning until all remaining lanes are reciprocal.
+
+    The initial legacy survey checks reach and a non-triggering first step, but those do not guarantee a
+    return in three steps on a subdivided border. This filters candidate lanes without changing ground;
+    an expected connection losing either end remains a hard error.
+    """
+    import publish_diagonal_continent as PDC
+    withdrawn = 0
+    while True:
+        _text, entries = PDC.connection_rows(publication['connections'], specs)
+        _needed, stranded = _step_back_analysis(entries, codes, step)
+        if not stranded:
+            return withdrawn
+        gone = {(source, int(x), int(y)) for source, x, y, *_ in stranded}
+        for connection in publication['connections']:
+            for end in connection['ends']:
+                before = len(end['lanes'])
+                end['lanes'] = [lane for lane in end['lanes']
+                                if (end['region'], *map(int, lane['tile'])) not in gone]
+                withdrawn += before - len(end['lanes'])
+                C.reseat(world, end)
+        withdrawn += C.prune_lanes(world, publication['connections'], served, hubs, climb)
+        empty = [c['id'] for c in publication['connections'] if not all(e['lanes'] for e in c['ends'])]
+        if empty:
+            raise CrossingsError('no reciprocal reachable lane remains for ' + ', '.join(empty))
 
 
 def straight_pairs(end):
@@ -484,6 +522,11 @@ def build(table, plan, codec, *, plan_sha=None, log=say):
     publication, seams, settled = survey(world, served, step, hubs, climb, links)
     log(f"lanes surveyed and pruned in {time.time() - started:.1f} s: opened {settled['opened'] or 'none'}, "
         f"{settled['withdrawnLanes']} withdrawn")
+    specs = specs_of(table)
+    reciprocal_withdrawn = prune_step_back(world, publication, specs,
+                                         {region: entry['codes'] for region, entry in table.items()},
+                                         step, served, hubs, climb)
+    log(f'reciprocal return pruning withdrew {reciprocal_withdrawn} additional candidate lanes')
     for connection in publication["connections"]:
         for end in connection["ends"]:
             if not end["lanes"]:
@@ -503,14 +546,14 @@ def build(table, plan, codec, *, plan_sha=None, log=say):
                 if int(world.owner_at(*point)) != world.ids.index(other["region"]):
                     raise CrossingsError(f"{connection['id']}: {end['region']} lane {lane['tile']} does not stand on "
                                          f"{other['region']}'s ground")
-    specs = specs_of(table)
     import publish_diagonal_continent as PDC
     # connection_rows refuses a row whose arrival is itself a departure (a walker would bounce straight back).
     _text, entries = PDC.connection_rows(publication["connections"], specs)
     step_back = check_step_back(entries, {region: entry["codes"] for region, entry in table.items()}, step)
     worlds = {region: entry["manifest"] for region, entry in table.items()}
     _graph, streaming = PDC.connection_manifests(publication, worlds, specs)
-    report = {"links": [], "moles": moles, "withdrawnLanes": settled["withdrawnLanes"],
+    report = {"links": [], "moles": moles, "withdrawnLanes": settled["withdrawnLanes"] + reciprocal_withdrawn,
+              "reciprocalWithdrawnLanes": reciprocal_withdrawn,
               "openedRoadless": settled["opened"], "seams": seams,
               "stepBack": {"lanesBySteps": {str(k): v for k, v in step_back.items()}, "limit": STEP_BACK_STEPS}}
     for connection in publication["connections"]:

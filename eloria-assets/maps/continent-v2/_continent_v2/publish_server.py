@@ -1,11 +1,13 @@
 """publish_server.py: serve the continent-v2 isles from a server checkout: vendored grids, content overlay, manifest.
 
   python -B eloria-assets/maps/continent-v2/_continent_v2/publish_server.py --server <server checkout> \
-         --bake sw_isle=<bake> --bake tollholms=<bake> --bake gull_skerries=<bake> --stage m1|m2|m3|m4 \
+         --bake <active-map-id>=<bake> [--bake <next-active-map-id>=<bake> ...] --stage m1|m2|m3|m4 \
          (--check | --apply) [--maps-root <dir holding continent-v2/<region>/client/>] [--crossings <crossings.json>] \
          [--record <publication.json>] [--checkout <worktree>] [--report <summary.json>]
 
-<bake> is each territory's region bake (the directory holding continent-authoring.json) of the committed scene: the
+Supply exactly one --bake per active catalog map; the current section partition has fifteen maps. Catalog, checked
+frames and server-tables.json must agree on that set. <bake> is each territory's region bake (the directory holding
+continent-authoring.json) of the committed scene: the
 one its published package was made from (the package's provenance.snapshotSha256 and its collision block's
 sourceSnapshotSha256 must be the bake's SHA-256, and the bake's scene SHA-256 the committed scene file's).
 
@@ -16,7 +18,7 @@ What it writes into --server (route B of the serve plan, section 2.3):
                                                     grid, checked and vendored byte for byte)
   config/eloria/continent-v2/                       the content overlay, every file CRLF, written as bytes:
       README                                        what this directory is
-      maps.txt                                      the three map rows; the land crossings both ways (crossings.json,
+      maps.txt                                      every active map row; the land crossings both ways (crossings.json,
                                                     crossings_v2.py); the one-way exit ferry, object-bound
       spawns.txt                                    every <region>/content/spawns.json row, each with its leash:N
       harvesting.txt                                the resources the isles add (server-tables.json) and every
@@ -24,10 +26,11 @@ What it writes into --server (route B of the serve plan, section 2.3):
       npcs.txt                                      the new people (server-rows.json group "new") at their markers
       interactives.txt                              every interactive marker with its server-rows.json role/target/text
       exterior_connections.json                     the land links (crossings.json exteriorConnections)
-      questlines.txt                                content/questlines.txt with every TX/TY placeholder resolved from
-                                                    the runtime-point markers (S1-S3, ids 26-28); from stage m2 only
-      landing.json                                  Signed Ashore's places (eloria-landing-v1; eloria/landing.py on the
-                                                    server's feature/landing-isle-chapter holds the schema)
+      questlines.txt                                content/questlines.txt with TX/TY/MAP resolved from uniquely owned
+                                                    markers and NPCMAP from actual giver posts (S1-S3, ids 26-28);
+                                                    from stage m2 only
+      landing.json                                  Signed Ashore's places (eloria-landing-v1, eloria/landing.py):
+                                                    targets/cast carry map and tile; register/ferry carry {map, id}
       homes.json                                    the home's points (eloria-homes-v1; eloria/home.py)
       home_npcs.txt                                 the re-homed people at their isle posts: each one's npcs.txt row
                                                     with only the map, the tile and the greeting changed
@@ -46,7 +49,11 @@ questlines.txt (S14), and needs eloria/landing.py in the tree: before M2's quest
 isle cast, the errands' givers stand only at Four Gates and would offer them there. m3 and m4 serve what m2 does and
 need eloria/home.py as well. --apply removes an overlay file the stage does not serve; --check reports one.
 
-Every coordinate comes from a scene marker or a content table's local metres, through frames.py; nothing is typed.
+Every content coordinate comes from a scene marker or a content table's local metres, through frames.py. Default
+arrivals use the shared arrivals.resolve contract: an original authored spawn where present, otherwise validated
+hash-bound generatedArrival metadata outside the authored marker arrays. Generated arrivals add no scene markers.
+The chapter's hub is the landing descriptor's map; targets, cast and ferry can belong to other active isles. Retired
+map entries are removed using catalog retirement metadata. Fresh IDs have no position migration.
 The ferry's landing is the destination's arrival as the legacy publication left it (the server's
 eloria/continent_geography.py MAPS[<map>]['arrival'], which the client's legacy publisher writes), refused unless
 every other copy agrees (the manifest's maps[] entry and continentGeography region, the client's generated
@@ -104,6 +111,8 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 sys.dont_write_bytecode = True
 import frames  # noqa: E402
+import arrivals as arrival_rules
+import ownership
 import export_collision as X  # noqa: E402
 import crossings_v2 as CV  # noqa: E402
 
@@ -278,6 +287,9 @@ def content_tables(checkout, regions):
     template = (checkout / QUESTLINES).read_text(encoding="utf-8")
     shas = {path: sha256_file(checkout / path) for path in
             [SERVER_ROWS, SERVER_TABLES, QUESTLINES] + [f"{V2}/{r}/content/spawns.json" for r in regions]}
+    rename_path = f"{V2}/_continent_v2/marker-renames.json"
+    if (checkout / rename_path).is_file():
+        shas[rename_path] = sha256_file(checkout / rename_path)
     if rows.get("schema") != "eloria-continent-v2-server-rows-v1":
         raise PublishError(f"{SERVER_ROWS}: unexpected schema {rows.get('schema')!r}")
     if tables.get("schema") != "eloria-continent-v2-server-tables-v1":
@@ -312,6 +324,9 @@ def server_side(server, codec, regions, frame_table, arrivals):
     if overlay.DIRECTORY != OVERLAY or getattr(overlay, "MAP_TABLE", "maps.txt") != "maps.txt":
         raise PublishError(f"the server's overlay directory is {overlay.DIRECTORY!r}, not {OVERLAY!r}")
     maps_module = sys.modules["generate_nymara_maps"]
+    import continent_v2_registry as isle_registry
+    isle_registry.register({r: {"serverCells": list(frame_table[r].cells), "arrival": list(arrivals[r])}
+                            for r in regions}, maps_module, codec.sources)
     problems = []
     for region in regions:
         cells = frame_table[region].cells[0]
@@ -429,7 +444,7 @@ class Checker:
         else:
             if polygon:
                 cx, cz = frame.continent(x, y)
-                if not bool(X.point_in_polygon(cx, cz, self.polygons[region])):
+                if not bool(ownership.contains(cx, cz, self.polygons[region])):
                     problems.append("outside its own ownership polygon")
             offsets = RING if ring else [(0, 0)]
             blocked, unreached = [], []
@@ -443,7 +458,31 @@ class Checker:
                     continue
                 if not frame.contains(nx, ny) or not self.codes[region][ny, nx]:
                     blocked.append([nx, ny])
-                elif not self.reached[region][ny, nx]:
+                    continue
+                # A harvest ring can include the neighbour map's imported seam strip.
+                # Judge that physical cell on its unique owning map, retaining the
+                # open alias, identical height code and strict owner reach checks.
+                owner, ox, oy = region, nx, ny
+                cx, cz = frame.continent(nx, ny)
+                if body and (dx or dy) and not ownership.contains(cx, cz, self.polygons[region]):
+                    owners = [r for r in self.frames if ownership.contains(cx, cz, self.polygons[r])]
+                    if len(owners) != 1 or owners[0] not in self.codes or owners[0] not in self.reached:
+                        problems.append(f"no unique active owner for ring tile {[nx, ny]}")
+                        continue
+                    owner = owners[0]
+                    canonical = self.frames[owner]
+                    ox, oy = canonical.tile(cx-canonical.translation[0], cz-canonical.translation[2])
+                    if not canonical.contains(ox, oy) or not np.allclose(canonical.continent(ox, oy),
+                                                                        [cx, cz], rtol=0, atol=1e-8):
+                        problems.append(f"canonical frame mismatch for ring tile {[nx, ny]}")
+                        continue
+                    if not self.codes[owner][oy, ox]:
+                        blocked.append([nx, ny])
+                        continue
+                    if self.codes[region][ny, nx] != self.codes[owner][oy, ox]:
+                        problems.append(f"canonical height mismatch for ring tile {[nx, ny]}")
+                        continue
+                if not self.reached[owner][oy, ox]:
                     unreached.append([nx, ny])
             if blocked:
                 problems.append(f"blocked {blocked}")
@@ -465,7 +504,7 @@ def compose(ctx, *, log=say):
     if sorted(m["id"] for m in map_rows) != sorted(ctx.frames):
         raise PublishError(f"{SERVER_TABLES} maps {[m['id'] for m in map_rows]} are not the catalog's "
                            f"{sorted(ctx.frames)}")
-    # The order every table is written in: server-tables.json's (sw_isle, tollholms, gull_skerries).
+    # Keep every generated table in server-tables.json's active catalog map order.
     regions = [m["id"] for m in map_rows]
     catalog = {e["id"]: e for e in frames.catalog_entries(ctx.checkout)}
     aliases = {}
@@ -479,9 +518,9 @@ def compose(ctx, *, log=say):
     markers = {region: markers_of(ctx.bakes[region], ctx.frames[region]) for region in regions}
     arrivals = {region: ctx.packages[region]["arrival"] for region in regions}
     for region in regions:
-        spawn = [rec for section, rec in markers[region].values() if section == "spawnPoints" and rec.get("default")]
-        if len(spawn) != 1 or spawn[0]["tile"] != arrivals[region]:
-            raise PublishError(f"{region}: the bake's default spawn point is not the package's arrival")
+        spawn = arrival_rules.resolve(ctx.bakes[region].doc, ctx.frames[region], ctx.checkout)
+        if list(ctx.frames[region].tile(spawn["position"][0], spawn["position"][2])) != arrivals[region]:
+            raise PublishError(f"{region}: resolved default arrival is not the package's arrival")
 
     def marker(region, identity, section=None):
         found = markers[region].get(identity)
@@ -522,12 +561,14 @@ def compose(ctx, *, log=say):
     climb = int(ctx.codec.climb_units)
     polygons = {region: ctx.packages[region]["polygon"] for region in regions}
     hold = tables.get("holdBack", {})
-    held_spawns, held_nodes = set(hold.get("spawns", [])), set(hold.get("nodes", []))
+    held_spawns = set(hold.get("spawns", []))
+    held_nodes = {(n["map"], n["id"]) if isinstance(n, dict) else n for n in hold.get("nodes", [])}
     held_map = hold.get("map")
 
     def in_pocket(kind, region, identity):
-        return region == held_map and ((kind == "spawn" and identity in held_spawns)
-                                       or (kind == "node" and identity in held_nodes))
+        return ((kind == "spawn" and identity in held_spawns)
+                or (kind == "node" and ((region, identity) in held_nodes or identity in held_nodes))) \
+            and (held_map is None or region == held_map)
 
     # Spawns.
     spawn_rows = []
@@ -651,42 +692,41 @@ def compose(ctx, *, log=say):
     triggers = {(s, x, y) for s, x, y, *_ in lanes}
     lane_arrivals = {(d, ax, ay) for *_, d, ax, ay in lanes}
     targets = {}
-    for identity, (section, rec) in sorted(markers[lmap].items()):
-        if section != "runtimePoints" or rec.get("role") not in land["targetRoles"]:
-            continue
-        key = rec.get("target")
-        if not key or key in targets:
-            raise PublishError(f"{identity}: a landing target needs a unique `target`")
-        entry = {"tile": rec["tile"], "marker": identity}
-        if "radius" in rec:
-            if type(rec["radius"]) is not int or not 0 <= rec["radius"] <= 64:
-                raise PublishError(f"{identity}: radius {rec['radius']!r} is not 0-64")
-            entry["radius"] = rec["radius"]
-        targets[key] = entry
+    for region in regions:
+        for identity, (section, rec) in sorted(markers[region].items()):
+            if section != "runtimePoints" or rec.get("role") not in land["targetRoles"]:
+                continue
+            key = rec.get("target")
+            if not key or key in targets:
+                raise PublishError(f"{identity}: a landing target needs a unique `target`")
+            entry = {"map": region, "tile": rec["tile"], "marker": identity}
+            if "radius" in rec:
+                if type(rec["radius"]) is not int or not 0 <= rec["radius"] <= 64:
+                    raise PublishError(f"{identity}: radius must be 0-64")
+                entry["radius"] = rec["radius"]
+            targets[key] = entry
     missing = [key for key in LANDING_TARGETS if key not in targets]
     if missing:
         raise PublishError(f"landing targets without a marker: {missing}")
     for key, entry in targets.items():
-        tile = tuple(entry["tile"])
-        if (lmap, tile) in npc_posts or (lmap, *tile) in triggers or (lmap, tile) in node_tiles:
-            entry["approach"] = approach_for(lmap, tile, entry.get("radius", 3), walk, reached, npc_posts, triggers,
-                                             ctx.frames)
-            entry["why"] = (f"{npc_posts[(lmap, tile)]} stands on the target tile" if (lmap, tile) in npc_posts
-                            else f"harvest node {node_tiles[(lmap, tile)]} is on the target tile"
-                            if (lmap, tile) in node_tiles else "a walk-over trigger is on the target tile")
-    cast = [{"name": p["name"], "tile": p["tile"]} for p in rehomed if p["map"] == lmap]
+        region, tile = entry["map"], tuple(entry["tile"])
+        if (region, tile) in npc_posts or (region, *tile) in triggers or (region, tile) in node_tiles:
+            entry["approach"] = approach_for(region, tile, entry.get("radius", 3), walk, reached, npc_posts,
+                                             triggers, ctx.frames)
+            entry["why"] = "target shares an NPC post, harvest node or trigger"
+    cast = [{"name": p["name"], "map": p["map"], "tile": p["tile"]} for p in rehomed]
     landing_arrival = marker(lmap, land["arrival"])["tile"]
-    by_marker = {r["id"]: r for r in interactive_rows if r["map"] == lmap}
+    by_marker = {r["id"]: r for r in interactive_rows}
     if land["register"] not in by_marker or land["ferry"] not in by_marker:
-        raise PublishError(f"{SERVER_TABLES} landing names {land['register']!r} and {land['ferry']!r}, and {lmap}'s "
-                           f"interactives are {sorted(by_marker)}")
+        raise PublishError("landing register or ferry marker has no interactive binding")
     register, ferry = by_marker[land["register"]], by_marker[land["ferry"]]
     if register["role"] != "information" or ferry["role"] != "portal":
-        raise PublishError("the landing register must be an information interactive and the ferry a portal one")
-    ferry_point = marker(lmap, land["ferryPoint"])["tile"]
+        raise PublishError("the landing register must be information and the ferry a portal")
+    ferry_point = marker(ferry["map"], land["ferryPoint"])["tile"]
     if ferry_point != ferry["tile"]:
-        raise PublishError(f"{land['ferryPoint']} {ferry_point} and the ferry interactive {ferry['tile']} differ")
-    questlines, stage_tiles = resolve_questlines(ctx.tables.template, markers, lmap)
+        raise PublishError("the ferry runtime point and interactive differ")
+    questlines, stage_tiles = resolve_questlines(ctx.tables.template, markers, lmap,
+                                               people=new_people + rehomed)
     # Every check, per row.
     held = []
     pocket = []
@@ -736,12 +776,12 @@ def compose(ctx, *, log=say):
     for key, entry in targets.items():
         # a target on an NPC's post is judged as the post is (open ground; the walker stands on its approach), one
         # on a harvest node as the node is (its ring)
-        check.ring(lmap, entry["tile"], "landing", key, ring=("approach" not in entry),
-                   post=(lmap, tuple(entry["tile"])) in npc_posts, body=(lmap, tuple(entry["tile"])) in node_tiles)
+        check.ring(entry["map"], entry["tile"], "landing", key, ring=("approach" not in entry),
+                   post=(entry["map"], tuple(entry["tile"])) in npc_posts, body=(entry["map"], tuple(entry["tile"])) in node_tiles)
         if "approach" in entry:
-            check.ring(lmap, entry["approach"], "landing", key + " approach")
+            check.ring(entry["map"], entry["approach"], "landing", key + " approach")
     for post in cast:
-        check.ring(lmap, post["tile"], "landing", "cast " + post["name"], post=True)
+        check.ring(post["map"], post["tile"], "landing", "cast " + post["name"], post=True)
     for key, (region, tile) in stage_tiles.items():
         check.ring(region, tile, "quest stage", key, body=(region, tuple(tile)) in node_tiles)
     for source, x, y, destination, ax, ay in lanes:
@@ -754,13 +794,14 @@ def compose(ctx, *, log=say):
     if check.failures:
         raise PublishError(f"{len(check.failures)} rows fail the checks: " + json.dumps(check.failures[:12]))
     if pocket:
-        held = sorted(held_spawns) + sorted(held_nodes)
+        held = sorted(held_spawns) + sorted(f"{n[0]}:{n[1]}" if isinstance(n, tuple) else str(n) for n in held_nodes)
         spawn_rows = [s for s in spawn_rows if not in_pocket("spawn", s["map"], s["id"])]
         nodes = [n for n in nodes if not in_pocket("node", n["map"], n["id"])]
         log(f"held back the B14 pocket's {len(held)} rows: {len(pocket)} failures, e.g. {pocket[:2]}")
     landing_doc = {"schema": LANDING_SCHEMA, "map": lmap, "arrival": landing_arrival,
-                   "objects": {"register": register["object"], "ferry": ferry["object"]},
-                   "targets": {key: {k: v for k, v in entry.items() if k in ("tile", "approach", "radius")}
+                   "objects": {"register": {"map": register["map"], "id": register["object"]},
+                               "ferry": {"map": ferry["map"], "id": ferry["object"]}},
+                   "targets": {key: {k: v for k, v in entry.items() if k in ("map", "tile", "approach", "radius")}
                                for key, entry in sorted(targets.items())},
                    "cast": cast,
                    "provenance": {"tool": TOOL, "markers": {key: entry["marker"] for key, entry in
@@ -804,7 +845,7 @@ def approach_for(region, tile, radius, codes, reached, npc_posts, triggers, fram
 PLACEHOLDER = re.compile(r"<T([XY]):([A-Za-z0-9_-]+)>")
 
 
-def resolve_questlines(template, markers, region):
+def resolve_questlines(template, markers, region, *, people=()):
     """The overlay questlines.txt: the template's quest blocks with each TX/TY placeholder the marker's tile, and the
     stage tiles it used (for the checks)."""
     lines = [line for line in template.splitlines() if not line.lstrip().startswith("#")]
@@ -814,22 +855,38 @@ def resolve_questlines(template, markers, region):
 
     def substitute(match):
         axis, identity = match.group(1), match.group(2)
-        found = markers[region].get(identity)
+        hits = [(r, rows[identity]) for r, rows in markers.items() if identity in rows]
+        if len(hits) != 1:
+            raise PublishError(f"{QUESTLINES}: marker {identity!r} has {len(hits)} owners")
+        owner, found = hits[0]
         if found is None or found[0] != "runtimePoints":
             raise PublishError(f"{QUESTLINES}: no runtime point {identity!r} on {region}")
         tile = found[1]["tile"]
-        used[identity] = (region, tile)
+        used[identity] = (owner, tile)
         return str(tile[0] if axis == "X" else tile[1])
 
     body = PLACEHOLDER.sub(substitute, "\n".join(lines).rstrip("\n") + "\n")
-    if "<T" in body or "QID" in body:
+    def map_substitute(match):
+        identity = match.group(1)
+        owners = [r for r, rows in markers.items() if identity in rows]
+        if len(owners) != 1:
+            raise PublishError(f"{QUESTLINES}: map marker {identity!r} lacks a unique owner")
+        return owners[0]
+    body = re.sub(r"<MAP:([A-Za-z0-9_-]+)>", map_substitute, body)
+    def npc_map(match):
+        owners = {p["map"] for p in people if p["name"] == match.group(1)}
+        if len(owners) != 1:
+            raise PublishError(f"{QUESTLINES}: giver {match.group(1)!r} lacks a unique map")
+        return owners.pop()
+    body = re.sub(r"<NPCMAP:([^>]+)>", npc_map, body)
+    if "<T" in body or "<MAP:" in body or "<NPCMAP:" in body or "QID" in body:
         raise PublishError(f"{QUESTLINES}: a placeholder is left unresolved")
     for number, line in enumerate(body.splitlines(), 1):
         if "#" in line or "|" in line:
             raise PublishError(f"{QUESTLINES}:{number}: a quest line may not hold '#' or '|'")
     header = ("# continent-v2 overlay: Landfall's side errands S1-S3 (quest ids 26-28).\n"
               f"# {GENERATED}\n"
-              f"# Source: {QUESTLINES}; stage tiles from the sw_isle scene's runtime points.\n\n")
+              f"# Source: {QUESTLINES}; stage tiles from the active maps' runtime points.\n\n")
     return header + body, used
 
 
@@ -1072,7 +1129,7 @@ def validate_with_server(ctx, pub):
         if home_module is not None:
             homes = home_module.load_homes(profile / OVERLAY / "homes.json")
             rows = home_module.read_home_npcs(profile / OVERLAY / "home_npcs.txt", home_map=pub.landing["map"],
-                                              base=load_npcs(profile / "npcs.txt", overlay=False))
+                                              base=load_npcs(profile / "npcs.txt", overlay=False), allowed_maps=pub.regions)
             report["homesParser"] = f"eloria.home.parse_homes: {sorted(homes)}; read_home_npcs: {len(rows)} rows"
     return report
 
@@ -1087,11 +1144,11 @@ def own_rules(pub):
     if set(land["objects"]) != {"register", "ferry"} or land["objects"]["register"] == land["objects"]["ferry"]:
         raise PublishError("landing.json objects must name the register and the ferry")
     for key, entry in land["targets"].items():
-        if not set(entry) <= {"tile", "approach", "radius"} or not tile_ok(entry["tile"]) or \
+        if not set(entry) <= {"map", "tile", "approach", "radius"} or not tile_ok(entry["tile"]) or \
                 ("approach" in entry and not tile_ok(entry["approach"])):
             raise PublishError(f"landing.json target {key} breaks eloria-landing-v1")
     if sorted(c["name"] for c in land["cast"]) != sorted({c["name"] for c in land["cast"]}) or \
-            not all(set(c) == {"name", "tile"} and tile_ok(c["tile"]) for c in land["cast"]):
+            not all(set(c) == {"name", "map", "tile"} and tile_ok(c["tile"]) for c in land["cast"]):
         raise PublishError("landing.json cast breaks eloria-landing-v1")
     homes = pub.homes
     if set(homes) - {"schema", "homes", "provenance"} or homes["schema"] != HOMES_SCHEMA or not homes["homes"]:
@@ -1126,7 +1183,9 @@ def manifest_bytes(ctx, pub, stage):
                         "server_origin": list(frame.origin), "coordinateTransform": transform,
                         "serverCells": list(frame.cells), "serverStorageVersion": 1, "serverTileMin": [0, 0],
                         "portals": portals.get(region, [])})
+    retired = set(read_json(ctx.checkout / frames.CATALOG).get("retiredMapIds", ()))
     maps = data.setdefault("maps", [])
+    maps[:] = [m for m in maps if m.get("id") not in retired]
     for entry in entries:
         at = next((k for k, item in enumerate(maps) if item.get("id") == entry["id"]), None)
         if at is None:
@@ -1159,6 +1218,9 @@ def manifest_block(ctx, pub, stage):
         "ferries": [{"map": f["map"], "object": f["object"], "trigger": f["tile"], "destination": f["destination"],
                      "landing": f["landing"]} for f in pub.ferries],
         "heldBack": pub.held,
+        "rowCounts": {"spawnsByMap": dict(Counter(row["map"] for row in pub.spawns)),
+                      "nodes": len(pub.nodes), "newNpcs": len(pub.new_people),
+                      "rehomedNpcs": len(pub.rehomed), "interactives": len(pub.interactives)},
     }
 
 
@@ -1179,6 +1241,7 @@ def run_sync(server, maps_root, region, out=None):
 def vendor(ctx, regions, out):
     """Run the server's sync for each map into `out` (the server's tools/collision, or a scratch folder seeded with
     its manifest); check the header discipline (AC-6) and that the vendored file is the package's byte for byte."""
+    retired = retired_maps(ctx, regions)
     lines = []
     for region in regions:
         lines.append(run_sync(ctx.server.root, ctx.maps_root, region, out))
@@ -1189,7 +1252,26 @@ def vendor(ctx, regions, out):
         if (grid.climb_mm, grid.unit_mm, grid.datum_mm) != (1000, 50, -100000):
             raise PublishError(f"{region}: the vendored header states climb {grid.climb_mm} unit {grid.unit_mm} "
                                f"datum {grid.datum_mm}")
+    if retired:
+        manifest_path = Path(out) / "manifest.json"
+        manifest = read_json(manifest_path)
+        manifest["maps"] = [row for row in manifest.get("maps", []) if row.get("map") not in retired]
+        manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
+        for region in retired:
+            (Path(out) / f"{region}.escg.gz").unlink(missing_ok=True)
     return lines
+
+
+def retired_maps(ctx, active):
+    """Explicit catalog retirements only; never infer a grid deletion from the active map set."""
+    values = read_json(ctx.checkout / frames.CATALOG).get("retiredMapIds", [])
+    if not isinstance(values, list) or any(not isinstance(v, str) or
+                                         re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", v) is None for v in values):
+        raise PublishError("catalog retiredMapIds must be safe map IDs")
+    retired = set(values)
+    if retired.intersection(active):
+        raise PublishError("catalog cannot retire an active map")
+    return retired
 
 
 def strip_sources(manifest, regions):
@@ -1337,6 +1419,9 @@ def main(argv=None):
                     mine = collision / f"{region}.escg.gz"
                     if not mine.is_file() or mine.read_bytes() != (Path(scratch) / f"{region}.escg.gz").read_bytes():
                         differences.append(f"tools/collision/{region}.escg.gz")
+                for region in retired_maps(ctx, pub.regions):
+                    if (collision / f"{region}.escg.gz").exists():
+                        differences.append(f"tools/collision/{region}.escg.gz (retired)")
                 theirs = json.loads((Path(scratch) / "manifest.json").read_text(encoding="utf-8"))
                 mine = json.loads((collision / "manifest.json").read_text(encoding="utf-8"))
                 if strip_sources(theirs, pub.regions) != strip_sources(mine, pub.regions):

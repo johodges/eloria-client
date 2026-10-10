@@ -51,7 +51,12 @@
  "gameplay": {
   "runtimeBindingCount": 0,
   "runtimePointCount": 0,
-  "existingMarkerBindingCount": 0
+  "existingMarkerBindingCount": 0,
+  "generatedArrival": {
+   "path": "eloria-assets/maps/continent-v2/hearthcroft/content/arrival.json",
+   "sha256": "32fd745d0b5712f5a599397e693d8e2751f1c6a14d2209a9f608db817e9c5916"
+  },
+  "authoredMarkerCount": 23
  },
  "continentV2": {
   "planPath": "eloria-assets/maps/continent-v2/_continent_v2/continent-v2-plan.json",

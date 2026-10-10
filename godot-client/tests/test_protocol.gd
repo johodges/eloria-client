@@ -33,6 +33,8 @@ func _init() -> void:
 		"borrowed_sky_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
 		"followup_tutorials_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
 		"signed_ashore_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
+		"tutorial_rewards_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
+		"spell_ring_v1": EloriaProtocol.ServerMessage.ELORIA_LANTERN_STATE,
 		"magic_book_v2": EloriaProtocol.ServerMessage.ELORIA_MAGIC_STATE,
 		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED,
 		"actor_wardrobe_v1": EloriaProtocol.ServerMessage.ADD_NEW_ENHANCED_ACTOR,
@@ -152,7 +154,7 @@ func _init() -> void:
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		# The server names a map by its id: the landing isle.
-		EloriaProtocol.ServerMessage.CHANGE_MAP: "sw_isle".to_utf8_buffer().hex_encode() + "00",
+		EloriaProtocol.ServerMessage.CHANGE_MAP: "landfall".to_utf8_buffer().hex_encode() + "00",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE: "00",
 		# Category 0 holding one described row: "A", worn on "B".
@@ -164,11 +166,13 @@ func _init() -> void:
 	# chapter's shape. Signed Ashore's is its first card, live, carrying the
 	# four countersigns in place of the Lantern's flags.
 	var capability_specific_probes: Dictionary = {
+		"tutorial_rewards_v1": '{"version":1,"event":"experience","permanent":true,"rewards":[{"skill":"magic","amount":60},{"skill":"overall","amount":210}]}'.to_utf8_buffer().hex_encode(),
+		"spell_ring_v1": '{"version":1,"active":false,"ring_training":true}'.to_utf8_buffer().hex_encode(),
 		"signed_ashore_v1": ('{"version":1,"active":true,"tutorial":"signed_ashore",'
 			+ '"chapter":"SIGNED ASHORE","stage":1,"total":10,"scene":1,"key":"signed_in",'
 			+ '"title":"Follow Nesh\'s lantern","hint":"Click Wayfinder Nesh to talk.",'
-			+ '"control":"world","item":"","map":"sw_isle","target_id":"wayfinder_nesh",'
-			+ '"target":[592,883],"count":0,"required":1,'
+			+ '"control":"world","item":"","map":"landfall","target_id":"wayfinder_nesh",'
+			+ '"target":[142,225],"count":0,"required":1,'
 			+ '"flags":{"grove":false,"temple":false,"gate":false,"light":false}}'
 			).to_utf8_buffer().hex_encode()}
 	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
@@ -185,20 +189,42 @@ func _init() -> void:
 			_expect(probe.type != "unknown" and probe.type != "invalid",
 				"the packet behind %s actually decodes (%s)" % [capability,
 					str(probe.get("error", probe.type))])
-	# continent_v2_maps_v1 claims the maps, not a packet: the change-map
-	# message naming sw_isle must resolve to a served continent-v2 row whose
-	# client package is on disk, or the claim would send a player to a map
-	# this client cannot draw.
-	var change_map: Dictionary = EloriaProtocol.decode_server(EloriaProtocol.ServerMessage.CHANGE_MAP,
-		_hex("sw_isle".to_utf8_buffer().hex_encode() + "00"))
+			if capability == "tutorial_rewards_v1":
+				_expect(probe.type == "tutorial_experience" and probe.permanent
+					and probe.rewards.size() == 2 and probe.rewards[0].skill == "magic"
+					and int(probe.rewards[0].amount) == 60 and probe.rewards[1].skill == "overall"
+					and int(probe.rewards[1].amount) == 210,
+					"tutorial rewards preserve permanent skill amounts")
+			if capability == "spell_ring_v1":
+				_expect(probe.type == "lantern_tutorial" and probe.state.ring_training,
+					"ring training survives its tutorial packet")
+	# The advertised map capability covers every active partition package.
+	var map_catalog: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(
+		"res://world_authoring/continent-v2/territories.json")) as Dictionary
 	var shipped_maps: Dictionary = (JSON.parse_string(FileAccess.get_file_as_string(
 		"res://data/maps/registry.json")) as Dictionary).get("maps", {}) as Dictionary
-	var isle: Dictionary = MapRegistry.resolve(shipped_maps, str(change_map.get("map_name", "")))
-	_expect(change_map.type == "change_map" and str(change_map.map_name) == "sw_isle",
-		"the change-map message names the landing isle by its map id")
-	_expect(str(isle.get("status", "")) == "continent-v2-served"
-		and FileAccess.file_exists(ProjectSettings.globalize_path(str(isle.get("manifest", "")))),
-		"the isle a continent_v2_maps_v1 client is sent to is a served map with its package on disk")
+	var partition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(str(map_catalog.partitionSpecPath))) as Dictionary
+	var expected := PackedStringArray()
+	for section: Dictionary in partition.sections:
+		expected.append(str(section.get("mapId", section.id)))
+	expected.sort()
+	var actual := PackedStringArray()
+	for entry: Dictionary in map_catalog.entries:
+		var id := str(entry.id)
+		actual.append(id)
+		var change_map: Dictionary = EloriaProtocol.decode_server(EloriaProtocol.ServerMessage.CHANGE_MAP,
+			_hex(id.to_utf8_buffer().hex_encode() + "00"))
+		var row: Dictionary = MapRegistry.resolve(shipped_maps, str(change_map.get("map_name", "")))
+		_expect(change_map.type == "change_map" and str(change_map.map_name) == id,
+			"change-map preserves active section id %s" % id)
+		_expect(str(row.get("status", "")) == "continent-v2-served"
+			and str(row.get("manifest", "")) == str(entry.publishedManifestPath)
+			and FileAccess.file_exists(str(row.get("manifest", ""))),
+			"%s is served with its map_catalog package on disk" % id)
+	actual.sort()
+	_expect(not expected.is_empty() and actual == expected, "the map capability covers the full exact partition")
+	for retired: String in map_catalog.get("retiredMapIds", []):
+		_expect(not shipped_maps.has(retired), "retired map %s has no active message destination" % retired)
 	# Command 209: which map package the server was built against. Two
 	# NUL-terminated strings, and nothing else - a mismatched install is
 	# something to be told about, not a negotiation.
@@ -622,8 +648,19 @@ func _init() -> void:
 				_expect(str(pathlike.get("registryKey", "")) == "westhaven",
 					"a path-shaped map name still reduces to its id")
 				var transform: Dictionary = four_gates.get("coordinateTransform", {})
-				_expect(is_equal_approx(float(transform.get("walkingHeight", 0.0)), 31.15),
-					"Four Gates actors stand above the authored y=31 walk surface")
+				var city_package: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(
+					str(four_gates.manifest))) as Dictionary
+				_expect(not transform.is_empty() and transform == city_package.get("coordinateTransform", {})
+					and is_finite(float(transform.get("walkingHeight", NAN))),
+					"Four Gates actor coordinates agree with its current authored package")
+				var city_adapter := CoordinateAdapter.new(transform)
+				var city_actor := ReplicatedActor3D.new()
+				# A stand-in visual exercises the real placement path without importing a rig.
+				city_actor.configure({"actor_id": 1, "x": 10, "y": 20, "rotation": 0}, city_adapter, {}, {})
+				_expect(city_actor.position.is_equal_approx(city_adapter.tile_center(10, 20))
+					and is_equal_approx(city_actor.position.y, float(transform.walkingHeight)),
+					"Four Gates actor feet use the package's absolute walking height")
+				city_actor.free()
 				var regional_ids: Array[String] = ["mirrorhold", "crownwater", "whitehorn_range",
 					"amethyst_barrens", "sunmane_steppe", "amberwood", "grey_moors", "westhaven",
 					"verdant_stair", "ssarathi_ruins", "manymouth_delta"]

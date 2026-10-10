@@ -123,7 +123,7 @@ def test_every_scene_marker_lies_in_its_window(all_frames):
     for region in MAPS:
         scene = T.load_scene(CHECKOUT / "godot-client/world_authoring/regions" / region / f"{region}.tscn")
         for path, section in scene.nodes.items():
-            if path.startswith("Gameplay/") and scene.script_of(section).endswith("gameplay_marker.gd"):
+            if path.startswith(("Gameplay/", "RuntimePoints/")) and scene.script_of(section).endswith("gameplay_marker.gd"):
                 matrix = scene.world(path)
                 all_frames[region].tile(float(matrix[0, 3]), float(matrix[2, 3]))
                 total += 1

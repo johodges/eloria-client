@@ -161,6 +161,94 @@ def encoded_road_faces(faces,uv,colors):
                     'reorientedFaces':int(reverse.sum()),'outputFaces':int(keep.sum())})
 
 
+def clip_weighted_ground_faces(faces, uv, colors, polygon):
+    """Hard-clip an existing weighted terrain triangle field without resampling its alpha, height or UV.
+
+    The mask cuts geometry, never vertex weights. New vertices interpolate all source attributes barycentrically;
+    triangles already contained in the mask retain their exact arrays. Constrained triangulation handles concave
+    rings and every disconnected intersection fragment without a hull, bridge or new two-metre fade band.
+    """
+    from shapely.geometry import Polygon
+    from shapely import constrained_delaunay_triangles
+    faces=np.asarray(faces,float).reshape(-1,3,3)
+    uv=np.asarray(uv,float).reshape(-1,3,2);colors=np.asarray(colors,float).reshape(-1,3,4)
+    output=[]
+    def parts(geometry):
+        if geometry.is_empty:return []
+        if geometry.geom_type=='Polygon':return [geometry]
+        return [part for child in getattr(geometry,'geoms',[]) for part in parts(child)]
+    for face,face_uv,face_colors in zip(faces,uv,colors):
+        source=Polygon(face[:,[0,2]])
+        if not source.area:continue
+        attrs=np.concatenate((face,face_uv,face_colors),axis=1)
+        if polygon.covers(source):
+            output.append(attrs);continue
+        intersection=source.intersection(polygon)
+        if intersection.is_empty:continue
+        basis=np.vstack((face[:,[0,2]].T,np.ones(3)))
+        winding=np.cross(face[1]-face[0],face[2]-face[0])[1]
+        for part in parts(intersection):
+            if not part.area:continue
+            for triangle in constrained_delaunay_triangles(part).geoms:
+                xz=np.asarray(triangle.exterior.coords)[:3]
+                barycentric=np.linalg.solve(basis,np.vstack((xz.T,np.ones(3)))).T
+                emitted=barycentric@attrs
+                emitted[:,[0,2]]=xz
+                encoded=emitted[:,[0,2]].astype(np.float32).astype(float)
+                cross=(encoded[1,0]-encoded[0,0])*(encoded[2,1]-encoded[0,1])-(encoded[1,1]-encoded[0,1])*(encoded[2,0]-encoded[0,0])
+                if cross==0:continue
+                if np.cross(emitted[1,:3]-emitted[0,:3],emitted[2,:3]-emitted[0,:3])[1]*winding<0:
+                    emitted=emitted[[0,2,1]]
+                output.append(emitted)
+    if not output:return np.empty((0,3,3)),np.empty((0,3,2)),np.empty((0,3,4))
+    result=np.asarray(output)
+    return result[:,:,:3],result[:,:,3:5],result[:,:,5:]
+
+
+def ground_region_faces(world, snapshot, ground, owned_triangles, positions, layer):
+    """Original analytic footprint weights on the shared terrain lattice, then optional exact mask cuts."""
+    from shapely.geometry import Polygon
+    translation=snapshot.translation
+    matrix=np.asarray(ground['matrix'],float).reshape(4,4,order='F');inverse=np.linalg.inv(matrix)
+    half=np.asarray(ground['size'],float)*.5
+    triangles=owned_triangles
+    mask=None
+    if 'clipPolygon' in ground:
+        local_mask=np.asarray(ground['clipPolygon'],float)
+        continent_mask=local_mask@matrix[np.ix_([0,2],[0,2])].T+matrix[[0,2],3]+translation[[0,2]]
+        mask=Polygon(continent_mask)
+        corners=np.array([[-half[0],-half[1]],[half[0],-half[1]],[half[0],half[1]],[-half[0],half[1]]])
+        extent=corners@matrix[np.ix_([0,2],[0,2])].T+matrix[[0,2],3]+translation[[0,2]]
+        lo=np.maximum(extent.min(axis=0)-CELL,np.asarray(mask.bounds[:2]))
+        hi=np.minimum(extent.max(axis=0)+CELL,np.asarray(mask.bounds[2:]))
+        origin=np.array([world.x[0],world.z[0]])
+        start=np.maximum(np.floor((lo-origin)/CELL).astype(int),0)
+        stop=np.minimum(np.ceil((hi-origin)/CELL).astype(int),[len(world.x)-1,len(world.z)-1])
+        if (start>=stop).any():return np.empty((0,3,3)),np.empty((0,3,2)),np.empty((0,3,4))
+        rows,cols=np.meshgrid(np.arange(start[1],stop[1]),np.arange(start[0],stop[0]),indexing='ij')
+        nx=len(world.x);a=rows.ravel()*nx+cols.ravel()
+        triangles=np.stack((a,a+nx,a+1,a+1,a+nx,a+nx+1),axis=1).reshape(-1,3)
+    faces=positions[triangles]
+    planar=faces.reshape(-1,3).copy();planar[:,1]=0
+    # Legacy weights use zero territory-local Y, independently of surface height.
+    local=np.c_[planar-np.array([translation[0],0,translation[2]]),np.ones(len(planar))]@inverse.T
+    point=local[:,[0,2]]
+    if ground['shape']=='rectangle':inside=np.minimum(half[0]-abs(point[:,0]),half[1]-abs(point[:,1]))
+    else:
+        radius=np.linalg.norm(point/half,axis=1);gradient=np.linalg.norm(point/(half*half),axis=1)
+        inside=np.where(radius<1e-5,min(half),(1-radius)*radius/np.maximum(gradient,1e-5))
+    blend=float(ground['blendWidth'])
+    weights=(np.where(inside>0,1. if blend<=0 else L.smoothstep(0,blend,inside),0)*float(ground['opacity'])).reshape(-1,3)
+    selected=weights.max(axis=1)>0;faces=faces[selected]
+    colors=np.ones((len(faces),3,4));colors[...,3]=weights[selected]
+    anchor=np.asarray(ground.get('uvAnchorContinent',translation[[0,2]]),float)
+    uv=(faces[...,[0,2]]-anchor)*float(snapshot.document['terrain']['previewUvMetresInverse'])
+    ordinal=int(ground.get('sourceLayerOrdinal',layer))
+    faces=faces+(0.002+ordinal*0.0005)*np.array([0,1,0])
+    if mask is not None:return clip_weighted_ground_faces(faces,uv,colors,mask)
+    return faces,uv,colors
+
+
 def authored_overlays(world,builder):
     snapshots=dict(getattr(world,'authoring_snapshots',{}))
     snapshot=getattr(world,'authoring_snapshot',None)
@@ -221,19 +309,8 @@ def authored_overlays(world,builder):
         ordered_regions=sorted(snapshot.document['groundRegions'],key=lambda value:(value['priority'],value['id']))
         for layer,ground_region in enumerate(ordered_regions):
             if not ground_region['enabled']:continue
-            matrix=np.asarray(ground_region['matrix'],float).reshape(4,4,order='F');inverse=np.linalg.inv(matrix)
-            local=np.c_[world.gx.ravel()-translation[0],np.zeros(world.gx.size),world.gz.ravel()-translation[2],np.ones(world.gx.size)]@inverse.T
-            half=np.asarray(ground_region['size'],float)*.5;point=local[:,[0,2]]
-            if ground_region['shape']=='rectangle':inside=np.minimum(half[0]-abs(point[:,0]),half[1]-abs(point[:,1]))
-            else:
-                radius=np.linalg.norm(point/half,axis=1);gradient=np.linalg.norm(point/(half*half),axis=1)
-                inside=np.where(radius<1e-5,min(half),(1-radius)*radius/np.maximum(gradient,1e-5))
-            blend=float(ground_region['blendWidth']);weight=np.where(inside>0,1. if blend<=0 else L.smoothstep(0,blend,inside),0)*float(ground_region['opacity'])
-            cell_weight=weight[tri].max(axis=1);selected=cell_weight>0
-            colors=np.ones((selected.sum(),3,4));colors[...,3]=weight[tri[selected]]
-            add(node_name(region_id,ground_region['id']),positions[tri[selected]]+(0.002+layer*0.0005)*np.array([0,1,0]),ground_region['surface'],
-                (positions[tri[selected]][...,[0,2]]-translation[[0,2]])*preview_uv,
-                colors,blend=True)
+            faces,uv,colors=ground_region_faces(world,snapshot,ground_region,tri,positions,layer)
+            add(node_name(region_id,ground_region['id']),faces,ground_region['surface'],uv,colors,blend=True)
         for path in snapshot.document['paths']:
             if path['kind']!='road':continue
             faces,uv,colors=conform_road_faces(world,*authored_road_faces(world,snapshot,path))

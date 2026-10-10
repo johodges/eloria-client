@@ -303,3 +303,18 @@ def test_active_plan_owners_use_positions_and_reject_unknown_schemas():
         B.reassign_active_owners({"landmark":{"territory":next(iter(retired)),"x":0,"z":0}},shapes,retired)
     with pytest.raises(ValueError,match="retired ID"):
         B.reassign_active_owners({"connections":{"maps":[next(iter(retired))]}},shapes,retired)
+
+
+def test_water_clearance_uses_transformed_ellipse_instead_of_outer_circle():
+    angle = np.pi/5
+    rotate = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
+    feature = {"kind": "water region", "path": "WaterRegions/oval", "xz": np.array([[12., 30.]]),
+               "ellipse": rotate @ np.diag([20., 3.])}
+    local = np.array([[0., 8.], [25., 0.], [0., 2.], [0., 3.5]])
+    world = local @ rotate.T + feature["xz"][0]
+    np.testing.assert_allclose(T._distance_to_water(feature, world[:, 0], world[:, 1]),
+                               [5., 5., 0., .5], atol=1e-10)
+    # The enclosing radius-20 circle would wrongly flag the first point, while
+    # the last point must still fail the two-metre seam rule.
+    assert T._distance_to_water(feature, world[:1,0], world[:1,1])[0] > T.SEAM_WATER_CLEARANCE
+    assert T._distance_to_water(feature, world[3:,0], world[3:,1])[0] < T.SEAM_WATER_CLEARANCE

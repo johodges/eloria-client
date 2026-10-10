@@ -1,6 +1,6 @@
 """render_minimap.py: draw a continent-v2 territory's map picture from its published chunks.
 
-  python -B eloria-assets/maps/continent-v2/_continent_v2/render_minimap.py --region sw_isle [--region ...] \
+  python -B eloria-assets/maps/continent-v2/_continent_v2/render_minimap.py --region <catalog-id> [--region ...] \
          [--work <scratch dir>] [--supersample 2] [--window 256] [--apply] [--checkout <worktree>]
   python -B eloria-assets/maps/continent-v2/_continent_v2/render_minimap.py --check [--region ...]
 

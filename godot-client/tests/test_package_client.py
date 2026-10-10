@@ -170,10 +170,30 @@ class ServedIsle(unittest.TestCase):
 
 
 class CommittedRegistry(unittest.TestCase):
-    def test_the_three_isles_are_served_and_none_is_a_preview(self):
-        registry = json.loads((TESTS.parents[1] / packager.REGISTRY_FILE).read_text(encoding="utf-8"))
+    def test_every_partition_section_is_served_with_a_package_and_none_is_preview(self):
+        checkout = TESTS.parents[1]
+        registry = json.loads((checkout / packager.REGISTRY_FILE).read_text(encoding="utf-8"))
+        catalog = json.loads((TESTS.parent / "world_authoring/continent-v2/territories.json").read_text(encoding="utf-8"))
+        def res_path(path):
+            self.assertTrue(path.startswith("res://"))
+            return (TESTS.parent / path.removeprefix("res://")).resolve()
+        partition = json.loads(res_path(catalog["partitionSpecPath"]).read_text(encoding="utf-8"))
+        ids = sorted(section.get("mapId", section["id"]) for section in partition["sections"])
+        self.assertTrue(ids)
+        self.assertEqual(sorted(entry["id"] for entry in catalog["entries"]), ids)
         self.assertEqual([package for package, _ in packager.served_v2_packages(registry)],
-                         [f"{V2}/{isle}/client" for isle in ("gull_skerries", "sw_isle", "tollholms")])
+                         [f"{V2}/{map_id}/client" for map_id in ids])
+        for entry in catalog["entries"]:
+            row = registry["maps"][entry["id"]]
+            self.assertEqual(row["status"], "continent-v2-served")
+            self.assertEqual(row["manifest"], entry["publishedManifestPath"])
+            package = res_path(entry["publishedManifestPath"])
+            self.assertTrue(package.is_file(), f"missing served package: {package}")
+            manifest = json.loads(package.read_text(encoding="utf-8"))
+            self.assertEqual(manifest["asset"]["id"], entry["id"])
+            self.assertTrue(manifest.get("streamingChunks"), f"no served chunks: {entry['id']}")
+        for retired in catalog.get("retiredMapIds", []):
+            self.assertNotIn(retired, registry["maps"])
         self.assertEqual(packager.preview_map_folders(registry), [])
 
 

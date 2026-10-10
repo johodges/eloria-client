@@ -13,13 +13,10 @@ extends SceneTree
 ## manifest; an unpublished v2 entry has no package; a territory the bound
 ## catalog does not list comes from the shared catalog.
 ##
-## Repository: the v2 catalog names each isle's client package, the one its
-## registry row names. Once sw_isle's committed package ships a served grid
-## (serve plan CV10), the walker loads it through the v2 catalog: 2046 x 2046
-## tiles, format 2, climb 20, in the scene's frame (1023, 993). Until then that
-## case prints WAITING. ELORIA_V2_PUBLISHED_PACKAGES=<folder holding
-## sw_isle/client/world.json> runs it on a package outside the checkout (the CV5
-## and CV6 trial packages) through an isolated copy of the v2 catalog.
+## Repository: every active partition entry must have a served registry row and
+## a client package with a served grid in its own recorded frame. Missing
+## packages fail. ELORIA_V2_PUBLISHED_PACKAGES may point to an external folder
+## holding all active <map>/client/world.json packages through a copied catalog.
 ##
 ## Godot_v4.7.2-stable_win64_console.exe --headless --path . \
 ##     --script res://tests/test_map_authoring_v2_published.gd
@@ -34,8 +31,6 @@ const GOLDEN_SHA256 := "7e4522023885486b2a47298826b3fad1d30ba6d660dcc80249c8690d
 const FIXTURE := "res://test-artifacts/v2-published"
 const V2_CATALOG := "res://world_authoring/continent-v2/territories.json"
 const REGISTRY := "res://data/maps/registry.json"
-const SW_ISLE_PACKAGE := "res://../eloria-assets/maps/continent-v2/sw_isle/client/world.json"
-const SW_ISLE_STUB := "res://../eloria-assets/maps/continent-v2/sw_isle/world.json"
 const PACKAGES_ENV := "ELORIA_V2_PUBLISHED_PACKAGES"
 
 var failures := 0
@@ -109,61 +104,68 @@ func _test_fixture_catalog() -> void:
 func _test_repository_catalog() -> void:
 	var catalog: Variant = JSON.parse_string(FileAccess.get_file_as_string(V2_CATALOG))
 	var registry: Variant = JSON.parse_string(FileAccess.get_file_as_string(REGISTRY))
-	if not _expect(catalog is Dictionary and registry is Dictionary, "the v2 catalog and the registry parse"):
+	if not _expect(catalog is Dictionary and registry is Dictionary, "the active catalog and registry parse"):
 		return
-	var named := 0
-	var entries: Array = (catalog as Dictionary).get("entries", [])
+	var partition: Variant = JSON.parse_string(FileAccess.get_file_as_string(String(catalog.get("partitionSpecPath", ""))))
+	if not _expect(partition is Dictionary, "the catalog's exact partition input parses"):
+		return
+	var expected := PackedStringArray()
+	for section: Dictionary in partition.get("sections", []):
+		expected.append(String(section.get("mapId", section.id)))
+	expected.sort()
+	var entries: Array = catalog.get("entries", [])
+	var actual := PackedStringArray()
 	for entry: Dictionary in entries:
-		var row: Dictionary = ((registry as Dictionary).get("maps", {}) as Dictionary).get(String(entry.id), {})
-		var published := String(entry.get("publishedManifestPath", ""))
-		if not published.is_empty() and published == String(row.get("manifest", "")) and \
-				published.ends_with("/%s/client/world.json" % String(entry.id)) and FileAccess.file_exists(published):
-			named += 1
-	_expect(entries.size() == 3 and named == 3,
-		"every v2 catalog entry names its client package, the registry row's manifest (%d of %d)" % [named,
-			entries.size()])
+		actual.append(String(entry.id))
+	actual.sort()
+	_expect(not expected.is_empty() and actual == expected, "the catalog lists every partition section exactly once")
+	var maps: Dictionary = registry.get("maps", {})
+	for retired: String in catalog.get("retiredMapIds", []):
+		_expect(not maps.has(retired), "retired map %s has no active registry row" % retired)
 	ProjectSettings.set_setting(SETTING, V2_CATALOG)
-	_expect(TimeOfDay.published_manifest_path_for("sw_isle") == SW_ISLE_PACKAGE and
-		TimeOfDay.manifest_path_for("sw_isle") == SW_ISLE_STUB,
-		"bound to the v2 catalog, sw_isle's package is client/world.json and its manifest the stub")
-	var stub: Variant = JSON.parse_string(FileAccess.get_file_as_string(SW_ISLE_STUB))
-	var origin := Vector2i(1023, 993)
-	if stub is Dictionary:
-		var frame: Array = ((stub as Dictionary).get("server", {}) as Dictionary).get("origin", [])
-		if frame.size() == 2:
-			origin = Vector2i(int(frame[0]), int(frame[1]))
 	var outside := OS.get_environment(PACKAGES_ENV).strip_edges()
 	if not outside.is_empty():
 		var copy := FIXTURE + "/v2-catalog-outside.json"
-		var bound: Dictionary = (catalog as Dictionary).duplicate(true)
+		var bound: Dictionary = catalog.duplicate(true)
 		for entry: Dictionary in bound.entries:
 			entry["publishedManifestPath"] = outside.path_join(String(entry.id)).path_join("client/world.json")
 		_write_json(copy, bound)
 		ProjectSettings.set_setting(SETTING, copy)
-		print("sw_isle package from %s: %s" % [PACKAGES_ENV, TimeOfDay.published_manifest_path_for("sw_isle")])
-	var package := TimeOfDay.published_manifest_path_for("sw_isle")
-	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(package)) if not package.is_empty() \
-		else null
-	var declared := manifest is Dictionary and (((manifest as Dictionary).get("collision", {}) as Dictionary)
-		.get("servedGrid") is Dictionary)
-	if not declared:
-		print("WAITING: sw_isle's package %s ships no served grid yet (serve plan CV10 publishes it)" % package)
-		return
-	var root: Node3D = REGION.new()
-	root.name = "SwIslePublished"
-	root.set("region_id", "sw_isle")
-	root.set("server_origin", origin)
-	get_root().add_child(root)
-	var began := Time.get_ticks_msec()
-	var grid := Walker.load_grid(root)
-	_expect(not grid.has("error") and String(grid.get("source", "")) == "published" and
-		int(grid.get("format", 0)) == 2 and int(grid.get("climb", 0)) == 20 and
-		int(grid.get("width", 0)) == 2046 and int(grid.get("rows", 0)) == 2046 and
-		grid.get("origin") == Vector2i(1023, 993) and
-		String(grid.get("served_grid", "")).get_base_dir() == package.get_base_dir(),
-		"on the v2 catalog the walker loads sw_isle's served grid: 2046 x 2046, format 2, climb 20, origin %s, in %d ms (%s)" %
-			[str(origin), Time.get_ticks_msec() - began, String(grid.get("error", grid.get("served_grid", "")))])
-	root.queue_free()
+	for entry: Dictionary in entries:
+		var id := String(entry.id)
+		var row: Dictionary = maps.get(id, {})
+		var published := String(entry.get("publishedManifestPath", ""))
+		_expect(published == String(row.get("manifest", "")) and published.ends_with("/%s/client/world.json" % id)
+			and String(row.get("status", "")) == "continent-v2-served", "%s names its served registry package" % id)
+		var stub_path := String(entry.get("manifestPath", ""))
+		var package := TimeOfDay.published_manifest_path_for(id)
+		_expect(TimeOfDay.manifest_path_for(id) == stub_path and not package.is_empty(),
+			"%s resolves its editor stub and published package separately" % id)
+		if not _expect(FileAccess.file_exists(package), "%s published package exists: %s" % [id, package]):
+			continue
+		var stub: Variant = JSON.parse_string(FileAccess.get_file_as_string(stub_path))
+		var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(package))
+		if not _expect(stub is Dictionary and manifest is Dictionary, "%s stub and package parse" % id):
+			continue
+		var frame: Dictionary = stub.get("server", {})
+		var raw_origin: Array = frame.get("origin", [])
+		var cells: Array = frame.get("cells", [])
+		if not _expect(raw_origin.size() == 2 and cells.size() == 2 and
+			manifest.get("collision", {}).get("servedGrid") is Dictionary, "%s records its frame and served grid" % id):
+			continue
+		var origin := Vector2i(int(raw_origin[0]), int(raw_origin[1]))
+		var region: Node3D = REGION.new()
+		region.name = "Published_" + id
+		region.set("region_id", id)
+		region.set("server_origin", origin)
+		get_root().add_child(region)
+		var grid := Walker.load_grid(region)
+		_expect(not grid.has("error") and String(grid.get("source", "")) == "published" and
+			int(grid.get("format", 0)) == 2 and int(grid.get("climb", 0)) == 20 and
+			int(grid.get("width", 0)) == int(cells[0]) and int(grid.get("rows", 0)) == int(cells[1]) and
+			grid.get("origin") == origin and String(grid.get("served_grid", "")).get_base_dir() == package.get_base_dir(),
+			"%s walker loads its exact frame, format 2 and climb 20 (%s)" % [id, String(grid.get("error", "served"))])
+		region.free()
 
 
 func _restore_setting() -> void:

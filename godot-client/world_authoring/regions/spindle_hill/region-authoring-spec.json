@@ -51,7 +51,12 @@
  "gameplay": {
   "runtimeBindingCount": 0,
   "runtimePointCount": 0,
-  "existingMarkerBindingCount": 0
+  "existingMarkerBindingCount": 0,
+  "generatedArrival": {
+   "path": "eloria-assets/maps/continent-v2/spindle_hill/content/arrival.json",
+   "sha256": "21c511190a888e0c5f92fc8ea53b7471fd260eb4815426a1e24e029c18afbdc0"
+  },
+  "authoredMarkerCount": 2
  },
  "continentV2": {
   "planPath": "eloria-assets/maps/continent-v2/_continent_v2/continent-v2-plan.json",

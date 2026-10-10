@@ -321,3 +321,25 @@ def test_packages_from_two_export_runs_are_refused():
         CV.check_one_run(stale)
     with pytest.raises(CV.CrossingsError, match="every map"):
         CV.check_one_run({"west": entry("w1", "W1", None), "east": entry("e1", "E1", run)})
+
+
+def test_survey_lanes_without_a_nearby_return_are_withdrawn(codec, monkeypatch):
+    original = CV.survey
+
+    def asymmetric(*args):
+        publication, seams, settled = original(*args)
+        for crossing in publication['connections']:
+            for end in crossing['ends']:
+                if end['region'] == 'east':
+                    end['lanes'] = [lane for lane in end['lanes'] if lane_z(EAST, lane) < 9]
+                    C.reseat(args[0], end)
+        return publication, seams, settled
+
+    monkeypatch.setattr(CV, 'survey', asymmetric)
+    doc = CV.build(table(), plan(), codec, log=lambda *_: None)
+    assert doc['report']['reciprocalWithdrawnLanes'] > 0
+    assert all(end['lanes'] for c in doc['connections'] for end in c['ends'])
+    step = lambda h, y, x, dy, dx: codec.sources.walk_step_ok(h, y, x, dy, dx, 20)
+    codes = {region: entry['codes'] for region, entry in table().items()}
+    assert CV.check_step_back(doc['portals'], codes, step) == {
+        int(k): v for k, v in doc['report']['stepBack']['lanesBySteps'].items()}

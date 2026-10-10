@@ -51,7 +51,12 @@
  "gameplay": {
   "runtimeBindingCount": 0,
   "runtimePointCount": 0,
-  "existingMarkerBindingCount": 0
+  "existingMarkerBindingCount": 0,
+  "generatedArrival": {
+   "path": "eloria-assets/maps/continent-v2/ringholm/content/arrival.json",
+   "sha256": "684be0a202353f4647c2b9f338428615484e5a1c3e78f303d434382570c319ac"
+  },
+  "authoredMarkerCount": 1
  },
  "continentV2": {
   "planPath": "eloria-assets/maps/continent-v2/_continent_v2/continent-v2-plan.json",

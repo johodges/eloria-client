@@ -6,6 +6,7 @@ const LanternSceneScript = preload("res://src/world/lantern_scene.gd")
 const BellSceneScript = preload("res://src/world/bell_scene.gd")
 const RoadSceneScript = preload("res://src/world/road_scene.gd")
 const SkySceneScript = preload("res://src/world/sky_scene.gd")
+const CartographyOwnershipGeometry = preload("res://addons/map_authoring_workspace/ownership_geometry.gd")
 var lantern_guide: Control
 var lantern_scene: Node3D
 
@@ -391,13 +392,18 @@ var world_object_models: Dictionary = {}
 var cartography: Dictionary = {}
 var cartography_regions: Array = []
 ## Region outlines in continent picture pixels, for which territory a map click is on.
-var _region_polygons: Array[PackedVector2Array] = []
+var _region_polygons: Array[Array] = []
 ## The continent picture and the regions' tab maps are decoded the first
 ## time the map window opens, not at startup: the continent alone is a
 ## 1600-pixel image nobody sees before pressing Tab.
 var continent_map: Control
 var _continent_texture: Texture2D
 var _cartography_loaded := false
+var _v2_cartography: Dictionary = {}
+var _continent_frame := ""
+var _continent_textures: Dictionary = {}
+## Overlay-local indices map to the combined cartography table's region indices.
+var _continent_region_indices: Array[int] = []
 var _tab_map_textures: Dictionary = {}
 ## Which region the big map is showing as a preview, or -1 for none, with
 ## that map's own adapter so the cursor can name the tile under it.
@@ -480,6 +486,7 @@ var _minimap_orientation := MINIMAP_DEFAULT_ORIENTATION
 var _minimap_zoom := MINIMAP_ZOOM_DEFAULT
 ## How far the Tab map is pulled back, and the framing it is pulled back from.
 ## Only a map that frames its neighbours (a continent exterior) pulls back.
+var _full_map_region_id := ""
 var _full_map_zoom := 1.0
 var _full_map_base_size := 0.0
 var _full_map_zoomable := false
@@ -1072,6 +1079,7 @@ func _ready() -> void:
 		_on_invasion_assistant_command_requested)
 	cartography = _json("res://data/maps/cartography.json")
 	cartography_regions = (cartography.get("regions", []) as Array).duplicate()
+	_v2_cartography = _json("res://data/maps/cartography-continent-v2.json")
 	cartography_regions.append_array(_continent_v2_tab_maps(cartography))
 	_region_polygons.clear()
 	equipment_config = preload(
@@ -3807,8 +3815,7 @@ func _map_owning_point(point: Vector3) -> String:
 	for index: int in range(cartography_regions.size()):
 		if _cartography_frame(index) != frame:
 			continue
-		var polygon: PackedVector2Array = _region_polygon(index)
-		if polygon.size() >= 3 and Geometry2D.is_point_in_polygon(pixel, polygon):
+		if CartographyOwnershipGeometry.contains(pixel, _region_polygon_components(index)):
 			return MapRegistry.normalize_server_map_id(str(
 				(cartography_regions[index] as Dictionary).get("serverMap", "")))
 	return ""
@@ -3821,15 +3828,16 @@ func _cartography_frame(index: int) -> String:
 	return str((cartography_regions[index] as Dictionary).get("frame", ""))
 
 ## A region's outline in continent picture pixels, built once per cartography.
-func _region_polygon(index: int) -> PackedVector2Array:
+func _region_polygon_components(index: int) -> Array[PackedVector2Array]:
 	if _region_polygons.size() != cartography_regions.size():
 		_region_polygons.clear()
 		for region_value: Variant in cartography_regions:
-			var polygon := PackedVector2Array()
-			for pair: Variant in ((region_value as Dictionary).get("continentPolygon", []) as Array):
-				polygon.append(Vector2(float((pair as Array)[0]), float((pair as Array)[1])))
-			_region_polygons.append(polygon)
-	return _region_polygons[index]
+			var row: Dictionary = region_value as Dictionary
+			_region_polygons.append(CartographyOwnershipGeometry.polygons(
+				row.get("continentPolygons", [row.get("continentPolygon", [])])))
+	var result: Array[PackedVector2Array] = []
+	result.assign(_region_polygons[index])
+	return result
 
 ## Whether a tile lies inside the current map's served cells.
 func _tile_inside_current_map(tile: Vector2i) -> bool:
@@ -4837,20 +4845,20 @@ func _map_boundaries() -> Array[Dictionary]:
 		if _cartography_frame(index) != frame:
 			continue
 		var region: Dictionary = cartography_regions[index] as Dictionary
-		var polygon: Array = region.get("continentPolygon", []) as Array
-		if polygon.size() < 3:
-			continue
-		var points := PackedVector3Array()
-		for pixel: Variant in polygon:
-			var pair: Array = pixel as Array
-			points.append(Vector3(float(origin[0]) + float(pair[0]) * metres_per_pixel - float(translation[0]), height,
-				float(origin[1]) + float(pair[1]) * metres_per_pixel - float(translation[2])))
 		var label_pixel: Array = region.get("continentLabel", []) as Array
 		var label := Vector3.INF
 		if label_pixel.size() == 2:
 			label = Vector3(float(origin[0]) + float(label_pixel[0]) * metres_per_pixel - float(translation[0]), height,
 				float(origin[1]) + float(label_pixel[1]) * metres_per_pixel - float(translation[2]))
-		result.append({"name": str(region.get("name", "")), "points": points, "label": label, "current": index == region_index})
+		var first := true
+		for polygon: PackedVector2Array in _region_polygon_components(index):
+			var points := PackedVector3Array()
+			for pixel: Vector2 in polygon:
+				points.append(Vector3(float(origin[0]) + pixel.x * metres_per_pixel - float(translation[0]), height,
+					float(origin[1]) + pixel.y * metres_per_pixel - float(translation[2])))
+			result.append({"name": str(region.get("name", "")), "points": points,
+				"label": label if first else Vector3.INF, "current": index == region_index})
+			first = false
 	return result
 
 func _update_map_boundaries() -> void:
@@ -5724,6 +5732,13 @@ func _configure_interior_cutaway(manifest: WorldManifest) -> void:
 
 
 func _configure_full_map(manifest: WorldManifest) -> void:
+	var map_id := MapRegistry.normalize_server_map_id(AppState.current_map)
+	if map_id.is_empty():
+		map_id = manifest.asset_id()
+	var changed_map := map_id != _full_map_region_id
+	if changed_map:
+		_full_map_region_id = map_id
+		_full_map_zoom = 1.0
 	# A continent exterior shows a buffer of its neighbours around it.
 	var buffer: float = MapViewScript.NEIGHBOUR_BUFFER_METRES if manifest.data.has("continentGeography") else 0.0
 	MapViewScript.configure(full_map_camera, full_map_viewport,
@@ -5738,6 +5753,8 @@ func _configure_full_map(manifest: WorldManifest) -> void:
 		full_map_camera.size = _full_map_base_size * _full_map_zoom
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
 	_update_map_boundaries()
+	if changed_map and _cartography_loaded:
+		_show_current_map_view()
 	player_map_marker.scale = Vector3(.18,1,.18) if manifest.asset_id() in ["lantern_reach", "bellwatch", "stillglass", "reedway", "cinderbank", "echo_court", "wayfarer_bastion", "lantern_exchange", "waystone_yard"] else Vector3.ONE
 
 ## The map window's cartography: the continent picture and the regions on it.
@@ -5750,36 +5767,67 @@ func _configure_cartography() -> void:
 	continent_map.name = "ContinentMap"
 	continent_view.add_child(continent_map)
 	continent_map.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	continent_map.region_selected.connect(_preview_region)
-	continent_map.region_hovered.connect(_on_continent_region_hovered)
-	var continent: Dictionary = cartography.get("continent", {}) as Dictionary
+	continent_map.region_selected.connect(_preview_continent_region)
+	continent_map.region_hovered.connect(_hover_continent_region)
+	_configure_continent_overlay(_active_continent_data())
+
+func _active_continent_data() -> Dictionary:
+	var index := _region_index_for_map(AppState.current_map)
+	if index >= 0 and _cartography_frame(index) == "continent-v2":
+		var overview: Dictionary = _v2_cartography.get("overview", {}) as Dictionary
+		if not overview.is_empty():
+			return overview
+	return cartography.get("continent", {}) as Dictionary
+
+func _configure_continent_overlay(continent: Dictionary) -> void:
 	var image_size: Array = continent.get("imageSize", []) as Array
 	var rects: Array[Dictionary] = []
-	# A row of another continent's frame (the rebuilt continent's isles) has no
-	# rectangle on this picture; those rows are appended after every row that
-	# has one, so the overlay's indices stay the cartography's.
-	for region_value: Variant in cartography_regions:
-		if not region_value is Dictionary:
-			continue
-		var region: Dictionary = region_value as Dictionary
-		var rect: Array = region.get("continentRect", []) as Array
-		if rect.size() != 4:
-			continue
-		rects.append({"name": str(region.get("name", "Unknown region")),
-			"rect": Rect2(float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3])),
-			"polygon": region.get("continentPolygon", []),
-			"label": region.get("continentLabel", [])})
+	_continent_region_indices.clear()
+	var frame := str(continent.get("frame", ""))
+	if not frame.is_empty():
+		for value: Variant in continent.get("regions", []):
+			var row: Dictionary = value as Dictionary
+			var index := _region_index_for_map(str(row.get("serverMap", "")))
+			var rect: Array = row.get("rect", []) as Array
+			if index < 0 or _cartography_frame(index) != frame or rect.size() != 4:
+				continue
+			_continent_region_indices.append(index)
+			rects.append({"name": str(row.get("name", "")),
+				"rect": Rect2(float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3])),
+				"polygons": row.get("polygons", []), "label": row.get("label", [])})
+	else:
+		for index: int in range(cartography_regions.size()):
+			var region: Dictionary = cartography_regions[index] as Dictionary
+			var rect: Array = region.get("continentRect", []) as Array
+			if not _cartography_frame(index).is_empty() or rect.size() != 4:
+				continue
+			_continent_region_indices.append(index)
+			rects.append({"name": str(region.get("name", "Unknown region")),
+				"rect": Rect2(float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3])),
+				"polygon": region.get("continentPolygon", []), "label": region.get("continentLabel", [])})
 	if image_size.size() == 2:
-		continent_map.configure(
-			Vector2(float(image_size[0]), float(image_size[1])), rects)
+		continent_map.configure(Vector2(float(image_size[0]), float(image_size[1])), rects)
 
-## Decodes the continent picture on the first look at the map window.
+func _preview_continent_region(local_index: int) -> void:
+	if local_index >= 0 and local_index < _continent_region_indices.size():
+		_preview_region(_continent_region_indices[local_index])
+
+func _hover_continent_region(local_index: int) -> void:
+	_on_continent_region_hovered(_continent_region_indices[local_index]
+		if local_index >= 0 and local_index < _continent_region_indices.size() else -1)
+
+## Decode only the active group's picture, once per group, when Tab opens.
 func _ensure_cartography_textures() -> void:
-	if _cartography_loaded:
+	var continent := _active_continent_data()
+	var frame := str(continent.get("frame", ""))
+	if _cartography_loaded and frame == _continent_frame:
 		return
 	_cartography_loaded = true
-	var continent: Dictionary = cartography.get("continent", {}) as Dictionary
-	_continent_texture = _external_texture(str(continent.get("texture", "")))
+	_continent_frame = frame
+	_configure_continent_overlay(continent)
+	if not _continent_textures.has(frame):
+		_continent_textures[frame] = _external_texture(str(continent.get("texture", "")))
+	_continent_texture = _continent_textures[frame] as Texture2D
 	continent_image.texture = _continent_texture
 
 ## A region's tab map: the pixels of its minimap the live Tab map would frame,
@@ -5821,7 +5869,7 @@ func _region_index_for_map(server_map: String) -> int:
 	return -1
 
 func _continent_name() -> String:
-	return str((cartography.get("continent", {}) as Dictionary).get("name", "Nymara"))
+	return str(_active_continent_data().get("name", "Nymara"))
 
 const CONTINENT_HINT := "Click a region to see its map. Your server map will not change."
 
@@ -5852,7 +5900,7 @@ func _show_continent_view() -> void:
 	_preview_region_index = -1
 	_sync_map_viewport_activity()
 	continent_view.show()
-	continent_map.set_current_region(_region_index_for_map(AppState.current_map))
+	continent_map.set_current_region(_continent_region_indices.find(_region_index_for_map(AppState.current_map)))
 	# The live render keeps its last frame while its viewport idles.
 	continent_button.texture_normal = full_map_viewport.get_texture()
 	continent_button.tooltip_text = "Return to your current map"

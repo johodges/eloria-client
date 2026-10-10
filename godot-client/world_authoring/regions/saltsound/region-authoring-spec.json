@@ -51,7 +51,12 @@
  "gameplay": {
   "runtimeBindingCount": 0,
   "runtimePointCount": 0,
-  "existingMarkerBindingCount": 0
+  "existingMarkerBindingCount": 0,
+  "generatedArrival": {
+   "path": "eloria-assets/maps/continent-v2/saltsound/content/arrival.json",
+   "sha256": "03662b078ac4b0881f95c9cba7f63d04f79b7cf2105f90ddd0e3c01fe547fc99"
+  },
+  "authoredMarkerCount": 9
  },
  "continentV2": {
   "planPath": "eloria-assets/maps/continent-v2/_continent_v2/continent-v2-plan.json",

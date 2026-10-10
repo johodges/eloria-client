@@ -50,8 +50,13 @@
  },
  "gameplay": {
   "runtimeBindingCount": 0,
-  "runtimePointCount": 0,
-  "existingMarkerBindingCount": 0
+  "runtimePointCount": 1,
+  "existingMarkerBindingCount": 0,
+  "generatedArrival": {
+   "path": "eloria-assets/maps/continent-v2/ravenhead/content/arrival.json",
+   "sha256": "b8f12403665013ae3765cdbf4906bb121914fbb270b7b60048e247d568031d8d"
+  },
+  "authoredMarkerCount": 28
  },
  "continentV2": {
   "planPath": "eloria-assets/maps/continent-v2/_continent_v2/continent-v2-plan.json",
