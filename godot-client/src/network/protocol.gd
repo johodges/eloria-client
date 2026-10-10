@@ -253,6 +253,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"mix_window_v1",
 	"market_window_v1",
 	"merchant_window_v1",
+	"merchant_weights_v1",
 	"navigation_hud_v1",
 	"party_window_v1",
 	"perk_catalog_v3",
@@ -1793,6 +1794,16 @@ static func decode_merchant(payload: PackedByteArray) -> Dictionary:
 		entry["name"] = str(entry_name.value)
 		offset = int(entry_name.offset)
 		items.append(entry)
+	# Negotiated merchant_weights_v1 trailer, in the same order as the rows.
+	if offset < payload.size():
+		if offset + 2 > payload.size() or u16(payload, offset) != items.size():
+			return {"type": "invalid", "error": "merchant_weights_count"}
+		offset += 2
+		if offset + items.size() * 4 != payload.size():
+			return {"type": "invalid", "error": "merchant_weights_length"}
+		for entry: Dictionary in items:
+			entry["emu"] = u32(payload, offset)
+			offset += 4
 	if offset != payload.size():
 		return {"type": "invalid", "error": "merchant_trailing"}
 	return {"type": "merchant", "actor_id": actor_id, "npc_name": str(name_field.value),

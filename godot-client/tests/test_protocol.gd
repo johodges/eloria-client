@@ -46,6 +46,7 @@ func _init() -> void:
 		"mix_window_v1": EloriaProtocol.ServerMessage.ELORIA_MIX_STATE,
 		"market_window_v1": EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE,
 		"merchant_window_v1": EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE,
+		"merchant_weights_v1": EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE,
 		"navigation_hud_v1": EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE,
 		"achievements_window_v1":
 			EloriaProtocol.ServerMessage.ELORIA_ACHIEVEMENTS_STATE,
@@ -1861,6 +1862,16 @@ func _init() -> void:
 		and int(stock.sell_price) == 12 and int(stock.owned) == 5
 		and str(stock.name) == "Sunleaf",
 		"a merchant row carries both prices and how many the player already has")
+	var weighted_merchant := EloriaProtocol.decode_server(223, _hex(
+		"5b00fa0000001400000050000000010053616c696e61000000280000000c00000005"
+		+ "000000140053756e6c65616600010001000000"))
+	_expect(int(weighted_merchant.items[0].emu) == 1,
+		"the optional merchant weight supports carry previews")
+	for trailer: String in ["020001000000", "0100010000"]:
+		var invalid_merchant := EloriaProtocol.decode_server(223, _hex(
+			"5b00fa0000001400000050000000010053616c696e61000000280000000c00000005"
+			+ "000000140053756e6c65616600" + trailer))
+		_expect(invalid_merchant.has("error"), "invalid merchant weights are refused")
 
 	var journal: Dictionary = EloriaProtocol.decode_server(224, _hex(
 		"01000001000000030000004b696c6c205468656d20416c6c00446566656174203320"

@@ -87,6 +87,17 @@ var detail_text: RichTextLabel
 var merchant_panel: PanelContainer
 var merchant_header: Label
 var merchant_list: ItemList
+## merchant_list remains the active list for tutorial and integration callers.
+var merchant_buy_list: ItemList
+var merchant_sell_list: ItemList
+var merchant_buy_mode: Button
+var merchant_sell_mode: Button
+var merchant_selection: Label
+var merchant_totals: Label
+var merchant_trade: Button
+var merchant_selected_icon: TextureRect
+var merchant_empty_pack: Label
+var _merchant_actor := -1
 var merchant_quantity: LineEdit
 var merchant_status: Label
 var market_panel: PanelContainer
@@ -614,34 +625,126 @@ func _sync_detail() -> void:
 func _sync_merchant() -> void:
 	if not bool(AppState.merchant.get("open", false)):
 		merchant_panel.hide()
+		_merchant_actor = -1
 		return
-	merchant_header.text = "%s  -  %d gold  -  load %d/%d" % [
+	var actor_id := int(AppState.merchant.get("actor_id", -1))
+	var selected_id := -1
+	if _merchant_actor == actor_id and merchant_list != null and not merchant_list.get_selected_items().is_empty():
+		selected_id = int(merchant_list.get_item_metadata(merchant_list.get_selected_items()[0]))
+	else:
+		_merchant_mode = "buy"
+		merchant_quantity.text = "1"
+	_merchant_actor = actor_id
+	merchant_header.text = "%s    ·    Gold: %d gc    ·    Carry: %d/%d" % [
 		str(AppState.merchant.get("npc_name", "Merchant")),
-		int(AppState.merchant.get("gold", 0)),
-		int(AppState.merchant.get("carried", 0)),
+		int(AppState.merchant.get("gold", 0)), int(AppState.merchant.get("carried", 0)),
 		int(AppState.merchant.get("capacity", 0))]
-	var selected: int = _selected_index(merchant_list)
-	merchant_list.clear()
+	merchant_buy_list.clear()
+	merchant_sell_list.clear()
 	for entry: Dictionary in AppState.merchant.get("items", []) as Array:
-		var price: int = int(entry.get("buy_price" if _merchant_mode == "buy"
-			else "sell_price", 0))
-		var index: int = merchant_list.item_count
-		merchant_list.add_item("%s  -  %d gc  (you have %d)" % [
-			str(entry.get("name", "")), price, int(entry.get("owned", 0))])
-		merchant_list.set_item_metadata(index, int(entry.get("index", index)))
-		if item_atlas != null:
-			var icon: Texture2D = _named_icon(int(entry.get("image_id", 0)),
-				str(entry.get("name", "")))
-			if icon != null:
-				merchant_list.set_item_icon(index, icon)
-	if merchant_list.item_count > 0:
-		merchant_list.select(clampi(selected, 0, merchant_list.item_count - 1))
+		_add_merchant_row(merchant_buy_list, entry, false)
+		if int(entry.get("owned", 0)) > 0 and int(entry.get("sell_price", 0)) > 0:
+			_add_merchant_row(merchant_sell_list, entry, true)
+	merchant_empty_pack.visible = merchant_sell_list.item_count == 0
+	merchant_list = merchant_buy_list if _merchant_mode == "buy" else merchant_sell_list
+	for index: int in range(merchant_list.item_count):
+		if int(merchant_list.get_item_metadata(index)) == selected_id:
+			merchant_list.select(index)
+			break
+	if merchant_list.get_selected_items().is_empty() and merchant_list.item_count > 0:
+		merchant_list.select(0)
+	merchant_list.ensure_current_is_visible()
+	merchant_status.text = ""
+	_sync_merchant_summary()
 	merchant_panel.show()
 	merchant_panel.move_to_front()
 
+func _add_merchant_row(list: ItemList, entry: Dictionary, selling: bool) -> void:
+	var name := str(entry.get("name", ""))
+	var price := int(entry.get("sell_price" if selling else "buy_price", 0))
+	var label := "%s  ×%d     ·     %d gc each" % [name, int(entry.get("owned", 0)), price] if selling else "%s     ·     %d gc each" % [name, price]
+	var row := list.item_count
+	list.add_item(label, _named_icon(int(entry.get("image_id", 0)), name))
+	list.set_item_metadata(row, int(entry.get("index", row)))
+	list.set_item_tooltip(row, "%s\n%s: %d gc each\nIn your pack: %d" % [name, "Sell price" if selling else "Buy price", price, int(entry.get("owned", 0))])
+
+func _on_merchant_selected(_index: int, mode: String) -> void:
+	_merchant_mode = mode
+	merchant_list = merchant_buy_list if mode == "buy" else merchant_sell_list
+	(merchant_sell_list if mode == "buy" else merchant_buy_list).deselect_all()
+	merchant_list.ensure_current_is_visible()
+	_sync_merchant_summary()
+
 func _on_merchant_mode(mode: String) -> void:
 	_merchant_mode = mode
-	_sync_merchant()
+	merchant_list = merchant_buy_list if mode == "buy" else merchant_sell_list
+	(merchant_sell_list if mode == "buy" else merchant_buy_list).deselect_all()
+	if merchant_list.get_selected_items().is_empty() and merchant_list.item_count > 0:
+		merchant_list.select(0)
+	merchant_list.ensure_current_is_visible()
+	_sync_merchant_summary()
+
+func _merchant_entry() -> Dictionary:
+	var selected := merchant_list.get_selected_items()
+	if selected.is_empty():
+		return {}
+	var item_index := int(merchant_list.get_item_metadata(selected[0]))
+	for entry: Dictionary in AppState.merchant.get("items", []) as Array:
+		if int(entry.get("index", -1)) == item_index:
+			return entry
+	return {}
+
+func _merchant_maximum(entry: Dictionary) -> int:
+	if entry.is_empty():
+		return 0
+	if _merchant_mode == "sell":
+		return mini(1000000, int(entry.get("owned", 0)))
+	var price := int(entry.get("buy_price", 0))
+	var maximum := mini(1000000, int(AppState.merchant.get("gold", 0)) / price) if price > 0 else 1000000
+	var weight := int(entry.get("emu", 0))
+	if weight > 0:
+		var free := maxi(0, int(AppState.merchant.get("capacity", 0)) - int(AppState.merchant.get("carried", 0)))
+		maximum = mini(maximum, free / weight)
+	return maximum
+
+func _merchant_change_quantity(delta: int) -> void:
+	merchant_quantity.text = str(clampi(int(merchant_quantity.text) + delta, 1, 1000000))
+	_sync_merchant_summary()
+
+func _merchant_set_maximum() -> void:
+	merchant_quantity.text = str(maxi(1, _merchant_maximum(_merchant_entry())))
+	_sync_merchant_summary()
+
+func _sync_merchant_summary(_text: String = "") -> void:
+	merchant_buy_mode.set_pressed_no_signal(_merchant_mode == "buy")
+	merchant_sell_mode.set_pressed_no_signal(_merchant_mode == "sell")
+	var entry := _merchant_entry()
+	merchant_trade.disabled = true
+	if entry.is_empty():
+		merchant_selection.text = "Select an item to buy or sell."
+		merchant_totals.text = ""
+		merchant_selected_icon.texture = null
+		merchant_trade.text = "Buy" if _merchant_mode == "buy" else "Sell"
+		return
+	var buying := _merchant_mode == "buy"
+	var price := int(entry.get("buy_price" if buying else "sell_price", 0))
+	merchant_selection.text = "%s\n%s · %d gc each" % ["BUYING" if buying else "SELLING", str(entry.get("name", "")), price]
+	merchant_selected_icon.texture = _named_icon(int(entry.get("image_id", 0)), str(entry.get("name", "")))
+	var quantity_text := merchant_quantity.text.strip_edges()
+	var valid := quantity_text.is_valid_int() and int(quantity_text) >= 1 and int(quantity_text) <= 1000000
+	if not valid:
+		merchant_totals.text = "Enter a whole quantity\nbetween 1 and 1,000,000."
+		return
+	var quantity := int(quantity_text)
+	var total := quantity * price
+	var gold_after := int(AppState.merchant.get("gold", 0)) + (-total if buying else total)
+	merchant_totals.text = "%s: %d gc\nGold after: %d gc" % ["Cost" if buying else "Receive", total, gold_after]
+	if entry.has("emu"):
+		var carry_after := int(AppState.merchant.get("carried", 0)) + int(entry.emu) * quantity * (1 if buying else -1)
+		merchant_totals.text += "\nCarry after: %d/%d" % [maxi(0, carry_after), int(AppState.merchant.get("capacity", 0))]
+	merchant_trade.text = "%s %d" % ["Buy" if buying else "Sell", quantity]
+	merchant_trade.disabled = quantity > _merchant_maximum(entry)
+	merchant_trade.tooltip_text = "Not enough gold or free carry space." if buying and merchant_trade.disabled else "You do not own that many." if merchant_trade.disabled else ""
 
 ## The dedicated shop command accepts an exact quantity in one request. The
 ## server validates stock, gold, carrying capacity and ownership as before.
@@ -660,6 +763,9 @@ func _merchant_trade_command() -> String:
 
 
 func _on_merchant_trade() -> void:
+	_sync_merchant_summary()
+	if merchant_trade.disabled:
+		return
 	var command := _merchant_trade_command()
 	if command.is_empty():
 		return
@@ -667,7 +773,7 @@ func _on_merchant_trade() -> void:
 	if trade_error != OK:
 		merchant_status.text = "Merchant request failed: " + error_string(trade_error)
 		return
-	merchant_status.text = "Sent to the server; the window updates when it answers."
+	merchant_status.text = "Buying…" if _merchant_mode == "buy" else "Selling…"
 
 # --- marketplace -------------------------------------------------------------
 
@@ -1160,46 +1266,7 @@ func _build() -> void:
 	detail_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_window_body(detail_panel).add_child(detail_text)
 
-	merchant_panel = _window("MerchantWindow", "Merchant")
-	var merchant_body: VBoxContainer = _window_body(merchant_panel)
-	merchant_header = Label.new()
-	merchant_header.name = "MerchantHeader"
-	merchant_body.add_child(merchant_header)
-	merchant_list = ItemList.new()
-	merchant_list.name = "MerchantList"
-	merchant_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	merchant_body.add_child(merchant_list)
-	var merchant_actions := HBoxContainer.new()
-	merchant_body.add_child(merchant_actions)
-	var buy_mode := Button.new()
-	buy_mode.name = "MerchantBuyMode"
-	buy_mode.text = "Buy"
-	buy_mode.pressed.connect(_on_merchant_mode.bind("buy"))
-	merchant_actions.add_child(buy_mode)
-	var sell_mode := Button.new()
-	sell_mode.name = "MerchantSellMode"
-	sell_mode.text = "Sell"
-	sell_mode.pressed.connect(_on_merchant_mode.bind("sell"))
-	merchant_actions.add_child(sell_mode)
-	var quantity_label := Label.new()
-	quantity_label.text = "Quantity"
-	merchant_actions.add_child(quantity_label)
-	merchant_quantity = LineEdit.new()
-	merchant_quantity.name = "MerchantQuantity"
-	merchant_quantity.text = "1"
-	merchant_quantity.placeholder_text = "Amount"
-	merchant_quantity.custom_minimum_size.x = 90.0
-	merchant_quantity.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	merchant_quantity.tooltip_text = "Number of items to buy or sell (1–1,000,000)"
-	merchant_actions.add_child(merchant_quantity)
-	var trade := Button.new()
-	trade.name = "MerchantTrade"
-	trade.text = "Trade"
-	trade.pressed.connect(_on_merchant_trade)
-	merchant_actions.add_child(trade)
-	merchant_status = Label.new()
-	merchant_status.name = "MerchantStatus"
-	merchant_body.add_child(merchant_status)
+	_build_merchant_window()
 
 	market_panel = _window("MarketplaceWindow", "Nymara Exchange")
 	var market_body: VBoxContainer = _window_body(market_panel)
@@ -1455,6 +1522,133 @@ func _style_quest_tracker(parchment: PanelContainer,
 			Color(0.96, 0.90, 0.78, 0.985)))
 	tracked_quest_text.add_theme_color_override("default_color", QUEST_INK)
 	tracked_quest_text.add_theme_font_size_override("normal_font_size", 13)
+
+## Two inventories share one explicit transaction, matching the selected concept.
+func _build_merchant_window() -> void:
+	merchant_panel = _window("MerchantWindow", "Merchant")
+	merchant_panel.custom_minimum_size = Vector2(1040.0, 550.0)
+	merchant_panel.size = merchant_panel.custom_minimum_size
+	merchant_panel.position = Vector2(72.0, 65.0)
+	merchant_panel.add_theme_stylebox_override("panel", _quest_box(Color("15120f"), Color("9a7843"), 1, 3, 12.0))
+	var body := _window_body(merchant_panel)
+	body.add_theme_constant_override("separation", 10)
+	var header := body.get_node("Header") as HBoxContainer
+	(header.get_node("Title") as Label).hide()
+	merchant_header = Label.new()
+	merchant_header.name = "MerchantHeader"
+	merchant_header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	merchant_header.add_theme_font_size_override("font_size", 18)
+	header.add_child(merchant_header)
+	header.move_child(merchant_header, 0)
+	var columns := HBoxContainer.new()
+	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	columns.add_theme_constant_override("separation", 12)
+	body.add_child(columns)
+	for selling: bool in [false, true]:
+		var panel := PanelContainer.new()
+		panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		panel.size_flags_stretch_ratio = 1.0
+		panel.add_theme_stylebox_override("panel", _quest_box(Color("1c1813"), Color("76603b"), 1, 2, 10.0))
+		columns.add_child(panel)
+		var column := VBoxContainer.new()
+		panel.add_child(column)
+		var mode := Button.new()
+		mode.name = "MerchantSellMode" if selling else "MerchantBuyMode"
+		mode.text = "Your backpack" if selling else "Shop goods"
+		mode.toggle_mode = true
+		mode.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		mode.add_theme_font_size_override("font_size", 19)
+		mode.pressed.connect(_on_merchant_mode.bind("sell" if selling else "buy"))
+		column.add_child(mode)
+		var hint := Label.new()
+		hint.text = "Select an item to sell · sell price" if selling else "Select an item to buy · buy price"
+		hint.add_theme_font_size_override("font_size", 13)
+		column.add_child(hint)
+		var list := ItemList.new()
+		list.name = "MerchantBackpack" if selling else "MerchantList"
+		list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		list.fixed_icon_size = Vector2i(40, 40)
+		list.icon_scale = 1.0
+		list.add_theme_constant_override("icon_margin", 12)
+		list.add_theme_font_size_override("font_size", 15)
+		list.add_theme_color_override("font_color", QUEST_WARM_TEXT)
+		list.add_theme_color_override("font_selected_color", QUEST_WARM_TEXT)
+		list.add_theme_constant_override("v_separation", 7)
+		list.add_theme_stylebox_override("panel", _quest_box(Color("151310"), Color("76603b"), 0, 0, 4.0))
+		list.add_theme_stylebox_override("selected", _quest_box(Color("40331e"), Color("c59a53"), 1, 2, 3.0))
+		list.add_theme_stylebox_override("selected_focus", _quest_box(Color("40331e"), Color("c59a53"), 1, 2, 3.0))
+		list.item_selected.connect(_on_merchant_selected.bind("sell" if selling else "buy"))
+		column.add_child(list)
+		if selling:
+			merchant_sell_mode = mode
+			merchant_sell_list = list
+			merchant_empty_pack = Label.new()
+			merchant_empty_pack.text = "No items this merchant buys in your backpack."
+			merchant_empty_pack.add_theme_font_size_override("font_size", 13)
+			column.add_child(merchant_empty_pack)
+		else:
+			merchant_buy_mode = mode
+			merchant_buy_list = list
+	merchant_list = merchant_buy_list
+	var footer := HBoxContainer.new()
+	footer.add_theme_constant_override("separation", 14)
+	body.add_child(footer)
+	merchant_selected_icon = TextureRect.new()
+	merchant_selected_icon.custom_minimum_size = Vector2(48, 48)
+	merchant_selected_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	merchant_selected_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	footer.add_child(merchant_selected_icon)
+	merchant_selection = Label.new()
+	merchant_selection.name = "MerchantSelection"
+	merchant_selection.custom_minimum_size.x = 250
+	merchant_selection.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	merchant_selection.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	footer.add_child(merchant_selection)
+	var quantities := VBoxContainer.new()
+	footer.add_child(quantities)
+	var quantity_label := Label.new()
+	quantity_label.text = "Quantity"
+	quantities.add_child(quantity_label)
+	var stepper := HBoxContainer.new()
+	quantities.add_child(stepper)
+	var minus := Button.new()
+	minus.text = "−"
+	minus.pressed.connect(_merchant_change_quantity.bind(-1))
+	stepper.add_child(minus)
+	merchant_quantity = LineEdit.new()
+	merchant_quantity.name = "MerchantQuantity"
+	merchant_quantity.text = "1"
+	merchant_quantity.custom_minimum_size.x = 80
+	merchant_quantity.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	merchant_quantity.text_changed.connect(_sync_merchant_summary)
+	stepper.add_child(merchant_quantity)
+	var plus := Button.new()
+	plus.text = "+"
+	plus.pressed.connect(_merchant_change_quantity.bind(1))
+	stepper.add_child(plus)
+	var maximum := Button.new()
+	maximum.name = "MerchantMaximum"
+	maximum.text = "Max"
+	maximum.pressed.connect(_merchant_set_maximum)
+	stepper.add_child(maximum)
+	merchant_totals = Label.new()
+	merchant_totals.name = "MerchantTotals"
+	merchant_totals.custom_minimum_size.x = 170
+	footer.add_child(merchant_totals)
+	merchant_trade = Button.new()
+	merchant_trade.name = "MerchantTrade"
+	merchant_trade.text = "Buy"
+	merchant_trade.custom_minimum_size = Vector2(112, 44)
+	merchant_trade.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	merchant_trade.add_theme_stylebox_override("normal", _quest_box(Color("5d4320"), Color("d5aa60"), 1, 3, 9.0))
+	merchant_trade.add_theme_stylebox_override("hover", _quest_box(Color("77552a"), Color("ebc982"), 1, 3, 9.0))
+	merchant_trade.pressed.connect(_on_merchant_trade)
+	footer.add_child(merchant_trade)
+	merchant_status = Label.new()
+	merchant_status.name = "MerchantStatus"
+	merchant_status.add_theme_font_size_override("font_size", 13)
+	body.add_child(merchant_status)
 
 func _bar(bar_name: String, colour: Color) -> ProgressBar:
 	var bar := ProgressBar.new()
