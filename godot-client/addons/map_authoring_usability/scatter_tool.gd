@@ -1,5 +1,7 @@
 @tool
 extends RefCounted
+
+const GEOMETRY := preload("res://addons/map_authoring_workspace/ownership_geometry.gd")
 ## Scatter: paints ordinary asset wrappers of one palette entry along a brush
 ## stroke. The seed is used only while placing; what is saved is the wrappers
 ## themselves, exactly as if each had been placed by hand (fresh asset ids,
@@ -46,7 +48,7 @@ var entry := {}
 var last_message := ""
 var strokes := 0
 var _root: Node3D
-var _polygon := PackedVector2Array()
+var _polygon: Array[PackedVector2Array] = []
 var _rng := RandomNumberGenerator.new()
 var _points := PackedVector2Array()
 var _taken := PackedVector2Array()
@@ -66,7 +68,7 @@ func is_active() -> bool:
 
 ## Arms the tool for `palette_entry` (an ordinary asset entry).
 func start(root: Node3D, palette_entry: Dictionary, tool_options: Dictionary,
-		polygon: PackedVector2Array) -> bool:
+		polygon: Variant) -> bool:
 	cancel()
 	if root == null or Probe.region_terrain(root) == null or not root.has_method("prepare_palette_asset"):
 		last_message = "Open a territory with region terrain to scatter assets."
@@ -75,14 +77,14 @@ func start(root: Node3D, palette_entry: Dictionary, tool_options: Dictionary,
 			not String(palette_entry.get("marker_kind", "")).is_empty():
 		last_message = "Choose an asset in the Map Assets dock first (not a marker or prefab)."
 		return false
-	if polygon.size() < 3:
+	if GEOMETRY.polygons(polygon).is_empty():
 		last_message = ("The land this territory owns is not known here; open the territory " +
 			"from the Territories dock so its ownership is loaded.")
 		return false
 	entry = palette_entry.duplicate(true)
 	options = tool_options.duplicate()
 	_root = root
-	_polygon = polygon
+	_polygon = GEOMETRY.polygons(polygon)
 	last_message = "Press and drag to scatter %s (seed %d)." % [String(entry.get("label", "")),
 		stroke_seed()]
 	return true
@@ -243,7 +245,8 @@ func _stamp(centre: Vector2) -> void:
 ## point in `taken` (and from each other) and inside `polygon`.
 static func stamp_points(rng: RandomNumberGenerator, centre: Vector2, disc_radius: float,
 		density: float, min_spacing: float, taken: PackedVector2Array,
-		polygon: PackedVector2Array, avoid: Dictionary = {}) -> PackedVector2Array:
+		polygon: Variant, avoid: Dictionary = {}) -> PackedVector2Array:
+	var polygons := GEOMETRY.polygons(polygon)
 	var wanted := roundi(density * PI * disc_radius * disc_radius / 100.0)
 	var result := PackedVector2Array()
 	var nearby := PackedVector2Array()
@@ -256,7 +259,7 @@ static func stamp_points(rng: RandomNumberGenerator, centre: Vector2, disc_radiu
 		var angle := rng.randf() * TAU
 		var distance := sqrt(rng.randf()) * disc_radius
 		var candidate := centre + Vector2(cos(angle), sin(angle)) * distance
-		var clear := (polygon.size() < 3 or Geometry2D.is_point_in_polygon(candidate, polygon)) and \
+		var clear := (polygons.is_empty() or GEOMETRY.contains(candidate, polygons)) and \
 			spot_problem(avoid, candidate).is_empty()
 		for other in nearby:
 			if not clear:

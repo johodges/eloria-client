@@ -1,5 +1,7 @@
 @tool
 extends RefCounted
+
+const GEOMETRY := preload("res://addons/map_authoring_workspace/ownership_geometry.gd")
 ## Click-to-draw roads and rivers for authored territories.
 ##
 ## Each click on the terrain adds a point; the draft is draped over the ground
@@ -52,7 +54,7 @@ var _node: MeshInstance3D
 var _mesh: ImmediateMesh
 ## The path being extended (null for a new one) and whether at its first point.
 var _extending: Node3D
-var _polygon := PackedVector2Array()
+var _polygon: Array[PackedVector2Array] = []
 var _extend_at_start := false
 
 
@@ -63,9 +65,9 @@ func is_active() -> bool:
 ## Starts drawing a "road" or "river" on `root`. Returns false with a message
 ## when the scene cannot hold one.
 func start(root: Node3D, path_kind: String,
-		ownership_polygon: PackedVector2Array = PackedVector2Array()) -> bool:
+		ownership_polygon: Variant = PackedVector2Array()) -> bool:
 	cancel()
-	_polygon = ownership_polygon
+	_polygon = GEOMETRY.polygons(ownership_polygon)
 	if root == null or Probe.region_terrain(root) == null:
 		last_message = "Open a territory with region terrain to draw %ss." % path_kind
 		return false
@@ -204,17 +206,11 @@ func ownership_reason(path: Node, end_world: Vector3) -> String:
 	var joins := String((path.get("properties") as Dictionary).get("joins", ""))
 	if not joins.is_empty():
 		return "it joins %s, and shared water topology is the map team's." % joins
-	if _polygon.size() >= 3:
+	if not _polygon.is_empty():
 		var local: Vector3 = _root.global_transform.affine_inverse() * end_world
 		var point := Vector2(local.x, local.z)
-		var nearest := INF
-		for index in _polygon.size():
-			var a := _polygon[index]
-			var b := _polygon[(index + 1) % _polygon.size()]
-			var segment := b - a
-			var t := clampf((point - a).dot(segment) / maxf(segment.length_squared(), 0.000001), 0.0, 1.0)
-			nearest = minf(nearest, point.distance_to(a + segment * t))
-		if nearest <= SEAM_DISTANCE or not Geometry2D.is_point_in_polygon(point, _polygon):
+		var nearest := GEOMETRY.edge_distance(point, _polygon)
+		if nearest <= SEAM_DISTANCE or not GEOMETRY.contains(point, _polygon):
 			return "that end is a seam tail on the territory border, which the map team changes."
 	return ""
 

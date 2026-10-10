@@ -38,7 +38,7 @@ sys.modules[SPEC.name] = package
 SPEC.loader.exec_module(package)
 
 REGION_SOURCES = (
-    "world_authoring/regions/sw_isle/sw_isle.tscn",
+    "world_authoring/regions/example/example.tscn",
     "world_authoring/regions/vale/assets/prototypes/rock.glb",
     "world_authoring/regions/vale/assets/textures/rock.jpg",
     "world_authoring/regions/vale/surfaces/worn-earth-road.tres",

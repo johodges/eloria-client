@@ -2441,8 +2441,7 @@ func _run() -> void:
 		and ground_effects[ground_effects.size() - 1] is MissileFlight3D,
 		"loosing at a place draws an arrow to it")
 	shooter = (app_state_inventory.get("actors") as Dictionary).get(91, {}) as Dictionary
-	_expect((shooter.get("aiming_at_tile", Vector2i.ZERO) as Vector2i)
-			== Vector2i(-1, -1),
+	_expect(int(shooter.get("aiming_at", 0)) == -1 and not shooter.has("aiming_at_tile"),
 		"and the aim at that place ends with it")
 	# A shot from an actor the client has never been told about draws nothing.
 	app_state_inventory.call("_on_packet", 87,
@@ -2882,9 +2881,24 @@ func _run() -> void:
 		"a map change clears the world objects and the harvesting state")
 	# GLTFDocument builds runtime textures with no mip chain, which is what made
 	# distant roofs and ground swim as the camera moved.
-	var loaded_world: Node3D = (main.get_node(
-		"GameView/ViewportContainer/Viewport/WorldRoot/WorldLoader")
-		as Node).get("world_root") as Node3D
+	var fixture_loader := main.get_node(
+		"GameView/ViewportContainer/Viewport/WorldRoot/WorldLoader") as WorldLoader
+	var load_deadline := Time.get_ticks_msec() + 30000
+	while (fixture_loader.world_root == null or fixture_loader.manifest == null
+			or fixture_loader.manifest.asset_id() != "mirrorhold") and Time.get_ticks_msec() < load_deadline:
+		await process_frame
+	_expect(fixture_loader.world_root != null and fixture_loader.manifest != null
+		and fixture_loader.manifest.asset_id() == "mirrorhold", "material fixture loads the actual expected map")
+	var loaded_world: Node3D = fixture_loader.world_root
+	if loaded_world is ContinentChunkStream:
+		# CHANGE_MAP alone has no arrival actor packet. Prime the real published
+		# spawn so the streamed map actually contains geometry before inspecting it.
+		var spawn: Array = fixture_loader.manifest.data["spawnPoints"][0]["position"]
+		var arrival := Vector3(float(spawn[0]), float(spawn[1]), float(spawn[2]))
+		(loaded_world as ContinentChunkStream).prime(arrival)
+		while not (loaded_world as ContinentChunkStream).arrival_resident(arrival) and Time.get_ticks_msec() < load_deadline:
+			await process_frame
+		_expect((loaded_world as ContinentChunkStream).arrival_resident(arrival), "material fixture has actual arrival chunks")
 	var mipped_textures := 0
 	var flat_textures := 0
 	var anisotropic := 0
@@ -3023,6 +3037,7 @@ func _run() -> void:
 	main.call("_load_server_map")
 	_expect(true, "the world-load path survives a dangling actor entry")
 
+	_expect(await ContinentChunkStream.drain_workers(self), "world fixture drains actual chunk import workers before exit")
 	print("world input tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()
 	await process_frame

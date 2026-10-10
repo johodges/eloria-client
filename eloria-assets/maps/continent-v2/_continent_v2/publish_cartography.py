@@ -25,6 +25,8 @@ in registry order:
                   as it turns every other row's
   globalTranslation   the registry row's continent translation
 No row has a continentRect: the isles are not on the twelve-territory continent's picture.
+The separate overview object places all regions, including every ownership component, on a Landfall picture
+composed from their existing minimaps. Its image-local polygons and row identities drive the clickable overview.
 
 --check exits 1 when the file differs from what this tool writes (godot-client/tests/test_continent_v2_cartography.py
 runs it): a picture was redrawn, a frame or polygon moved, cartography.json's lattice changed, or the file was edited
@@ -36,14 +38,24 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import io
+import math
+
+from PIL import Image, ImageChops, ImageDraw
 from pathlib import Path
 import sys
+
+HERE = Path(__file__).resolve().parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
+import ownership
 
 DEFAULT_CHECKOUT = Path(__file__).resolve().parents[4]
 TOOL = "eloria-assets/maps/continent-v2/_continent_v2/publish_cartography.py"
 REGISTRY = "godot-client/data/maps/registry.json"
 CARTOGRAPHY = "godot-client/data/maps/cartography.json"
 OUTPUT = "godot-client/data/maps/cartography-continent-v2.json"
+OVERVIEW = "eloria-assets/maps/continent-v2/_continent_v2/cartography/landfall-map.webp"
 FRAME = "continent-v2"
 SERVED_STATUSES = {"continent-v2-served"}
 SCHEMA = "eloria-cartography-continent-v2-v1"
@@ -93,6 +105,7 @@ def compose(checkout: Path = DEFAULT_CHECKOUT) -> dict:
     continent = read_json(checkout / CARTOGRAPHY)["continent"]
     lattice = {"originMetres": continent["originMetres"], "metresPerPixel": continent["metresPerPixel"]}
     regions, sources = [], {}
+    water_rgb = None
     for key, entry in served(registry):
         manifest_path = tool.resource_to_path(entry["manifest"])
         manifest = read_json(manifest_path)
@@ -103,13 +116,19 @@ def compose(checkout: Path = DEFAULT_CHECKOUT) -> dict:
         image_path = manifest_path.parent / minimap["image"]
         if not image_path.is_file():
             raise CartographyError(f"{key}: {image_path} is missing")
+        colour = minimap.get("cartographyRender", {}).get("waterRGB", [79, 150, 157])
+        if water_rgb is not None and colour != water_rgb:
+            raise CartographyError(f"{key}: overview minimaps use different ocean colours")
+        water_rgb = colour
         translation = [float(v) for v in entry["continentGeography"]["translation"]]
         geography = manifest.get("continentGeography") or {}
         if [float(v) for v in geography.get("translation", [])] != translation:
             raise CartographyError(f"{key}: the package's continent translation is not its registry row's")
         crop = tool.tab_map_crop(minimap, tool.framing(manifest))
         world_min, world_max = tool.crop_world(minimap, crop)
-        polygon = geography["ownershipPolygon"]
+        polygons = ownership.rings(geography)
+        shape = ownership.geometry(polygons)
+        centroid = shape.centroid
         sources[key] = hashlib.sha256(image_path.read_bytes()).hexdigest()
         regions.append({
             "name": str(manifest.get("asset", {}).get("name", key)),
@@ -117,14 +136,76 @@ def compose(checkout: Path = DEFAULT_CHECKOUT) -> dict:
             "frame": FRAME,
             "tabMap": {"texture": tool.path_to_resource(image_path), "region": list(crop),
                        "worldMin": world_min, "worldMax": world_max},
-            "continentPolygon": [tool.atlas_point(point, lattice) for point in polygon],
-            "continentLabel": tool.atlas_point(polygon_centroid(polygon), lattice),
+            "continentPolygon": [tool.atlas_point(point, lattice) for point in polygons[0]],
+            "continentPolygons": [[tool.atlas_point(point, lattice) for point in ring] for ring in polygons],
+            "continentLabel": tool.atlas_point([centroid.x,centroid.y], lattice),
             "globalTranslation": translation,
         })
-    return {"schema": SCHEMA, "generator": TOOL,
+    data = {"schema": SCHEMA, "generator": TOOL,
             "note": ("The continent-v2 territories' tab maps, appended by the client after cartography.json's regions. "
                      "Generated: run the generator after a map picture, a frame or a polygon changes."),
             "frame": FRAME, "lattice": lattice, "sources": sources, "regions": regions}
+    data["overview"] = overview_layout(data)
+    data["overview"]["waterRGB"] = water_rgb
+    data["overview"]["sha256"] = hashlib.sha256(overview_bytes(checkout, data)).hexdigest()
+    return data
+
+
+def overview_layout(data: dict) -> dict:
+    """A separate north-up group atlas; legacy pixel coordinates stay unchanged."""
+    scale = float(data["lattice"]["metresPerPixel"])
+    origin = data["lattice"]["originMetres"]
+    points = [p for row in data["regions"] for ring in row["continentPolygons"] for p in ring]
+    if not points:
+        raise CartographyError("the Landfall overview has no served regions")
+    padding = 32  # 64m at the existing two-metre lattice.
+    low = [math.floor(min(p[i] for p in points)) - padding for i in (0, 1)]
+    high = [math.ceil(max(p[i] for p in points)) + padding for i in (0, 1)]
+    regions = []
+    for row in data["regions"]:
+        rings = [[[round(p[i] - low[i], 3) for i in (0, 1)] for p in ring]
+                 for ring in row["continentPolygons"]]
+        flat = [p for ring in rings for p in ring]
+        minimum = [min(p[i] for p in flat) for i in (0, 1)]
+        maximum = [max(p[i] for p in flat) for i in (0, 1)]
+        regions.append({"serverMap": row["serverMap"], "name": row["name"],
+                        "rect": [*minimum, *[maximum[i] - minimum[i] for i in (0, 1)]],
+                        "polygons": rings,
+                        "label": [round(row["continentLabel"][i] - low[i], 3) for i in (0, 1)]})
+    return {"name": "Landfall", "frame": FRAME,
+            "texture": "res://../" + OVERVIEW,
+            "imageSize": [high[i] - low[i] for i in (0, 1)],
+            "originMetres": [origin[i] + low[i] * scale for i in (0, 1)],
+            "metresPerPixel": scale, "regions": regions}
+
+
+def overview_bytes(checkout: Path, data: dict) -> bytes:
+    """Compose existing minimap crops, masked by every component; no GPU render."""
+    tool = legacy_tool(checkout)
+    overview = data["overview"]
+    scale = overview["metresPerPixel"]
+    origin = overview["originMetres"]
+    canvas = Image.new("RGB", tuple(overview["imageSize"]), tuple(overview["waterRGB"]))
+    for row, region in zip(data["regions"], overview["regions"]):
+        tab = row["tabMap"]
+        translation = row["globalTranslation"]
+        low = [tab["worldMin"][i] + translation[i * 2] for i in (0, 1)]
+        high = [tab["worldMax"][i] + translation[i * 2] for i in (0, 1)]
+        rect_low = [round((low[i] - origin[i]) / scale) for i in (0, 1)]
+        rect_high = [round((high[i] - origin[i]) / scale) for i in (0, 1)]
+        with Image.open(tool.resource_to_path(tab["texture"])) as image:
+            x, y, w, h = tab["region"]
+            piece = image.convert("RGBA").crop((x, y, x + w, y + h))
+            piece = piece.resize(tuple(rect_high[i] - rect_low[i] for i in (0, 1)), Image.Resampling.LANCZOS)
+        mask = Image.new("L", piece.size)
+        pen = ImageDraw.Draw(mask)
+        for ring in region["polygons"]:
+            pen.polygon([(p[0] - rect_low[0], p[1] - rect_low[1]) for p in ring], fill=255)
+        piece.putalpha(ImageChops.multiply(piece.getchannel("A"), mask))
+        canvas.paste(piece, tuple(rect_low), piece)
+    output = io.BytesIO()
+    canvas.save(output, "WEBP", lossless=True, method=6)
+    return output.getvalue()
 
 
 def encode(data: dict) -> bytes:
@@ -140,8 +221,12 @@ def check(checkout: Path = DEFAULT_CHECKOUT) -> list[str]:
     if not path.is_file():
         return [f"{OUTPUT} is missing; run {TOOL}"]
     current = read_json(path)
-    return [f"{OUTPUT} '{key}' is stale; run {TOOL}" for key in sorted(set(current) | set(wanted))
+    problems = [f"{OUTPUT} '{key}' is stale; run {TOOL}" for key in sorted(set(current) | set(wanted))
             if current.get(key) != wanted.get(key)]
+    image_path = Path(checkout) / OVERVIEW
+    if not image_path.is_file() or hashlib.sha256(image_path.read_bytes()).hexdigest() != wanted["overview"]["sha256"]:
+        problems.append(f"{OVERVIEW} is missing or stale; run {TOOL}")
+    return problems
 
 
 def main(argv=None) -> int:
@@ -159,6 +244,9 @@ def main(argv=None) -> int:
     except CartographyError as error:
         print(f"refused: {error}")
         return 1
+    image_path = args.checkout / OVERVIEW
+    image_path.parent.mkdir(parents=True, exist_ok=True)
+    image_path.write_bytes(overview_bytes(args.checkout, data))
     (args.checkout / OUTPUT).write_bytes(encode(data))
     for region in data["regions"]:
         print(f"  {region['serverMap']:14s} {region['tabMap']['region']} of {Path(region['tabMap']['texture']).name}")

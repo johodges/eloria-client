@@ -1,5 +1,7 @@
 @tool
 extends RefCounted
+
+const GEOMETRY := preload("res://addons/map_authoring_workspace/ownership_geometry.gd")
 ## Drag-to-size tools that create ordinary authored controls, one undo step each:
 ## - "ground": a ground region (Ground/Regions/<id>, the same control the
 ##   territories already use) with a chosen surface, shape, feather (blend
@@ -39,7 +41,7 @@ var kind := ""
 var options := {}
 var last_message := ""
 var _root: Node3D
-var _polygon := PackedVector2Array()
+var _polygon: Array[PackedVector2Array] = []
 var _protection: Dictionary = {}
 var _anchor := Vector3.INF
 var _hover: Variant = null
@@ -58,12 +60,12 @@ func is_active() -> bool:
 ## Starts a "ground" or "plateau" tool. `polygon` is the owned land in
 ## territory-local X/Z; `protection` is the sculpt tool's protection_fields().
 func start(root: Node3D, tool_kind: String, tool_options: Dictionary,
-		polygon: PackedVector2Array, protection: Dictionary) -> bool:
+		polygon: Variant, protection: Dictionary) -> bool:
 	cancel()
 	if root == null or Probe.region_terrain(root) == null:
 		last_message = "Open a territory with region terrain first."
 		return false
-	if tool_kind == "ground" and polygon.size() < 3:
+	if tool_kind == "ground" and GEOMETRY.polygons(polygon).is_empty():
 		last_message = ("The land this territory owns is not known here; open the territory " +
 			"from the Territories dock so its ownership is loaded.")
 		return false
@@ -74,7 +76,7 @@ func start(root: Node3D, tool_kind: String, tool_options: Dictionary,
 	kind = tool_kind
 	options = tool_options.duplicate()
 	_root = root
-	_polygon = polygon
+	_polygon = GEOMETRY.polygons(polygon)
 	_protection = protection
 	_yaw = 0.0
 	_stroke.clear()
@@ -355,7 +357,7 @@ func ground_error(centre: Vector3, size: Vector2, pending := 0) -> String:
 	var reach := Vector2(size.x * 0.5, size.y * 0.5) + Vector2.ONE * float(
 		options.get("blend_width", 3.0))
 	for point in outline(Vector2(centre.x, centre.z), reach, int(options.get("shape", 0)), 32, _yaw):
-		if not Geometry2D.is_point_in_polygon(point, _polygon):
+		if not GEOMETRY.contains(point, _polygon):
 			return "The region (with its feather) must stay inside the land this territory owns."
 	return ""
 

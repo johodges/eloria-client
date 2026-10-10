@@ -1,0 +1,116 @@
+{
+ "region": "reedfall",
+ "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
+ "snapshot": {
+  "sha256": "e23aefb742db23b325b0b9a976a4d6d19d5d4d107873985e72a9e0e41527cf21",
+  "sceneSha256": "c06843094ea1be8d43dd818a975fd9ee0cddf798c050ae8b4862db30d55eb45f",
+  "recipe": "region_bake_cli.gd --scene godot-client/world_authoring/regions/reedfall/reedfall.tscn --output <bake>/continent-authoring.json"
+ },
+ "collision": {
+  "sidecarSha256": "559243598d890dff734e285ac1a5a0c32ca0656901f01d577f674c18b4b6f7a3",
+  "collisionSha256": "c72b3d349df2d83810d09c7f3a8af4e1196f0c93aab490540e4e54e67f826081",
+  "servedGridSha256": "900fe1401d5cb7d95a44a2aa9ba327107be249a7d600f99fe28b6b5299558550",
+  "walkableCells": 475895,
+  "openTiles": 116745,
+  "sourceSnapshotSha256": "e23aefb742db23b325b0b9a976a4d6d19d5d4d107873985e72a9e0e41527cf21"
+ },
+ "chunks": 38,
+ "kitPlacementsOutsideWindow": 0,
+ "lightingMarkers": 0,
+ "chunkGlbBytes": {
+  "total": 84394736,
+  "max": 5404624,
+  "over100MiB": []
+ },
+ "estimatedResidentMiB": {
+  "06_10": 21.5,
+  "06_11": 67.0,
+  "06_12": 27.2,
+  "07_07": 54.6,
+  "07_08": 15.0,
+  "07_09": 80.0,
+  "07_10": 118.5,
+  "07_11": 129.7,
+  "07_12": 91.1,
+  "08_07": 142.5,
+  "08_08": 198.6,
+  "08_09": 69.9,
+  "08_10": 84.3,
+  "08_11": 47.4,
+  "08_12": 60.6,
+  "09_07": 128.6,
+  "09_08": 211.8,
+  "09_09": 74.6,
+  "09_10": 150.5,
+  "09_11": 97.9,
+  "09_12": 48.6,
+  "10_07": 76.4,
+  "10_08": 204.7,
+  "10_09": 237.1,
+  "10_10": 150.4,
+  "10_11": 166.9,
+  "10_12": 18.8,
+  "11_07": 57.5,
+  "11_08": 248.5,
+  "11_09": 179.4,
+  "11_10": 126.9,
+  "11_11": 65.1,
+  "12_07": 10.8,
+  "12_08": 132.5,
+  "12_09": 11.5,
+  "12_10": 11.0,
+  "13_08": 124.4,
+  "13_09": 10.9
+ },
+ "timings": {
+  "snapshot_s": 0.6,
+  "terrain_s": 0.1,
+  "water_s": 0.0,
+  "overlays_s": 0.6,
+  "bridges_s": 0.0,
+  "surface_glb_bytes": 83531556,
+  "walk_kit_nodes": 8,
+  "library_s": 0.3,
+  "chunks_s": 1.4
+ },
+ "seconds": 9.8,
+ "imagePolicy": {
+  "surface": {
+   "imagesResampled": 7,
+   "resampledImages": [
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
+   ]
+  },
+  "library": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  }
+ },
+ "generatedArrival": {
+  "path": "eloria-assets/maps/continent-v2/reedfall/content/arrival.json",
+  "sha256": "85b6504bf2a5ce226e13fe7934061655fef608e08b09ef9384b06c33f6241294"
+ },
+ "geometryResidentFactor": 1.0,
+ "chunkBudget": {
+  "algorithm": "whole-metre-budget-phase-v1",
+  "phaseMetres": [
+   37,
+   62
+  ],
+  "originMetres": [
+   -986,
+   -961
+  ],
+  "maximumPlacements": 57,
+  "maximumTriangles": 165097,
+  "placementLimit": 240,
+  "triangleLimit": 450000,
+  "cellMetres": 96
+ }
+}

@@ -1,0 +1,56 @@
+{
+ "schema": "eloria-continent-v2-generated-arrival-v1",
+ "map": "reedfall",
+ "id": "generated-arrival-reedfall",
+ "default": true,
+ "generated": true,
+ "position": [
+  -33.5,
+  51.8,
+  -7.5
+ ],
+ "serverTile": [
+  313,
+  274
+ ],
+ "facing": [
+  0.0,
+  0.0,
+  -1.0
+ ],
+ "frame": {
+  "origin": [
+   347,
+   267
+  ],
+  "cells": [
+   696,
+   696
+  ],
+  "translation": [
+   1606.0,
+   0.0,
+   7404.0
+  ]
+ },
+ "provenance": {
+  "algorithm": "nearest-owned-safe-baseline-tile-v1",
+  "clientBaseCommit": "1d23effa0bfb1d7ad9671502fa5c61400f3d165e",
+  "sectionsSpecSha256": "88b9c453716f092dfb3b7765650b58c5fb1596cefad2e205a3b86d37becf07f5",
+  "frameSha256": "c1a5f00c5d799c1aad96482aa84112d4dd09f411b5a21cafc39358cb9f5f46e4",
+  "sourceMap": "sw_isle",
+  "sourceTile": [
+   1177,
+   866
+  ],
+  "sourceWorldSha256": "8b19a2c15567b5bfcfae21ef80e7428b9f45fa5946997159c41c28bff0e0b507",
+  "sourceCollisionSha256": "8e610f0ab472e8cab16885de39172e1faf8db9121d3f363b9c4f54e352916397",
+  "sourceServedGridSha256": "17cc0fccb7d4b05199e6facc4ff8d55ccbd04b60e7aa0efa3cdb2038a8e61f54",
+  "representativeContinent": [
+   1569.5816326530612,
+   7396.0
+  ],
+  "tieRule": "squared-distance, continent-x, continent-z, pinned-source-catalog-order",
+  "safeOwnedReachedCandidates": 95981
+ }
+}

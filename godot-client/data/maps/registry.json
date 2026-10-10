@@ -2146,132 +2146,18 @@
       },
       "status": "private-followup-tutorial"
     },
-    "sw_isle": {
-      "manifest": "res://../eloria-assets/maps/continent-v2/sw_isle/client/world.json",
-      "label": "Landfall",
+    "boarsend": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/boarsend/client/world.json",
+      "label": "Boarsend",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          1023,
-          993
+          682,
+          429
         ],
         "serverCells": [
-          2046,
-          2046
-        ],
-        "origin": [
-          0,
-          0,
-          0
-        ],
-        "walkingHeight": 121.49400329589844,
-        "invertServerY": true,
-        "serverStorageVersion": 1,
-        "serverTileMin": [
-          0,
-          0
-        ],
-        "addressableWorldBounds": {
-          "min": [
-            -1023,
-            -1053
-          ],
-          "max": [
-            1023,
-            993
-          ]
-        }
-      },
-      "status": "continent-v2-served",
-      "landscapeTransitions": true,
-      "continentGeography": {
-        "translation": [
-          1418.0,
-          0.0,
-          7270.0
-        ],
-        "frame": "continent-v2",
-        "geometryMode": "continent-chunks-v1",
-        "serverCells": [
-          2046,
-          2046
-        ],
-        "serverStorageVersion": 1,
-        "serverTileMin": [
-          0,
-          0
-        ]
-      }
-    },
-    "tollholms": {
-      "manifest": "res://../eloria-assets/maps/continent-v2/tollholms/client/world.json",
-      "label": "The Tollholms",
-      "coordinateTransform": {
-        "metresPerTile": 1.0,
-        "serverOrigin": [
-          367,
-          949
-        ],
-        "serverCells": [
-          1902,
-          1902
-        ],
-        "origin": [
-          0,
-          0,
-          0
-        ],
-        "walkingHeight": 54.249000549316406,
-        "invertServerY": true,
-        "serverStorageVersion": 1,
-        "serverTileMin": [
-          0,
-          0
-        ],
-        "addressableWorldBounds": {
-          "min": [
-            -367,
-            -953
-          ],
-          "max": [
-            1535,
-            949
-          ]
-        }
-      },
-      "status": "continent-v2-served",
-      "landscapeTransitions": true,
-      "continentGeography": {
-        "translation": [
-          2800.0,
-          0.0,
-          7398.0
-        ],
-        "frame": "continent-v2",
-        "geometryMode": "continent-chunks-v1",
-        "serverCells": [
-          1902,
-          1902
-        ],
-        "serverStorageVersion": 1,
-        "serverTileMin": [
-          0,
-          0
-        ]
-      }
-    },
-    "gull_skerries": {
-      "manifest": "res://../eloria-assets/maps/continent-v2/gull_skerries/client/world.json",
-      "label": "The Gull Skerries",
-      "coordinateTransform": {
-        "metresPerTile": 1.0,
-        "serverOrigin": [
-          571,
-          779
-        ],
-        "serverCells": [
-          1560,
-          1560
+          1368,
+          1368
         ],
         "origin": [
           0,
@@ -2287,28 +2173,2461 @@
         ],
         "addressableWorldBounds": {
           "min": [
-            -571,
-            -781
+            -682,
+            -939
           ],
           "max": [
-            989,
-            779
+            686,
+            429
           ]
         }
       },
       "status": "continent-v2-served",
       "landscapeTransitions": true,
       "continentGeography": {
+        "revision": "continent-v2-draft-1",
         "translation": [
-          896.0,
+          1007.0,
           0.0,
-          7876.0
+          8226.0
         ],
-        "frame": "continent-v2",
+        "ownershipPolygon": [
+          [
+            899.0,
+            8271.0
+          ],
+          [
+            329.0,
+            8321.0
+          ],
+          [
+            329.0,
+            8651.0
+          ],
+          [
+            1461.0,
+            8651.0
+          ],
+          [
+            1461.0,
+            8259.0
+          ],
+          [
+            1685.0,
+            8259.0
+          ],
+          [
+            1675.0,
+            7941.0
+          ],
+          [
+            1299.0,
+            7921.0
+          ],
+          [
+            1129.0,
+            7911.0
+          ],
+          [
+            1039.0,
+            7801.0
+          ],
+          [
+            899.0,
+            7821.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              899.0,
+              8271.0
+            ],
+            [
+              329.0,
+              8321.0
+            ],
+            [
+              329.0,
+              8651.0
+            ],
+            [
+              1461.0,
+              8651.0
+            ],
+            [
+              1461.0,
+              8259.0
+            ],
+            [
+              1685.0,
+              8259.0
+            ],
+            [
+              1675.0,
+              7941.0
+            ],
+            [
+              1299.0,
+              7921.0
+            ],
+            [
+              1129.0,
+              7911.0
+            ],
+            [
+              1039.0,
+              7801.0
+            ],
+            [
+              899.0,
+              7821.0
+            ]
+          ]
+        ],
         "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
         "serverCells": [
-          1560,
-          1560
+          1368,
+          1368
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "brambleshaw": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/brambleshaw/client/world.json",
+      "label": "Brambleshaw",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          277,
+          177
+        ],
+        "serverCells": [
+          558,
+          558
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 84.75,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -277,
+            -381
+          ],
+          "max": [
+            281,
+            177
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          1402.0,
+          0.0,
+          7768.0
+        ],
+        "ownershipPolygon": [
+          [
+            1129.0,
+            7911.0
+          ],
+          [
+            1299.0,
+            7921.0
+          ],
+          [
+            1675.0,
+            7941.0
+          ],
+          [
+            1629.0,
+            7701.0
+          ],
+          [
+            1575.0,
+            7655.0
+          ],
+          [
+            1499.0,
+            7667.0
+          ],
+          [
+            1379.0,
+            7651.0
+          ],
+          [
+            1341.0,
+            7621.0
+          ],
+          [
+            1263.0,
+            7601.0
+          ],
+          [
+            1159.0,
+            7597.0
+          ],
+          [
+            1139.0,
+            7595.0
+          ],
+          [
+            1139.0,
+            7721.0
+          ],
+          [
+            1129.0,
+            7821.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              1129.0,
+              7911.0
+            ],
+            [
+              1299.0,
+              7921.0
+            ],
+            [
+              1675.0,
+              7941.0
+            ],
+            [
+              1629.0,
+              7701.0
+            ],
+            [
+              1575.0,
+              7655.0
+            ],
+            [
+              1499.0,
+              7667.0
+            ],
+            [
+              1379.0,
+              7651.0
+            ],
+            [
+              1341.0,
+              7621.0
+            ],
+            [
+              1263.0,
+              7601.0
+            ],
+            [
+              1159.0,
+              7597.0
+            ],
+            [
+              1139.0,
+              7595.0
+            ],
+            [
+              1139.0,
+              7721.0
+            ],
+            [
+              1129.0,
+              7821.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          558,
+          558
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "greenlight": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/greenlight/client/world.json",
+      "label": "Greenlight",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          435,
+          448
+        ],
+        "serverCells": [
+          900,
+          900
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": -0.3,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -435,
+            -452
+          ],
+          "max": [
+            465,
+            448
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          2006.0,
+          0.0,
+          7815.0
+        ],
+        "ownershipPolygon": [
+          [
+            1675.0,
+            7941.0
+          ],
+          [
+            1685.0,
+            8259.0
+          ],
+          [
+            2437.0,
+            8259.0
+          ],
+          [
+            2437.0,
+            7671.0
+          ],
+          [
+            1899.0,
+            7671.0
+          ],
+          [
+            1849.0,
+            7371.0
+          ],
+          [
+            1699.0,
+            7581.0
+          ],
+          [
+            1575.0,
+            7601.0
+          ],
+          [
+            1575.0,
+            7655.0
+          ],
+          [
+            1629.0,
+            7701.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              1675.0,
+              7941.0
+            ],
+            [
+              1685.0,
+              8259.0
+            ],
+            [
+              2437.0,
+              8259.0
+            ],
+            [
+              2437.0,
+              7671.0
+            ],
+            [
+              1899.0,
+              7671.0
+            ],
+            [
+              1849.0,
+              7371.0
+            ],
+            [
+              1699.0,
+              7581.0
+            ],
+            [
+              1575.0,
+              7601.0
+            ],
+            [
+              1575.0,
+              7655.0
+            ],
+            [
+              1629.0,
+              7701.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          900,
+          900
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "hearthcroft": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/hearthcroft/client/world.json",
+      "label": "Hearthcroft",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          425,
+          269
+        ],
+        "serverCells": [
+          852,
+          852
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 98.1,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -425,
+            -583
+          ],
+          "max": [
+            427,
+            269
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          1900.0,
+          0.0,
+          6956.0
+        ],
+        "ownershipPolygon": [
+          [
+            1939.0,
+            6849.0
+          ],
+          [
+            1919.0,
+            6781.0
+          ],
+          [
+            1639.0,
+            6821.0
+          ],
+          [
+            1479.0,
+            6821.0
+          ],
+          [
+            1489.0,
+            6911.0
+          ],
+          [
+            1519.0,
+            6961.0
+          ],
+          [
+            1599.0,
+            7041.0
+          ],
+          [
+            1609.0,
+            7151.0
+          ],
+          [
+            1689.0,
+            7151.0
+          ],
+          [
+            1729.0,
+            7201.0
+          ],
+          [
+            1949.0,
+            7221.0
+          ],
+          [
+            1959.0,
+            6921.0
+          ],
+          [
+            1959.0,
+            6919.0
+          ],
+          [
+            2259.0,
+            6789.0
+          ],
+          [
+            2321.0,
+            6761.0
+          ],
+          [
+            2321.0,
+            6691.0
+          ],
+          [
+            2259.0,
+            6717.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              1939.0,
+              6849.0
+            ],
+            [
+              1919.0,
+              6781.0
+            ],
+            [
+              1639.0,
+              6821.0
+            ],
+            [
+              1479.0,
+              6821.0
+            ],
+            [
+              1489.0,
+              6911.0
+            ],
+            [
+              1519.0,
+              6961.0
+            ],
+            [
+              1599.0,
+              7041.0
+            ],
+            [
+              1609.0,
+              7151.0
+            ],
+            [
+              1689.0,
+              7151.0
+            ],
+            [
+              1729.0,
+              7201.0
+            ],
+            [
+              1949.0,
+              7221.0
+            ],
+            [
+              1959.0,
+              6921.0
+            ],
+            [
+              1959.0,
+              6919.0
+            ],
+            [
+              2259.0,
+              6789.0
+            ],
+            [
+              2321.0,
+              6761.0
+            ],
+            [
+              2321.0,
+              6691.0
+            ],
+            [
+              2259.0,
+              6717.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          852,
+          852
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "landfall": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/landfall/client/world.json",
+      "label": "Landfall",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          282,
+          248
+        ],
+        "serverCells": [
+          564,
+          564
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 121.49400329589844,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -282,
+            -316
+          ],
+          "max": [
+            282,
+            248
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          1127.0,
+          0.0,
+          7357.0
+        ],
+        "ownershipPolygon": [
+          [
+            899.0,
+            7541.0
+          ],
+          [
+            999.0,
+            7591.0
+          ],
+          [
+            1139.0,
+            7595.0
+          ],
+          [
+            1159.0,
+            7597.0
+          ],
+          [
+            1263.0,
+            7601.0
+          ],
+          [
+            1307.0,
+            7421.0
+          ],
+          [
+            1311.0,
+            7323.0
+          ],
+          [
+            1405.0,
+            7271.0
+          ],
+          [
+            1365.0,
+            7171.0
+          ],
+          [
+            1299.0,
+            7113.0
+          ],
+          [
+            959.0,
+            7113.0
+          ],
+          [
+            869.0,
+            7171.0
+          ],
+          [
+            849.0,
+            7301.0
+          ],
+          [
+            855.0,
+            7421.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              899.0,
+              7541.0
+            ],
+            [
+              999.0,
+              7591.0
+            ],
+            [
+              1139.0,
+              7595.0
+            ],
+            [
+              1159.0,
+              7597.0
+            ],
+            [
+              1263.0,
+              7601.0
+            ],
+            [
+              1307.0,
+              7421.0
+            ],
+            [
+              1311.0,
+              7323.0
+            ],
+            [
+              1405.0,
+              7271.0
+            ],
+            [
+              1365.0,
+              7171.0
+            ],
+            [
+              1299.0,
+              7113.0
+            ],
+            [
+              959.0,
+              7113.0
+            ],
+            [
+              869.0,
+              7171.0
+            ],
+            [
+              849.0,
+              7301.0
+            ],
+            [
+              855.0,
+              7421.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          564,
+          564
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pinebrow": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/pinebrow/client/world.json",
+      "label": "Pinebrow",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          409,
+          394
+        ],
+        "serverCells": [
+          822,
+          822
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 157.6,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -409,
+            -428
+          ],
+          "max": [
+            413,
+            394
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          734.0,
+          0.0,
+          7931.0
+        ],
+        "ownershipPolygon": [
+          [
+            899.0,
+            7821.0
+          ],
+          [
+            1039.0,
+            7801.0
+          ],
+          [
+            1129.0,
+            7911.0
+          ],
+          [
+            1129.0,
+            7821.0
+          ],
+          [
+            1139.0,
+            7721.0
+          ],
+          [
+            1139.0,
+            7595.0
+          ],
+          [
+            999.0,
+            7591.0
+          ],
+          [
+            899.0,
+            7541.0
+          ],
+          [
+            819.0,
+            7561.0
+          ],
+          [
+            329.0,
+            7551.0
+          ],
+          [
+            329.0,
+            8321.0
+          ],
+          [
+            899.0,
+            8271.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              899.0,
+              7821.0
+            ],
+            [
+              1039.0,
+              7801.0
+            ],
+            [
+              1129.0,
+              7911.0
+            ],
+            [
+              1129.0,
+              7821.0
+            ],
+            [
+              1139.0,
+              7721.0
+            ],
+            [
+              1139.0,
+              7595.0
+            ],
+            [
+              999.0,
+              7591.0
+            ],
+            [
+              899.0,
+              7541.0
+            ],
+            [
+              819.0,
+              7561.0
+            ],
+            [
+              329.0,
+              7551.0
+            ],
+            [
+              329.0,
+              8321.0
+            ],
+            [
+              899.0,
+              8271.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          822,
+          822
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "ravenhead": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/ravenhead/client/world.json",
+      "label": "Ravenhead",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          660,
+          579
+        ],
+        "serverCells": [
+          1320,
+          1320
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 2.5,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -660,
+            -741
+          ],
+          "max": [
+            660,
+            579
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          2505.0,
+          0.0,
+          7096.0
+        ],
+        "ownershipPolygon": [
+          [
+            1939.0,
+            6849.0
+          ],
+          [
+            2259.0,
+            6717.0
+          ],
+          [
+            2259.0,
+            6521.0
+          ],
+          [
+            1919.0,
+            6781.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              1939.0,
+              6849.0
+            ],
+            [
+              2259.0,
+              6717.0
+            ],
+            [
+              2259.0,
+              6521.0
+            ],
+            [
+              1919.0,
+              6781.0
+            ]
+          ],
+          [
+            [
+              2719.0,
+              7671.0
+            ],
+            [
+              2729.0,
+              7671.0
+            ],
+            [
+              3161.0,
+              7671.0
+            ],
+            [
+              3161.0,
+              7171.0
+            ],
+            [
+              2729.0,
+              7171.0
+            ],
+            [
+              2479.0,
+              7171.0
+            ],
+            [
+              2409.0,
+              7101.0
+            ],
+            [
+              2289.0,
+              6981.0
+            ],
+            [
+              2259.0,
+              6921.0
+            ],
+            [
+              2259.0,
+              6789.0
+            ],
+            [
+              1959.0,
+              6919.0
+            ],
+            [
+              1959.0,
+              6921.0
+            ],
+            [
+              1949.0,
+              7221.0
+            ],
+            [
+              1849.0,
+              7371.0
+            ],
+            [
+              1899.0,
+              7671.0
+            ],
+            [
+              2437.0,
+              7671.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          1320,
+          1320
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "reedfall": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/reedfall/client/world.json",
+      "label": "Reedfall",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          347,
+          267
+        ],
+        "serverCells": [
+          696,
+          696
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 51.8,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -347,
+            -429
+          ],
+          "max": [
+            349,
+            267
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          1606.0,
+          0.0,
+          7404.0
+        ],
+        "ownershipPolygon": [
+          [
+            1307.0,
+            7421.0
+          ],
+          [
+            1263.0,
+            7601.0
+          ],
+          [
+            1341.0,
+            7621.0
+          ],
+          [
+            1379.0,
+            7651.0
+          ],
+          [
+            1499.0,
+            7667.0
+          ],
+          [
+            1575.0,
+            7655.0
+          ],
+          [
+            1575.0,
+            7601.0
+          ],
+          [
+            1699.0,
+            7581.0
+          ],
+          [
+            1849.0,
+            7371.0
+          ],
+          [
+            1949.0,
+            7221.0
+          ],
+          [
+            1729.0,
+            7201.0
+          ],
+          [
+            1689.0,
+            7151.0
+          ],
+          [
+            1609.0,
+            7151.0
+          ],
+          [
+            1479.0,
+            7141.0
+          ],
+          [
+            1365.0,
+            7171.0
+          ],
+          [
+            1405.0,
+            7271.0
+          ],
+          [
+            1311.0,
+            7323.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              1307.0,
+              7421.0
+            ],
+            [
+              1263.0,
+              7601.0
+            ],
+            [
+              1341.0,
+              7621.0
+            ],
+            [
+              1379.0,
+              7651.0
+            ],
+            [
+              1499.0,
+              7667.0
+            ],
+            [
+              1575.0,
+              7655.0
+            ],
+            [
+              1575.0,
+              7601.0
+            ],
+            [
+              1699.0,
+              7581.0
+            ],
+            [
+              1849.0,
+              7371.0
+            ],
+            [
+              1949.0,
+              7221.0
+            ],
+            [
+              1729.0,
+              7201.0
+            ],
+            [
+              1689.0,
+              7151.0
+            ],
+            [
+              1609.0,
+              7151.0
+            ],
+            [
+              1479.0,
+              7141.0
+            ],
+            [
+              1365.0,
+              7171.0
+            ],
+            [
+              1405.0,
+              7271.0
+            ],
+            [
+              1311.0,
+              7323.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          696,
+          696
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "ringholm": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/ringholm/client/world.json",
+      "label": "Ringholm",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          455,
+          334
+        ],
+        "serverCells": [
+          912,
+          912
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 70.65,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -455,
+            -578
+          ],
+          "max": [
+            457,
+            334
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          2710.0,
+          0.0,
+          6841.0
+        ],
+        "ownershipPolygon": [
+          [
+            2479.0,
+            7171.0
+          ],
+          [
+            2729.0,
+            7171.0
+          ],
+          [
+            3161.0,
+            7171.0
+          ],
+          [
+            3161.0,
+            6959.0
+          ],
+          [
+            3037.0,
+            6863.0
+          ],
+          [
+            2957.0,
+            6797.0
+          ],
+          [
+            2877.0,
+            6713.0
+          ],
+          [
+            2797.0,
+            6627.0
+          ],
+          [
+            2717.0,
+            6547.0
+          ],
+          [
+            2637.0,
+            6511.0
+          ],
+          [
+            2659.0,
+            6521.0
+          ],
+          [
+            2259.0,
+            6521.0
+          ],
+          [
+            2259.0,
+            6717.0
+          ],
+          [
+            2321.0,
+            6691.0
+          ],
+          [
+            2321.0,
+            6761.0
+          ],
+          [
+            2259.0,
+            6789.0
+          ],
+          [
+            2259.0,
+            6921.0
+          ],
+          [
+            2289.0,
+            6981.0
+          ],
+          [
+            2409.0,
+            7101.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              2479.0,
+              7171.0
+            ],
+            [
+              2729.0,
+              7171.0
+            ],
+            [
+              3161.0,
+              7171.0
+            ],
+            [
+              3161.0,
+              6959.0
+            ],
+            [
+              3037.0,
+              6863.0
+            ],
+            [
+              2957.0,
+              6797.0
+            ],
+            [
+              2877.0,
+              6713.0
+            ],
+            [
+              2797.0,
+              6627.0
+            ],
+            [
+              2717.0,
+              6547.0
+            ],
+            [
+              2637.0,
+              6511.0
+            ],
+            [
+              2659.0,
+              6521.0
+            ],
+            [
+              2259.0,
+              6521.0
+            ],
+            [
+              2259.0,
+              6717.0
+            ],
+            [
+              2321.0,
+              6691.0
+            ],
+            [
+              2321.0,
+              6761.0
+            ],
+            [
+              2259.0,
+              6789.0
+            ],
+            [
+              2259.0,
+              6921.0
+            ],
+            [
+              2289.0,
+              6981.0
+            ],
+            [
+              2409.0,
+              7101.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          912,
+          912
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "saltsound": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/saltsound/client/world.json",
+      "label": "Saltsound",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          604,
+          304
+        ],
+        "serverCells": [
+          1212,
+          1212
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 0.2,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -604,
+            -908
+          ],
+          "max": [
+            608,
+            304
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          2059.0,
+          0.0,
+          6521.0
+        ],
+        "ownershipPolygon": [
+          [
+            1919.0,
+            6781.0
+          ],
+          [
+            2259.0,
+            6521.0
+          ],
+          [
+            2659.0,
+            6521.0
+          ],
+          [
+            2637.0,
+            6511.0
+          ],
+          [
+            2517.0,
+            6499.0
+          ],
+          [
+            2437.0,
+            6453.0
+          ],
+          [
+            2437.0,
+            6221.0
+          ],
+          [
+            1459.0,
+            6221.0
+          ],
+          [
+            1459.0,
+            6761.0
+          ],
+          [
+            1459.0,
+            6811.0
+          ],
+          [
+            1479.0,
+            6821.0
+          ],
+          [
+            1639.0,
+            6821.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              1919.0,
+              6781.0
+            ],
+            [
+              2259.0,
+              6521.0
+            ],
+            [
+              2659.0,
+              6521.0
+            ],
+            [
+              2637.0,
+              6511.0
+            ],
+            [
+              2517.0,
+              6499.0
+            ],
+            [
+              2437.0,
+              6453.0
+            ],
+            [
+              2437.0,
+              6221.0
+            ],
+            [
+              1459.0,
+              6221.0
+            ],
+            [
+              1459.0,
+              6761.0
+            ],
+            [
+              1459.0,
+              6811.0
+            ],
+            [
+              1479.0,
+              6821.0
+            ],
+            [
+              1639.0,
+              6821.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          1212,
+          1212
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "spindle_hill": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/spindle_hill/client/world.json",
+      "label": "Spindle Hill",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          150,
+          340
+        ],
+        "serverCells": [
+          684,
+          684
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 90.8,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -150,
+            -344
+          ],
+          "max": [
+            534,
+            340
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          2583.0,
+          0.0,
+          8007.0
+        ],
+        "ownershipPolygon": [
+          [
+            2699.0,
+            8051.0
+          ],
+          [
+            2719.0,
+            7921.0
+          ],
+          [
+            2719.0,
+            7671.0
+          ],
+          [
+            2437.0,
+            7671.0
+          ],
+          [
+            2437.0,
+            8259.0
+          ],
+          [
+            2437.0,
+            8343.0
+          ],
+          [
+            2723.0,
+            8343.0
+          ],
+          [
+            2729.0,
+            8181.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              2699.0,
+              8051.0
+            ],
+            [
+              2719.0,
+              7921.0
+            ],
+            [
+              2719.0,
+              7671.0
+            ],
+            [
+              2437.0,
+              7671.0
+            ],
+            [
+              2437.0,
+              8259.0
+            ],
+            [
+              2437.0,
+              8343.0
+            ],
+            [
+              2723.0,
+              8343.0
+            ],
+            [
+              2729.0,
+              8181.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          684,
+          684
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "stagheath": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/stagheath/client/world.json",
+      "label": "Stagheath",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          534,
+          300
+        ],
+        "serverCells": [
+          1068,
+          1068
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 66.65,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -534,
+            -768
+          ],
+          "max": [
+            534,
+            300
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          929.0,
+          0.0,
+          6517.0
+        ],
+        "ownershipPolygon": [
+          [
+            959.0,
+            6741.0
+          ],
+          [
+            1159.0,
+            6761.0
+          ],
+          [
+            1459.0,
+            6761.0
+          ],
+          [
+            1459.0,
+            6221.0
+          ],
+          [
+            399.0,
+            6221.0
+          ],
+          [
+            399.0,
+            6813.0
+          ],
+          [
+            699.0,
+            6781.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              959.0,
+              6741.0
+            ],
+            [
+              1159.0,
+              6761.0
+            ],
+            [
+              1459.0,
+              6761.0
+            ],
+            [
+              1459.0,
+              6221.0
+            ],
+            [
+              399.0,
+              6221.0
+            ],
+            [
+              399.0,
+              6813.0
+            ],
+            [
+              699.0,
+              6781.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          1068,
+          1068
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "tollholm": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/tollholm/client/world.json",
+      "label": "Tollholm",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          235,
+          340
+        ],
+        "serverCells": [
+          684,
+          684
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 54.249000549316406,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -235,
+            -344
+          ],
+          "max": [
+            449,
+            340
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          2930.0,
+          0.0,
+          8007.0
+        ],
+        "ownershipPolygon": [
+          [
+            2729.0,
+            8181.0
+          ],
+          [
+            2723.0,
+            8343.0
+          ],
+          [
+            3161.0,
+            8343.0
+          ],
+          [
+            3161.0,
+            7671.0
+          ],
+          [
+            2729.0,
+            7671.0
+          ],
+          [
+            2719.0,
+            7671.0
+          ],
+          [
+            2719.0,
+            7921.0
+          ],
+          [
+            2699.0,
+            8051.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              2729.0,
+              8181.0
+            ],
+            [
+              2723.0,
+              8343.0
+            ],
+            [
+              3161.0,
+              8343.0
+            ],
+            [
+              3161.0,
+              7671.0
+            ],
+            [
+              2729.0,
+              7671.0
+            ],
+            [
+              2719.0,
+              7671.0
+            ],
+            [
+              2719.0,
+              7921.0
+            ],
+            [
+              2699.0,
+              8051.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          684,
+          684
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "twinbrook": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/twinbrook/client/world.json",
+      "label": "Twinbrook",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          459,
+          219
+        ],
+        "serverCells": [
+          918,
+          918
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 121.6,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -459,
+            -699
+          ],
+          "max": [
+            459,
+            219
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          1154.0,
+          0.0,
+          6956.0
+        ],
+        "ownershipPolygon": [
+          [
+            729.0,
+            7121.0
+          ],
+          [
+            869.0,
+            7171.0
+          ],
+          [
+            959.0,
+            7113.0
+          ],
+          [
+            1299.0,
+            7113.0
+          ],
+          [
+            1365.0,
+            7171.0
+          ],
+          [
+            1479.0,
+            7141.0
+          ],
+          [
+            1609.0,
+            7151.0
+          ],
+          [
+            1599.0,
+            7041.0
+          ],
+          [
+            1519.0,
+            6961.0
+          ],
+          [
+            1489.0,
+            6911.0
+          ],
+          [
+            1479.0,
+            6821.0
+          ],
+          [
+            1459.0,
+            6811.0
+          ],
+          [
+            1459.0,
+            6761.0
+          ],
+          [
+            1159.0,
+            6761.0
+          ],
+          [
+            959.0,
+            6741.0
+          ],
+          [
+            699.0,
+            6781.0
+          ],
+          [
+            791.0,
+            6961.0
+          ],
+          [
+            781.0,
+            7031.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              729.0,
+              7121.0
+            ],
+            [
+              869.0,
+              7171.0
+            ],
+            [
+              959.0,
+              7113.0
+            ],
+            [
+              1299.0,
+              7113.0
+            ],
+            [
+              1365.0,
+              7171.0
+            ],
+            [
+              1479.0,
+              7141.0
+            ],
+            [
+              1609.0,
+              7151.0
+            ],
+            [
+              1599.0,
+              7041.0
+            ],
+            [
+              1519.0,
+              6961.0
+            ],
+            [
+              1489.0,
+              6911.0
+            ],
+            [
+              1479.0,
+              6821.0
+            ],
+            [
+              1459.0,
+              6811.0
+            ],
+            [
+              1459.0,
+              6761.0
+            ],
+            [
+              1159.0,
+              6761.0
+            ],
+            [
+              959.0,
+              6741.0
+            ],
+            [
+              699.0,
+              6781.0
+            ],
+            [
+              791.0,
+              6961.0
+            ],
+            [
+              781.0,
+              7031.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          918,
+          918
+        ],
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ]
+      }
+    },
+    "warrenmead": {
+      "manifest": "res://../eloria-assets/maps/continent-v2/warrenmead/client/world.json",
+      "label": "Warrenmead",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          289,
+          394
+        ],
+        "serverCells": [
+          792,
+          792
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "walkingHeight": 136.5,
+        "invertServerY": true,
+        "serverStorageVersion": 1,
+        "serverTileMin": [
+          0,
+          0
+        ],
+        "addressableWorldBounds": {
+          "min": [
+            -289,
+            -398
+          ],
+          "max": [
+            503,
+            394
+          ]
+        }
+      },
+      "status": "continent-v2-served",
+      "landscapeTransitions": true,
+      "continentGeography": {
+        "revision": "continent-v2-draft-1",
+        "translation": [
+          614.0,
+          0.0,
+          7171.0
+        ],
+        "ownershipPolygon": [
+          [
+            899.0,
+            7541.0
+          ],
+          [
+            855.0,
+            7421.0
+          ],
+          [
+            849.0,
+            7301.0
+          ],
+          [
+            869.0,
+            7171.0
+          ],
+          [
+            729.0,
+            7121.0
+          ],
+          [
+            781.0,
+            7031.0
+          ],
+          [
+            791.0,
+            6961.0
+          ],
+          [
+            699.0,
+            6781.0
+          ],
+          [
+            399.0,
+            6813.0
+          ],
+          [
+            399.0,
+            7101.0
+          ],
+          [
+            329.0,
+            7101.0
+          ],
+          [
+            329.0,
+            7551.0
+          ],
+          [
+            819.0,
+            7561.0
+          ]
+        ],
+        "ownershipPolygons": [
+          [
+            [
+              899.0,
+              7541.0
+            ],
+            [
+              855.0,
+              7421.0
+            ],
+            [
+              849.0,
+              7301.0
+            ],
+            [
+              869.0,
+              7171.0
+            ],
+            [
+              729.0,
+              7121.0
+            ],
+            [
+              781.0,
+              7031.0
+            ],
+            [
+              791.0,
+              6961.0
+            ],
+            [
+              699.0,
+              6781.0
+            ],
+            [
+              399.0,
+              6813.0
+            ],
+            [
+              399.0,
+              7101.0
+            ],
+            [
+              329.0,
+              7101.0
+            ],
+            [
+              329.0,
+              7551.0
+            ],
+            [
+              819.0,
+              7561.0
+            ]
+          ]
+        ],
+        "geometryMode": "continent-chunks-v1",
+        "frame": "continent-v2",
+        "serverCells": [
+          792,
+          792
         ],
         "serverStorageVersion": 1,
         "serverTileMin": [

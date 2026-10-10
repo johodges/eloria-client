@@ -1,0 +1,129 @@
+{
+ "region": "tollholm",
+ "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
+ "snapshot": {
+  "sha256": "933fa89a5976fa31feb6c719b5a60ab073dcec7ec29f62f80d3c7a56dfa1fb69",
+  "sceneSha256": "6e50e6e7f2bf72b8076139fc7a8e85b12bfea38f3f2baf1e910f22ed241632ce",
+  "recipe": "region_bake_cli.gd --scene godot-client/world_authoring/regions/tollholm/tollholm.tscn --output <bake>/continent-authoring.json"
+ },
+ "collision": {
+  "sidecarSha256": "5dfe8debd3bf9fae6eec9af7340cfaa196276c0fa57ce913c87970d12b321c6a",
+  "collisionSha256": "4a417e07ca48779a41710434209d3cf4cb11f2122ab9bd36d9217f7b88a018da",
+  "servedGridSha256": "631b98dc619f396960f37162b7afb03f678113680d4b323179390e2572b9c804",
+  "walkableCells": 300624,
+  "openTiles": 72250,
+  "sourceSnapshotSha256": "933fa89a5976fa31feb6c719b5a60ab073dcec7ec29f62f80d3c7a56dfa1fb69"
+ },
+ "chunks": 46,
+ "kitPlacementsOutsideWindow": 0,
+ "lightingMarkers": 0,
+ "chunkGlbBytes": {
+  "total": 102148016,
+  "max": 10129192,
+  "over100MiB": []
+ },
+ "estimatedResidentMiB": {
+  "07_06": 10.7,
+  "07_07": 21.4,
+  "07_08": 26.7,
+  "07_09": 64.9,
+  "07_10": 98.9,
+  "07_11": 39.7,
+  "08_06": 11.0,
+  "08_07": 254.3,
+  "08_08": 226.4,
+  "08_09": 312.7,
+  "08_10": 442.2,
+  "08_11": 261.0,
+  "08_12": 189.7,
+  "08_13": 100.8,
+  "09_06": 11.0,
+  "09_07": 11.7,
+  "09_08": 171.1,
+  "09_09": 288.0,
+  "09_10": 426.5,
+  "09_11": 395.1,
+  "09_12": 157.9,
+  "09_13": 117.0,
+  "10_06": 11.0,
+  "10_07": 11.7,
+  "10_08": 15.8,
+  "10_09": 69.2,
+  "10_10": 194.0,
+  "10_11": 151.8,
+  "10_12": 202.7,
+  "10_13": 11.5,
+  "11_06": 11.0,
+  "11_07": 11.7,
+  "11_08": 11.7,
+  "11_09": 11.7,
+  "11_10": 152.1,
+  "11_11": 196.6,
+  "11_12": 128.0,
+  "11_13": 11.5,
+  "12_06": 11.0,
+  "12_07": 11.3,
+  "12_08": 11.3,
+  "12_09": 11.3,
+  "12_10": 20.0,
+  "12_11": 116.9,
+  "12_12": 11.3,
+  "12_13": 11.2
+ },
+ "timings": {
+  "snapshot_s": 1.3,
+  "terrain_s": 0.0,
+  "water_s": 0.0,
+  "overlays_s": 0.6,
+  "bridges_s": 0.0,
+  "surface_glb_bytes": 147955424,
+  "walk_kit_nodes": 0,
+  "library_s": 0.4,
+  "chunks_s": 2.4
+ },
+ "seconds": 10.9,
+ "imagePolicy": {
+  "surface": {
+   "imagesResampled": 16,
+   "resampledImages": [
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
+   ]
+  },
+  "library": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  }
+ },
+ "geometryResidentFactor": 1.0,
+ "chunkBudget": {
+  "algorithm": "whole-metre-budget-phase-v1",
+  "phaseMetres": [
+   45,
+   39
+  ],
+  "originMetres": [
+   -978,
+   -984
+  ],
+  "maximumPlacements": 231,
+  "maximumTriangles": 432435,
+  "placementLimit": 240,
+  "triangleLimit": 450000,
+  "cellMetres": 96
+ }
+}

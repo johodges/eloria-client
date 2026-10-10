@@ -1,0 +1,148 @@
+{
+ "region": "saltsound",
+ "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
+ "snapshot": {
+  "sha256": "7a7704c51e5d1f2a8bf678810d4b3d10f15056ce4e5be2cb29a77b1e92440406",
+  "sceneSha256": "d16d91840a88174c43c52ee2effa1fd243b78e1790a3004b86f0c22e91cbcdd0",
+  "recipe": "region_bake_cli.gd --scene godot-client/world_authoring/regions/saltsound/saltsound.tscn --output <bake>/continent-authoring.json"
+ },
+ "collision": {
+  "sidecarSha256": "20fc672ddceaad58972ac2bbadb5cdc7f490b4196894573c98086adff1b386e4",
+  "collisionSha256": "6c0bdfaaf6f4c00b7c8d16805ea084acaab98621b3c583272f4d64f8dd16c3d5",
+  "servedGridSha256": "6b1e515ee1f8ad942bfd43082c01cdf75f3c477f36fc0247c4a6bccdfaae04ed",
+  "walkableCells": 355801,
+  "openTiles": 86816,
+  "sourceSnapshotSha256": "7a7704c51e5d1f2a8bf678810d4b3d10f15056ce4e5be2cb29a77b1e92440406"
+ },
+ "chunks": 72,
+ "kitPlacementsOutsideWindow": 0,
+ "lightingMarkers": 0,
+ "chunkGlbBytes": {
+  "total": 103094888,
+  "max": 6604708,
+  "over100MiB": []
+ },
+ "estimatedResidentMiB": {
+  "04_06": 10.9,
+  "04_07": 132.6,
+  "04_08": 140.0,
+  "04_09": 66.0,
+  "04_10": 60.6,
+  "04_11": 106.4,
+  "04_12": 86.1,
+  "04_13": 37.0,
+  "05_06": 10.9,
+  "05_07": 11.7,
+  "05_08": 108.6,
+  "05_09": 216.9,
+  "05_10": 253.1,
+  "05_11": 177.0,
+  "05_12": 163.8,
+  "05_13": 64.4,
+  "06_06": 10.9,
+  "06_07": 11.7,
+  "06_08": 11.7,
+  "06_09": 35.7,
+  "06_10": 154.4,
+  "06_11": 116.9,
+  "06_12": 11.7,
+  "06_13": 10.9,
+  "07_06": 10.9,
+  "07_07": 11.7,
+  "07_08": 11.7,
+  "07_09": 34.4,
+  "07_10": 11.7,
+  "07_11": 11.7,
+  "07_12": 11.6,
+  "08_06": 10.9,
+  "08_07": 173.2,
+  "08_08": 204.6,
+  "08_09": 182.5,
+  "08_10": 11.7,
+  "08_11": 11.7,
+  "08_12": 19.6,
+  "09_06": 10.9,
+  "09_07": 206.1,
+  "09_08": 155.6,
+  "09_09": 195.6,
+  "09_10": 11.7,
+  "09_11": 11.7,
+  "09_12": 11.2,
+  "10_06": 10.9,
+  "10_07": 141.0,
+  "10_08": 189.9,
+  "10_09": 159.6,
+  "10_10": 11.7,
+  "10_11": 11.4,
+  "11_06": 10.9,
+  "11_07": 11.7,
+  "11_08": 11.7,
+  "11_09": 11.7,
+  "11_10": 11.5,
+  "11_11": 10.9,
+  "12_06": 10.9,
+  "12_07": 11.7,
+  "12_08": 11.7,
+  "12_09": 11.7,
+  "12_10": 11.0,
+  "13_06": 10.9,
+  "13_07": 134.1,
+  "13_08": 11.7,
+  "13_09": 11.7,
+  "14_06": 10.8,
+  "14_07": 75.8,
+  "14_08": 11.2,
+  "14_09": 11.5,
+  "15_09": 11.0,
+  "16_09": 10.9
+ },
+ "timings": {
+  "snapshot_s": 0.7,
+  "terrain_s": 0.1,
+  "water_s": 0.0,
+  "overlays_s": 0.8,
+  "bridges_s": 0.0,
+  "surface_glb_bytes": 84900608,
+  "walk_kit_nodes": 29,
+  "library_s": 0.3,
+  "chunks_s": 2.2
+ },
+ "seconds": 9.3,
+ "imagePolicy": {
+  "surface": {
+   "imagesResampled": 5,
+   "resampledImages": [
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
+   ]
+  },
+  "library": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  }
+ },
+ "generatedArrival": {
+  "path": "eloria-assets/maps/continent-v2/saltsound/content/arrival.json",
+  "sha256": "03662b078ac4b0881f95c9cba7f63d04f79b7cf2105f90ddd0e3c01fe547fc99"
+ },
+ "geometryResidentFactor": 1.0,
+ "chunkBudget": {
+  "algorithm": "whole-metre-budget-phase-v1",
+  "phaseMetres": [
+   11,
+   63
+  ],
+  "originMetres": [
+   -1012,
+   -960
+  ],
+  "maximumPlacements": 102,
+  "maximumTriangles": 192719,
+  "placementLimit": 240,
+  "triangleLimit": 450000,
+  "cellMetres": 96
+ }
+}

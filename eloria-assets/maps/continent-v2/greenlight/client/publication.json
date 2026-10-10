@@ -1,0 +1,141 @@
+{
+ "region": "greenlight",
+ "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
+ "snapshot": {
+  "sha256": "163ffe7b29f92096c9f2bf774f4f4005396795250c41ae223bcaa95d30c56468",
+  "sceneSha256": "8c1131509101e9036f410cf3568b3f6d8560f91c6bea7371df1da110f2bea71f",
+  "recipe": "region_bake_cli.gd --scene godot-client/world_authoring/regions/greenlight/greenlight.tscn --output <bake>/continent-authoring.json"
+ },
+ "collision": {
+  "sidecarSha256": "4530cc9fd541731c968fcffb84a64da3573787015583c36e69c285ac0d719b98",
+  "collisionSha256": "327ce7fa48704eb7281b098f6700ce07f0c2c8f2bdc95d3f758b00bfb672c203",
+  "servedGridSha256": "2f46a36acd0c6431cc9974abb0aeced568055e6f9340e5e932336174eaf22f1f",
+  "walkableCells": 238541,
+  "openTiles": 57797,
+  "sourceSnapshotSha256": "163ffe7b29f92096c9f2bf774f4f4005396795250c41ae223bcaa95d30c56468"
+ },
+ "chunks": 71,
+ "kitPlacementsOutsideWindow": 0,
+ "lightingMarkers": 0,
+ "chunkGlbBytes": {
+  "total": 92397524,
+  "max": 6289336,
+  "over100MiB": []
+ },
+ "estimatedResidentMiB": {
+  "05_07": 19.0,
+  "05_08": 41.4,
+  "06_07": 27.2,
+  "06_08": 169.7,
+  "06_09": 104.5,
+  "06_10": 11.3,
+  "06_11": 11.2,
+  "06_12": 11.2,
+  "06_13": 11.1,
+  "06_14": 11.1,
+  "07_06": 11.1,
+  "07_07": 60.0,
+  "07_08": 100.5,
+  "07_09": 121.4,
+  "07_10": 11.7,
+  "07_11": 11.7,
+  "07_12": 11.7,
+  "07_13": 11.7,
+  "07_14": 11.5,
+  "08_05": 10.9,
+  "08_06": 11.3,
+  "08_07": 11.4,
+  "08_08": 11.6,
+  "08_09": 107.5,
+  "08_10": 34.7,
+  "08_11": 11.7,
+  "08_12": 11.7,
+  "08_13": 11.7,
+  "08_14": 11.5,
+  "09_08": 11.1,
+  "09_09": 11.7,
+  "09_10": 34.6,
+  "09_11": 104.2,
+  "09_12": 40.7,
+  "09_13": 11.7,
+  "09_14": 11.5,
+  "10_08": 11.1,
+  "10_09": 11.7,
+  "10_10": 11.7,
+  "10_11": 213.2,
+  "10_12": 93.9,
+  "10_13": 11.7,
+  "10_14": 11.5,
+  "11_08": 11.1,
+  "11_09": 11.7,
+  "11_10": 11.7,
+  "11_11": 111.3,
+  "11_12": 119.6,
+  "11_13": 113.1,
+  "11_14": 11.5,
+  "12_08": 11.1,
+  "12_09": 11.7,
+  "12_10": 11.7,
+  "12_11": 33.6,
+  "12_12": 56.2,
+  "12_13": 127.2,
+  "12_14": 134.4,
+  "13_08": 11.1,
+  "13_09": 11.7,
+  "13_10": 11.7,
+  "13_11": 95.6,
+  "13_12": 89.8,
+  "13_13": 11.7,
+  "13_14": 54.9,
+  "14_08": 11.0,
+  "14_09": 11.3,
+  "14_10": 11.3,
+  "14_11": 126.1,
+  "14_12": 87.9,
+  "14_13": 11.3,
+  "14_14": 11.1
+ },
+ "timings": {
+  "snapshot_s": 0.9,
+  "terrain_s": 0.1,
+  "water_s": 0.0,
+  "overlays_s": 0.8,
+  "bridges_s": 0.1,
+  "surface_glb_bytes": 86351968,
+  "walk_kit_nodes": 88,
+  "library_s": 0.2,
+  "chunks_s": 2.2
+ },
+ "seconds": 10.2,
+ "imagePolicy": {
+  "surface": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  },
+  "library": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  }
+ },
+ "generatedArrival": {
+  "path": "eloria-assets/maps/continent-v2/greenlight/content/arrival.json",
+  "sha256": "96c01231383e13514804fb4bb42c1b76696106abd39c5a7f9e23906ad8a6a1e7"
+ },
+ "geometryResidentFactor": 1.0,
+ "chunkBudget": {
+  "algorithm": "whole-metre-budget-phase-v1",
+  "phaseMetres": [
+   62,
+   51
+  ],
+  "originMetres": [
+   -961,
+   -972
+  ],
+  "maximumPlacements": 103,
+  "maximumTriangles": 154455,
+  "placementLimit": 240,
+  "triangleLimit": 450000,
+  "cellMetres": 96
+ }
+}

@@ -1,0 +1,115 @@
+{
+ "region": "spindle_hill",
+ "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
+ "snapshot": {
+  "sha256": "7c0bab380a0357058f93d14794ae2268d23aa7a9180ec0b52a0c21dbc472f96f",
+  "sceneSha256": "6dc5edeabf893a23a87af8601dbad0add42ba2e8fee296a2de09b2b53bebbaf9",
+  "recipe": "region_bake_cli.gd --scene godot-client/world_authoring/regions/spindle_hill/spindle_hill.tscn --output <bake>/continent-authoring.json"
+ },
+ "collision": {
+  "sidecarSha256": "40e681d56f9948104f3da83dca1dc57acc4eed9c92de38e0de073cd0e2f5a457",
+  "collisionSha256": "677712e19637177f88f6d4f3adf933185c02f42e526371672323548792dba641",
+  "servedGridSha256": "004a2039ffc18a6a575d7ee7ffbc3702da27c42703cc670676d8cffc232d11ee",
+  "walkableCells": 223740,
+  "openTiles": 54329,
+  "sourceSnapshotSha256": "7c0bab380a0357058f93d14794ae2268d23aa7a9180ec0b52a0c21dbc472f96f"
+ },
+ "chunks": 32,
+ "kitPlacementsOutsideWindow": 0,
+ "lightingMarkers": 0,
+ "chunkGlbBytes": {
+  "total": 63047660,
+  "max": 5545896,
+  "over100MiB": []
+ },
+ "estimatedResidentMiB": {
+  "08_06": 10.9,
+  "08_07": 11.1,
+  "08_08": 11.1,
+  "08_09": 64.5,
+  "08_10": 35.2,
+  "08_11": 27.2,
+  "08_12": 11.1,
+  "08_13": 11.0,
+  "09_06": 11.2,
+  "09_07": 80.5,
+  "09_08": 138.8,
+  "09_09": 110.2,
+  "09_10": 49.8,
+  "09_11": 101.1,
+  "09_12": 36.5,
+  "09_13": 11.3,
+  "10_06": 11.2,
+  "10_07": 270.8,
+  "10_08": 162.6,
+  "10_09": 157.7,
+  "10_10": 90.5,
+  "10_11": 152.2,
+  "10_12": 117.4,
+  "10_13": 11.3,
+  "11_06": 27.2,
+  "11_07": 243.8,
+  "11_08": 177.7,
+  "11_09": 181.0,
+  "11_10": 65.7,
+  "11_11": 187.9,
+  "11_12": 149.6,
+  "11_13": 11.2
+ },
+ "timings": {
+  "snapshot_s": 0.5,
+  "terrain_s": 0.0,
+  "water_s": 0.0,
+  "overlays_s": 0.4,
+  "bridges_s": 0.0,
+  "surface_glb_bytes": 98308908,
+  "walk_kit_nodes": 0,
+  "library_s": 0.2,
+  "chunks_s": 1.5
+ },
+ "seconds": 7.4,
+ "imagePolicy": {
+  "surface": {
+   "imagesResampled": 12,
+   "resampledImages": [
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
+   ]
+  },
+  "library": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  }
+ },
+ "generatedArrival": {
+  "path": "eloria-assets/maps/continent-v2/spindle_hill/content/arrival.json",
+  "sha256": "21c511190a888e0c5f92fc8ea53b7471fd260eb4815426a1e24e029c18afbdc0"
+ },
+ "geometryResidentFactor": 1.0,
+ "chunkBudget": {
+  "algorithm": "whole-metre-budget-phase-v1",
+  "phaseMetres": [
+   39,
+   56
+  ],
+  "originMetres": [
+   -984,
+   -967
+  ],
+  "maximumPlacements": 97,
+  "maximumTriangles": 235995,
+  "placementLimit": 240,
+  "triangleLimit": 450000,
+  "cellMetres": 96
+ }
+}

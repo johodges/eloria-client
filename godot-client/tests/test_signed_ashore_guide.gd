@@ -37,8 +37,8 @@ func run() -> void:
 
 	var ashore := {"version": 1, "active": true, "tutorial": "signed_ashore", "chapter": "SIGNED ASHORE",
 		"stage": 2, "total": 10, "scene": 2, "key": "grove", "title": "The Palace Grove",
-		"hint": "Click an olive bush once.", "control": "world", "item": "Olive", "map": "sw_isle",
-		"target_id": "olive_grove", "target": [574, 920], "required": 5, "count": 2,
+		"hint": "Click an olive bush once.", "control": "world", "item": "Olive", "map": "landfall",
+		"target_id": "olive_grove", "target": [124, 262], "required": 5, "count": 2,
 		"flags": {"grove": false, "temple": false, "gate": false, "light": false}}
 	guide.apply_state(card(ashore))
 	expect(guide.visible and guide.card.visible, "an active chapter shows the card")

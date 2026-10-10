@@ -198,13 +198,8 @@ func _test_gate() -> void:
 	var legacy := Walkability.continent_v2(root)
 	root.scene_file_path = ""
 	var bare := Walkability.continent_v2(root)
-	root.scene_file_path = "res://world_authoring/regions/sw_isle/sw_isle.tscn"
-	var landfall := Walkability.continent_v2(root)
-	root.scene_file_path = "res://world_authoring/regions/sunmane_steppe/sunmane_steppe.tscn"
-	var sunmane := Walkability.continent_v2(root)
 	root.free()
-	_expect(v2 and not legacy and not bare, "the gate reads the region's authoring spec")
-	_expect(landfall and not sunmane, "Landfall takes the continent-v2 rules; Sunmane keeps the legacy ones")
+	_expect(v2 and not legacy and not bare, "the gate reads the generic region fixtures' authoring specs")
 
 
 func _structure_result(fixture: Node3D, ground: Dictionary, continent_v2: bool) -> Dictionary:

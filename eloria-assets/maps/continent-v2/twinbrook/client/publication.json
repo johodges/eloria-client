@@ -1,0 +1,128 @@
+{
+ "region": "twinbrook",
+ "tool": "eloria-assets/maps/continent-v2/_continent_v2/publish_client.py",
+ "snapshot": {
+  "sha256": "b5af40b17c3e86dba808f8726998fb60864f41997a69d1280c38fe15d7279536",
+  "sceneSha256": "7f4ba02e8a73d31697de829fb78c49141b81ffc62965f151c98362614a7eed3a",
+  "recipe": "region_bake_cli.gd --scene godot-client/world_authoring/regions/twinbrook/twinbrook.tscn --output <bake>/continent-authoring.json"
+ },
+ "collision": {
+  "sidecarSha256": "4b1bf323a424849fbcee252d0c81cff27aa4363ddea020431138492fd3b26ff9",
+  "collisionSha256": "67196bde5487f67962898912b9b914904a9e8be0dc5dd75ee485e060c1a032fa",
+  "servedGridSha256": "047121e2c606a37142ec9fece64cad2f808d5af95ea5c2cee67b75aae8c8a183",
+  "walkableCells": 873077,
+  "openTiles": 214006,
+  "sourceSnapshotSha256": "b5af40b17c3e86dba808f8726998fb60864f41997a69d1280c38fe15d7279536"
+ },
+ "chunks": 47,
+ "kitPlacementsOutsideWindow": 0,
+ "lightingMarkers": 0,
+ "chunkGlbBytes": {
+  "total": 104117468,
+  "max": 5154152,
+  "over100MiB": []
+ },
+ "estimatedResidentMiB": {
+  "05_08": 10.9,
+  "05_09": 10.8,
+  "05_11": 10.8,
+  "06_08": 80.0,
+  "06_09": 62.6,
+  "06_10": 21.8,
+  "06_11": 63.3,
+  "06_12": 19.0,
+  "07_08": 110.6,
+  "07_09": 87.1,
+  "07_10": 93.9,
+  "07_11": 20.6,
+  "07_12": 19.8,
+  "08_07": 10.7,
+  "08_08": 102.7,
+  "08_09": 95.0,
+  "08_10": 50.6,
+  "08_11": 72.4,
+  "08_12": 10.8,
+  "09_08": 110.9,
+  "09_09": 107.2,
+  "09_10": 143.5,
+  "09_11": 65.7,
+  "10_08": 127.1,
+  "10_09": 123.6,
+  "10_10": 121.8,
+  "10_11": 80.0,
+  "11_08": 78.5,
+  "11_09": 112.4,
+  "11_10": 143.4,
+  "11_11": 127.3,
+  "12_08": 105.2,
+  "12_09": 79.9,
+  "12_10": 149.1,
+  "12_11": 112.1,
+  "12_12": 107.2,
+  "13_08": 107.6,
+  "13_09": 77.1,
+  "13_10": 182.4,
+  "13_11": 129.1,
+  "13_12": 83.1,
+  "14_09": 21.4,
+  "14_10": 119.6,
+  "14_11": 214.1,
+  "14_12": 81.5,
+  "15_11": 43.0,
+  "15_12": 20.7
+ },
+ "timings": {
+  "snapshot_s": 0.8,
+  "terrain_s": 0.1,
+  "water_s": 0.0,
+  "overlays_s": 0.6,
+  "bridges_s": 0.0,
+  "surface_glb_bytes": 111712800,
+  "walk_kit_nodes": 0,
+  "library_s": 0.3,
+  "chunks_s": 2.0
+ },
+ "seconds": 11.6,
+ "imagePolicy": {
+  "surface": {
+   "imagesResampled": 10,
+   "resampledImages": [
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "64f31e3beff4ed70a468c6b81a1fd624ab1c593e3a2a8641b54ab9702faea5f5",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7",
+    "9ee53453b9ded8fedd5fdbff750c5d9f7c80bf985dc2cfd49207c15860a057e7"
+   ]
+  },
+  "library": {
+   "imagesResampled": 0,
+   "resampledImages": []
+  }
+ },
+ "generatedArrival": {
+  "path": "eloria-assets/maps/continent-v2/twinbrook/content/arrival.json",
+  "sha256": "06b4c953aa5014d2ad9f0715dc481bdf286cb2d1327647481a3a51c1fab20cf9"
+ },
+ "geometryResidentFactor": 1.0,
+ "chunkBudget": {
+  "algorithm": "whole-metre-budget-phase-v1",
+  "phaseMetres": [
+   24,
+   41
+  ],
+  "originMetres": [
+   -999,
+   -982
+  ],
+  "maximumPlacements": 67,
+  "maximumTriangles": 240807,
+  "placementLimit": 240,
+  "triangleLimit": 450000,
+  "cellMetres": 96
+ }
+}

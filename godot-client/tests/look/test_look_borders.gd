@@ -100,22 +100,133 @@ func _run() -> void:
 		"Verdant Stair borders Ssarathi")
 	_expect(LookBorders.neighbours_of("lantern_reach").is_empty(),
 		"Lantern Reach, an island off the continent, borders nothing")
-	# The continent-v2 island group: sw_isle borders its second map, The Tollholms (task A3), across the seam at
-	# x 2437, and its third, The Gull Skerries (task A3b), along z 8259 and x 399; the two new maps do not touch, and
-	# none of the three borders the old continent's regions (another frame).
-	var isle := LookBorders.neighbours_of("sw_isle")
-	isle.sort()
-	_expect(isle == PackedStringArray(["gull_skerries", "tollholms"])
-		and not LookBorders.neighbours_of("westhaven").has("sw_isle"),
-		"sw_isle, in the continent-v2 frame, borders The Gull Skerries and The Tollholms and none of the old "
-		+ "continent's regions (%s)" % ", ".join(isle))
-	_expect(LookBorders.neighbours_of("tollholms") == PackedStringArray(["sw_isle"]),
-		"The Tollholms border sw_isle only (%s)" % ", ".join(LookBorders.neighbours_of("tollholms")))
-	_expect(LookBorders.neighbours_of("gull_skerries") == PackedStringArray(["sw_isle"]),
-		"The Gull Skerries border sw_isle only (%s)" % ", ".join(LookBorders.neighbours_of("gull_skerries")))
+	_test_partition_borders()
 
 	print("test_look_borders: %s (%d failures)" % ["PASS" if failures == 0 else "FAIL", failures])
 	quit(1 if failures > 0 else 0)
+
+## Read the authored exact polygons independently of Look's registry reader.
+## Every component contributes edges, including disconnected islands.
+func _test_partition_borders() -> void:
+	var catalog: Variant = JSON.parse_string(FileAccess.get_file_as_string(
+		"res://world_authoring/continent-v2/territories.json"))
+	_expect(catalog is Dictionary, "the active Look catalog parses")
+	if catalog is not Dictionary:
+		return
+	var partition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(str(catalog.partitionSpecPath))) as Dictionary
+	var expected_ids := PackedStringArray()
+	for section: Dictionary in partition.sections:
+		expected_ids.append(str(section.get("mapId", section.id)))
+	expected_ids.sort()
+	var polygons := {}
+	for entry: Dictionary in catalog.entries:
+		var stub: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(str(entry.manifestPath))) as Dictionary
+		var geography: Dictionary = stub.get("continentGeography", {})
+		var rings: Array = geography.get("ownershipPolygons", [geography.get("ownershipPolygon", [])])
+		_expect(not rings.is_empty(), "%s has its complete ownership rings" % str(entry.id))
+		polygons[str(entry.id)] = rings
+	var ids: Array = polygons.keys()
+	ids.sort()
+	var actual_ids := PackedStringArray(ids)
+	_expect(actual_ids == expected_ids and not ids.is_empty(), "Look covers every exact partition section")
+	var shared := {}
+	for id: String in ids:
+		shared[id] = {}
+	var pairs := 0
+	for ia: int in ids.size():
+		var first := String(ids[ia])
+		for ib: int in range(ia + 1, ids.size()):
+			var second := String(ids[ib])
+			var edges := _shared_edges(polygons[first], polygons[second])
+			if edges.is_empty():
+				continue
+			pairs += 1
+			shared[first][second] = edges
+			shared[second][first] = edges
+	_expect(pairs > 0, "the partition has real shared borders (%d pairs)" % pairs)
+	for id: String in ids:
+		var expected_neighbours := PackedStringArray((shared[id] as Dictionary).keys())
+		expected_neighbours.sort()
+		var actual_neighbours := LookBorders.neighbours_of(id)
+		actual_neighbours.sort()
+		_expect(actual_neighbours == expected_neighbours, "%s finds all and only exact polygon neighbours" % id)
+		var actual_segments := {}
+		for border: Dictionary in LookBorders._borders.get(id, []):
+			var neighbour := String(border.neighbour)
+			var keys := PackedStringArray()
+			for segment: Vector4 in border.segments:
+				keys.append(_edge_key(Vector2(segment.x, segment.y), Vector2(segment.z, segment.w)))
+				var point := Vector2((segment.x + segment.z) * 0.5, (segment.y + segment.w) * 0.5)
+				var own := {"neighbours": PackedStringArray([neighbour]), "slots": PackedFloat32Array([0]),
+					"segments": PackedVector4Array([segment])}
+				var reverse := {"neighbours": PackedStringArray([id]), "slots": PackedFloat32Array([0]),
+					"segments": PackedVector4Array([Vector4(segment.z, segment.w, segment.x, segment.y)])}
+				var direction := (Vector2(segment.z, segment.w) - Vector2(segment.x, segment.y)).normalized()
+				var normal := Vector2(-direction.y, direction.x)
+				var reciprocal := absf(_weight(point, own) - 0.5) < 0.0001
+				for offset: float in [-30.0, -1.0, 1.0, 30.0]:
+					reciprocal = reciprocal and absf(_weight(point + normal * offset, own)
+						+ _weight(point + normal * offset, reverse) - 1.0) < 0.0001
+				_expect(reciprocal, "%s / %s border paints reciprocal weights" % [id, neighbour])
+			keys.sort()
+			actual_segments[neighbour] = keys
+		for neighbour: String in expected_neighbours:
+			_expect(actual_segments.get(neighbour, PackedStringArray()) == shared[id][neighbour],
+				"%s / %s uses every exact shared segment" % [id, neighbour])
+			var expected_reverse := PackedStringArray()
+			for border: Dictionary in LookBorders._borders.get(id, []):
+				if String(border.neighbour) == neighbour:
+					for segment: Vector4 in border.segments:
+						expected_reverse.append(_directed_edge_key(Vector2(segment.z, segment.w), Vector2(segment.x, segment.y)))
+			expected_reverse.sort()
+			var reverse_keys := PackedStringArray()
+			for border: Dictionary in LookBorders._borders.get(neighbour, []):
+				if String(border.neighbour) == id:
+					for segment: Vector4 in border.segments:
+						reverse_keys.append(_directed_edge_key(Vector2(segment.x, segment.y), Vector2(segment.z, segment.w)))
+			reverse_keys.sort()
+			_expect(reverse_keys == expected_reverse, "%s / %s shares reversed reciprocal geometry" % [id, neighbour])
+		_expect(not LookBorders.neighbours_of("westhaven").has(id), "%s has no legacy continent border" % id)
+	for retired: String in catalog.get("retiredMapIds", []):
+		_expect(LookBorders.neighbours_of(retired).is_empty(), "retired %s has no active Look borders" % retired)
+
+
+func _directed_edge_key(a: Vector2, b: Vector2) -> String:
+	return "%.3f,%.3f/%.3f,%.3f" % [a.x, a.y, b.x, b.y]
+
+
+func _edge_key(a: Vector2, b: Vector2) -> String:
+	if a.x > b.x or (is_equal_approx(a.x, b.x) and a.y > b.y):
+		var swap := a
+		a = b
+		b = swap
+	return "%.3f,%.3f/%.3f,%.3f" % [a.x, a.y, b.x, b.y]
+
+
+## A positive collinear overlap of two edges is a border; point contact is not.
+func _shared_edges(first: Array, second: Array) -> PackedStringArray:
+	var result := PackedStringArray()
+	for a: Array in first:
+		for i: int in a.size():
+			var start := Vector2(float(a[i][0]), float(a[i][1]))
+			var finish := Vector2(float(a[(i + 1) % a.size()][0]), float(a[(i + 1) % a.size()][1]))
+			var length := start.distance_to(finish)
+			if length < 0.0001:
+				continue
+			var direction := (finish - start) / length
+			for b: Array in second:
+				for j: int in b.size():
+					var p := Vector2(float(b[j][0]), float(b[j][1]))
+					var q := Vector2(float(b[(j + 1) % b.size()][0]), float(b[(j + 1) % b.size()][1]))
+					if absf(direction.cross(p - start)) > 0.0001 or absf(direction.cross(q - start)) > 0.0001:
+						continue
+					var lo := maxf(0.0, minf(direction.dot(p - start), direction.dot(q - start)))
+					var hi := minf(length, maxf(direction.dot(p - start), direction.dot(q - start)))
+					if hi - lo > 0.0001:
+						result.append(_edge_key(start + direction * lo, start + direction * hi))
+	result.sort()
+	return result
+
 
 ## How much of the (one) neighbour `selection` holds the look takes at `xz`.
 func _weight(xz: Vector2, selection: Dictionary) -> float:

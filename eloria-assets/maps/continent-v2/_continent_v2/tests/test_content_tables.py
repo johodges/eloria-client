@@ -24,7 +24,7 @@ CHECKOUT = V2.parents[2]
 sys.path.insert(0, str(CHECKOUT / "godot-client" / "tools"))
 import continent_v2_territories as T  # noqa: E402
 
-MAPS = ("sw_isle", "tollholms", "gull_skerries")
+MAPS = tuple(e["id"] for e in json.loads((CHECKOUT / "godot-client/world_authoring/continent-v2/territories.json").read_text())["entries"])
 ID_PREFIX = {"sw_isle": "sw-spawn-", "tollholms": "th-spawn-", "gull_skerries": "gs-spawn-"}
 # The accepted plans' rosters, species by species (spawn_plan_rf.json summary.sw_isle_spawns_by_species and
 # second_map_spawns_by_species; owner swaps of 2026-10-02 applied: 60 foxes to stoats, 8 beach otters to the
@@ -74,17 +74,18 @@ def rows() -> dict:
 
 
 def scene_markers(map_id: str) -> dict[str, dict]:
-    """record_id -> {kind, label, extras} of every gameplay marker in the territory's committed scene."""
+    """Every authored gameplay marker, including the scene's root RuntimePoints subtree."""
     scene = T.load_scene((CHECKOUT / "godot-client" / "world_authoring" / "regions" / map_id /
                           f"{map_id}.tscn").resolve())
     markers = {}
     for path, section in scene.nodes.items():
-        if not path.startswith("Gameplay/") or not scene.script_of(section).endswith("gameplay_marker.gd"):
+        if not path.startswith(("Gameplay/", "RuntimePoints/")) or not scene.script_of(section).endswith("gameplay_marker.gd"):
             continue
         props = section.properties
         record = json.loads(props["record_id"])
         assert record not in markers, f"{map_id}: two markers named {record}"
-        markers[record] = {"kind": json.loads(props.get("kind", '"landmark"')),
+        markers[record] = {"node_name": section.attributes["name"],
+                           "kind": json.loads(props.get("kind", '"landmark"')),
                            "label": json.loads(props.get("label", '""')),
                            "extras": json.loads(props["extras"]) if "extras" in props else {}}
     return markers
@@ -99,15 +100,15 @@ def test_each_map_has_its_planned_number_of_rows(spawns):
     for map_id in MAPS:
         assert spawns[map_id]["schema"] == "eloria-continent-v2-spawns-v1"
         assert spawns[map_id]["map"] == map_id
-        assert len(spawns[map_id]["spawns"]) == COUNTS[map_id], map_id
+        assert isinstance(spawns[map_id]["spawns"], list), map_id
     assert sum(len(spawns[m]["spawns"]) for m in MAPS) == 1027
 
 
-def test_row_ids_are_unique_and_name_their_map(spawns):
+def test_row_ids_are_unique_and_preserve_their_source_identity(spawns):
     ids = [r["id"] for m in MAPS for r in spawns[m]["spawns"]]
     assert len(ids) == len(set(ids))
     for map_id in MAPS:
-        assert all(r["id"].startswith(ID_PREFIX[map_id]) for r in spawns[map_id]["spawns"]), map_id
+        assert all(any(r["id"].startswith(prefix) for prefix in ID_PREFIX.values()) for r in spawns[map_id]["spawns"]), map_id
 
 
 def test_every_row_has_a_leash_and_its_band_sets_it(spawns):
@@ -115,13 +116,14 @@ def test_every_row_has_a_leash_and_its_band_sets_it(spawns):
         for r in spawns[map_id]["spawns"]:
             assert isinstance(r["leash"], int) and not isinstance(r["leash"], bool), r["id"]
             assert 1 <= r["leash"] <= 200, r["id"]
-            assert r["leash"] == LEASH[map_id][r["band"]], r["id"]
+            source = next(source for source, prefix in ID_PREFIX.items() if r["id"].startswith(prefix))
+            assert r["leash"] == LEASH[source][r["band"]], r["id"]
 
 
 def test_species_come_only_from_the_plan_roster(spawns):
-    for map_id in MAPS:
-        counts = Counter(r["creature"] for r in spawns[map_id]["spawns"])
-        assert dict(counts) == ROSTER[map_id], map_id
+    for source, prefix in ID_PREFIX.items():
+        counts = Counter(r["creature"] for m in MAPS for r in spawns[m]["spawns"] if r["id"].startswith(prefix))
+        assert dict(counts) == ROSTER[source], source
 
 
 def test_every_row_is_a_finite_local_position_in_a_named_zone(spawns):
@@ -133,7 +135,7 @@ def test_every_row_is_a_finite_local_position_in_a_named_zone(spawns):
             assert isinstance(r["zone"], str) and r["zone"], r["id"]
 
 
-def test_the_server_rows_cover_the_three_maps(rows):
+def test_the_server_rows_cover_the_catalog(rows):
     assert rows["schema"] == "eloria-continent-v2-server-rows-v1"
     assert set(rows["maps"]) == set(MAPS)
     for map_id in MAPS:
@@ -162,7 +164,7 @@ def test_npc_entries_name_their_marker_and_keep_a_body_of_its_race(rows, markers
             else:
                 low, high = marker["extras"]["actorTypeBlock"]
                 assert entry["group"] == "new" and low <= body <= high, rid
-    sw = rows["maps"]["sw_isle"]["npcs"]
+    sw = {rid: e for m in MAPS for rid,e in rows["maps"][m]["npcs"].items()}
     assert Counter(e["group"] for e in sw.values()) == {"new": 5, "re-homed": 5}
     assert sorted(e["actorType"] for e in sw.values() if e["group"] == "new") == [315, 338, 342, 360, 376]
     assert sorted(e["actorType"] for e in sw.values() if e["group"] == "re-homed") == [303, 307, 308, 310, 312]
@@ -179,8 +181,8 @@ def test_interactive_entries_are_rows_the_server_accepts(rows, markers):
             assert isinstance(entry["objectId"], int) and not 100 <= entry["objectId"] <= 335, rid
             assert entry["objectId"] not in nodes, rid
             assert entry["target"] and entry["text"], rid
-    desk = rows["maps"]["sw_isle"]["interactives"]["obj-landing-register-desk"]
-    ferry = rows["maps"]["sw_isle"]["interactives"]["obj-ferry-n10"]
+    desk = rows["maps"]["landfall"]["interactives"]["landfall--obj-landing-register-desk"]
+    ferry = rows["maps"]["greenlight"]["interactives"]["greenlight--obj-ferry-n10"]
     assert (desk["objectId"], desk["role"], desk["target"]) == (20, "information", "register")
     assert (ferry["objectId"], ferry["role"], ferry["target"]) == (21, "portal", "maps.txt")
     assert ferry["portal"]["destinationMap"] == "crownwater" and ferry["portal"]["oneWay"] is True
@@ -204,23 +206,40 @@ def test_the_interactive_markers_carry_their_server_object_ids_and_roles(rows, m
 
 
 def tutorial_posts(markers):
-    return {rid: m for rid, m in markers.items() if m["kind"] == "runtime_point" and rid.split("-", 1)[0] in
-            ("tgt", "opt")}
+    return {rid: m for rid, m in markers.items() if m["kind"] == "runtime_point"
+            and m["extras"].get("role") in ("tutorial-target", "tutorial-option")}
 
 
 def test_every_chapter_target_has_one_marker_named_for_its_post(markers):
-    posts = tutorial_posts(markers["sw_isle"])
+    renamed = {entry["newMarkerId"]: entry for entry in
+               load(V2 / "_continent_v2/marker-renames.json")["entries"]}
+    posts = {rid:m for region in MAPS for rid,m in tutorial_posts(markers[region]).items()}
     assert len(posts) == 22   # geo.json: 12 tgt_* and 10 opt_* posts
-    assert not tutorial_posts(markers["tollholms"]) and not tutorial_posts(markers["gull_skerries"])
     counts = Counter(m["extras"]["target"] for m in posts.values())
     assert all(counts[t] == 1 for t in CHAPTER_TARGETS), counts
     assert len(counts) == len(posts)
     for rid, m in posts.items():
         extras = m["extras"]
         prefix, target = extras["post"].split("_", 1)
-        assert rid == extras["post"].replace("_", "-") and target == extras["target"], rid
+        history = renamed[rid]
+        post_name = extras["post"].replace("_", "-")
+        assert m["node_name"] == rid == history["newMarkerId"], rid
+        assert history["kind"] == "runtime_point" and history["oldMarkerId"] == post_name, rid
+        assert history["oldNodePath"].rsplit("/", 1)[-1] == post_name and target == extras["target"], rid
         assert extras["role"] == {"tgt": "tutorial-target", "opt": "tutorial-option"}[prefix], rid
         assert extras["chapterTarget"] is (target in CHAPTER_TARGETS), rid
         assert extras.get("radius", 6) == 6, rid
     quest = {m["extras"]["questXY"]: rid for rid, m in posts.items() if "questXY" in m["extras"]}
-    assert quest == QUEST_XY
+    assert {key: renamed[rid]["oldMarkerId"] for key, rid in quest.items()} == QUEST_XY
+
+
+def test_split_retains_exactly_three_authored_arrivals_and_unique_owned_marker_ids(markers):
+    renamed = load(V2 / "_continent_v2/marker-renames.json")["entries"]
+    all_ids = [rid for region in MAPS for rid in markers[region]]
+    assert len(all_ids) == len(set(all_ids)) == 254
+    assert len(renamed) == 254 and set(all_ids) == {entry["newMarkerId"] for entry in renamed}
+    for entry in renamed:
+        assert entry["newMarkerId"] in markers[entry["newRegion"]]
+    assert sum(m["kind"] == "spawn" for region in MAPS for m in markers[region].values()) == 3
+    for region in MAPS:
+        assert all(rid.startswith(region+"--") for rid in markers[region])

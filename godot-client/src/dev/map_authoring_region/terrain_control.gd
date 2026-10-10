@@ -34,6 +34,8 @@ const BIOME_CATALOG_PATH := "res://assets/world/biome_blend/catalog.json"
 ## heights, the bake, the sculpt or any other tool: a viewer wrapper uses them so that maps sharing one grid (the
 ## continent-v2 isle group, whose crops share sw_isle's vertices) each draw their own ground once.
 @export var preview_clip_inside := PackedVector2Array()
+## Authoritative ordered inside components when provided; gaps are not drawn.
+@export var preview_clip_polygons: Array[PackedVector2Array] = []
 @export var preview_clip_outside: Array[PackedVector2Array] = []
 
 var _base_heights := PackedFloat32Array()
@@ -300,7 +302,7 @@ func intersect_local_segment(segment_start: Vector3, segment_end: Vector3) -> Va
 
 func _load_base_heights() -> bool:
 	if grid_size.x < 2 or grid_size.y < 2 or cell_metres <= 0.0:
-		last_error = "Terrain grid needs at least 2×2 samples and a positive cell size."
+		last_error = "Terrain grid needs at least 2Ãƒâ€”2 samples and a positive cell size."
 		return false
 	if base_heights_path.strip_edges().is_empty():
 		last_error = "Terrain Base Heights Path is empty."
@@ -319,7 +321,7 @@ func _load_base_heights() -> bool:
 		return false
 	var expected_bytes := grid_size.x * grid_size.y * 4
 	if file.get_length() != expected_bytes:
-		last_error = "Terrain base heights has %d bytes; expected %d for %d×%d float32 samples." % [
+		last_error = "Terrain base heights has %d bytes; expected %d for %dÃƒâ€”%d float32 samples." % [
 			file.get_length(), expected_bytes, grid_size.x, grid_size.y]
 		return false
 	file.big_endian = false
@@ -353,7 +355,7 @@ func _load_base_colors() -> bool:
 	var bytes := FileAccess.get_file_as_bytes(absolute)
 	var expected_bytes := grid_size.x * grid_size.y * 4
 	if bytes.size() != expected_bytes:
-		last_error = "Terrain base colors has %d bytes; expected %d for %d×%d RGBA8 samples." % [
+		last_error = "Terrain base colors has %d bytes; expected %d for %dÃƒâ€”%d RGBA8 samples." % [
 			bytes.size(), expected_bytes, grid_size.x, grid_size.y]
 		return false
 	var loaded := PackedColorArray()
@@ -794,6 +796,10 @@ func _build_ground_region_previews() -> void:
 		if not region.enabled or not region.is_visible_in_tree() or region.surface == null:
 			continue
 		region.surface.enable_region_uv_projection(preview_uv_metres_inverse)
+		var uv_offset := Vector2.ZERO
+		if region.uv_anchor_continent_enabled:
+			var source_translation: Vector3 = get_parent().get("continent_translation")
+			uv_offset = Vector2(source_translation.x, source_translation.z) - region.uv_anchor_continent
 		var bounds: Rect2 = region.world_bounds()
 		if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 			continue
@@ -811,7 +817,7 @@ func _build_ground_region_previews() -> void:
 		var indices := PackedInt32Array()
 		for z_index in range(z0, z1 + 1):
 			for x_index in range(x0, x1 + 1):
-				if not _cell_drawn(x_index, z_index):
+				if region.clip_polygon.is_empty() and not _cell_drawn(x_index, z_index):
 					continue
 				var p00 := _point(x_index, z_index) + Vector3.UP * 0.008
 				var p10 := _point(x_index + 1, z_index) + Vector3.UP * 0.008
@@ -823,7 +829,7 @@ func _build_ground_region_previews() -> void:
 				for vertex in quad:
 					indices.append(vertices.size())
 					vertices.append(vertex)
-					uvs.append(Vector2(vertex.x, vertex.z) *
+					uvs.append((Vector2(vertex.x, vertex.z) + uv_offset) *
 						preview_uv_metres_inverse)
 				for unused in 3:
 					normals.append(normal0)
@@ -854,7 +860,7 @@ func _build_ground_region_previews() -> void:
 			continue
 		instance.material_override = GROUND_REGION_MATERIAL.create(region.surface,
 			projected as Transform2D, region.size * 0.5, region.shape,
-			region.blend_width, region.opacity, -128 + region_index)
+			region.blend_width, region.opacity, -128 + (region.source_layer_ordinal if region.source_layer_ordinal >= 0 else region_index), region.clip_polygon)
 		if instance.material_override != null:
 			container.add_child(instance)
 
@@ -864,7 +870,10 @@ func _build_ground_region_previews() -> void:
 ## row's cell-centre line), so a whole-group grid is masked in a few milliseconds.
 func preview_clip_mask() -> PackedByteArray:
 	var mask := PackedByteArray()
-	var inside_used := preview_clip_inside.size() >= 3
+	var inside_polygons: Array[PackedVector2Array] = preview_clip_polygons
+	if inside_polygons.is_empty() and preview_clip_inside.size() >= 3:
+		inside_polygons = [preview_clip_inside]
+	var inside_used := not inside_polygons.is_empty()
 	var outside_used := false
 	for polygon in preview_clip_outside:
 		outside_used = outside_used or polygon.size() >= 3
@@ -878,7 +887,9 @@ func preview_clip_mask() -> PackedByteArray:
 	var x0 := origin.x + translation.x + 0.5 * cell_metres
 	var z0 := origin.y + translation.z + 0.5 * cell_metres
 	if inside_used:
-		_mark_polygon(mask, preview_clip_inside, x0, z0, columns, rows, 1)
+		for polygon in inside_polygons:
+			if polygon.size() >= 3:
+				_mark_polygon(mask, polygon, x0, z0, columns, rows, 1)
 	for polygon in preview_clip_outside:
 		if polygon.size() >= 3:
 			_mark_polygon(mask, polygon, x0, z0, columns, rows, 0)
@@ -998,7 +1009,7 @@ func _current_signature() -> Array:
 			if FileAccess.file_exists(ProjectSettings.globalize_path(
 				BIOME_CATALOG_PATH)) else "",
 		preview_enabled,
-		preview_uv_metres_inverse, patches, paths, grounds, preview_clip_inside, preview_clip_outside]
+		preview_uv_metres_inverse, patches, paths, grounds, preview_clip_inside, preview_clip_outside, preview_clip_polygons]
 
 
 func _region_paths() -> Array:

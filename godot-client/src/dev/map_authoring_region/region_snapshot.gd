@@ -6,6 +6,7 @@ const SCHEMA := "eloria-continent-authoring-v1"
 const GLTF_MATERIAL_BINDING := preload(
 	"res://src/dev/map_authoring_region/gltf_material_binding.gd")
 const OWNERSHIP := preload("res://src/dev/map_authoring_region/ownership_source.gd")
+const ARRIVAL_GEOMETRY := preload("res://addons/map_authoring_workspace/ownership_geometry.gd")
 const BASE_HEIGHT_SIDECAR := "base-heights.f32le"
 const RESOLVED_HEIGHT_SIDECAR := "resolved-heights.f32le"
 const BASE_COLOR_SIDECAR := "base-colors.rgba8"
@@ -26,12 +27,14 @@ const BIOME_PALETTE_ENTRY := preload(
 	"res://src/dev/map_authoring_region/biome_palette_entry.gd")
 
 var errors: Array[String] = []
+var _validated_generated_arrival: Dictionary = {}
 # Programmatic fixture checkout override; never serialized into scenes/snapshots.
 var ownership_project_directory := ""
 
 
 func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 	errors.clear()
+	_validated_generated_arrival.clear()
 	if region == null:
 		_fail("Authoring region root is missing.")
 		return {}
@@ -100,7 +103,7 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 		var color_source := ProjectSettings.globalize_path(base_colors_path)
 		var color_bytes := FileAccess.get_file_as_bytes(color_source)
 		if color_bytes.size() != terrain.grid_size.x * terrain.grid_size.y * 4:
-			_fail("%s: base color byte count must be width × height × 4." % terrain.get_path())
+			_fail("%s: base color byte count must be width Ãƒâ€” height Ãƒâ€” 4." % terrain.get_path())
 			return {}
 		var color_output := output_directory.path_join(BASE_COLOR_SIDECAR)
 		if not _write_bytes(color_output, color_bytes):
@@ -113,6 +116,7 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 	var bridges := _bridge_records(region)
 	var objects := _object_records(region, output_directory)
 	var gameplay := _gameplay_records(region)
+	var generated_arrival := _generated_arrival_record(region, storage, ownership, gameplay)
 	var runtime_seed: Variant = _runtime_binding_seed_record(region)
 	var replacements := _replacement_record(region, paths, water_regions)
 	var base_surface_record := _surface_record(terrain.base_surface,
@@ -144,6 +148,10 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 	}
 	if not storage.source.binding.is_empty():
 		sources["authoringSpec"] = storage.source.binding.duplicate(true)
+	if not generated_arrival.is_empty():
+		sources["generatedArrival"] = generated_arrival.binding.duplicate(true)
+		sources.dependencies.append(generated_arrival.binding.duplicate(true))
+		sources.dependencies.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.path < b.path)
 	if runtime_seed is Dictionary:
 		sources["runtimeBindingSeed"] = runtime_seed
 	var repository_dependencies: Array = migration.repository_dependencies.duplicate(true)
@@ -203,6 +211,10 @@ func export_region(region: Node3D, output_json_path: String) -> Dictionary:
 	if ownership.get("selected", false):
 		document["ownershipSource"] = verified.binding
 		document.seams["ownershipPolygonSha256"] = verified.ownershipPolygonSha256
+	if not generated_arrival.is_empty():
+		document["generatedArrival"] = generated_arrival.payload.duplicate(true)
+		if FileAccess.get_sha256(generated_arrival.absolute) != generated_arrival.binding.sha256:
+			_fail("Generated arrival source changed during export; retry the bake.")
 	_validate_document(region, document)
 	if not errors.is_empty():
 		return {}
@@ -300,6 +312,8 @@ func _ground_region_records(region: Node3D) -> Array[Dictionary]:
 			continue
 		var ground = child
 		var relative: Transform3D = region.global_transform.affine_inverse() * ground.global_transform
+		var mask_error: String = ground.clip_error(ground.clip_polygon)
+		if not mask_error.is_empty(): _fail("%s: %s" % [ground.get_path(), mask_error])
 		records.append({
 			"id": ground.region_id,
 			"enabled": ground.enabled,
@@ -312,6 +326,17 @@ func _ground_region_records(region: Node3D) -> Array[Dictionary]:
 			"priority": ground.priority,
 			"surface": _surface_record(ground.surface, String(ground.get_path())),
 		})
+		var record := records[-1]
+		if not ground.clip_polygon.is_empty():
+			record["clipPolygon"] = []
+			for point: Vector2 in ground.clip_polygon: record.clipPolygon.append([point.x, point.y])
+		if ground.uv_anchor_continent_enabled:
+			if not ground.uv_anchor_continent.is_finite(): _fail("Ground UV source anchor must be finite.")
+			record["uvAnchorContinent"] = [ground.uv_anchor_continent.x, ground.uv_anchor_continent.y]
+		if ground.source_layer_ordinal < -1: _fail("Ground source layer ordinal must be -1 or nonnegative.")
+		if ground.source_layer_ordinal >= 0:
+			if ground.source_layer_ordinal > 126: _fail("Ground source layer ordinal exceeds 126.")
+			record["sourceLayerOrdinal"] = ground.source_layer_ordinal
 	records.sort_custom(_sort_id)
 	return records
 
@@ -569,11 +594,20 @@ func _gameplay_records(region: Node3D) -> Dictionary:
 	var output := {"spawnPoints": [], "portals": [], "interactives": [],
 		"landmarks": [], "harvestables": [], "npcMarkers": [],
 		"ambientPopulation": [], "runtimePoints": [], "runtimeBindings": []}
-	var root := region.get_node_or_null("Gameplay")
-	if root == null:
-		return output
+	var markers: Array[Node] = []
+	var seen := {}
+	# Conserved dedicated controls may live beside Gameplay in the region scene.
+	# Collect each node once, including legacy controls nested under Gameplay.
+	for path in ["Gameplay", "RuntimePoints"]:
+		var container := region.get_node_or_null(path)
+		if container == null:
+			continue
+		for child in container.find_children("*", "", true, false):
+			if not seen.has(child.get_instance_id()):
+				seen[child.get_instance_id()] = true
+				markers.append(child)
 	var inverse: Transform3D = region.global_transform.affine_inverse()
-	for child in root.find_children("*", "", true, false):
+	for child in markers:
 		if not _uses_script(child, GAMEPLAY_SCRIPT):
 			continue
 		var marker = child
@@ -855,15 +889,120 @@ func _same_resource(first: Variant, second: Variant) -> bool:
 	return (first as Resource).resource_path == (second as Resource).resource_path
 
 
+
+func _arrival_vector(value: Variant, count: int) -> bool:
+	if not value is Array or value.size() != count: return false
+	for part: Variant in value:
+		if (part is not int and part is not float) or not is_finite(float(part)): return false
+	return true
+
+
+func _generated_arrival_record(region: Node3D, storage: Dictionary, ownership: Dictionary,
+		gameplay: Dictionary) -> Dictionary:
+	var spec: Dictionary = storage.source.document
+	var configuration: Variant = spec.get("gameplay", {})
+	if not configuration is Dictionary:
+		_fail("Region gameplay spec must be an object.")
+		return {}
+	if not configuration.has("generatedArrival"): return {}
+	var reference: Variant = configuration.generatedArrival
+	var map_id := String(region.get("region_id"))
+	if not reference is Dictionary or reference.size() != 2 or \
+			not reference.has_all(["path", "sha256"]) or reference.path is not String or \
+			not _is_sha(String(reference.get("sha256", ""))):
+		_fail("Generated arrival requires exactly a contained path and raw SHA-256 binding.")
+		return {}
+	for spawn: Dictionary in gameplay.get("spawnPoints", []):
+		if spawn.get("default", false):
+			_fail("Authored and generated default arrivals cannot be mixed.")
+			return {}
+	var expected := "eloria-assets/maps/continent-v2/" + map_id + "/content/arrival.json"
+	var absolute: String = OWNERSHIP.contained(ownership.checkout, reference.path)
+	if reference.path != expected or absolute.is_empty() or not FileAccess.file_exists(absolute):
+		_fail("Generated arrival source is missing or outside its map content path.")
+		return {}
+	if FileAccess.get_sha256(absolute) != reference.sha256:
+		_fail("Generated arrival source SHA-256 changed; update the reviewed binding.")
+		return {}
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(absolute))
+	if not parsed is Dictionary:
+		_fail("Generated arrival source must be a JSON object.")
+		return {}
+	var payload: Dictionary = parsed
+	if payload.get("schema") != "eloria-continent-v2-generated-arrival-v1" or \
+			payload.get("map") != map_id or payload.get("id") != "generated-arrival-" + map_id or \
+			payload.get("default") is not bool or payload.get("default") != true or \
+			payload.get("generated") is not bool or payload.get("generated") != true:
+		_fail("Generated arrival identity/schema/default is invalid.")
+		return {}
+	var frame: Variant = payload.get("frame")
+	var translation := _vec3(region.get("continent_translation"))
+	if not frame is Dictionary or frame.size() != 3 or not OWNERSHIP.STORAGE.same_vector(frame.get("origin"), storage.server.origin) or \
+			not OWNERSHIP.STORAGE.same_vector(frame.get("cells"), storage.server.cells) or \
+			not OWNERSHIP.STORAGE.same_vector(frame.get("translation"), translation):
+		_fail("Generated arrival frame differs from the scene/spec frame.")
+		return {}
+	if not _arrival_vector(payload.get("position"), 3) or \
+			not _arrival_vector(payload.get("facing"), 3) or not _arrival_vector(payload.get("serverTile"), 2):
+		_fail("Generated arrival position, facing and tile must be finite numeric vectors.")
+		return {}
+	var position: Array = payload.position
+	var tile: Array = payload.serverTile
+	var want_tile := [floor(float(position[0]) + float(storage.server.origin[0])),
+		floor(float(storage.server.origin[1]) - float(position[2]))]
+	if tile[0] != want_tile[0] or tile[1] != want_tile[1] or \
+			tile[0] < 0 or tile[1] < 0 or tile[0] >= storage.server.cells[0] or tile[1] >= storage.server.cells[1]:
+		_fail("Generated arrival tile differs from its position or lies outside storage.")
+		return {}
+	var provenance: Variant = payload.get("provenance")
+	if not provenance is Dictionary or provenance.get("algorithm") != "nearest-owned-safe-baseline-tile-v1":
+		_fail("Generated arrival provenance algorithm is unsupported.")
+		return {}
+	for field in ["sectionsSpecSha256", "frameSha256", "sourceWorldSha256", "sourceCollisionSha256", "sourceServedGridSha256"]:
+		if not _is_sha(String(provenance.get(field, ""))):
+			_fail("Generated arrival provenance has an invalid " + field + ".")
+			return {}
+	var base_commit := String(provenance.get("clientBaseCommit", ""))
+	if base_commit.length() != 40 or base_commit != base_commit.to_lower() or not base_commit.is_valid_hex_number(false) or \
+			String(provenance.get("sourceMap", "")).is_empty() or not _arrival_vector(provenance.get("sourceTile"), 2):
+		_fail("Generated arrival source provenance is incomplete.")
+		return {}
+	for coordinate: Variant in provenance.sourceTile:
+		if coordinate != floor(float(coordinate)) or coordinate < 0:
+			_fail("Generated arrival source tile must contain nonnegative integers.")
+			return {}
+	var partition := OWNERSHIP.contained(ownership.checkout,
+		"eloria-assets/maps/continent-v2/_continent_v2/partition-inputs/sections_spec.json")
+	if partition.is_empty() or not FileAccess.file_exists(partition) or \
+			FileAccess.get_sha256(partition) != provenance.sectionsSpecSha256:
+		_fail("Generated arrival section partition provenance changed.")
+		return {}
+	var stub_path := OWNERSHIP.contained(ownership.checkout,
+		"eloria-assets/maps/continent-v2/" + map_id + "/world.json")
+	var stub: Variant = JSON.parse_string(FileAccess.get_file_as_string(stub_path)) if not stub_path.is_empty() else null
+	if not stub is Dictionary or not stub.get("continentGeography") is Dictionary:
+		_fail("Generated arrival ownership stub is missing.")
+		return {}
+	var rings := ARRIVAL_GEOMETRY.from_geography(stub.continentGeography)
+	var point := Vector2(float(position[0]) + float(translation[0]), float(position[2]) + float(translation[2]))
+	if rings.is_empty() or ARRIVAL_GEOMETRY.hash(rings) != String(region.get("ownership_polygon_sha256")) or \
+			not (ARRIVAL_GEOMETRY.contains(point, rings) or ARRIVAL_GEOMETRY.edge_distance(point, rings) <= 0.000001):
+		_fail("Generated arrival lies outside the bound map ownership union.")
+		return {}
+	_validated_generated_arrival = payload.duplicate(true)
+	return {"payload": payload, "binding": reference.duplicate(true), "absolute": absolute}
+
+
 func _validate_document(region: Node3D, document: Dictionary) -> void:
 	if String(document.regionId).strip_edges().is_empty():
 		_fail("%s: Region Id is empty." % region.get_path())
 	if document.terrain.width < 2 or document.terrain.height < 2:
-		_fail("Terrain grid must be at least 2×2.")
+		_fail("Terrain grid must be at least 2Ãƒâ€”2.")
 	if not is_finite(float(document.terrain.previewUvMetresInverse)) or \
 			float(document.terrain.previewUvMetresInverse) <= 0.0:
 		_fail("Terrain Preview UV Metres Inverse must be positive and finite.")
-	if bool(document.authority.gameplay) and document.gameplay.spawnPoints.is_empty():
+	if bool(document.authority.gameplay) and document.gameplay.spawnPoints.is_empty() and \
+			(_validated_generated_arrival.is_empty() or document.get("generatedArrival") != _validated_generated_arrival):
 		_fail("Authoritative gameplay needs at least one spawn point.")
 	for water: Dictionary in document.waterRegions:
 		if water.shape != "ellipse":
