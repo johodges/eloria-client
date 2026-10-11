@@ -83,6 +83,7 @@ var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 ## stays black.
 var secret_sections: RefCounted = SecretSectionsScript.new()
 var occluder_fade: RefCounted = OccluderFadeScript.new()
+var _dynamic_occluder_roots: Array = []
 var invasion_assistant_window
 var extension_windows: Control
 @onready var gameplay_camera: Camera3D = %Camera
@@ -457,6 +458,7 @@ const MANUFACTURING_MAX_QUANTITY := 1000
 ## recipe needs tools, and a queue has no rows at all until somebody fills it.
 var manufacturing_tabs: HBoxContainer
 var manufacturing_side: VBoxContainer
+var _inventory_metadata_at := 0
 var manufacturing_tool_rows: VBoxContainer
 var manufacturing_quantity: LineEdit
 var manufacturing_source: CheckButton
@@ -1208,6 +1210,7 @@ func _ready() -> void:
 	_populate_creation_sexes()
 	_populate_creation_choices()
 	_configure_creation_classes()
+	_configure_creation_layout()
 	_creation_appearance_rng.randomize()
 	_randomize_creation_appearance()
 	_update_preview_camera()
@@ -1340,6 +1343,11 @@ func _bind_shared_world() -> void:
 	print_debug("world_binding stage=shared world=", gameplay_world)
 
 func _process(delta: float) -> void:
+	if AppState.authenticated and AppState.inventory_metadata_dirty and Network._link_ready() \
+			and Time.get_ticks_msec() >= _inventory_metadata_at:
+		AppState.inventory_metadata_dirty = false
+		_inventory_metadata_at = Time.get_ticks_msec() + 500
+		Network.send_chat("#inventory")
 	_update_preview_viewport()
 	_update_action_cursor()
 	if _spawn_backlog:
@@ -1790,6 +1798,39 @@ func _configure_creation_classes() -> void:
 			else str(entry.get("label", "?")).left(1))
 	_update_creation_class_ui()
 
+func _configure_creation_layout() -> void:
+	create_status.size_flags_vertical = Control.SIZE_FILL
+	var form := get_node("CreationPanel/Columns/FormPanel/Form") as VBoxContainer
+	var fields := VBoxContainer.new()
+	fields.name = "CreationFields"
+	fields.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fields.add_theme_constant_override("separation", 6)
+	var scroll := ScrollContainer.new()
+	scroll.name = "CreationFieldsScroll"
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	form.add_child(scroll)
+	form.move_child(scroll, 0)
+	scroll.add_child(fields)
+	for child: Node in form.get_children():
+		if child != scroll and child.name != "Actions" and child != create_status:
+			child.reparent(fields)
+	(get_node("%FormPanel") as Control).custom_minimum_size.x = 520
+	for picker: OptionButton in [get_node("%CreateSkin"), get_node("%CreateHair"),
+			get_node("%CreateEyes"), get_node("%CreateHairColor"), get_node("%CreateShirt"),
+			get_node("%CreatePants"), get_node("%CreateBoots")]:
+		picker.custom_minimum_size.x = 180
+		picker.item_selected.connect(func(index: int) -> void:
+			picker.tooltip_text = picker.get_item_text(index))
+	var rail := get_node("%ClassRail") as Control
+	var class_content := rail.get_node("ClassContent") as Control
+	var class_scroll := ScrollContainer.new()
+	class_scroll.name = "ClassScroll"
+	class_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	rail.add_child(class_scroll)
+	class_content.reparent(class_scroll)
+	class_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
 func _update_creation_class_ui() -> void:
 	selected_creation_class = posmod(selected_creation_class,
 		CreationArchetypes.count())
@@ -2170,6 +2211,7 @@ func _on_inventory_button_pressed() -> void:
 		return
 	inventory_panel.visible = not inventory_panel.visible
 	if inventory_panel.visible:
+		AppState.close_storage()
 		_road_ui(16)
 		stats_panel.hide()
 		manufacturing_panel.hide()
@@ -2866,6 +2908,8 @@ func _close_client() -> void:
 
 func _exit_tree() -> void:
 	occluder_fade.reset()
+	ReplicatedActor3D.clear_wardrobe_texture_cache()
+	NativeAnimationImporter.clear()
 	# Released here, before the rendering server goes: otherwise the picture's
 	# and the cached tab-map textures are reported leaked at exit.
 	_remove_map_picture()
@@ -4090,7 +4134,7 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_stats()
 			_sync_spells()
 			_sync_manufacturing()
-		&"inventory", &"inventory_text":
+		&"inventory", &"inventory_text", &"inventory_state":
 			if path == &"inventory_text" and manufacturing_panel.visible:
 				manufacturing_server_status = AppState.inventory_text
 			_sync_inventory()
@@ -5109,6 +5153,9 @@ func _on_ground_bag_look_pressed(index: int) -> void:
 func _sync_reading() -> void:
 	if reading_panel == null:
 		return
+	# Keep wrapping text from retaining a transient minimum height before the
+	# anchored panel receives its final width. Longer details can scroll.
+	reading_detail.fit_content = false
 	var active: bool = bool(AppState.reading.get("active", false))
 	var index: int = int(AppState.reading.get("index", -1))
 	if not active:
@@ -5221,15 +5268,27 @@ func _build_manufacturing_window() -> void:
 	manufacturing_side.name = "ManufacturingSide"
 	manufacturing_side.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	manufacturing_side.add_theme_constant_override("separation", 6)
-	manufacturing_list.get_parent().add_child(manufacturing_side)
+	var side_column := VBoxContainer.new()
+	side_column.name = "ManufacturingSideColumn"
+	side_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	manufacturing_list.get_parent().add_child(side_column)
+	var side_scroll := ScrollContainer.new()
+	side_scroll.name = "ManufacturingDetailScroll"
+	side_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	side_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	side_scroll.custom_minimum_size = Vector2(350, 120)
+	side_column.add_child(side_scroll)
+	side_scroll.add_child(manufacturing_side)
 	manufacturing_detail.get_parent().remove_child(manufacturing_detail)
 	manufacturing_side.add_child(manufacturing_detail)
+	manufacturing_detail.owner = self
 	manufacturing_detail.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	manufacturing_detail.custom_minimum_size.y = 120
 
 	manufacturing_tool_rows = VBoxContainer.new()
 	manufacturing_tool_rows.name = "ManufacturingTools"
-	manufacturing_side.add_child(manufacturing_tool_rows)
-	manufacturing_side.add_child(_manufacturing_quantity_row())
+	side_column.add_child(manufacturing_tool_rows)
+	side_column.add_child(_manufacturing_quantity_row())
 
 	# The scene's two mix buttons become Mix Now and Add To Queue. Reused
 	# rather than hidden and replaced: the scene owns their names and the
@@ -5251,7 +5310,9 @@ func _build_manufacturing_window() -> void:
 	manufacturing_mix_one.tooltip_text = "Start this batch now, ahead of the queue"
 	manufacturing_mix_all.text = "ADD TO QUEUE"
 	manufacturing_mix_all.tooltip_text = "Put this batch at the end of the queue"
-	manufacturing_side.add_child(actions)
+	side_column.add_child(actions)
+	for button: Button in [manufacturing_mix_one, manufacturing_mix_all]:
+		button.owner = self
 
 	var queue: Control = _manufacturing_queue_section()
 	content.add_child(queue)
@@ -5678,7 +5739,8 @@ func _configure_occluder_fade(manifest: WorldManifest) -> void:
 ## between a map change and the first actor list, so a frame without one simply
 ## lets whatever is faded blend back to solid.
 func _update_occluder_fade(delta: float) -> void:
-	occluder_fade.sync_worlds(world_loader.manifest, world_loader.world_root, exterior_stream.residents)
+	occluder_fade.sync_worlds(world_loader.manifest, world_loader.world_root, exterior_stream.residents,
+		_dynamic_occluder_roots)
 	var target_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	var target: Node3D = target_value as Node3D if target_value is Node3D else null
 	occluder_fade.update(delta, gameplay_camera, target)
@@ -5702,6 +5764,7 @@ func _update_animation_gate(delta: float) -> void:
 	var local_node: Node3D = local_value as Node3D if is_instance_valid(local_value) else null
 	var here: Vector3 = local_node.global_position if local_node != null else Vector3.ZERO
 	var fighting: int = _combat_target_actor_id()
+	_dynamic_occluder_roots.clear()
 	for raw_id: Variant in actor_nodes:
 		var actor_value: Variant = actor_nodes[raw_id]
 		if not is_instance_valid(actor_value):
@@ -5709,6 +5772,13 @@ func _update_animation_gate(delta: float) -> void:
 		var actor: ReplicatedActor3D = actor_value as ReplicatedActor3D
 		if actor == null or not actor.is_inside_tree():
 			continue
+		var dto: Dictionary = AppState.actors.get(raw_id, {})
+		if int(raw_id) != AppState.local_actor_id and actor.view_radius() >= 1.5 \
+				and _minimap_actor_type(dto) in [&"creature", &"invasion"] \
+				and actor.global_position.distance_squared_to(camera_rig.focus) < 1600.0:
+			var model: Node3D = actor.get("_native_model") as Node3D
+			if is_instance_valid(model):
+				_dynamic_occluder_roots.append(model)
 		var tier: AnimationGate.Tier = AnimationGate.Tier.FULL
 		if int(raw_id) == AppState.local_actor_id:
 			actor.set_drawn(true)
@@ -5723,6 +5793,54 @@ func _update_animation_gate(delta: float) -> void:
 			actor.set_overhead_fade(1.0 if int(raw_id) == fighting
 				else nameplate_fade(distance, _name_distance_metres))
 		actor.set_animation_tier(tier, animation_gate)
+	_declutter_actor_overheads(fighting)
+
+## Keep the target and nearby characters readable as crowds enter the view.
+## Bodies and interaction targets remain independent of overhead visibility.
+func _declutter_actor_overheads(target_id: int) -> void:
+	var candidates: Array[Dictionary] = []
+	for raw_id: Variant in actor_nodes:
+		var actor := actor_nodes[raw_id] as ReplicatedActor3D
+		if not is_instance_valid(actor) or not actor.is_inside_tree():
+			continue
+		if int(raw_id) == AppState.local_actor_id or actor.overhead_fade() <= 0.0:
+			actor.set_overhead_crowded(false)
+			continue
+		var point := actor.global_position + Vector3.UP * (actor.head_height() + 0.35)
+		if gameplay_camera.is_position_behind(point):
+			actor.set_overhead_crowded(true)
+			continue
+		var dto: Dictionary = AppState.actors.get(raw_id, {})
+		var priority := 0 if int(raw_id) == target_id else (2 if _minimap_actor_type(dto) in [&"creature", &"invasion"] else 1)
+		var screen := gameplay_camera.unproject_position(point)
+		if not Rect2(Vector2.ZERO, Vector2(main_viewport.size)).grow(80).has_point(screen):
+			actor.set_overhead_crowded(true)
+			continue
+		var width := maxf(110.0, ThemeDB.fallback_font.get_string_size(
+			str(dto.get("name", "")), HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x + 12.0)
+		candidates.append({"actor": actor, "id": int(raw_id), "priority": priority,
+			"distance": actor.global_position.distance_squared_to(camera_rig.focus),
+			"rect": Rect2(screen - Vector2(width * 0.5, 12), Vector2(width, 38))})
+	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		if a.priority != b.priority: return a.priority < b.priority
+		if a.distance != b.distance: return a.distance < b.distance
+		return a.id < b.id)
+	var occupied: Array[Rect2] = []
+	if actor_resource_overlay.visible:
+		var scale_to_view := Vector2(main_viewport.size) / viewport_container.size
+		var own := actor_resource_overlay.get_global_rect()
+		occupied.append(Rect2((own.position - viewport_container.global_position) * scale_to_view,
+			own.size * scale_to_view))
+	for candidate: Dictionary in candidates:
+		var crowded := false
+		if candidate.id != target_id:
+			for previous: Rect2 in occupied:
+				if previous.grow(3).intersects(candidate.rect):
+					crowded = true
+					break
+		(candidate.actor as ReplicatedActor3D).set_overhead_crowded(crowded)
+		if not crowded:
+			occupied.append(candidate.rect)
 
 ## How much of an actor's overhead block shows at this distance from the
 ## player: all of it up to `NAME_FADE_METRES` short of the name distance,
@@ -6074,7 +6192,8 @@ func _load_hud_settings() -> void:
 		extension_windows.call("set_combat_hud_pinned",
 			bool(config.get_value("hud", "combat_hud_pinned", false)))
 		var combat_hud_where: Variant = config.get_value(
-			"hud", "combat_hud_position", null)
+			"hud", "combat_hud_position", Vector2.ZERO) if config.has_section_key(
+			"hud", "combat_hud_position") else null
 		if combat_hud_where is Vector2:
 			extension_windows.call("set_combat_hud_position",
 				combat_hud_where as Vector2)
@@ -6324,7 +6443,8 @@ func _apply_minimap_scale() -> void:
 	minimap.offset_right = -border_size
 	minimap.offset_bottom = -border_size
 	minimap.custom_minimum_size = Vector2.ZERO
-	var maximum: Vector2 = (game_view.size - Vector2.ONE * frame_size).max(Vector2.ZERO)
+	var maximum: Vector2 = (game_view.size - Vector2(WindowDrag.RESERVED_RIGHT_RAIL,
+		WindowDrag.RESERVED_BOTTOM_BAR) - Vector2.ONE * frame_size).max(Vector2.ZERO)
 	minimap_frame.position = Vector2(
 		clampf(minimap_frame.position.x, 0.0, maximum.x),
 		clampf(minimap_frame.position.y, 30.0, maxf(30.0, maximum.y)))
@@ -6467,7 +6587,7 @@ func _clamp_inventory_window_to_viewport() -> void:
 	# nothing may cover; every script-built window already respects the same
 	# reserve.
 	var maximum: Vector2 = (game_view.size - visible_size
-		- Vector2(RESERVED_RIGHT_RAIL_MARGIN, 8.0)).max(Vector2(8.0, 8.0))
+		- Vector2(RESERVED_RIGHT_RAIL_MARGIN, WindowDrag.RESERVED_BOTTOM_BAR + 8.0)).max(Vector2(8.0, 8.0))
 	local_position = Vector2(
 		clampf(local_position.x, 8.0, maximum.x),
 		clampf(local_position.y, 8.0, maximum.y))
@@ -6783,7 +6903,8 @@ func _on_minimap_frame_gui_input(event: InputEvent) -> void:
 	elif event is InputEventMouseMotion and _minimap_dragging:
 		var target_position: Vector2 = (get_viewport().get_mouse_position()
 			- _minimap_drag_offset)
-		var maximum: Vector2 = (game_view.size - minimap_frame.size).max(Vector2.ZERO)
+		var maximum: Vector2 = (game_view.size - Vector2(WindowDrag.RESERVED_RIGHT_RAIL,
+			WindowDrag.RESERVED_BOTTOM_BAR) - minimap_frame.size).max(Vector2.ZERO)
 		minimap_frame.position = Vector2(
 			clampf(target_position.x, 0.0, maximum.x),
 			clampf(target_position.y, 30.0, maximum.y))
@@ -8789,6 +8910,21 @@ func _flush_floating_feedback() -> void:
 	_floating_feedback_flush_queued = false
 	var pending: Array[Dictionary] = _pending_floating_feedback
 	_pending_floating_feedback = []
+	var merged: Array[Dictionary] = []
+	var experience_rows: Dictionary = {}
+	for feedback: Dictionary in pending:
+		if str(feedback.get("kind", "")) != "experience":
+			merged.append(feedback)
+			continue
+		var key := "%s/%s/%s" % [feedback.get("skill", ""),
+			feedback.get("bonus", false), feedback.get("permanent", false)]
+		if experience_rows.has(key):
+			var row: Dictionary = merged[int(experience_rows[key])]
+			row.amount = int(row.get("amount", 0)) + int(feedback.get("amount", 0))
+		else:
+			experience_rows[key] = merged.size()
+			merged.append(feedback.duplicate())
+	pending = merged
 	var has_skill_experience := false
 	for feedback: Dictionary in pending:
 		if _is_skill_experience(feedback):
@@ -9391,6 +9527,11 @@ func _sync_inventory() -> void:
 			selected_inventory_slot = -1
 	if not AppState.inventory_text.is_empty():
 		inventory_description.text = AppState.inventory_text
+	elif selected_inventory_slot >= 0 and AppState.inventory.has(selected_inventory_slot):
+		inventory_description.text = _inventory_tooltip(
+			AppState.inventory[selected_inventory_slot], selected_inventory_slot)
+	else:
+		inventory_description.text = "Select an item to inspect it."
 	if ground_bag_panel.visible:
 		_sync_ground_bag_actions()
 
@@ -10125,7 +10266,7 @@ func _inventory_tooltip(item: Dictionary, slot: int) -> String:
 	var described: Dictionary = _inventory_description_for(slot)
 	var heading: String = (str(described.get("name", ""))
 		if not str(described.get("name", "")).is_empty()
-		else "Item image #%d" % image_id)
+		else str(AppState.inventory_names.get(slot, "Item image #%d" % image_id)))
 	var tooltip: String = "%s — quantity %d%s" % [heading,
 		int(item.get("quantity", 0)), " — " + ", ".join(traits) if not traits.is_empty() else ""]
 	if not str(described.get("category", "")).is_empty():
@@ -10175,6 +10316,14 @@ func _is_player_actor(actor_id: int) -> bool:
 func _spawn_health_change_label(actor: ReplicatedActor3D, delta: int) -> void:
 	if not game_view.visible or not is_instance_valid(actor):
 		return
+	var now := Time.get_ticks_msec()
+	for active: Label in _active_floating_labels:
+		if is_instance_valid(active) and int(active.get_meta("feedback_actor", -1)) == actor.actor_id \
+				and int(active.get_meta("feedback_sign", 0)) == signi(delta) \
+				and now - int(active.get_meta("feedback_started", 0)) < 200:
+			var amount := int(active.text) + delta
+			active.text = "+%d" % amount if amount > 0 else str(amount)
+			return
 	var world_position: Vector3 = actor.global_position + Vector3(0.0, 2.45, 0.0)
 	if gameplay_camera.is_position_behind(world_position):
 		return
@@ -10185,6 +10334,9 @@ func _spawn_health_change_label(actor: ReplicatedActor3D, delta: int) -> void:
 	var screen_position: Vector2 = (viewport_container.position
 		+ viewport_position * viewport_scale)
 	var label: Label = Label.new()
+	label.set_meta("feedback_actor", actor.actor_id)
+	label.set_meta("feedback_sign", signi(delta))
+	label.set_meta("feedback_started", now)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", 15)
@@ -10196,7 +10348,7 @@ func _spawn_health_change_label(actor: ReplicatedActor3D, delta: int) -> void:
 	_floating_feedback_layer.add_child(label)
 	label.reset_size()
 	label.position = Vector2(screen_position.x - label.size.x * 0.5,
-		screen_position.y)
+		_floating_feedback_row(screen_position.y, screen_position.y))
 	_active_floating_labels.append(label)
 	var tween: Tween = create_tween().set_parallel(true)
 	tween.tween_property(label, "position",
@@ -10259,7 +10411,11 @@ func _inventory_description_for(slot: int) -> Dictionary:
 		for entry: Variant in items:
 			if entry is Dictionary:
 				_described_slots[int((entry as Dictionary).get("slot", -1))] = entry
-	return _described_slots.get(slot, {}) as Dictionary
+	var described: Dictionary = _described_slots.get(slot, {}) as Dictionary
+	var item: Dictionary = AppState.inventory.get(slot, {}) as Dictionary
+	if not described.is_empty() and int(described.get("image_id", -1)) != int(item.get("image_id", -2)):
+		return {}
+	return described
 
 ## Walk mode is Eternal Lands' move action, so a click there lifts the item
 ## onto the cursor instead of only selecting it. Every other mode keeps the
@@ -10437,6 +10593,7 @@ func _on_inventory_slot_pressed(slot: int) -> void:
 		_drop_inventory_stack(slot)
 		return
 	selected_inventory_slot = slot
+	AppState.inventory_text = ""
 	_apply_inventory_tool(slot)
 	_sync_equipment_slots()
 	_sync_inventory()
@@ -10865,6 +11022,7 @@ func _sync_storage() -> void:
 	if not is_open:
 		selected_storage_side = ""
 		return
+	inventory_panel.hide()
 	stats_panel.hide()
 	full_map.hide()
 	trade_panel.hide()
@@ -11022,6 +11180,7 @@ func _fill_storage_item_list(list_control: ItemList, items: Dictionary, prefix: 
 			label = "%s  ×%d  •  %s" % [name, int(item.get("quantity", 0)),
 				_storage_row_detail(described)]
 		list_control.add_item(label)
+		list_control.set_item_tooltip(index, label)
 		list_control.set_item_metadata(index, position)
 		var icon: Texture2D = _named_icon(image_id, name)
 		if icon != null:
@@ -11302,7 +11461,9 @@ func _send_popup_reply(answers: Dictionary) -> void:
 
 func _sync_dialogue() -> void:
 	var dialogue: Dictionary = AppState.npc_dialogue
-	dialogue_panel.visible = bool(dialogue.get("open", false))
+	dialogue_panel.visible = bool(dialogue.get("open", false)) and (
+		not str(dialogue.get("text", "")).strip_edges().is_empty()
+		or not (dialogue.get("options", []) as Array).is_empty())
 	OldcraftDialogueStyleScript.sync_visibility(self, dialogue_panel.visible)
 	if not dialogue_panel.visible:
 		return

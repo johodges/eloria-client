@@ -98,6 +98,7 @@ var merchant_trade: Button
 var merchant_selected_icon: TextureRect
 var merchant_empty_pack: Label
 var _merchant_actor := -1
+var _merchant_request_pending := false
 var merchant_quantity: LineEdit
 var merchant_status: Label
 var market_panel: PanelContainer
@@ -623,15 +624,17 @@ func _sync_detail() -> void:
 # --- merchant ----------------------------------------------------------------
 
 func _sync_merchant() -> void:
+	_merchant_request_pending = false
 	if not bool(AppState.merchant.get("open", false)):
 		merchant_panel.hide()
 		_merchant_actor = -1
 		return
 	var actor_id := int(AppState.merchant.get("actor_id", -1))
+	var opening := _merchant_actor != actor_id
 	var selected_id := -1
-	if _merchant_actor == actor_id and merchant_list != null and not merchant_list.get_selected_items().is_empty():
+	if not opening and merchant_list != null and not merchant_list.get_selected_items().is_empty():
 		selected_id = int(merchant_list.get_item_metadata(merchant_list.get_selected_items()[0]))
-	else:
+	elif opening:
 		_merchant_mode = "buy"
 		merchant_quantity.text = "1"
 	_merchant_actor = actor_id
@@ -651,9 +654,14 @@ func _sync_merchant() -> void:
 		if int(merchant_list.get_item_metadata(index)) == selected_id:
 			merchant_list.select(index)
 			break
-	if merchant_list.get_selected_items().is_empty() and merchant_list.item_count > 0:
+	if opening and merchant_list.item_count > 0:
 		merchant_list.select(0)
-	merchant_list.ensure_current_is_visible()
+	if merchant_list.get_selected_items().is_empty():
+		merchant_quantity.text = "1"
+	else:
+		merchant_quantity.text = str(clampi(int(merchant_quantity.text), 1,
+			maxi(1, _merchant_maximum(_merchant_entry()))))
+		merchant_list.ensure_current_is_visible()
 	merchant_status.text = ""
 	_sync_merchant_summary()
 	merchant_panel.show()
@@ -669,6 +677,7 @@ func _add_merchant_row(list: ItemList, entry: Dictionary, selling: bool) -> void
 	list.set_item_tooltip(row, "%s\n%s: %d gc each\nIn your pack: %d" % [name, "Sell price" if selling else "Buy price", price, int(entry.get("owned", 0))])
 
 func _on_merchant_selected(_index: int, mode: String) -> void:
+	merchant_quantity.text = "1"
 	_merchant_mode = mode
 	merchant_list = merchant_buy_list if mode == "buy" else merchant_sell_list
 	(merchant_sell_list if mode == "buy" else merchant_buy_list).deselect_all()
@@ -676,6 +685,7 @@ func _on_merchant_selected(_index: int, mode: String) -> void:
 	_sync_merchant_summary()
 
 func _on_merchant_mode(mode: String) -> void:
+	merchant_quantity.text = "1"
 	_merchant_mode = mode
 	merchant_list = merchant_buy_list if mode == "buy" else merchant_sell_list
 	(merchant_sell_list if mode == "buy" else merchant_buy_list).deselect_all()
@@ -736,6 +746,13 @@ func _sync_merchant_summary(_text: String = "") -> void:
 		merchant_totals.text = "Enter a whole quantity\nbetween 1 and 1,000,000."
 		return
 	var quantity := int(quantity_text)
+	var maximum := _merchant_maximum(entry)
+	merchant_trade.text = "%s %d" % ["Buy" if buying else "Sell", quantity]
+	if quantity > maximum:
+		merchant_totals.text = "Maximum available: %d\n%s" % [maximum,
+			"Not enough gold or free carry space." if buying else "You do not own that many."]
+		merchant_trade.tooltip_text = merchant_totals.text
+		return
 	var total := quantity * price
 	var gold_after := int(AppState.merchant.get("gold", 0)) + (-total if buying else total)
 	merchant_totals.text = "%s: %d gc\nGold after: %d gc" % ["Cost" if buying else "Receive", total, gold_after]
@@ -743,8 +760,8 @@ func _sync_merchant_summary(_text: String = "") -> void:
 		var carry_after := int(AppState.merchant.get("carried", 0)) + int(entry.emu) * quantity * (1 if buying else -1)
 		merchant_totals.text += "\nCarry after: %d/%d" % [maxi(0, carry_after), int(AppState.merchant.get("capacity", 0))]
 	merchant_trade.text = "%s %d" % ["Buy" if buying else "Sell", quantity]
-	merchant_trade.disabled = quantity > _merchant_maximum(entry)
-	merchant_trade.tooltip_text = "Not enough gold or free carry space." if buying and merchant_trade.disabled else "You do not own that many." if merchant_trade.disabled else ""
+	merchant_trade.disabled = _merchant_request_pending
+	merchant_trade.tooltip_text = "Waiting for the merchant's response." if _merchant_request_pending else ""
 
 ## The dedicated shop command accepts an exact quantity in one request. The
 ## server validates stock, gold, carrying capacity and ownership as before.
@@ -773,6 +790,8 @@ func _on_merchant_trade() -> void:
 	if trade_error != OK:
 		merchant_status.text = "Merchant request failed: " + error_string(trade_error)
 		return
+	_merchant_request_pending = true
+	_sync_merchant_summary()
 	merchant_status.text = "Buying…" if _merchant_mode == "buy" else "Selling…"
 
 # --- marketplace -------------------------------------------------------------

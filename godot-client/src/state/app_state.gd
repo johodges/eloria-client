@@ -81,6 +81,8 @@ var inventory: Dictionary = {}
 ## finding one, which is also what an older server gets it.
 var inventory_names: Dictionary = {}
 var inventory_text := ""
+var inventory_metadata_dirty := false
+var _inventory_text_generation := 0
 var inventory_cooldowns: Dictionary = {}
 var owned_sigils: Array[int] = []
 var active_spells: Dictionary = {}
@@ -692,21 +694,36 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			_refresh_reading()
 			state_changed.emit(&"stats")
 		"inventory":
+			inventory_metadata_dirty = true
+			var previous_inventory := inventory.duplicate()
 			inventory.clear()
 			for raw_item: Variant in event.items:
 				var item: Dictionary = raw_item as Dictionary
 				inventory[int(item.get("slot", -1))] = item
+			for slot: Variant in inventory_names.keys():
+				if not inventory.has(slot) or int(inventory[slot].get("image_id", -1)) != int(
+						(previous_inventory.get(slot, {}) as Dictionary).get("image_id", -2)):
+					inventory_names.erase(slot)
 			state_changed.emit(&"inventory")
 		"inventory_update":
+			inventory_metadata_dirty = true
 			var updated_item: Dictionary = event.item as Dictionary
+			var updated_slot := int(updated_item.get("slot", -1))
+			var previous_item: Dictionary = inventory.get(updated_slot, {}) as Dictionary
+			if int(previous_item.get("image_id", -1)) != int(updated_item.get("image_id", -2)):
+				inventory_names.erase(updated_slot)
 			inventory[int(updated_item.get("slot", -1))] = updated_item
 			state_changed.emit(&"inventory")
 		"inventory_remove":
+			inventory_metadata_dirty = true
 			for raw_slot: Variant in event.slots:
 				inventory.erase(int(raw_slot))
+				inventory_names.erase(int(raw_slot))
 			state_changed.emit(&"inventory")
 		"inventory_text":
 			inventory_text = str(event.text)
+			_inventory_text_generation += 1
+			_expire_inventory_text(_inventory_text_generation)
 			state_changed.emit(&"inventory_text")
 		"ground_bag":
 			var bag: Dictionary = {"bag_id": int(event.bag_id),
@@ -1202,6 +1219,9 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			inventory_state = {"gold": int(event.gold),
 				"carried": int(event.carried), "capacity": int(event.capacity),
 				"items": (event.items as Array).duplicate(true)}
+			inventory_names.clear()
+			for entry: Dictionary in inventory_state.items:
+				inventory_names[int(entry.slot)] = str(entry.name)
 			state_changed.emit(&"inventory_state")
 		"combat_state":
 			# A defeat ends the engagement; every other event refreshes it.
@@ -1447,6 +1467,12 @@ func close_marketplace() -> void:
 func close_merchant() -> void:
 	merchant = _empty_merchant_state()
 	state_changed.emit(&"merchant")
+
+func _expire_inventory_text(generation: int) -> void:
+	await get_tree().create_timer(8.0).timeout
+	if generation == _inventory_text_generation:
+		inventory_text = ""
+		state_changed.emit(&"inventory_text")
 
 func close_item_detail() -> void:
 	item_detail = {"open": false}

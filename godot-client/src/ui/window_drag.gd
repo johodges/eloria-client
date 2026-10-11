@@ -16,6 +16,7 @@ extends Node
 
 ## Nothing may cover the fixed resource rail down the right-hand edge.
 const RESERVED_RIGHT_RAIL := 96.0
+const RESERVED_BOTTOM_BAR := 40.0
 const EDGE_MARGIN := 6.0
 
 ## Emitted when a drag ends, for a caller that remembers where its window was.
@@ -25,6 +26,15 @@ var window: Control
 
 var _dragging := false
 var _grab_offset := Vector2.ZERO
+
+func _ready() -> void:
+	window.visibility_changed.connect(_clamp_when_visible)
+	window.resized.connect(_clamp_when_visible)
+	window.get_viewport().size_changed.connect(_clamp_when_visible)
+
+func _clamp_when_visible() -> void:
+	if is_instance_valid(window) and window.is_visible_in_tree():
+		clamp_into_view.call_deferred()
 
 ## Makes `target` draggable by `handle`. The handle is usually the window's
 ## header row; where a window has no header it is the title label, which is the
@@ -75,7 +85,7 @@ func clamp_into_view() -> void:
 	var size: Vector2 = window.size * window.scale
 	var limit := Vector2(
 		maxf(EDGE_MARGIN, bounds.x - RESERVED_RIGHT_RAIL - size.x),
-		maxf(EDGE_MARGIN, bounds.y - size.y - EDGE_MARGIN))
+		maxf(EDGE_MARGIN, bounds.y - size.y - RESERVED_BOTTOM_BAR - EDGE_MARGIN))
 	window.global_position = Vector2(
 		clampf(window.global_position.x, EDGE_MARGIN, limit.x),
 		clampf(window.global_position.y, EDGE_MARGIN, limit.y))

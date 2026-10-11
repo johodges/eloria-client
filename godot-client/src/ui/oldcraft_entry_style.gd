@@ -284,9 +284,9 @@ static func _style_creation_layout(main: Control) -> void:
 			Color(0.16, 0.125, 0.08, 1.0), GOLD_BRIGHT, 2, 4, 6.0))
 		randomize.add_theme_color_override("font_color", GOLD_BRIGHT)
 	for path: String in [
-			"CreationPanel/Columns/FormPanel/Form/AccountSection",
-			"CreationPanel/Columns/FormPanel/Form/IdentitySection",
-			"CreationPanel/Columns/FormPanel/Form/AppearanceSection"]:
+			"CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AccountSection",
+			"CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/IdentitySection",
+			"CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceSection"]:
 		var section := main.get_node_or_null(path) as Label
 		if section == null:
 			continue
@@ -311,7 +311,7 @@ static func _style_titles(main: Control) -> void:
 		login_title.add_theme_font_size_override("font_size", 18)
 		login_title.add_theme_constant_override("outline_size", 3)
 	var creation_title := main.get_node_or_null(
-		"CreationPanel/Columns/FormPanel/Form/Title") as Label
+		"CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/Title") as Label
 	if creation_title != null:
 		creation_title.text = "FORGE YOUR HERO"
 		creation_title.add_theme_color_override("font_color", BURGUNDY_PRESSED)

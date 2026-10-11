@@ -117,6 +117,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if visible:
+		_keep_on_screen()
 	if _size_save_countdown > 0.0:
 		_size_save_countdown -= delta
 		if _size_save_countdown <= 0.0:
@@ -135,8 +137,8 @@ func _process(delta: float) -> void:
 
 func _available_size() -> Vector2i:
 	var viewport_size := get_tree().root.size
-	return Vector2i(maxi(240, viewport_size.x - VIEWPORT_MARGIN.x),
-		maxi(200, viewport_size.y - VIEWPORT_MARGIN.y))
+	return Vector2i(maxi(240, viewport_size.x - VIEWPORT_MARGIN.x - int(WindowDrag.RESERVED_RIGHT_RAIL)),
+		maxi(200, viewport_size.y - VIEWPORT_MARGIN.y - int(WindowDrag.RESERVED_BOTTOM_BAR)))
 
 
 ## Reopening the assistant restores the scale the player left it at rather
@@ -148,6 +150,7 @@ func _fit_to_viewport() -> void:
 	var viewport_size := get_tree().root.size
 	position = Vector2i(maxi(0, (viewport_size.x - size.x) / 2),
 		maxi(0, (viewport_size.y - size.y) / 2))
+	_keep_on_screen()
 
 
 ## The window's pixel size and the scale its contents are drawn at move
@@ -178,8 +181,8 @@ func resize_to_scale(requested: float) -> void:
 func _keep_on_screen() -> void:
 	var viewport_size := get_tree().root.size
 	position = Vector2i(
-		clampi(position.x, 0, maxi(0, viewport_size.x - size.x)),
-		clampi(position.y, 0, maxi(0, viewport_size.y - size.y)))
+		clampi(position.x, 0, maxi(0, viewport_size.x - size.x - int(WindowDrag.RESERVED_RIGHT_RAIL))),
+		clampi(position.y, 0, maxi(0, viewport_size.y - size.y - int(WindowDrag.RESERVED_BOTTOM_BAR))))
 
 
 func _flush_size_preference() -> void:

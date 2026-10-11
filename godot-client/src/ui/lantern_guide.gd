@@ -213,7 +213,7 @@ func _process(_delta: float) -> void:
 			detail.custom_minimum_size.y = 120
 		else:
 			card.reparent(self)
-			detail.custom_minimum_size.y = 350
+			detail.custom_minimum_size.y = 120
 			manufacturing.position = manufacturing_rect.position
 			manufacturing.size = manufacturing_rect.size
 	if not AppState.authenticated:
@@ -226,7 +226,7 @@ func _process(_delta: float) -> void:
 		card.custom_minimum_size.x = 350
 		heading.custom_minimum_size.x = 326
 		instruction.custom_minimum_size.x = 326
-		manufacturing.size.y = get_viewport_rect().size.y-16
+		manufacturing.size.y = get_viewport_rect().size.y - WindowDrag.RESERVED_BOTTOM_BAR - 16
 		manufacturing.position.y = 8
 		queue_redraw()
 		return

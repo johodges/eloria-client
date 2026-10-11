@@ -1027,9 +1027,9 @@ func _run() -> void:
 	var manufacturing_list: ItemList = main.get_node(
 		"GameView/ManufacturingPanel/Content/Columns/ManufacturingList") as ItemList
 	var manufacturing_detail: RichTextLabel = main.get_node(
-		"GameView/ManufacturingPanel/Content/Columns/ManufacturingSide/ManufacturingDetail") as RichTextLabel
+		"%ManufacturingDetail") as RichTextLabel
 	var manufacturing_mix_one: Button = main.get_node(
-		"GameView/ManufacturingPanel/Content/Columns/ManufacturingSide/ManufacturingActions/ManufacturingMixOne") as Button
+		"%ManufacturingMixOne") as Button
 	var ready_only: CheckButton = main.get("manufacturing_ready_only") as CheckButton
 	_expect(ready_only.button_pressed and manufacturing_list.item_count > 0
 		and manufacturing_list.item_count < (main.get("manufacturing_catalog") as ManufacturingCatalog).count(),
@@ -2968,7 +2968,7 @@ func _run() -> void:
 	var reading_rect: Rect2 = reading_panel.get_global_rect()
 	_expect(reading_rect.position.x >= 0.0 and reading_rect.position.y >= 0.0
 		and reading_rect.end.x <= 1280.0 and reading_rect.end.y <= 720.0,
-		"the reading window fits within 1280x720")
+		"the reading window fits within 1280x720: %s" % reading_rect)
 	_expect(not reading_rect.intersects(right_stats.get_global_rect()),
 		"the reading window does not cover the fixed resource rail")
 

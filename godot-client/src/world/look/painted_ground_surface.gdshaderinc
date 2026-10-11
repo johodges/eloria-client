@@ -120,10 +120,18 @@ void fragment() {
 		}
 	}
 	float covered = texel.a * albedo_color.a * coverage * look_opacity;
+#ifdef LOOK_GROUND_CUTOUT
+	// Coverage on MASK patches must reach the ground edge. Keep opaque depth
+	// and viewport alpha while breaking the old solid rectangular boundary.
+	vec2 grain = floor(UV * 80.0);
+	float threshold = fract(sin(dot(grain, vec2(12.9898, 78.233))) * 43758.5453);
+	if (covered <= threshold) { discard; }
+#else
 	// The road over what lies beneath, and beyond it that ground darkened:
 	// covered * road + (1 - covered) * (1 - band) * ground.
 	ALPHA = 1.0 - (1.0 - covered) * (1.0 - band);
 	ALBEDO *= covered / max(ALPHA, 0.0001);
+#endif
 #ifdef LOOK_GROUND_EDGE_BAND
 	vec3 pushed = VERTEX + normalize(VERTEX) * (band > 0.0 ? look_edge_band_push : 0.0);
 	vec4 clip = PROJECTION_MATRIX * vec4(pushed, 1.0);

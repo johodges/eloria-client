@@ -36,7 +36,7 @@ const PROBE_RADIUS := 0.25
 const PROBE_HEIGHT := 1.0
 ## How far in front of the camera the probe starts, keeping geometry the near
 ## plane already clipped out of it.
-const PROBE_NEAR := 1.2
+const PROBE_NEAR := 0.1
 ## Opacity an obstacle settles at while it covers the player: enough to read the
 ## character through, enough to keep the obstacle's own shape legible.
 const FADED_ALPHA := 0.5

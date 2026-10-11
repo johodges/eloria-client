@@ -264,6 +264,7 @@ var _equipment_applied: bool = false
 var _equipment_hides: Dictionary = {}
 var _hidden_body_surfaces: Dictionary = {}
 var _nameplate: Label3D
+var _overhead_crowded := false
 var _title_line: Label3D
 var _speech_bubble: Label3D
 var _speech_bubble_expiry_msec := 0
@@ -382,6 +383,10 @@ const HEALTH_LABEL_DROP := HEALTH_BAR_DROP
 const HEALTH_NUMBER_GAP := 5.0
 const OVERHEAD_BACKING := Color(0.0, 0.0, 0.0, 0.45)
 static var _health_gradient: GradientTexture2D
+static var _wardrobe_texture_cache: Dictionary = {}
+
+static func clear_wardrobe_texture_cache() -> void:
+	_wardrobe_texture_cache.clear()
 ## The speech bubble sits above the name instead, and wraps well short of the
 ## screen it is now measured against.
 const SPEECH_BUBBLE_RISE := 28.0
@@ -750,6 +755,8 @@ func _set_mesh_color(mesh_node: MeshInstance3D, color: Color) -> void:
 				continue
 			var coloured := original.duplicate() as StandardMaterial3D
 			coloured.albedo_color = color
+			coloured.albedo_texture = _wardrobe_dye_texture(original.albedo_texture)
+			coloured.vertex_color_use_as_albedo = false
 			mesh_node.set_surface_override_material(surface, coloured)
 		return
 	var source: Material = mesh_node.get_active_material(0)
@@ -757,7 +764,44 @@ func _set_mesh_color(mesh_node: MeshInstance3D, color: Color) -> void:
 		return
 	var material: StandardMaterial3D = (source as StandardMaterial3D).duplicate()
 	material.albedo_color = color
+	material.albedo_texture = _wardrobe_dye_texture(material.albedo_texture)
+	material.vertex_color_use_as_albedo = false
 	mesh_node.material_override = material
+
+## Remove the atlas's baked brown dye while retaining fabric grain and seams.
+## Shared once per source texture; character and equipment textures stay intact.
+static func _wardrobe_dye_texture(source: Texture2D) -> Texture2D:
+	if source == null:
+		return null
+	var key := source.get_instance_id()
+	if _wardrobe_texture_cache.has(key):
+		return _wardrobe_texture_cache[key]
+	var original := source.get_image()
+	if original == null or original.is_empty():
+		return source
+	var neutral := original.duplicate() as Image
+	if neutral.is_compressed():
+		neutral.decompress()
+	neutral.convert(Image.FORMAT_RGBA8)
+	var reference := 0.0
+	var count := 0
+	for y: int in neutral.get_height():
+		for x: int in neutral.get_width():
+			var pixel := neutral.get_pixel(x, y)
+			if pixel.a > 0.0:
+				reference += pixel.get_luminance()
+				count += 1
+	reference = maxf(0.01, reference / maxi(1, count))
+	for y: int in neutral.get_height():
+		for x: int in neutral.get_width():
+			var pixel := neutral.get_pixel(x, y)
+			var value := clampf(pixel.get_luminance() / reference, 0.0, 1.0)
+			neutral.set_pixel(x, y, Color(value, value, value, pixel.a))
+	neutral.generate_mipmaps()
+	var texture := ImageTexture.create_from_image(neutral)
+	_wardrobe_texture_cache[key] = texture
+	_wardrobe_texture_cache[texture.get_instance_id()] = texture
+	return texture
 
 ## Lifts a garment off the skin it is fitted to. Reuses the override the tint
 ## pass already installed so a garment keeps its colour.
@@ -1171,7 +1215,13 @@ func _refresh_overhead_health() -> void:
 ## The last matters because `set_drawn` hides these nodes itself, and a label
 ## switched back on while the actor is out of range would float over nothing.
 func _overhead_shown() -> bool:
-	return _overhead_visible and _overhead_fade > 0.0 and _drawn
+	return _overhead_visible and not _overhead_crowded and _overhead_fade > 0.0 and _drawn
+
+func set_overhead_crowded(crowded: bool) -> void:
+	if _overhead_crowded == crowded:
+		return
+	_overhead_crowded = crowded
+	_refresh_overhead()
 
 func _fade_label(label: Label3D) -> void:
 	label.modulate.a = _overhead_fade

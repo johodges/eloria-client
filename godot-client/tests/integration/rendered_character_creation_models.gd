@@ -44,27 +44,27 @@ func _run() -> void:
 		"CreationPanel/Columns/CharacterPreview/Viewport") as SubViewport
 	var spin_names: Array[String] = ["CreateSkin", "CreateEyes",
 		"CreateShirt", "CreatePants", "CreateBoots"]
-	var hair := main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateHair") as OptionButton
-	var hair_color := main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateHairColor") as OptionButton
+	var hair := main.get_node("CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceGrid/CreateHair") as OptionButton
+	var hair_color := main.get_node("CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceGrid/CreateHairColor") as OptionButton
 	_expect(hair.item_count == 10 and hair_color.item_count == 20, "independent named hairstyle and color choices")
-	_expect(main.get_node_or_null("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/CreateHead") == null, "broken head control removed")
+	_expect(main.get_node_or_null("CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceGrid/CreateHead") == null, "broken head control removed")
 	hair.select(0)
 	hair_color.select(0)
 	# The shared bodies expose native wardrobe dye surfaces. Exercise their
 	# existing controls alongside the hair choices, including the bald default.
 	for garment: String in ["CreateShirt", "CreatePants", "CreateBoots"]:
 		_expect(main.get_node_or_null(
-			"CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + garment) is OptionButton,
+			"CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceGrid/" + garment) is OptionButton,
 			"creation offers native wardrobe dye " + garment)
 	for spin_name: String in spin_names:
-		(main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).select((main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).get_item_index(1 if spin_name == "CreateSkin" else 0))
+		(main.get_node("CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceGrid/" + spin_name) as OptionButton).select((main.get_node("CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceGrid/" + spin_name) as OptionButton).get_item_index(1 if spin_name == "CreateSkin" else 0))
 
 	var creation_options: Array = main.get("creation_options")
 	for index: int in range(creation_options.size()):
 		var option: Dictionary = creation_options[index]
 		_select_actor_type(main, int(option.actorType))
 		for choice_name: String in spin_names + ["CreateHair", "CreateHairColor"]:
-			var choice := main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + choice_name) as OptionButton
+			var choice := main.get_node("CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceGrid/" + choice_name) as OptionButton
 			var seen: Dictionary = {}
 			for item: int in range(choice.item_count):
 				var label_text := choice.get_item_text(item)
@@ -85,7 +85,7 @@ func _run() -> void:
 		hair.select(hair.get_item_index(style))
 		hair_color.select(hair_color.get_item_index(style))
 		for spin_name: String in spin_names:
-			(main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).select(mini(style, (main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).item_count - 1))
+			(main.get_node("CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceGrid/" + spin_name) as OptionButton).select(mini(style, (main.get_node("CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceGrid/" + spin_name) as OptionButton).item_count - 1))
 		main.call("_refresh_creation_preview")
 		for unused_frame: int in range(10):
 			await process_frame
@@ -96,7 +96,7 @@ func _run() -> void:
 	# Changing colour must leave the selected mesh alone, and changing style
 	# must keep its colour. Exercise the real controls/materials and wire value.
 	for spin_name: String in spin_names:
-		(main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).select((main.get_node("CreationPanel/Columns/FormPanel/Form/AppearanceGrid/" + spin_name) as OptionButton).get_item_index(1 if spin_name == "CreateSkin" else 0))
+		(main.get_node("CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceGrid/" + spin_name) as OptionButton).select((main.get_node("CreationPanel/Columns/FormPanel/Form/CreationFieldsScroll/CreationFields/AppearanceGrid/" + spin_name) as OptionButton).get_item_index(1 if spin_name == "CreateSkin" else 0))
 	for model_index: int in [0, 1]:
 		selector.select(selector.get_item_index(model_index))
 		main.call("_populate_creation_choices")

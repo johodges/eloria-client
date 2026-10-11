@@ -40,6 +40,9 @@ func _run() -> void:
 	viewport.add_child(overlay)
 	var loader := WorldLoader.new()
 	loader._apply_material_passes([overlay])
+	if OS.get_environment("ELORIA_TEST_PAINTED_MASK") == "1":
+		overlay.material_override = LookGround.painted_for(soil, LookGround.Kind.PATCH, mesh, 0)
+		assert(overlay.material_override != null)
 	var light := DirectionalLight3D.new()
 	light.rotation_degrees.x = -90
 	viewport.add_child(light)

@@ -12,6 +12,7 @@ const INVASION_COLOR := Color("ff6b63")
 const BOSS_COLOR := Color("ffc94f")
 const MARKER_FONT_SIZE := 10
 const MAX_LOCATION_LABELS := 6
+const CLUSTER_PIXELS := 28.0
 
 var state: Dictionary = {}
 var selected_tile: Variant = null
@@ -150,6 +151,7 @@ func _draw() -> void:
 	draw_rect(rect, Color("7392a6"), false, 2.0)
 
 	var font: Font = ThemeDB.fallback_font
+	_draw_creatures(font)
 	for raw_location: Variant in state.get("locations", []):
 		var location := raw_location as Dictionary
 		var point := _point(Vector2(float(location.get("x", 0)), float(location.get("y", 0))))
@@ -165,14 +167,6 @@ func _draw() -> void:
 		draw_circle(point, 1.5, Color.WHITE)
 		draw_string(font, point + Vector2(6, 3), str(player.get("name", "Player")),
 			HORIZONTAL_ALIGNMENT_LEFT, -1.0, MARKER_FONT_SIZE, PLAYER_COLOR)
-	for raw_creature: Variant in state.get("creatures", []):
-		var creature := raw_creature as Dictionary
-		var point := _point(Vector2(float(creature.get("x", 0)), float(creature.get("y", 0))))
-		var color := BOSS_COLOR if bool(creature.get("boss", false)) else INVASION_COLOR
-		var diamond := PackedVector2Array([
-			point + Vector2(0, -5), point + Vector2(5, 0),
-			point + Vector2(0, 5), point + Vector2(-5, 0)])
-		draw_colored_polygon(diamond, color)
 	if selected_tile is Vector2i:
 		var selected_point := _point(Vector2(selected_tile))
 		draw_circle(selected_point, 7.0, Color("f4ef7a"), false, 2.0)
@@ -180,6 +174,46 @@ func _draw() -> void:
 			Color("f4ef7a"), 1.0)
 		draw_line(selected_point - Vector2(0, 10), selected_point + Vector2(0, 10),
 			Color("f4ef7a"), 1.0)
+
+func _creature_clusters() -> Array[Dictionary]:
+	var cells: Dictionary = {}
+	for creature: Dictionary in state.get("creatures", []):
+		if bool(creature.get("boss", false)):
+			continue
+		var point := _point(Vector2(float(creature.get("x", 0)), float(creature.get("y", 0))))
+		if not _map_rect().has_point(point):
+			continue
+		var cell := Vector2i(floori(point.x / CLUSTER_PIXELS), floori(point.y / CLUSTER_PIXELS))
+		if not cells.has(cell):
+			cells[cell] = {"position": Vector2.ZERO, "count": 0, "names": {}}
+		var cluster: Dictionary = cells[cell]
+		cluster.position += point
+		cluster.count += 1
+		var creature_name := str(creature.get("name", "Creature"))
+		cluster.names[creature_name] = int(cluster.names.get(creature_name, 0)) + 1
+	var clusters: Array[Dictionary] = []
+	for cluster: Dictionary in cells.values():
+		cluster.position /= cluster.count
+		clusters.append(cluster)
+	return clusters
+
+func _draw_creatures(font: Font) -> void:
+	for cluster: Dictionary in _creature_clusters():
+		if cluster.count > 1:
+			draw_circle(cluster.position, 12.0, Color("182734"))
+			draw_circle(cluster.position, 12.0, INVASION_COLOR, false, 1.5)
+			var text := str(cluster.count)
+			var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 9).x
+			draw_string(font, cluster.position + Vector2(-width * 0.5, 3), text,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color.WHITE)
+		else:
+			draw_circle(cluster.position, 4.0, INVASION_COLOR)
+	for creature: Dictionary in state.get("creatures", []):
+		if not bool(creature.get("boss", false)):
+			continue
+		var point := _point(Vector2(float(creature.get("x", 0)), float(creature.get("y", 0))))
+		draw_colored_polygon(PackedVector2Array([point + Vector2(0, -5), point + Vector2(5, 0),
+			point + Vector2(0, 5), point + Vector2(-5, 0)]), BOSS_COLOR)
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -203,13 +237,23 @@ func _update_hover(position: Vector2) -> void:
 		return
 	var nearest_text := ""
 	var nearest_distance := 10.0
-	for key: String in ["locations", "players", "creatures"]:
+	for cluster: Dictionary in _creature_clusters():
+		var distance: float = cluster.position.distance_to(position)
+		if distance < nearest_distance:
+			nearest_distance = distance
+			var entries: Array[String] = []
+			for creature_name: String in cluster.names:
+				entries.append("%s ×%d" % [creature_name, cluster.names[creature_name]])
+			nearest_text = "%d creatures\n%s" % [cluster.count, "\n".join(entries)]
+	for key: String in ["creatures", "locations", "players"]:
 		for raw_marker: Variant in state.get(key, []):
 			var marker := raw_marker as Dictionary
+			if key == "creatures" and not bool(marker.get("boss", false)):
+				continue
 			var marker_point := _point(Vector2(float(marker.get("x", 0)),
 				float(marker.get("y", 0))))
 			var distance := marker_point.distance_to(position)
-			if distance < nearest_distance:
+			if distance <= nearest_distance:
 				nearest_distance = distance
 				nearest_text = "%s — %d, %d" % [str(marker.get("name", key)),
 					int(marker.get("x", 0)), int(marker.get("y", 0))]

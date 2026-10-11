@@ -1,5 +1,7 @@
 class_name LookGround
 extends RefCounted
+
+const SHADER_CUTOUT := preload("res://src/world/look/painted_ground_cutout.gdshader")
 ## Look pass layer L2: gives the ground a value hierarchy - pale roads over a
 ## deeper, richer verge - by swapping its materials for painted ones as each
 ## region, chunk and neighbour is finished. Does nothing unless
@@ -502,6 +504,10 @@ static func painted_for(source: Material, kind: Kind, mesh: Mesh, surface: int,
 		BaseMaterial3D.TRANSPARENCY_ALPHA:
 			shader = SHADER_BLEND
 			blended = true
+		BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR, BaseMaterial3D.TRANSPARENCY_ALPHA_HASH:
+			if kind == Kind.PATCH:
+				shader = SHADER_CUTOUT
+				blended = true
 	if shader == null:
 		return null
 	# An opaque deck without vertex colour is a bridge's timber or cobble, not
